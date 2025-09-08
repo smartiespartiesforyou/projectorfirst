@@ -4,6 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>About — ProjectorFirst</title>
+  <meta name="description" content="Learn more about ProjectorFirst, building big, simple apps for nursing homes & senior care." />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
@@ -13,25 +14,33 @@
   <header class="bg-gray-800 py-4 shadow-md">
     <div class="max-w-4xl mx-auto px-4 flex justify-between items-center">
       <h1 class="text-2xl font-bold text-green-400">ProjectorFirst</h1>
-     <nav class="space-x-4">
-  <a href="/" class="px-3 py-2 rounded hover:bg-green-400 hover:text-gray-900 transition">Home</a>
-  <a href="/about.html" class="px-3 py-2 rounded hover:bg-green-400 hover:text-gray-900 transition">About</a>
-  <a href="/contact.html" class="px-3 py-2 rounded hover:bg-green-400 hover:text-gray-900 transition">Contact</a>
-</nav>
+      <nav class="space-x-4">
+        <a href="/" class="px-3 py-2 rounded hover:bg-green-400 hover:text-gray-900 transition">Home</a>
+        <a href="/about.html" class="px-3 py-2 rounded hover:bg-green-400 hover:text-gray-900 transition">About</a>
+        <a href="/contact.html" class="px-3 py-2 rounded hover:bg-green-400 hover:text-gray-900 transition">Contact</a>
+      </nav>
     </div>
   </header>
 
   <main class="max-w-4xl mx-auto p-8">
     <h2 class="text-3xl font-extrabold mb-4">About ProjectorFirst</h2>
+    <p class="text-gray-300 leading-7 mb-4">
+      ProjectorFirst creates apps designed for nursing homes and senior care facilities. 
+      Our goal is to simplify daily tasks, save time, and make technology accessible 
+      for all staff members.
+    </p>
     <p class="text-gray-300 leading-7">
-      We build big, simple, projector-friendly apps for nursing homes and senior care.
-      The goal is zero confusion and real time savings for staff.
+      We focus on high-contrast visuals, large fonts, and projector-friendly layouts 
+      to support care teams and enhance resident engagement.
     </p>
   </main>
 
   <footer class="bg-gray-800 py-4 mt-12 text-center text-gray-400 text-sm">
-    © <span id="year"></span> ProjectorFirst.
+    © <span id="year"></span> ProjectorFirst. All rights reserved.
   </footer>
-  <script>document.getElementById('year').textContent = new Date().getFullYear();</script>
+
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
 </body>
 </html>
