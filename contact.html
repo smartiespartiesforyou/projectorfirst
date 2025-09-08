@@ -4,6 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Contact — ProjectorFirst</title>
+  <meta name="description" content="Get in touch with ProjectorFirst to learn more about our apps for nursing homes and senior care." />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
@@ -13,16 +14,47 @@
   <header class="bg-gray-800 py-4 shadow-md">
     <div class="max-w-4xl mx-auto px-4 flex justify-between items-center">
       <h1 class="text-2xl font-bold text-green-400">ProjectorFirst</h1>
-     <nav class="space-x-4">
-  <a href="/" class="px-3 py-2 rounded hover:bg-green-400 hover:text-gray-900 transition">Home</a>
-  <a href="/about.html" class="px-3 py-2 rounded hover:bg-green-400 hover:text-gray-900 transition">About</a>
-  <a href="/contact.html" class="px-3 py-2 rounded hover:bg-green-400 hover:text-gray-900 transition">Contact</a>
-</nav>
+      <nav class="space-x-4">
+        <a href="/" class="px-3 py-2 rounded hover:bg-green-400 hover:text-gray-900 transition">Home</a>
+        <a href="/about.html" class="px-3 py-2 rounded hover:bg-green-400 hover:text-gray-900 transition">About</a>
+        <a href="/contact.html" class="px-3 py-2 rounded hover:bg-green-400 hover:text-gray-900 transition">Contact</a>
+      </nav>
     </div>
   </header>
 
   <main class="max-w-4xl mx-auto p-8">
-    <h2 class="text-3xl font-extrabold mb-6">Contact</h2>
+    <h2 class="text-3xl font-extrabold mb-6">Contact Us</h2>
 
-    <!-- Netlify form -->
-    <form name="contact" method="POST" data-netlify="
+    <form name="contact" method="POST" data-netlify="true" class="grid gap-4 bg-gray-800 p-6 rounded-lg border border-gray-700 max-w-xl">
+      <input type="hidden" name="form-name" value="contact" />
+      <label class="grid gap-2">
+        <span class="text-gray-300">Name</span>
+        <input class="bg-gray-900 border border-gray-700 rounded p-2" type="text" name="name" required />
+      </label>
+      <label class="grid gap-2">
+        <span class="text-gray-300">Email</span>
+        <input class="bg-gray-900 border border-gray-700 rounded p-2" type="email" name="email" required />
+      </label>
+      <label class="grid gap-2">
+        <span class="text-gray-300">Message</span>
+        <textarea class="bg-gray-900 border border-gray-700 rounded p-2" name="message" rows="5" required></textarea>
+      </label>
+      <button class="bg-green-400 text-gray-900 px-5 py-2 rounded font-semibold hover:bg-green-300 transition" type="submit">
+        Send
+      </button>
+    </form>
+
+    <p class="text-gray-400 mt-4 text-sm">
+      After your first submission, check Netlify → <strong>Forms</strong> to see entries.
+    </p>
+  </main>
+
+  <footer class="bg-gray-800 py-4 mt-12 text-center text-gray-400 text-sm">
+    © <span id="year"></span> ProjectorFirst. All rights reserved.
+  </footer>
+
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>
