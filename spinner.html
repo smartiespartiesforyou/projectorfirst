@@ -12,8 +12,8 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     .wheel {
-      width: 300px;
-      height: 300px;
+      width: 350px;
+      height: 350px;
       border-radius: 50%;
       border: 8px solid white;
       margin: 0 auto;
@@ -29,6 +29,12 @@
       top: 0;
       left: 50%;
       transform-origin: left center;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 2rem;
+      font-weight: bold;
+      color: white;
     }
     .yes {
       background: #22c55e;
@@ -65,8 +71,8 @@
     <h2 class="text-3xl font-extrabold mb-6 text-green-300">Yes/No Spinner</h2>
     <div class="pointer"></div>
     <div class="wheel" id="wheel">
-      <div class="half yes"></div>
-      <div class="half no"></div>
+      <div class="half yes">YES</div>
+      <div class="half no">NO</div>
     </div>
     <div class="mt-8">
       <button onclick="spinWheel()" class="bg-yellow-400 text-gray-900 px-6 py-3 rounded-lg font-semibold shadow hover:bg-yellow-300 transition">Spin</button>
@@ -81,7 +87,7 @@
     document.getElementById('year').textContent = new Date().getFullYear();
     function spinWheel() {
       const wheel = document.getElementById('wheel');
-      const random = Math.floor(Math.random() * 360) + 720; // at least 2 spins
+      const random = Math.floor(Math.random() * 360) + 720; // spin 2+ times
       wheel.style.transform = `rotate(${random}deg)`;
     }
   </script>
