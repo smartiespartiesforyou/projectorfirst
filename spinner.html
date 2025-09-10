@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Yes/No Spinner — ProjectorFirst</title>
-  <meta name="description" content="A big, colorful Yes/No spinner for nursing home activities." />
+  <meta name="description" content="A simple Yes/No spinner for nursing home activities." />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
@@ -15,28 +15,28 @@
       width: 300px;
       height: 300px;
       border-radius: 50%;
-      border: 10px solid #fff;
+      border: 8px solid white;
       margin: 0 auto;
       position: relative;
       overflow: hidden;
       transform: rotate(0deg);
       transition: transform 3s ease-out;
     }
-    .wheel div {
+    .half {
       width: 50%;
-      height: 50%;
+      height: 100%;
       position: absolute;
-      top: 50%;
+      top: 0;
       left: 50%;
-      transform-origin: 0% 0%;
+      transform-origin: left center;
     }
     .yes {
       background: #22c55e;
-      transform: rotate(0deg) skewY(-60deg);
+      transform: rotate(0deg);
     }
     .no {
       background: #ef4444;
-      transform: rotate(180deg) skewY(-60deg);
+      transform: rotate(180deg);
     }
     .pointer {
       width: 0; 
@@ -65,8 +65,8 @@
     <h2 class="text-3xl font-extrabold mb-6 text-green-300">Yes/No Spinner</h2>
     <div class="pointer"></div>
     <div class="wheel" id="wheel">
-      <div class="yes"></div>
-      <div class="no"></div>
+      <div class="half yes"></div>
+      <div class="half no"></div>
     </div>
     <div class="mt-8">
       <button onclick="spinWheel()" class="bg-yellow-400 text-gray-900 px-6 py-3 rounded-lg font-semibold shadow hover:bg-yellow-300 transition">Spin</button>
@@ -81,7 +81,7 @@
     document.getElementById('year').textContent = new Date().getFullYear();
     function spinWheel() {
       const wheel = document.getElementById('wheel');
-      const random = Math.floor(Math.random() * 360) + 1080; // at least 3 full spins
+      const random = Math.floor(Math.random() * 360) + 720; // at least 2 spins
       wheel.style.transform = `rotate(${random}deg)`;
     }
   </script>
