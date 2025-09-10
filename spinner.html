@@ -37,11 +37,11 @@
       color: white;
     }
     .yes {
-      background: #22c55e;
+      background: #22c55e; /* Green */
       transform: rotate(0deg);
     }
     .no {
-      background: #ef4444;
+      background: #ef4444; /* Red */
       transform: rotate(180deg);
     }
     .pointer {
@@ -49,7 +49,7 @@
       height: 0; 
       border-left: 30px solid transparent;
       border-right: 30px solid transparent;
-      border-top: 60px solid white; /* Arrow now points DOWN */
+      border-top: 60px solid white; /* Arrow points down */
       margin: 20px auto;
     }
   </style>
@@ -85,9 +85,10 @@
 
   <script>
     document.getElementById('year').textContent = new Date().getFullYear();
+
     function spinWheel() {
       const wheel = document.getElementById('wheel');
-      const random = Math.floor(Math.random() * 360) + 720; // spin 2+ times
+      const random = Math.floor(Math.random() * 360) + 720; // spin at least twice
       wheel.style.transform = `rotate(${random}deg)`;
     }
   </script>
