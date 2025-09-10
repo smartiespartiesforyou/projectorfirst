@@ -12,7 +12,7 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     .card-face {
-      width: 14rem;
+      width: 14rem;           /* card size on projector */
       height: 19rem;
       border-radius: 0.75rem;
       background: white;
@@ -27,8 +27,8 @@
     .rank-big   { font-size: 7rem; line-height: .9; font-weight: 800; }
     .suit-big   { font-size: 5rem; line-height: 1; }
     .corner     { font-size: 1.5rem; font-weight: 800; }
-    .red        { color: #ef4444; }
-    .black      { color: #111827; }
+    .red        { color: #ef4444; }   /* hearts/diamonds */
+    .black      { color: #111827; }   /* spades/clubs   */
     .history-pill {
       border-radius: .5rem; padding: .35rem .55rem;
       border: 1px solid rgba(255,255,255,.2);
@@ -42,7 +42,7 @@
   </style>
 </head>
 <body class="bg-gradient-to-b from-emerald-900 via-gray-900 to-black text-white font-sans">
-  <!-- Header -->
+  <!-- Header / Nav -->
   <header class="bg-gray-800 py-4 shadow-md">
     <div class="max-w-5xl mx-auto px-4 flex justify-between items-center">
       <h1 class="text-2xl font-bold text-green-400">ProjectorFirst</h1>
@@ -84,9 +84,6 @@
     © <span id="year"></span> ProjectorFirst. All rights reserved.
   </footer>
 
-  <!-- Sound -->
-  <audio id="ding" src="https://actions.google.com/sounds/v1/alarms/beep_short.ogg" preload="auto"></audio>
-
   <script>
     document.getElementById('year').textContent = new Date().getFullYear();
 
@@ -117,12 +114,6 @@
       }
     }
 
-    function playSound(){
-      const ding = document.getElementById('ding');
-      ding.currentTime = 0;
-      ding.play();
-    }
-
     function paintCard(card){
       const rankEl = document.getElementById('rank');
       const suitEl = document.getElementById('suit');
@@ -133,11 +124,13 @@
       suitEl.textContent = card.suit;
       cornerTop.textContent = card.label;
 
+      // color classes
       [rankEl, suitEl, cornerTop].forEach(el=>{
         el.classList.remove('red','black');
         el.classList.add(card.color);
       });
 
+      // subtle highlight ring in matching color
       cardBox.style.outline = card.color === 'red' ? '6px solid rgba(239,68,68,.25)'
                                                    : '6px solid rgba(17,24,39,.25)';
       cardBox.style.outlineOffset = '6px';
@@ -150,13 +143,14 @@
         const span = document.createElement('span');
         span.className = 'history-pill';
         span.textContent = c.label;
-        if (c.color === 'red') span.style.color = '#fecaca';
+        if (c.color === 'red') span.style.color = '#fecaca'; // light red text
         box.appendChild(span);
       });
     }
 
     function nextCard(){
       if (deck.length === 0){
+        // all done
         document.getElementById('rank').textContent = 'END';
         document.getElementById('suit').textContent = '';
         document.getElementById('cornerTop').textContent = 'No cards left';
@@ -166,13 +160,13 @@
       called.push(card);
       paintCard(card);
       renderHistory();
-      playSound();
     }
 
     function resetDeck(){
       called = [];
       buildDeck();
       shuffle(deck);
+      // show back placeholder
       paintCard({rank:'A', suit:'♠', color:'black', label:'A♠'});
       document.getElementById('history').innerHTML = '';
     }
@@ -187,6 +181,7 @@
       }
     }
 
+    // init
     resetDeck();
   </script>
 </body>
