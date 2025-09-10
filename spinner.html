@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Yes/No Spinner — ProjectorFirst</title>
+  <meta name="description" content="A big, colorful Yes/No spinner for nursing home activities." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+  <link rel="icon" href="/logo.svg" type="image/svg+xml" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .wheel {
+      width: 300px;
+      height: 300px;
+      border-radius: 50%;
+      border: 10px solid #fff;
+      margin: 0 auto;
+      position: relative;
+      overflow: hidden;
+      transform: rotate(0deg);
+      transition: transform 3s ease-out;
+    }
+    .wheel div {
+      width: 50%;
+      height: 50%;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform-origin: 0% 0%;
+    }
+    .yes {
+      background: #22c55e;
+      transform: rotate(0deg) skewY(-60deg);
+    }
+    .no {
+      background: #ef4444;
+      transform: rotate(180deg) skewY(-60deg);
+    }
+    .pointer {
+      width: 0; 
+      height: 0; 
+      border-left: 20px solid transparent;
+      border-right: 20px solid transparent;
+      border-bottom: 40px solid white;
+      margin: 20px auto;
+    }
+  </style>
+</head>
+<body class="bg-gradient-to-b from-purple-800 via-gray-900 to-black text-white font-sans text-center">
+  <header class="bg-gray-800 py-4 shadow-md">
+    <div class="max-w-4xl mx-auto px-4 flex justify-between items-center">
+      <h1 class="text-2xl font-bold text-green-400">ProjectorFirst</h1>
+      <nav class="space-x-4">
+        <a href="/" class="px-3 py-2 rounded hover:bg-green-400 hover:text-gray-900 transition">Home</a>
+        <a href="/about.html" class="px-3 py-2 rounded hover:bg-green-400 hover:text-gray-900 transition">About</a>
+        <a href="/contact.html" class="px-3 py-2 rounded hover:bg-green-400 hover:text-gray-900 transition">Contact</a>
+        <a href="/apps.html" class="px-3 py-2 rounded hover:bg-green-400 hover:text-gray-900 transition">Apps</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="max-w-5xl mx-auto p-8">
+    <h2 class="text-3xl font-extrabold mb-6 text-green-300">Yes/No Spinner</h2>
+    <div class="pointer"></div>
+    <div class="wheel" id="wheel">
+      <div class="yes"></div>
+      <div class="no"></div>
+    </div>
+    <div class="mt-8">
+      <button onclick="spinWheel()" class="bg-yellow-400 text-gray-900 px-6 py-3 rounded-lg font-semibold shadow hover:bg-yellow-300 transition">Spin</button>
+    </div>
+  </main>
+
+  <footer class="bg-gray-800 py-4 mt-12 text-center text-gray-400 text-sm">
+    © <span id="year"></span> ProjectorFirst. All rights reserved.
+  </footer>
+
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+    function spinWheel() {
+      const wheel = document.getElementById('wheel');
+      const random = Math.floor(Math.random() * 360) + 1080; // at least 3 full spins
+      wheel.style.transform = `rotate(${random}deg)`;
+    }
+  </script>
+</body>
+</html>
