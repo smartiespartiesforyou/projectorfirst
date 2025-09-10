@@ -4,47 +4,59 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Pokeno Card Caller — ProjectorFirst</title>
-  <meta name="description" content="Simple projector-friendly Pokeno card caller for activities." />
+  <meta name="description" content="Projector-friendly Pokeno card caller for activities." />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
   <link rel="icon" href="/logo.svg" type="image/svg+xml" />
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
+    /* Big current card */
     .card-face {
-      width: 14rem;           /* card size on projector */
-      height: 19rem;
-      border-radius: 0.75rem;
+      width: 95vw;
+      max-width: 800px;          /* bigger cap */
+      aspect-ratio: 3/4;
+      border-radius: 1rem;
       background: white;
       color: black;
-      box-shadow: 0 10px 30px rgba(0,0,0,.4);
+      box-shadow: 0 18px 50px rgba(0,0,0,.55);
       display: grid;
       grid-template-rows: 1fr auto 1fr;
       align-items: center;
       justify-items: center;
-      padding: 1rem;
+      padding: 1.2rem;
     }
-    .rank-big   { font-size: 7rem; line-height: .9; font-weight: 800; }
-    .suit-big   { font-size: 5rem; line-height: 1; }
-    .corner     { font-size: 1.5rem; font-weight: 800; }
-    .red        { color: #ef4444; }   /* hearts/diamonds */
-    .black      { color: #111827; }   /* spades/clubs   */
-    .history-pill {
-      border-radius: .5rem; padding: .35rem .55rem;
-      border: 1px solid rgba(255,255,255,.2);
-      font-weight: 700;
+    .rank-big { font-size: 14rem; line-height: .85; font-weight: 800; }
+    .suit-big { font-size: 10rem; line-height: 1; font-weight: 800; }
+    .corner   { font-size: 3rem; font-weight: 800; align-self: start; justify-self: start; }
+    .red   { color: #ef4444; }
+    .black { color: #111827; }
+
+    /* Mini cards for recent history */
+    .mini-card {
+      width: 6.5rem;
+      aspect-ratio: 3/4;
+      border-radius: .5rem;
+      background: white;
+      color: black;
+      box-shadow: 0 6px 18px rgba(0,0,0,.35);
+      display: grid;
+      grid-template-rows: 1fr auto 1fr;
+      align-items: center;
+      justify-items: center;
+      padding: .35rem;
     }
-    @media (min-width: 1280px){
-      .card-face { width: 18rem; height: 24rem; }
-      .rank-big { font-size: 9rem; }
-      .suit-big { font-size: 6rem; }
-    }
+    .mini-rank { font-size: 2.2rem; font-weight: 800; line-height: 1; }
+    .mini-suit { font-size: 1.6rem; font-weight: 800; line-height: 1; }
+    .mini-corner { font-size: .9rem; font-weight: 800; align-self: start; justify-self: start; }
+
+    /* Pills if you want full list later */
+    .history-pill { border-radius: .5rem; padding: .35rem .55rem; border: 1px solid rgba(255,255,255,.2); font-weight: 700; }
   </style>
 </head>
 <body class="bg-gradient-to-b from-emerald-900 via-gray-900 to-black text-white font-sans">
-  <!-- Header / Nav -->
   <header class="bg-gray-800 py-4 shadow-md">
-    <div class="max-w-5xl mx-auto px-4 flex justify-between items-center">
+    <div class="max-w-6xl mx-auto px-4 flex justify-between items-center">
       <h1 class="text-2xl font-bold text-green-400">ProjectorFirst</h1>
       <nav class="space-x-4">
         <a href="/" class="px-3 py-2 rounded hover:bg-green-400 hover:text-gray-900 transition">Home</a>
@@ -55,9 +67,8 @@
     </div>
   </header>
 
-  <!-- Main -->
-  <main class="max-w-5xl mx-auto p-8 text-center">
-    <h2 class="text-3xl font-extrabold mb-6 text-green-300">Pokeno Card Caller</h2>
+  <main class="max-w-6xl mx-auto p-6 text-center">
+    <h2 class="text-4xl font-extrabold mb-6 text-green-300">Pokeno Card Caller</h2>
 
     <!-- Current Card -->
     <div class="flex justify-center mb-8">
@@ -69,20 +80,25 @@
     </div>
 
     <!-- Controls -->
-    <div class="flex justify-center gap-4 flex-wrap mb-10">
-      <button onclick="nextCard()"  class="bg-green-400 text-gray-900 px-6 py-3 rounded-lg font-semibold shadow hover:bg-green-300 transition">Next Card</button>
-      <button onclick="resetDeck()" class="bg-red-400 text-gray-900 px-6 py-3 rounded-lg font-semibold shadow hover:bg-red-300 transition">Reset</button>
-      <button onclick="toggleFullScreen()" class="bg-blue-400 text-gray-900 px-6 py-3 rounded-lg font-semibold shadow hover:bg-blue-300 transition">Full Screen</button>
+    <div class="flex justify-center gap-4 flex-wrap mb-8">
+      <button onclick="nextCard()"  class="bg-green-400 text-gray-900 px-8 py-4 text-xl rounded-lg font-bold shadow hover:bg-green-300 transition">Next Card</button>
+      <button onclick="resetDeck()" class="bg-red-400 text-gray-900 px-8 py-4 text-xl rounded-lg font-bold shadow hover:bg-red-300 transition">Reset</button>
+      <button onclick="toggleFullScreen()" class="bg-blue-400 text-gray-900 px-8 py-4 text-xl rounded-lg font-bold shadow hover:bg-blue-300 transition">Full Screen</button>
     </div>
 
-    <!-- History -->
-    <h3 class="text-xl font-bold text-green-400 mb-3">Called Cards</h3>
-    <div id="history" class="flex flex-wrap justify-center gap-2 text-lg"></div>
+    <!-- Last few cards -->
+    <h3 class="text-xl font-bold text-green-400 mb-3">Last Cards</h3>
+    <div id="recent" class="flex flex-wrap justify-center gap-3 mb-10"></div>
+
+    <!-- (Optional) Full history pills could go here if you want later -->
+    <!-- <div id="history" class="flex flex-wrap justify-center gap-2 text-lg"></div> -->
   </main>
 
   <footer class="bg-gray-800 py-4 mt-12 text-center text-gray-400 text-sm">
     © <span id="year"></span> ProjectorFirst. All rights reserved.
   </footer>
+
+  <audio id="ding" src="https://actions.google.com/sounds/v1/alarms/beep_short.ogg" preload="auto"></audio>
 
   <script>
     document.getElementById('year').textContent = new Date().getFullYear();
@@ -114,7 +130,13 @@
       }
     }
 
-    function paintCard(card){
+    function playSound(){
+      const ding = document.getElementById('ding');
+      ding.currentTime = 0;
+      ding.play();
+    }
+
+    function paintCurrent(card){
       const rankEl = document.getElementById('rank');
       const suitEl = document.getElementById('suit');
       const cornerTop = document.getElementById('cornerTop');
@@ -124,33 +146,41 @@
       suitEl.textContent = card.suit;
       cornerTop.textContent = card.label;
 
-      // color classes
       [rankEl, suitEl, cornerTop].forEach(el=>{
         el.classList.remove('red','black');
         el.classList.add(card.color);
       });
 
-      // subtle highlight ring in matching color
-      cardBox.style.outline = card.color === 'red' ? '6px solid rgba(239,68,68,.25)'
-                                                   : '6px solid rgba(17,24,39,.25)';
-      cardBox.style.outlineOffset = '6px';
+      cardBox.style.outline = card.color === 'red' ? '8px solid rgba(239,68,68,.25)'
+                                                   : '8px solid rgba(17,24,39,.25)';
+      cardBox.style.outlineOffset = '8px';
     }
 
-    function renderHistory(){
-      const box = document.getElementById('history');
-      box.innerHTML = '';
-      called.forEach(c=>{
-        const span = document.createElement('span');
-        span.className = 'history-pill';
-        span.textContent = c.label;
-        if (c.color === 'red') span.style.color = '#fecaca'; // light red text
-        box.appendChild(span);
+    function renderRecent(){
+      const cont = document.getElementById('recent');
+      cont.innerHTML = '';
+      const last = called.slice(-6).reverse(); // newest first
+      last.forEach(c=>{
+        const wrap = document.createElement('div');
+        wrap.className = 'mini-card';
+        const corner = document.createElement('div');
+        corner.className = 'mini-corner ' + (c.color === 'red' ? 'red' : 'black');
+        corner.textContent = c.label;
+        const r = document.createElement('div');
+        r.className = 'mini-rank ' + (c.color === 'red' ? 'red' : 'black');
+        r.textContent = c.rank;
+        const s = document.createElement('div');
+        s.className = 'mini-suit ' + (c.color === 'red' ? 'red' : 'black');
+        s.textContent = c.suit;
+        wrap.appendChild(corner);
+        wrap.appendChild(r);
+        wrap.appendChild(s);
+        cont.appendChild(wrap);
       });
     }
 
     function nextCard(){
       if (deck.length === 0){
-        // all done
         document.getElementById('rank').textContent = 'END';
         document.getElementById('suit').textContent = '';
         document.getElementById('cornerTop').textContent = 'No cards left';
@@ -158,17 +188,17 @@
       }
       const card = deck.pop();
       called.push(card);
-      paintCard(card);
-      renderHistory();
+      paintCurrent(card);
+      renderRecent();
+      playSound();
     }
 
     function resetDeck(){
       called = [];
       buildDeck();
       shuffle(deck);
-      // show back placeholder
-      paintCard({rank:'A', suit:'♠', color:'black', label:'A♠'});
-      document.getElementById('history').innerHTML = '';
+      paintCurrent({rank:'A', suit:'♠', color:'black', label:'A♠'});
+      renderRecent();
     }
 
     function toggleFullScreen(){
