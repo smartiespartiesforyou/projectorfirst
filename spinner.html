@@ -12,10 +12,10 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     .wheel {
-      width: 350px;
-      height: 350px;
+      width: 500px;
+      height: 500px;
       border-radius: 50%;
-      border: 8px solid white;
+      border: 10px solid white;
       margin: 0 auto;
       position: relative;
       overflow: hidden;
@@ -32,7 +32,7 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      font-size: 2rem;
+      font-size: 3rem;
       font-weight: bold;
       color: white;
     }
@@ -47,9 +47,9 @@
     .pointer {
       width: 0; 
       height: 0; 
-      border-left: 20px solid transparent;
-      border-right: 20px solid transparent;
-      border-bottom: 40px solid white;
+      border-left: 30px solid transparent;
+      border-right: 30px solid transparent;
+      border-top: 60px solid white; /* Arrow now points DOWN */
       margin: 20px auto;
     }
   </style>
@@ -68,14 +68,14 @@
   </header>
 
   <main class="max-w-5xl mx-auto p-8">
-    <h2 class="text-3xl font-extrabold mb-6 text-green-300">Yes/No Spinner</h2>
+    <h2 class="text-4xl font-extrabold mb-6 text-green-300">Yes/No Spinner</h2>
     <div class="pointer"></div>
     <div class="wheel" id="wheel">
       <div class="half yes">YES</div>
       <div class="half no">NO</div>
     </div>
     <div class="mt-8">
-      <button onclick="spinWheel()" class="bg-yellow-400 text-gray-900 px-6 py-3 rounded-lg font-semibold shadow hover:bg-yellow-300 transition">Spin</button>
+      <button onclick="spinWheel()" class="bg-yellow-400 text-gray-900 px-8 py-4 text-xl rounded-lg font-bold shadow hover:bg-yellow-300 transition">SPIN</button>
     </div>
   </main>
 
