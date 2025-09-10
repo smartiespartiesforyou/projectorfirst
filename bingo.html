@@ -11,7 +11,10 @@
   <link rel="icon" href="/logo.svg" type="image/svg+xml" />
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    .bingo-number { font-size: 10rem; }
+    .bingo-number { 
+      font-size: 15rem; /* HUGE number for projectors */
+      line-height: 1;
+    }
   </style>
 </head>
 <body class="bg-gradient-to-b from-green-900 via-gray-900 to-black text-white font-sans">
@@ -31,9 +34,10 @@
     <h2 class="text-3xl font-extrabold mb-6 text-green-300">Bingo Caller</h2>
     <div id="current" class="bingo-number font-extrabold text-yellow-400 mb-8">---</div>
 
-    <div class="flex justify-center gap-4 mb-8">
+    <div class="flex justify-center gap-4 mb-8 flex-wrap">
       <button onclick="callNumber()" class="bg-green-400 text-gray-900 px-6 py-3 rounded-lg font-semibold shadow hover:bg-green-300 transition">Next Ball</button>
       <button onclick="resetGame()" class="bg-red-400 text-gray-900 px-6 py-3 rounded-lg font-semibold shadow hover:bg-red-300 transition">Reset</button>
+      <button onclick="toggleFullScreen()" class="bg-blue-400 text-gray-900 px-6 py-3 rounded-lg font-semibold shadow hover:bg-blue-300 transition">Full Screen</button>
     </div>
 
     <h3 class="text-xl font-bold text-green-400 mb-4">Called Numbers</h3>
@@ -95,6 +99,16 @@
 
     function resetGame() {
       initGame();
+    }
+
+    function toggleFullScreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(err => {
+          alert(`Error attempting full-screen: ${err.message}`);
+        });
+      } else {
+        document.exitFullscreen();
+      }
     }
 
     initGame();
