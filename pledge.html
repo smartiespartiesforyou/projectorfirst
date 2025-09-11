@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Pledge of Allegiance — ProjectorFirst</title>
+  <meta name="description" content="Large-print, projector-ready Pledge of Allegiance with teleprompter mode."/>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-900 text-white min-h-screen">
+  <main class="max-w-5xl mx-auto px-6 py-10">
+    <h1 class="text-3xl sm:text-4xl font-extrabold text-green-400 text-center mb-2">Pledge of Allegiance</h1>
+    <p class="text-center text-gray-400 mb-8">Space = Start/Stop scroll • +/- = Font size • F = Fullscreen • A = Play/Pause audio</p>
+
+    <!-- Controls -->
+    <div class="flex flex-wrap gap-3 justify-center mb-6">
+      <button id="teleprompterBtn" class="px-5 py-3 bg-green-500 text-gray-900 font-bold rounded-lg hover:bg-green-400">Start Teleprompter</button>
+      <button id="resetBtn" class="px-5 py-3 bg-gray-700 rounded-lg hover:bg-gray-600">Reset</button>
+      <button id="biggerBtn" class="px-5 py-3 bg-gray-700 rounded-lg hover:bg-gray-600">A+</button>
+      <button id="smallerBtn" class="px-5 py-3 bg-gray-700 rounded-lg hover:bg-gray-600">A−</button>
+      <button id="contrastBtn" class="px-5 py-3 bg-gray-700 rounded-lg hover:bg-gray-600">High Contrast</button>
+      <button id="fullscreenBtn" class="px-5 py-3 bg-gray-700 rounded-lg hover:bg-gray-600">Fullscreen</button>
+      <button id="audioBtn" class="px-5 py-3 bg-blue-500 text-gray-900 font-bold rounded-lg hover:bg-blue-400">Play Audio</button>
+      <select id="mode" class="px-3 py-3 bg-gray-800 border border-gray-700 rounded-lg">
+        <option value="block">Full Text</option>
+        <option value="lines">Line-by-Line</option>
+      </select>
+      <select id="variant" class="px-3 py-3 bg-gray-800 border border-gray-700 rounded-lg">
+        <option value="en">English</option>
+        <option value="es">Spanish</option>
+      </select>
+    </div>
+
+    <!-- Display Area -->
+    <div id="container" class="bg-gray-800 rounded-xl p-6 sm:p-10 shadow-lg overflow-hidden">
+      <!-- Full text -->
+      <div id="fullText" class="text-center leading-tight">
+        <p id="pledge" class="font-black tracking-wide" style="font-size: clamp(36px, 9vw, 96px);">
+          I pledge allegiance to the Flag of the United States of America, and to the Republic for which it stands,
+          one Nation under God, indivisible, with liberty and justice for all.
+        </p>
+      </div>
+
+      <!-- Line by line -->
+      <div id="lineWrap" class="hidden text-center">
+        <div id="lineText" class="font-black tracking-wide" style="font-size: clamp(48px, 10vw, 110px);">—</div>
+        <div class="mt-6 flex justify-center gap-3">
+          <button id="prevLine" class="px-5 py-3 bg-gray-700 rounded-lg hover:bg-gray-600">Prev</button>
+          <button id="nextLine" class="px-5 py-3 bg-green-500 text-gray-900 font-bold rounded-lg hover:bg-green-400">Next</button>
+        </div>
+      </div>
+    </div>
+
+    <p class="mt-6 text-center text-gray-500 text-sm">
+      Text per current common recitation: “I pledge allegiance to the Flag of the United States of America, and to the Republic for which it stands, one Nation under God, indivisible, with liberty and justice for all.”
+    </p>
+  </main>
+
+  <script>
+    // Text variants
+    const pledgeEN = "I pledge allegiance to the Flag of the United States of America, and to the Republic for which it stands, one Nation under God, indivisible, with liberty and justice for all.";
+    const pledgeES = "Prometo lealtad a la bandera de los Estados Unidos de América y a la República que representa, una Nación bajo Dios, indivisible, con libertad y justicia para todos.";
+
+    const linesEN = [
+      "I pledge allegiance to the Flag",
+      "of the United States of America,",
+      "and to the Republic for which it stands,",
+      "one Nation under God,",
+      "indivisible,",
+      "with liberty and justice for all."
+    ];
+    const linesES = [
+      "Prometo lealtad a la bandera",
+      "de los Estados Unidos de América",
+      "y a la República que representa,",
+      "una Nación bajo Dios,",
+      "indivisible,",
+      "con libertad y justicia para todos."
+    ];
+
+    // Elements
+    const pledgeEl = document.getElementById('pledge');
+    const fullText = document.getElementById('fullText');
+    const lineWrap = document.getElementById('lineWrap');
+    const lineText = document.getElementById('lineText');
+    const nextLineBtn = document.getElementById('nextLine');
+    const prevLineBtn = document.getElementById('prevLine');
+
+    const teleBtn = document.getElementById('teleprompterBtn');
+    const resetBtn = document.getElementById('resetBtn');
+    const biggerBtn = document.getElementById('biggerBtn');
+    const smallerBtn = document.getElementById('smallerBtn');
+    const contrastBtn = document.getElementById('contrastBtn');
+    const fullscreenBtn = document.getElementById('fullscreenBtn');
+    const audioBtn = document.getElementById('audioBtn');
+    const modeSel = document.getElementById('mode');
+    const variantSel = document.getElementById('variant');
+    const container = document.getElementById('container');
+
+    // State
+    let highContrast = false;
+    let teleScrolling = false;
+    let teleSpeed = 1.2; // pixels per frame
+    let rafId = null;
+    let currentLine = 0;
+
+    // Init
+    setVariant('en');
+
+    function setVariant(v) {
+      if (v === 'es') {
+        pledgeEl.textContent = pledgeES;
+        lines = [...linesES];
+      } else {
+        pledgeEl.textContent = pledgeEN;
+        lines = [...linesEN];
+      }
+      currentLine = 0;
+      lineText.textContent = lines[0] || '—';
+    }
+
+    // Modes
+    function setMode(m) {
+      if (m === 'lines') {
+        fullText.classList.add('hidden');
+        lineWrap.classList.remove('hidden');
+      } else {
+        stopTeleprompter();
+        lineWrap.classList.add('hidden');
+        fullText.classList.remove('hidden');
+        container.scrollTop = 0;
+      }
+    }
+
+    // Teleprompter (full text mode only)
+    function startTeleprompter() {
+      if (modeSel.value === 'lines') return;
+      teleScrolling = true;
+      teleBtn.textContent = 'Stop Teleprompter';
+      const step = () => {
+        if (!teleScrolling) return;
+        container.scrollTop += teleSpeed;
+        if (container.scrollTop + container.clientHeight >= container.scrollHeight) {
+          stopTeleprompter(); // reached end
+          return;
+        }
+        rafId = requestAnimationFrame(step);
+      };
+      rafId = requestAnimationFrame(step);
+    }
+    function stopTeleprompter() {
+      teleScrolling = false;
+      teleBtn.textContent = 'Start Teleprompter';
+      if (rafId) cancelAnimationFrame(rafId);
+      rafId = null;
+    }
+    teleBtn.addEventListener('click', () => teleScrolling ? stopTeleprompter() : startTeleprompter());
+
+    // Font size controls
+    function changeFont(delta) {
+      const el = modeSel.value === 'lines' ? lineText : pledgeEl;
+      const style = window.getComputedStyle(el);
+      const size = parseFloat(style.fontSize);
+      el.style.fontSize = Math.max(24, size + delta) + 'px';
+    }
+    biggerBtn.addEventListener('click', () => changeFont(8));
+    smallerBtn.addEventListener('click', () => changeFont(-8));
+
+    // Contrast toggle
+    contrastBtn.addEventListener('click', () => {
+      highContrast = !highContrast;
+      document.body.className = highContrast ? 'bg-black text-white min-h-screen' : 'bg-gray-900 text-white min-h-screen';
+      container.className = highContrast ? 'bg-black rounded-xl p-6 sm:p-10 shadow-lg overflow-hidden' : 'bg-gray-800 rounded-xl p-6 sm:p-10 shadow-lg overflow-hidden';
+    });
+
+    // Fullscreen
+    fullscreenBtn.addEventListener('click', () => {
+      if (!document.fullscreenElement) document.documentElement.requestFullscreen().catch(()=>{});
+      else document.exitFullscreen().catch(()=>{});
+    });
+
+    // Line navigation
+    let lines = [...linesEN];
+    nextLineBtn.addEventListener('click', () => {
+      currentLine = (currentLine + 1) % lines.length;
+      lineText.textContent = lines[currentLine];
+    });
+    prevLineBtn.addEventListener('click', () => {
+      currentLine = (currentLine - 1 + lines.length) % lines.length;
+      lineText.textContent = lines[currentLine];
+    });
+
+    // Mode/variant selects
+    modeSel.addEventListener('change', () => setMode(modeSel.value));
+    variantSel.addEventListener('change', () => setVariant(variantSel.value));
+
+    // Web Speech API (device voice)
+    let speaking = false;
+    function speak(text) {
+      if (!('speechSynthesis' in window)) return;
+      const utter = new SpeechSynthesisUtterance(text);
+      utter.rate = 0.9;
+      utter.pitch = 1.0;
+      speechSynthesis.cancel();
+      speechSynthesis.speak(utter);
+      speaking = true;
+      utter.onend = () => speaking = false;
+    }
+    function toggleAudio() {
+      if (!('speechSynthesis' in window)) return;
+      if (speaking) { speechSynthesis.cancel(); speaking = false; audioBtn.textContent = 'Play Audio'; return; }
+      const text = variantSel.value === 'es' ? pledgeES : pledgeEN;
+      speak(text);
+      audioBtn.textContent = 'Pause/Stop Audio';
+    }
+    audioBtn.addEventListener('click', toggleAudio);
+
+    // Keyboard shortcuts
+    document.addEventListener('keydown', (e) => {
+      if (e.key === ' ') { e.preventDefault(); teleScrolling ? stopTeleprompter() : startTeleprompter(); }
+      else if (e.key === '+') changeFont(8);
+      else if (e.key === '-') changeFont(-8);
+      else if (e.key.toLowerCase() === 'f') fullscreenBtn.click();
+      else if (e.key.toLowerCase() === 'a') audioBtn.click();
+      else if (modeSel.value === 'lines') {
+        if (e.key === 'ArrowRight') nextLineBtn.click();
+        if (e.key === 'ArrowLeft') prevLineBtn.click();
+      }
+    });
+
+    // Reset
+    resetBtn.addEventListener('click', () => {
+      stopTeleprompter();
+      setVariant(variantSel.value);
+      setMode(modeSel.value);
+      pledgeEl.style.fontSize = '';
+      lineText.style.fontSize = '';
+      container.scrollTop = 0;
+      audioBtn.textContent = 'Play Audio';
+      speechSynthesis?.cancel?.();
+    });
+  </script>
+</body>
+</html>
