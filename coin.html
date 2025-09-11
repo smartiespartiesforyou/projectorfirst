@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Coin Flip — ProjectorFirst</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-900 text-white min-h-screen flex items-center justify-center">
+  <main class="text-center">
+    <h1 class="text-3xl font-bold text-green-400 mb-6">Coin Flip</h1>
+    <div id="result" class="text-7xl font-extrabold mb-8 select-none">—</div>
+    <button id="flipBtn"
+      class="px-8 py-4 bg-green-500 text-gray-900 font-bold rounded-xl hover:bg-green-400 transition text-2xl">
+      Flip
+    </button>
+    <p class="mt-6 text-gray-400">Press <span class="text-gray-200 font-semibold">Space</span> to flip.</p>
+  </main>
+
+  <script>
+    const result = document.getElementById('result');
+    const flip = () => {
+      result.textContent = Math.random() < 0.5 ? 'HEADS' : 'TAILS';
+    };
+    document.getElementById('flipBtn').addEventListener('click', flip);
+    document.addEventListener('keydown', e => { if (e.code === 'Space') { e.preventDefault(); flip(); }});
+  </script>
+</body>
+</html>
