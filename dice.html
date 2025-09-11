@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dice Roller — ProjectorFirst</title>
+  <meta name="description" content="Big, simple dice roller for activities and games." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+  <link rel="icon" href="/logo.svg" type="image/svg+xml" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .die {
+      width: 140px; height: 140px;
+      background: white; color: #111827;
+      border-radius: 18px;
+      box-shadow: 0 18px 45px rgba(0,0,0,.45), inset 0 0 0 8px #e5e7eb;
+      display: grid; place-items: center;
+      font-size: 5rem; font-weight: 800;
+      user-select: none;
+    }
+    .shake {
+      animation: shake .5s ease-in-out;
+    }
+    @keyframes shake {
+      0% { transform: rotate(0deg) translate(0,0); }
+      25% { transform: rotate(3deg) translate(2px,-2px); }
+      50% { transform: rotate(-3deg) translate(-2px,2px); }
+      75% { transform: rotate(2deg) translate(1px,-1px); }
+      100% { transform: rotate(0deg) translate(0,0); }
+    }
+    @media (min-width: 1280px){
+      .die { width: 170px; height: 170px; font-size: 6rem; }
+    }
+  </style>
+</head>
+<body class="bg-gradient-to-b from-indigo-900 via-gray-900 to-black text-white font-sans">
+  <header class="bg-gray-800 py-4 shadow-md">
+    <div class="max-w-6xl mx-auto px-4 flex justify-between items-center">
+      <h1 class="text-2xl font-bold text-green-400">ProjectorFirst</h1>
+      <nav class="space-x-4">
+        <a href="/" class="px-3 py-2 rounded hover:bg-green-400 hover:text-gray-900 transition">Home</a>
+        <a href="/about.html" class="px-3 py-2 rounded hover:bg-green-400 hover:text-gray-900 transition">About</a>
+        <a href="/contact.html" class="px-3 py-2 rounded hover:bg-green-400 hover:text-gray-900 transition">Contact</a>
+        <a href="/apps.html" class="px-3 py-2 rounded hover:bg-green-400 hover:text-gray-900 transition">Apps</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="max-w-6xl mx-auto p-6 text-center">
+    <h2 class="text-4xl font-extrabold mb-4 text-green-300">Dice Roller</h2>
+
+    <!-- Controls -->
+    <div class="flex flex-wrap items-center justify-center gap-3 mb-6">
+      <span class="text-gray-300">Dice:</span>
+      <div id="diceButtons" class="flex gap-2">
+        <!-- buttons injected -->
+      </div>
+      <button id="rollBtn" class="bg-yellow-400 text-gray-900 px-8 py-3 text-xl rounded-lg font-bold shadow hover:bg-yellow-300 transition">
+        ROLL
+      </button>
+      <button onclick="resetDice()" class="bg-red-400 text-gray-900 px-6 py-3 rounded-lg font-semibold shadow hover:bg-red-300 transition">
+        Reset
+      </button>
+      <button onclick="toggleFullScreen()" class="bg-blue-400 text-gray-900 px-6 py-3 rounded-lg font-semibold shadow hover:bg-blue-300 transition">
+        Full Screen
+      </button>
+    </div>
+
+    <!-- Dice Grid -->
+    <div id="diceGrid" class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-4 justify-items-center mb-6"></div>
+
+    <!-- Total -->
+    <div id="totalBox" class="text-yellow-300 font-extrabold text-5xl">Total: —</div>
+    <div class="text-gray-400 mt-2 text-sm">Tip: Press <span class="font-bold">Space</span> to roll.</div>
+  </main>
+
+  <footer class="bg-gray-800 py-4 mt-12 text-center text-gray-400 text-sm">
+    © <span id="year"></span> ProjectorFirst. All rights reserved.
+  </footer>
+
+  <!-- Sound -->
+  <audio id="rollSound" src="https://actions.google.com/sounds/v1/cartoon/wood_plank_flicks.ogg" preload="auto"></audio>
+
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    let diceCount = 2; // default 2 dice
+    let diceValues = [];
+
+    const diceGrid = document.getElementById('diceGrid');
+    const totalBox = document.getElementById('totalBox');
+    const rollBtn = document.getElementById('rollBtn');
+
+    function buildDiceButtons(){
+      const wrap = document.getElementById('diceButtons');
+      wrap.innerHTML = '';
+      for (let i=1; i<=6; i++){
+        const b = document.createElement('button');
+        b.className = 'px-3 py-2 rounded border border-gray-600 text-sm hover:bg-gray-700';
+        b.textContent = i;
+        b.onclick = ()=> setDiceCount(i);
+        if (i === diceCount) b.classList.add('bg-gray-700','border-green-400');
+        wrap.appendChild(b);
+      }
+    }
+
+    function setDiceCount(n){
+      diceCount = n;
+      buildDiceButtons();
+      renderDice(true);
+    }
+
+    function renderDice(blank=false){
+      diceGrid.innerHTML = '';
+      diceValues = Array(diceCount).fill(0);
+      for (let i=0; i<diceCount; i++){
+        const d = document.createElement('div');
+        d.className = 'die';
+        d.textContent = blank ? '—' : (diceValues[i] || '—');
+        diceGrid.appendChild(d);
+      }
+      totalBox.textContent = 'Total: —';
+    }
+
+    function randomDie(){
+      return Math.floor(Math.random()*6)+1; // 1-6
+    }
+
+    function roll(){
+      const sound = document.getElementById('rollSound');
+      sound.currentTime = 0; sound.play().catch(()=>{});
+      const dieElems = [...document.querySelectorAll('.die')];
+      dieElems.forEach(el => el.classList.add('shake'));
+      setTimeout(()=>{
+        let total = 0;
+        diceValues = diceValues.map(()=> {
+          const v = randomDie(); total += v; return v;
+        });
+        dieElems.forEach((el, idx)=>{
+          el.textContent = diceValues[idx];
+          el.classList.remove('shake');
+        });
+        totalBox.textContent = 'Total: ' + total;
+      }, 500);
+    }
+
+    function resetDice(){
+      renderDice(true);
+      totalBox.textContent = 'Total: —';
+    }
+
+    function toggleFullScreen(){
+      if (!document.fullscreenElement){
+        document.documentElement.requestFullscreen().catch(err=>{
+          alert(`Full-screen error: ${err.message}`);
+        });
+      } else {
+        document.exitFullscreen();
+      }
+    }
+
+    // Keyboard: Space to roll
+    document.addEventListener('keydown', (e)=>{
+      if (e.code === 'Space'){ e.preventDefault(); roll(); }
+      if (['Digit1','Numpad1','Digit2','Numpad2','Digit3','Numpad3','Digit4','Numpad4','Digit5','Numpad5','Digit6','Numpad6'].includes(e.code)){
+        const n = Number(e.key);
+        if (n>=1 && n<=6) setDiceCount(n);
+      }
+    });
+
+    rollBtn.addEventListener('click', roll);
+
+    // Init
+    buildDiceButtons();
+    renderDice(true);
+  </script>
+</body>
+</html>
