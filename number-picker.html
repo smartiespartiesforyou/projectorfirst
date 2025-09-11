@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Number Picker (1–150) — ProjectorFirst</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-900 text-white min-h-screen flex items-center justify-center">
+  <main class="max-w-5xl w-full text-center px-4">
+    <h1 class="text-3xl font-bold text-green-400 mb-6">Number Picker (1–150)</h1>
+
+    <div id="current" class="text-8xl font-extrabold mb-6 select-none">—</div>
+
+    <div class="flex flex-wrap gap-4 justify-center mb-8">
+      <button id="drawBtn" class="px-8 py-4 bg-green-500 text-gray-900 font-bold rounded-xl hover:bg-green-400 transition text-2xl">
+        Draw
+      </button>
+      <button id="resetBtn" class="px-8 py-4 bg-gray-700 font-bold rounded-xl hover:bg-gray-600 transition text-2xl">
+        Reset
+      </button>
+    </div>
+
+    <div class="grid grid-cols-10 gap-2 text-sm" id="numberGrid"></div>
+
+    <p class="mt-6 text-gray-400">Press <span class="text-gray-200 font-semibold">Space</span> to draw.</p>
+  </main>
+
+  <script>
+    const current = document.getElementById('current');
+    const grid = document.getElementById('numberGrid');
+    const drawBtn = document.getElementById('drawBtn');
+    const resetBtn = document.getElementById('resetBtn');
+
+    let pool = Array.from({length:150}, (_,i)=>i+1);
+    const drawn = new Set();
+
+    function buildGrid() {
+      grid.innerHTML = '';
+      for (let i = 1; i <= 150; i++) {
+        const cell = document.createElement('div');
+        cell.id = 'n' + i;
+        cell.className = 'bg-gray-800 rounded-lg py-2';
+        cell.textContent = i;
+        grid.appendChild(cell);
+      }
+    }
+
+    function draw() {
+      if (pool.length === 0) { current.textContent = 'DONE'; return; }
+      const idx = Math.floor(Math.random() * pool.length);
+      const num = pool.splice(idx,1)[0];
+      drawn.add(num);
+      current.textContent = num;
+      const cell = document.getElementById('n'+num);
+      if (cell) cell.className = 'bg-green-500 text-gray-900 font-extrabold rounded-lg py-2';
+    }
+
+    function reset() {
+      pool = Array.from({length:150}, (_,i)=>i+1);
+      drawn.clear();
+      current.textContent = '—';
+      buildGrid();
+    }
+
+    drawBtn.addEventListener('click', draw);
+    resetBtn.addEventListener('click', reset);
+    document.addEventListener('keydown', e => { if (e.code === 'Space') { e.preventDefault(); draw(); }});
+
+    buildGrid();
+  </script>
+</body>
+</html>
