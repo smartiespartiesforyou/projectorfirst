@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Horse Race — ProjectorFirst</title>
+  <meta name="description" content="Projector-friendly horse race game driven by dice rolls."/>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-900 text-white min-h-screen">
+  <main class="max-w-6xl mx-auto px-6 py-8">
+    <h1 class="text-3xl sm:text-4xl font-extrabold text-green-400 text-center mb-2">Horse Race</h1>
+    <p class="text-center text-gray-400 mb-6">
+      Space = Roll • R = Reset • ←/→ = Change active horse • +/- = Track length
+    </p>
+
+    <!-- SETUP -->
+    <section class="bg-gray-800 rounded-xl p-4 sm:p-6 mb-6">
+      <div class="flex flex-wrap gap-4 items-end">
+        <div>
+          <label class="block text-sm text-gray-400 mb-1">Horses</label>
+          <select id="horseCount" class="bg-gray-900 border border-gray-700 rounded-lg px-3 py-2">
+            <option>4</option><option>5</option><option selected>6</option><option>7</option><option>8</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-sm text-gray-400 mb-1">Track Length (spaces)</label>
+          <div class="flex items-center gap-2">
+            <button id="lenMinus" class="px-3 py-2 bg-gray-700 rounded-lg hover:bg-gray-600">−</button>
+            <input id="trackLen" type="number" min="10" max="60" value="24"
+                   class="w-24 text-center bg-gray-900 border border-gray-700 rounded-lg px-3 py-2">
+            <button id="lenPlus" class="px-3 py-2 bg-gray-700 rounded-lg hover:bg-gray-600">+</button>
+          </div>
+        </div>
+        <div>
+          <label class="block text-sm text-gray-400 mb-1">Icons</label>
+          <select id="iconSet" class="bg-gray-900 border border-gray-700 rounded-lg px-3 py-2">
+            <option value="horse" selected>🐎 Horses</option>
+            <option value="unicorn">🦄 Unicorns</option>
+            <option value="rider">🏇 Jockeys</option>
+          </select>
+        </div>
+        <div class="ml-auto">
+          <button id="startBtn"
+                  class="px-6 py-3 bg-green-500 text-gray-900 font-bold rounded-lg hover:bg-green-400">
+            Start / Reset Race
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONTROLS -->
+    <section class="flex flex-wrap items-center gap-4 mb-6">
+      <div class="text-center bg-gray-800 rounded-xl px-6 py-4">
+        <div class="text-sm text-gray-400">Active Horse</div>
+        <div id="activeHorse" class="text-3xl font-black text-green-400">#1</div>
+      </div>
+
+      <button id="prevHorse" class="px-5 py-3 bg-gray-700 rounded-lg hover:bg-gray-600">◀ Prev</button>
+      <button id="rollBtn"
+              class="px-8 py-4 bg-green-500 text-gray-900 font-extrabold rounded-xl hover:bg-green-400 text-2xl">
+        Roll 🎲
+      </button>
+      <button id="nextHorse" class="px-5 py-3 bg-gray-700 rounded-lg hover:bg-gray-600">Next ▶</button>
+
+      <div class="text-center bg-gray-800 rounded-xl px-6 py-4">
+        <div class="text-sm text-gray-400">Last Roll</div>
+        <div id="lastRoll" class="text-4xl font-black">—</div>
+      </div>
+
+      <label class="flex items-center gap-2 bg-gray-800 rounded-xl px-4 py-3">
+        <input id="roundRobin" type="checkbox" class="accent-green-500">
+        <span class="text-sm text-gray-300">Auto-advance to next horse after each roll</span>
+      </label>
+    </section>
+
+    <!-- TRACK -->
+    <section id="trackWrap" class="bg-gray-800 rounded-xl p-3 sm:p-4 overflow-x-auto">
+      <div id="track" class="space-y-3"></div>
+    </section>
+
+    <!-- STATUS -->
+    <section class="mt-6 text-center">
+      <div id="status" class="text-xl text-gray-300"></div>
+    </section>
+  </main>
+
+  <script>
+    // ===== helpers
+    const iconFor = (set) => set === 'unicorn' ? '🦄' : set === 'rider' ? '🏇' : '🐎';
+    const clamp = (n,min,max)=>Math.max(min,Math.min(max,n));
+
+    // ===== state
+    let horses = [];          // [{pos:0, id:1}, ...]
+    let current = 0;          // index of active horse
+    let finished = false;
+    let trackLength = 24;
+    let icon = '🐎';
+
+    // ===== elements
+    const track = document.getElementById('track');
+    const trackLenInput = document.getElementById('trackLen');
+    const horseCountSel = document.getElementById('horseCount');
+    const iconSetSel = document.getElementById('iconSet');
+    const startBtn = document.getElementById('startBtn');
+    const rollBtn = document.getElementById('rollBtn');
+    const lastRollEl = document.getElementById('lastRoll');
+    const activeHorseEl = document.getElementById('activeHorse');
+    const statusEl = document.getElementById('status');
+    const prevHorseBtn = document.getElementById('prevHorse');
+    const nextHorseBtn = document.getElementById('nextHorse');
+    const lenMinus = document.getElementById('lenMinus');
+    const lenPlus = document.getElementById('lenPlus');
+    const roundRobin = document.getElementById('roundRobin');
+
+    // ===== init / render
+    function buildTrack() {
+      track.innerHTML = '';
+      const lanes = horses.length;
+      for (let i = 0; i < lanes; i++) {
+        const lane = document.createElement('div');
+        lane.className = 'flex items-center gap-2';
+
+        // horse label
+        const label = document.createElement('div');
+        label.className = 'w-14 text-right text-sm sm:text-base text-gray-300';
+        label.textContent = `Horse ${i+1}`;
+        lane.appendChild(label);
+
+        // cells row
+        const row = document.createElement('div');
+        row.className = 'grid flex-1';
+        row.style.gridTemplateColumns = `repeat(${trackLength}, minmax(18px, 1fr))`;
+        row.style.gap = '4px';
+
+        for (let j = 0; j < trackLength; j++) {
+          const cell = document.createElement('div');
+          cell.id = `cell-${i}-${j}`;
+          cell.className = 'bg-gray-900/70 rounded-md h-7';
+          row.appendChild(cell);
+        }
+
+        // finish line
+        const finish = document.createElement('div');
+        finish.className = 'w-12 text-center text-xs sm:text-sm text-gray-400';
+        finish.innerHTML = '🏁';
+
+        lane.appendChild(row);
+        lane.appendChild(finish);
+        track.appendChild(lane);
+      }
+
+      // place horse icons
+      renderPositions();
+    }
+
+    function renderPositions() {
+      // clear all icons
+      for (let i = 0; i < horses.length; i++) {
+        for (let j = 0; j < trackLength; j++) {
+          const c = document.getElementById(`cell-${i}-${j}`);
+          if (!c) continue;
+          c.textContent = '';
+          c.className = 'bg-gray-900/70 rounded-md h-7';
+        }
+      }
+      // draw each horse
+      for (let i = 0; i < horses.length; i++) {
+        const pos = clamp(horses[i].pos, 0, trackLength-1);
+        const cell = document.getElementById(`cell-${i}-${pos}`);
+        if (cell) {
+          cell.textContent = icon;
+          cell.className = 'bg-green-500 text-gray-900 font-bold rounded-md h-7 flex items-center justify-center';
+        }
+      }
+      // active horse pulse on its cell
+      const aPos = clamp(horses[current].pos,0,trackLength-1);
+      const aCell = document.getElementById(`cell-${current}-${aPos}`);
+      if (aCell) aCell.classList.add('ring-2','ring-yellow-300');
+
+      activeHorseEl.textContent = `#${current+1}`;
+    }
+
+    function resetRace() {
+      const count = parseInt(horseCountSel.value,10);
+      trackLength = clamp(parseInt(trackLenInput.value,10) || 24, 10, 60);
+      icon = iconFor(iconSetSel.value);
+
+      horses = Array.from({length: count}, (_,i)=>({id:i+1, pos:0, done:false}));
+      current = 0;
+      finished = false;
+      lastRollEl.textContent = '—';
+      statusEl.textContent = '';
+      buildTrack();
+    }
+
+    // ===== game logic
+    function nextTurn() {
+      current = (current + 1) % horses.length;
+      // skip finished horses
+      let guard = 0;
+      while (horses[current].done && guard < 100) {
+        current = (current + 1) % horses.length;
+        guard++;
+      }
+      renderPositions();
+    }
+
+    function rollDie() {
+      if (finished) return;
+      const roll = Math.floor(Math.random() * 6) + 1; // 1..6
+      lastRollEl.textContent = roll;
+
+      const h = horses[current];
+      h.pos += roll;
+
+      if (h.pos >= trackLength - 1) {
+        h.pos = trackLength - 1;
+        h.done = true;
+        statusEl.innerHTML = `<span class="text-green-400 font-bold">Horse ${h.id} wins!</span>`;
+        finished = true;
+      }
+
+      renderPositions();
+      if (!finished && roundRobin.checked) nextTurn();
+    }
+
+    // ===== events
+    startBtn.addEventListener('click', resetRace);
+    rollBtn.addEventListener('click', rollDie);
+    prevHorseBtn.addEventListener('click', () => { if (!finished){ do { current = (current - 1 + horses.length) % horses.length; } while (horses[current].done); renderPositions(); }});
+    nextHorseBtn.addEventListener('click', () => { if (!finished){ nextTurn(); }});
+    lenMinus.addEventListener('click', ()=>{ trackLenInput.value = clamp(parseInt(trackLenInput.value,10)-1,10,60); resetRace(); });
+    lenPlus.addEventListener('click', ()=>{ trackLenInput.value = clamp(parseInt(trackLenInput.value,10)+1,10,60); resetRace(); });
+
+    document.addEventListener('keydown', (e)=>{
+      if (e.key === ' ') { e.preventDefault(); rollDie(); }
+      else if (e.key.toLowerCase() === 'r') resetRace();
+      else if (e.key === 'ArrowLeft') prevHorseBtn.click();
+      else if (e.key === 'ArrowRight') nextHorseBtn.click();
+      else if (e.key === '+') lenPlus.click();
+      else if (e.key === '-') lenMinus.click();
+    });
+
+    // first load
+    resetRace();
+  </script>
+</body>
+</html>
