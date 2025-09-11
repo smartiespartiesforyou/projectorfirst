@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Word Scrambler — ProjectorFirst</title>
+  <meta name="description" content="Big-font word scrambler for group play."/>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-900 text-white min-h-screen flex items-center justify-center">
+  <main class="w-full max-w-5xl px-6 text-center">
+    <h1 class="text-4xl sm:text-5xl font-extrabold text-green-400 mb-2">Word Scrambler</h1>
+    <p class="text-gray-400 mb-8">Space/“N” = Next • Enter/“R” = Reveal • “H” = Hide</p>
+
+    <!-- SCRAMBLED WORD -->
+    <div id="scrambled"
+         class="text-6xl sm:text-8xl font-black tracking-wider mb-4 select-none break-words">
+      —
+    </div>
+
+    <!-- ANSWER -->
+    <div id="answer"
+         class="text-3xl sm:text-4xl text-gray-300 mb-8 hidden select-none">
+    </div>
+
+    <!-- CONTROLS -->
+    <div class="flex flex-wrap gap-4 justify-center mb-8">
+      <button id="nextBtn"
+              class="px-8 py-4 bg-green-500 text-gray-900 font-bold rounded-xl hover:bg-green-400 transition text-2xl">
+        Next Word
+      </button>
+      <button id="revealBtn"
+              class="px-8 py-4 bg-blue-500 text-gray-900 font-bold rounded-xl hover:bg-blue-400 transition text-2xl">
+        Reveal Answer
+      </button>
+      <button id="hideBtn"
+              class="px-8 py-4 bg-gray-700 font-bold rounded-xl hover:bg-gray-600 transition text-2xl">
+        Hide Answer
+      </button>
+    </div>
+
+    <!-- STATUS -->
+    <div id="status" class="text-sm text-gray-400"></div>
+
+    <!-- WORD LIST EDITING NOTE -->
+    <details class="mt-8 text-left max-w-3xl mx-auto opacity-80">
+      <summary class="cursor-pointer text-gray-300">How to change the words</summary>
+      <div class="mt-2 text-gray-400">
+        Edit the <code>words</code> array in the script. Keep words short & readable in ALL CAPS for best projector visibility.
+      </div>
+    </details>
+  </main>
+
+  <script>
+    // ====== EDIT YOUR WORDS HERE (ALL CAPS RECOMMENDED) ======
+    const words = [
+      "BINGO","SENIOR","FRIENDSHIP","PROJECTOR","ACTIVITY","CARE","SMILE","LAUGHTER",
+      "COMMUNITY","MUSIC","DANCING","MEMORY","FAMILY","NURSE","HEALTH","GARDEN",
+      "SUNSHINE","HAPPINESS","RESIDENT","TEAMWORK"
+    ];
+    // ==========================================================
+
+    const scrambledEl = document.getElementById('scrambled');
+    const answerEl = document.getElementById('answer');
+    const nextBtn = document.getElementById('nextBtn');
+    const revealBtn = document.getElementById('revealBtn');
+    const hideBtn = document.getElementById('hideBtn');
+    const statusEl = document.getElementById('status');
+
+    let currentWord = "";
+    let usedIndices = new Set();
+
+    function pickNewWord() {
+      if (usedIndices.size === words.length) usedIndices.clear(); // cycle list
+      let idx;
+      do { idx = Math.floor(Math.random() * words.length); }
+      while (usedIndices.has(idx) && usedIndices.size < words.length);
+      usedIndices.add(idx);
+      return words[idx];
+    }
+
+    function shuffleLetters(word) {
+      // Fisher–Yates; ensure it's different from original if possible
+      const arr = word.split("");
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      const scrambled = arr.join("");
+      // If scrambled equals original and there is variety, try again up to 10 times
+      if (scrambled === word && new Set(arr).size > 1) {
+        for (let k = 0; k < 10; k++) {
+          for (let i = arr.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [arr[i], arr[j]] = [arr[j], arr[i]];
+          }
+          const try2 = arr.join("");
+          if (try2 !== word) return try2;
+        }
+      }
+      return scrambled;
+    }
+
+    function newRound() {
+      answerEl.classList.add("hidden");
+      currentWord = pickNewWord();
+      scrambledEl.textContent = shuffleLetters(currentWord);
+      answerEl.textContent = currentWord;
+      statusEl.textContent = `Words used this cycle: ${usedIndices.size}/${words.length}`;
+    }
+
+    function reveal() {
+      answerEl.classList.remove("hidden");
+    }
+    function hide() {
+      answerEl.classList.add("hidden");
+    }
+
+    nextBtn.addEventListener("click", newRound);
+    revealBtn.addEventListener("click", reveal);
+    hideBtn.addEventListener("click", hide);
+
+    document.addEventListener("keydown", (e) => {
+      if (e.code === "Space" || e.key.toLowerCase() === "n") {
+        e.preventDefault();
+        newRound();
+      } else if (e.key === "Enter" || e.key.toLowerCase() === "r") {
+        e.preventDefault();
+        reveal();
+      } else if (e.key.toLowerCase() === "h") {
+        e.preventDefault();
+        hide();
+      }
+    });
+
+    // init
+    newRound();
+  </script>
+</body>
+</html>
