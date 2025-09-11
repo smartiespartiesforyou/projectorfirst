@@ -1,53 +1,60 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ProjectorFirst Games</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f9f9f9;
-      text-align: center;
-      margin: 0;
-      padding: 0;
-    }
-    h1 {
-      background: #333;
-      color: #fff;
-      padding: 20px 0;
-      margin: 0;
-    }
-    .game-list {
-      display: flex;
-      justify-content: center;
-      flex-wrap: wrap;
-      gap: 20px;
-      margin: 40px auto;
-      max-width: 800px;
-    }
-    a {
-      display: block;
-      text-decoration: none;
-      background: #4CAF50;
-      color: white;
-      padding: 15px 30px;
-      border-radius: 8px;
-      font-size: 18px;
-      transition: background 0.3s ease;
-    }
-    a:hover {
-      background: #45a049;
-    }
-  </style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Apps — ProjectorFirst</title>
+  <meta name="description" content="Explore ProjectorFirst apps for nursing homes and senior care." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+  <link rel="icon" href="/logo.svg" type="image/svg+xml" />
+  <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-  <h1>ProjectorFirst Games</h1>
-  <div class="game-list">
-    <a href="/pokeno.html">Play Pokeno</a>
-    <a href="/dice.html">Dice Roller</a>
-    <!-- Add more games here -->
-    <!-- <a href="/tic-tac-toe.html">Tic Tac Toe</a> -->
-  </div>
+<body class="bg-gray-900 text-white font-sans">
+  <header class="bg-gray-800 py-4 shadow-md">
+    <div class="max-w-4xl mx-auto px-4 flex justify-between items-center">
+      <h1 class="text-2xl font-bold text-green-400">ProjectorFirst</h1>
+      <nav class="space-x-4">
+        <a href="/" class="px-3 py-2 rounded hover:bg-green-400 hover:text-gray-900 transition">Home</a>
+        <a href="/about.html" class="px-3 py-2 rounded hover:bg-green-400 hover:text-gray-900 transition">About</a>
+        <a href="/contact.html" class="px-3 py-2 rounded hover:bg-green-400 hover:text-gray-900 transition">Contact</a>
+        <a href="/apps.html" class="px-3 py-2 rounded hover:bg-green-400 hover:text-gray-900 transition">Apps</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="max-w-4xl mx-auto p-8 text-center">
+    <h2 class="text-3xl font-extrabold mb-4">Our Apps</h2>
+    <p class="text-gray-300 mb-6">Simple, big-font, projector-ready tools for activities.</p>
+
+    <!-- GAME CARDS -->
+    <div class="grid gap-6 sm:grid-cols-2">
+      <a href="/bingo.html" class="bg-gray-800 border border-gray-700 rounded-lg p-6 hover:border-green-400 transition">
+        <h3 class="text-xl font-bold text-green-400 mb-2">Bingo Board</h3>
+        <p class="text-gray-400">Digital Bingo caller.</p>
+      </a>
+      <a href="/yesno.html" class="bg-gray-800 border border-gray-700 rounded-lg p-6 hover:border-green-400 transition">
+        <h3 class="text-xl font-bold text-green-400 mb-2">Yes/No Spinner</h3>
+        <p class="text-gray-400">Fast decisions made fun.</p>
+      </a>
+      <a href="/pokeno.html" class="bg-gray-800 border border-gray-700 rounded-lg p-6 hover:border-green-400 transition">
+        <h3 class="text-xl font-bold text-green-400 mb-2">Pokeno</h3>
+        <p class="text-gray-400">Group-friendly Pokeno.</p>
+      </a>
+      <a href="/dice.html" class="bg-gray-800 border border-gray-700 rounded-lg p-6 hover:border-green-400 transition">
+        <h3 class="text-xl font-bold text-green-400 mb-2">Dice Roller</h3>
+        <p class="text-gray-400">Big, clear virtual dice.</p>
+      </a>
+    </div>
+  </main>
+
+  <footer class="bg-gray-800 py-4 mt-12 text-center text-gray-400 text-sm">
+    © <span id="year"></span> ProjectorFirst. All rights reserved.
+  </footer>
+
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
 </body>
 </html>
