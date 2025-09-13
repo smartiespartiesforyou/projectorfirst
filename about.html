@@ -6,14 +6,12 @@
   <title>About Me</title>
   <link href="styles.css" rel="stylesheet">
 </head>
-<body class="bg-gray-100 text-gray-900">
-  <!-- Nav include -->
+<body>
   <div id="nav"></div>
 
-  <!-- Main content -->
-  <main class="max-w-3xl mx-auto p-6">
-    <h1 class="text-4xl font-bold mb-4">About Me</h1>
-    <p class="mb-4">
+  <main style="max-width: 600px; margin: 40px auto; padding: 0 16px; font-family: sans-serif;">
+    <h1>About Me</h1>
+    <p>
       I am a former Activity Director with a degree in Psychology and a Master’s in Criminal Justice.
       My work in senior care has shown me how vision and hearing challenges can make it hard for
       older adults to engage fully in activities.
@@ -24,10 +22,8 @@
     </p>
   </main>
 
-  <!-- Footer include -->
   <div id="footer"></div>
 
-  <!-- Include loader -->
   <script>
     async function loadIncludes() {
       const nav = await fetch('includes/nav.html');
