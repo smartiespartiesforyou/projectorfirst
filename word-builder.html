@@ -76,4 +76,142 @@
           <div id="points" class="text-3xl font-extrabold">0</div>
         </div>
         <div class="bg-gray-800 rounded-xl p-4">
-          <div class="text-gray-400 te
+          <div class="text-gray-400 text-sm">Longest word</div>
+          <div id="longest" class="text-3xl font-extrabold">—</div>
+        </div>
+      </div>
+
+      <div class="bg-gray-800 rounded-xl p-4 sm:p-6 mt-4">
+        <div class="text-gray-400 mb-3">Words</div>
+        <div id="list" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2"></div>
+      </div>
+
+      <p class="mt-6 text-gray-500 text-center text-sm">
+        Tips: Enter = Add • Letters are limited by counts • Points = word length • Use the mic or type as residents call them out.
+      </p>
+    </section>
+  </main>
+
+  <script>
+    // Elements
+    const sourceEl = document.getElementById('source');
+    const minLenEl = document.getElementById('minLen');
+    const uniqueOnlyEl = document.getElementById('uniqueOnly');
+    const lettersOnlyEl = document.getElementById('lettersOnly');
+    const startBtn = document.getElementById('startBtn');
+
+    const board = document.getElementById('board');
+    const lettersWrap = document.getElementById('letters');
+    const guessEl = document.getElementById('guess');
+    const submitGuessBtn = document.getElementById('submitGuess');
+    const feedback = document.getElementById('feedback');
+    const listEl = document.getElementById('list');
+    const countEl = document.getElementById('count');
+    const pointsEl = document.getElementById('points');
+    const longestEl = document.getElementById('longest');
+    const shuffleBtn = document.getElementById('shuffleBtn');
+    const clearGuessesBtn = document.getElementById('clearGuesses');
+
+    // State
+    let baseLetters = [];      // array of letters from source
+    let letterCounts = {};     // {A:2, B:1, ...}
+    let words = [];            // accepted words
+    let totalPoints = 0;
+
+    function normalize(str){ return (str || "").toUpperCase().replace(/[^A-Z]/g,""); }
+
+    function countMap(str) {
+      const m = {};
+      for (const ch of str) m[ch] = (m[ch]||0)+1;
+      return m;
+    }
+
+    function renderLetters(arr){
+      lettersWrap.innerHTML = '';
+      arr.forEach(ch=>{
+        const d = document.createElement('div');
+        d.className = 'px-3 sm:px-4 py-2 bg-gray-900 rounded-lg';
+        d.textContent = ch;
+        lettersWrap.appendChild(d);
+      });
+    }
+
+    function shuffle(arr){
+      const a = arr.slice();
+      for (let i=a.length-1;i>0;i--){
+        const j = Math.floor(Math.random()*(i+1));
+        [a[i],a[j]]=[a[j],a[i]];
+      }
+      return a;
+    }
+
+    function resetBoard() {
+      const src = normalize(sourceEl.value);
+      if (!src) { alert("Enter a source word."); return; }
+
+      baseLetters = src.split('');
+      letterCounts = countMap(src);
+      words = [];
+      totalPoints = 0;
+
+      countEl.textContent = "0";
+      pointsEl.textContent = "0";
+      longestEl.textContent = "—";
+      listEl.innerHTML = "";
+      feedback.textContent = "";
+      guessEl.value = "";
+      board.classList.remove('hidden');
+      renderLetters(baseLetters);
+      guessEl.focus();
+    }
+
+    function validByLetters(word) {
+      const w = countMap(word);
+      for (const k in w) {
+        if (!letterCounts[k] || w[k] > letterCounts[k]) return false;
+      }
+      return true;
+    }
+
+    function addWord() {
+      feedback.textContent = "";
+      const raw = normalize(guessEl.value);
+      const minLen = parseInt(minLenEl.value,10) || 3;
+
+      if (!raw) { feedback.textContent = "Type a word."; return; }
+      if (raw.length < minLen) { feedback.textContent = `Too short (min ${minLen}).`; return; }
+      if (lettersOnlyEl.checked && !validByLetters(raw)) { feedback.textContent = "Uses letters not available."; return; }
+      if (uniqueOnlyEl.checked && words.includes(raw)) { feedback.textContent = "Already used."; return; }
+
+      // Accept
+      words.push(raw);
+      totalPoints += raw.length;
+      countEl.textContent = String(words.length);
+      pointsEl.textContent = String(totalPoints);
+      if (longestEl.textContent === "—" || raw.length > longestEl.textContent.length) longestEl.textContent = raw;
+
+      const tag = document.createElement('div');
+      tag.className = 'bg-green-500 text-gray-900 font-bold rounded-lg px-3 py-2 text-center';
+      tag.textContent = raw;
+      listEl.appendChild(tag);
+
+      guessEl.value = "";
+      guessEl.focus();
+    }
+
+    // Events
+    startBtn.addEventListener('click', resetBoard);
+    submitGuessBtn.addEventListener('click', addWord);
+    guessEl.addEventListener('keydown', e => { if (e.key === 'Enter') addWord(); });
+    shuffleBtn.addEventListener('click', () => renderLetters(shuffle(baseLetters)));
+    clearGuessesBtn.addEventListener('click', ()=>{
+      if (!confirm("Clear the found words list?")) return;
+      words = []; totalPoints = 0;
+      countEl.textContent = "0"; pointsEl.textContent = "0"; longestEl.textContent = "—"; listEl.innerHTML = "";
+    });
+
+    // Convenience: prefill a demo word on first load
+    if (!sourceEl.value) sourceEl.value = "HAPPINESS";
+  </script>
+</body>
+</html>
