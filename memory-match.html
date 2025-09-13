@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Memory Match — ProjectorFirst</title>
+  <meta name="description" content="Big, projector-friendly memory match game."/>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-900 text-white min-h-screen">
+  <main class="max-w-6xl mx-auto px-6 py-8">
+    <h1 class="text-3xl sm:text-4xl font-extrabold text-green-400 text-center mb-2">Memory Match</h1>
+    <p class="text-center text-gray-400 mb-6">Flip two cards. If they match, they stay revealed. Match them all.</p>
+
+    <!-- Controls -->
+    <section class="bg-gray-800 rounded-xl p-4 sm:p-6 mb-6">
+      <div class="flex flex-wrap items-end gap-4">
+        <div>
+          <label class="block text-sm text-gray-400 mb-1">Board size</label>
+          <select id="sizeSel" class="bg-gray-900 border border-gray-700 rounded-lg px-3 py-2">
+            <option value="4">4 × 4 (Easy)</option>
+            <option value="5">5 × 4 (Medium)</option>
+            <option value="6">6 × 4 (Hard)</option>
+          </select>
+        </div>
+        <label class="flex items-center gap-2">
+          <input id="peekToggle" type="checkbox" class="accent-green-500" checked>
+          <span class="text-sm text-gray-300">Show all for 3s at start</span>
+        </label>
+        <button id="startBtn" class="ml-auto px-6 py-3 bg-green-500 text-gray-900 font-bold rounded-lg hover:bg-green-400">
+          Start / Reset
+        </button>
+      </div>
+      <div class="mt-4 flex flex-wrap gap-4">
+        <div class="bg-gray-900 rounded-lg px-4 py-3">
+          <div class="text-sm text-gray-400">Moves</div>
+          <div id="moves" class="text-2xl font-extrabold">0</div>
+        </div>
+        <div class="bg-gray-900 rounded-lg px-4 py-3">
+          <div class="text-sm text-gray-400">Matches</div>
+          <div id="matches" class="text-2xl font-extrabold">0</div>
+        </div>
+        <div class="bg-gray-900 rounded-lg px-4 py-3">
+          <div class="text-sm text-gray-400">Time</div>
+          <div id="time" class="text-2xl font-extrabold">00:00</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Board -->
+    <section id="boardWrap" class="bg-gray-800 rounded-xl p-3 sm:p-5">
+      <div id="board" class="grid gap-3 sm:gap-4"></div>
+    </section>
+
+    <p id="winMsg" class="hidden mt-6 text-center text-3xl font-extrabold text-green-400">🎉 All matched! Great job!</p>
+  </main>
+
+  <script>
+    const EMOJI_SET = ["🐶","🐱","🐭","🐹","🐰","🦊","🐻","🐼","🐨","🐯","🦁","🐮","🐷","🐵","🐸","🐔","🐤","🦆","🦉","🐙","🐠","🐳","🦋","🌸","🍎","🍊","🍉","🍇","🍓","🥕","🍞","🧀","⚽","🏀","🎲","🎵","⭐","❤️","🔔","🎁","🚗","✈️","⛵","⏰","💡","📚","🧩","🎨","🪁"];
+    const boardEl = document.getElementById('board');
+    const boardWrap = document.getElementById('boardWrap');
+    const sizeSel = document.getElementById('sizeSel');
+    const peekToggle = document.getElementById('peekToggle');
+    const startBtn = document.getElementById('startBtn');
+    const movesEl = document.getElementById('moves');
+    const matchesEl = document.getElementById('matches');
+    const timeEl = document.getElementById('time');
+    const winMsg = document.getElementById('winMsg');
+
+    let cols = 4, rows = 4;
+    let first = null, lock = false, moves = 0, matches = 0, totalPairs = 0;
+    let timerId = null, seconds = 0;
+
+    function fmtTime(s){ const m = Math.floor(s/60), ss = s%60; return `${String(m).padStart(2,"0")}:${String(ss).padStart(2,"0")}`; }
+    function startTimer(){ stopTimer(); seconds=0; timeEl.textContent=fmtTime(seconds); timerId=setInterval(()=>{seconds++; timeEl.textContent=fmtTime(seconds);},1000); }
+    function stopTimer(){ if (timerId){ clearInterval(timerId); timerId=null; } }
+
+    function shuffle(a){ for (let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]];} return a; }
+
+    function makeDeck(nPairs){
+      const pool = shuffle(EMOJI_SET.slice()).slice(0,nPairs);
+      const deck = shuffle(pool.concat(pool)).map((icon, idx) => ({ id: idx, icon, matched: false }));
+      return deck;
+    }
+
+    function cardEl(card){
+      const btn = document.createElement('button');
+      btn.className = "card relative aspect-square rounded-lg bg-gray-900 ring-2 ring-transparent focus:outline-none focus:ring-yellow-300 transition";
+      btn.setAttribute('data-id', card.id);
+      btn.innerHTML = `
+        <div class="front absolute inset-0 flex items-center justify-center text-4xl sm:text-6xl font-extrabold">${card.icon}</div>
+        <div class="back absolute inset-0 flex items-center justify-center text-2xl sm:text-3xl text-gray-400">?</div>
+      `;
+      btn.dataset.state = "back"; // "front" or "back" or "matched"
+      return btn;
+    }
+
+    function layoutGrid(){
+      boardEl.style.gridTemplateColumns = `repeat(${cols}, minmax(70px, 1fr))`;
+    }
+
+    function flipTo(el, state){
+      el.dataset.state = state;
+      if (state === "front") {
+        el.classList.add("bg-green-500","text-gray-900");
+        el.querySelector(".front").style.opacity = "1";
+        el.querySelector(".back").style.opacity = "0";
+      } else if (state === "back") {
+        el.classList.remove("bg-green-500","text-gray-900");
+        el.querySelector(".front").style.opacity = "0";
+        el.querySelector(".back").style.opacity = "1";
+      } else { // matched
+        el.dataset.state = "matched";
+        el.classList.add("bg-green-600","text-gray-900");
+        el.querySelector(".front").style.opacity = "1";
+        el.querySelector(".back").style.opacity = "0";
+        el.disabled = true;
+      }
+    }
+
+    function resetGame(){
+      // size selection -> cols x rows mapping
+      const sel = parseInt(sizeSel.value,10);
+      if (sel === 4){ cols=4; rows=4; }         // 16 cards / 8 pairs
+      else if (sel === 5){ cols=5; rows=4; }    // 20 cards / 10 pairs
+      else { cols=6; rows=4; }                  // 24 cards / 12 pairs
+
+      layoutGrid();
+      boardEl.innerHTML = "";
+      first = null; lock = false; moves = 0; matches = 0;
+      movesEl.textContent = "0"; matchesEl.textContent = "0"; winMsg.classList.add('hidden');
+
+      totalPairs = (cols*rows)/2;
+      const deck = makeDeck(totalPairs);
+
+      // build board
+      deck.forEach(card => {
+        const el = cardEl(card);
+        el.onclick = () => onFlip(el, card);
+        boardEl.appendChild(el);
+      });
+
+      // Start timer + optional peek
+      startTimer();
+      // back state initially
+      [...boardEl.children].forEach(el => flipTo(el, "back"));
+      if (peekToggle.checked){
+        // brief reveal
+        setTimeout(()=>{ [...boardEl.children].forEach(el => flipTo(el, "front")); }, 100);
+        setTimeout(()=>{ [...boardEl.children].forEach(el => flipTo(el, "back")); }, 3100);
+      }
+    }
+
+    function onFlip(el, card){
+      if (lock) return;
+      const state = el.dataset.state;
+      if (state !== "back") return;
+
+      flipTo(el, "front");
+      if (!first){
+        first = {el, card};
+        return;
+      }
+
+      // second flip
+      moves++; movesEl.textContent = String(moves);
+
+      const second = {el, card};
+      if (first.card.icon === second.card.icon && first.el !== second.el){
+        // match
+        lock = true;
+        setTimeout(()=>{
+          flipTo(first.el, "matched");
+          flipTo(second.el, "matched");
+          matches++; matchesEl.textContent = String(matches);
+          lock = false; first = null;
+
+          if (matches === totalPairs){
+            stopTimer();
+            winMsg.classList.remove('hidden');
+          }
+        }, 300);
+      } else {
+        // no match
+        lock = true;
+        setTimeout(()=>{
+          flipTo(first.el, "back");
+          flipTo(second.el, "back");
+          first = null; lock = false;
+        }, 750);
+      }
+    }
+
+    // events
+    startBtn.addEventListener('click', resetGame);
+    document.addEventListener('keydown', (e)=>{
+      if (e.key.toLowerCase() === 'r') resetGame();
+    });
+
+    // first load
+    resetGame();
+  </script>
+</body>
+</html>
