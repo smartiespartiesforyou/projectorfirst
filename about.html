@@ -4,35 +4,31 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>About Me</title>
-  <link href="styles.css" rel="stylesheet">
 </head>
-<body>
+<body style="font-family: sans-serif; margin: 40px auto; max-width: 600px; padding: 0 16px;">
   <div id="nav"></div>
 
-  <main style="max-width: 600px; margin: 40px auto; padding: 0 16px; font-family: sans-serif;">
-    <h1>About Me</h1>
-    <p>
-      I am a former Activity Director with a degree in Psychology and a Master’s in Criminal Justice.
-      My work in senior care has shown me how vision and hearing challenges can make it hard for
-      older adults to engage fully in activities.
-    </p>
-    <p>
-      This website is designed to be simple, accessible, and inclusive so everyone can participate,
-      no matter their abilities.
-    </p>
-  </main>
+  <h1>About Me</h1>
+  <p>
+    I am a former Activity Director with a degree in Psychology and a Master’s in Criminal Justice.
+    My work in senior care has shown me how vision and hearing challenges can make it hard for
+    older adults to engage fully in activities.
+  </p>
+  <p>
+    This website is designed to be simple, accessible, and inclusive so everyone can participate,
+    no matter their abilities.
+  </p>
 
   <div id="footer"></div>
 
   <script>
-    async function loadIncludes() {
+    (async () => {
       const nav = await fetch('includes/nav.html');
       document.getElementById('nav').innerHTML = await nav.text();
 
       const footer = await fetch('includes/footer.html');
       document.getElementById('footer').innerHTML = await footer.text();
-    }
-    loadIncludes();
+    })();
   </script>
 </body>
 </html>
