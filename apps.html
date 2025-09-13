@@ -1,92 +1,83 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>Apps — ProjectorFirst</title>
-  <meta name="description" content="Explore ProjectorFirst apps for nursing homes and senior care." />
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
-  <link rel="icon" href="/logo.svg" type="image/svg+xml" />
+  <meta name="description" content="All games and tools for nursing homes and senior care."/>
+  <link rel="icon" href="/logo.svg" type="image/svg+xml"/>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-900 text-white font-sans">
-  <header class="bg-gray-800 py-4 shadow-md">
-    <div class="max-w-4xl mx-auto px-4 flex justify-between items-center">
-      <h1 class="text-2xl font-bold text-green-400">ProjectorFirst</h1>
-      <nav class="space-x-4">
-        <a href="/" class="px-3 py-2 rounded hover:bg-green-400 hover:text-gray-900 transition">Home</a>
-        <a href="/about.html" class="px-3 py-2 rounded hover:bg-green-400 hover:text-gray-900 transition">About</a>
-        <a href="/contact.html" class="px-3 py-2 rounded hover:bg-green-400 hover:text-gray-900 transition">Contact</a>
-        <a href="/apps.html" class="px-3 py-2 rounded hover:bg-green-400 hover:text-gray-900 transition">Apps</a>
-      </nav>
+
+  <!-- NAV -->
+  <div id="navbar"></div>
+  <script>
+    fetch('/nav.html')
+      .then(res => res.text())
+      .then(html => document.getElementById('navbar').innerHTML = html);
+  </script>
+
+  <!-- HEADER -->
+  <section class="bg-gray-800 rounded-xl p-8 sm:p-12 text-center mb-10">
+    <h2 class="text-3xl sm:text-4xl font-extrabold mb-4 text-green-400">App Hub</h2>
+    <p class="text-gray-300 max-w-2xl mx-auto">
+      All your big-font, projector-ready activities and tools in one place.  
+      Click any app below to get started!
+    </p>
+  </section>
+
+  <main class="max-w-6xl mx-auto px-4 pb-12">
+    <!-- GAMES -->
+    <h3 class="text-2xl font-bold text-green-400 mb-4">🎲 Games</h3>
+    <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 mb-10">
+      <a href="/bingo.html" class="card">Bingo Caller</a>
+      <a href="/horse-race.html" class="card">Horse Race</a>
+      <a href="/word-scrambler.html" class="card">Word Scrambler</a>
+      <a href="/word-builder.html" class="card">Word Builder</a>
+      <a href="/memory-match.html" class="card">Memory Match</a>
+      <a href="/trivia.html" class="card">Trivia Board</a>
     </div>
-  </header>
 
-  <main class="max-w-4xl mx-auto p-8 text-center">
-    <h2 class="text-3xl font-extrabold mb-4">Our Apps</h2>
-    <p class="text-gray-300 mb-6">Simple, big-font, projector-ready tools for activities.</p>
+    <!-- TOOLS -->
+    <h3 class="text-2xl font-bold text-green-400 mb-4">🛠️ Tools</h3>
+    <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 mb-10">
+      <a href="/countdown.html" class="card">Countdown Timer</a>
+      <a href="/dice.html" class="card">Dice Roller</a>
+      <a href="/yesno.html" class="card">Yes/No Spinner</a>
+      <a href="/name-picker.html" class="card">Name Picker</a>
+    </div>
 
-    <!-- GAME CARDS -->
-    <div class="grid gap-6 sm:grid-cols-2">
-      <a href="/bingo.html" class="bg-gray-800 border border-gray-700 rounded-lg p-6 hover:border-green-400 transition">
-        <h3 class="text-xl font-bold text-green-400 mb-2">Bingo Board</h3>
-        <p class="text-gray-400">Digital Bingo caller.</p>
-      </a>
-      <a href="/yesno.html" class="bg-gray-800 border border-gray-700 rounded-lg p-6 hover:border-green-400 transition">
-        <h3 class="text-xl font-bold text-green-400 mb-2">Yes/No Spinner</h3>
-        <p class="text-gray-400">Fast decisions made fun.</p>
-      </a>
-      <a href="/pokeno.html" class="bg-gray-800 border border-gray-700 rounded-lg p-6 hover:border-green-400 transition">
-        <h3 class="text-xl font-bold text-green-400 mb-2">Pokeno</h3>
-        <p class="text-gray-400">Group-friendly Pokeno.</p>
-      </a>
-      <a href="/dice.html" class="bg-gray-800 border border-gray-700 rounded-lg p-6 hover:border-green-400 transition">
-        <h3 class="text-xl font-bold text-green-400 mb-2">Dice Roller</h3>
-        <p class="text-gray-400">Big, clear virtual dice.</p>
-      </a>
-      <a href="/coin.html" class="bg-gray-800 border border-gray-700 rounded-lg p-6 hover:border-green-400 transition">
-  <h3 class="text-xl font-bold text-green-400 mb-2">Coin Flip</h3>
-  <p class="text-gray-400">Heads or tails with huge text.</p>
-</a>
-<a href="/number-picker.html" class="bg-gray-800 border border-gray-700 rounded-lg p-6 hover:border-green-400 transition">
-  <h3 class="text-xl font-bold text-green-400 mb-2">Number Picker (1–150)</h3>
-  <p class="text-gray-400">No repeats until reset.</p>
-</a>
-<a href="/scrambler.html" class="bg-gray-800 border border-gray-700 rounded-lg p-6 hover:border-green-400 transition">
-  <h3 class="text-xl font-bold text-green-400 mb-2">Word Scrambler</h3>
-  <p class="text-gray-400">Jumbled words with big, clear text.</p>
-</a>
-<a href="/pledge.html" class="bg-gray-800 border border-gray-700 rounded-lg p-6 hover:border-green-400 transition">
-  <h3 class="text-xl font-bold text-green-400 mb-2">Pledge of Allegiance</h3>
-  <p class="text-gray-400">Large text, teleprompter, audio.</p>
-</a>
-<a href="/horse-race.html" class="bg-gray-800 border border-gray-700 rounded-lg p-6 hover:border-green-400 transition">
-  <h3 class="text-xl font-bold text-green-400 mb-2">Horse Race</h3>
-  <p class="text-gray-400">Roll dice to move horses. First to 🏁 wins.</p>
-</a>
-<a href="/word-builder.html" class="bg-gray-800 border border-gray-700 rounded-lg p-6 hover:border-green-400 transition">
-  <h3 class="text-xl font-bold text-green-400 mb-2">Word Builder</h3>
-  <p class="text-gray-400">Make words from a source word.</p>
-</a>
-<a href="/memory-match.html" class="bg-gray-800 border border-gray-700 rounded-lg p-6 hover:border-green-400 transition">
-  <h3 class="text-xl font-bold text-green-400 mb-2">Memory Match</h3>
-  <p class="text-gray-400">Flip cards and find pairs.</p>
-</a>
-<a href="/trivia.html" class="bg-gray-800 border border-gray-700 rounded-lg p-6 hover:border-green-400 transition">
-  <h3 class="text-xl font-bold text-green-400 mb-2">Trivia Board</h3>
-  <p class="text-gray-400">Big-font questions with reveal.</p>
-</a>
+    <!-- SEASONAL -->
+    <h3 class="text-2xl font-bold text-green-400 mb-4">🎉 Seasonal</h3>
+    <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <a href="/bingo.html" class="card">Seasonal Bingo (Fall, Halloween, Christmas)</a>
     </div>
   </main>
 
-  <footer class="bg-gray-800 py-4 mt-12 text-center text-gray-400 text-sm">
-    © <span id="year"></span> ProjectorFirst. All rights reserved.
-  </footer>
-
+  <!-- FOOTER -->
+  <div id="footer"></div>
   <script>
-    document.getElementById('year').textContent = new Date().getFullYear();
+    fetch('/footer.html')
+      .then(res => res.text())
+      .then(html => document.getElementById('footer').innerHTML = html);
   </script>
+
+  <style>
+    .card {
+      display: block;
+      background: #1f2937;
+      border: 1px solid #374151;
+      border-radius: 0.75rem;
+      padding: 1.5rem;
+      font-weight: 700;
+      text-align: center;
+      transition: border 0.2s, background 0.2s;
+    }
+    .card:hover {
+      border-color: #22c55e;
+      background: #111827;
+    }
+  </style>
 </body>
 </html>
