@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Word Builder — ProjectorFirst</title>
+  <meta name="description" content="Make as many words as you can from the given letters."/>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-900 text-white min-h-screen">
+  <main class="max-w-5xl mx-auto px-6 py-8">
+    <h1 class="text-3xl sm:text-4xl font-extrabold text-green-400 text-center mb-2">Word Builder</h1>
+    <p class="text-center text-gray-400 mb-6">Type a source word, then residents call out words you can spell from those letters.</p>
+
+    <!-- Setup -->
+    <section class="bg-gray-800 rounded-xl p-4 sm:p-6 mb-6">
+      <div class="flex flex-wrap items-end gap-4">
+        <div class="flex-1 min-w-[220px]">
+          <label class="block text-sm text-gray-400 mb-1">Source word</label>
+          <input id="source" type="text" placeholder="e.g., HAPPINESS"
+            class="w-full bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 uppercase tracking-wide">
+        </div>
+        <div>
+          <label class="block text-sm text-gray-400 mb-1">Min length</label>
+          <input id="minLen" type="number" min="2" max="10" value="3"
+            class="w-24 text-center bg-gray-900 border border-gray-700 rounded-lg px-3 py-2">
+        </div>
+        <label class="flex items-center gap-2">
+          <input id="uniqueOnly" type="checkbox" class="accent-green-500" checked>
+          <span class="text-sm text-gray-300">No duplicate words</span>
+        </label>
+        <label class="flex items-center gap-2">
+          <input id="lettersOnly" type="checkbox" class="accent-green-500" checked>
+          <span class="text-sm text-gray-300">Must use only given letters</span>
+        </label>
+        <button id="startBtn"
+          class="ml-auto px-6 py-3 bg-green-500 text-gray-900 font-bold rounded-lg hover:bg-green-400">
+          Start / Reset
+        </button>
+      </div>
+    </section>
+
+    <!-- Board -->
+    <section id="board" class="hidden">
+      <!-- Big letters -->
+      <div class="bg-gray-800 rounded-xl p-4 sm:p-6 mb-4">
+        <div class="flex items-center justify-between flex-wrap gap-3">
+          <div class="text-gray-400 text-sm">Letters</div>
+          <div class="flex items-center gap-2">
+            <button id="shuffleBtn" class="px-4 py-2 bg-gray-700 rounded-lg hover:bg-gray-600">Shuffle</button>
+            <button id="clearGuesses" class="px-4 py-2 bg-gray-700 rounded-lg hover:bg-gray-600">Clear List</button>
+          </div>
+        </div>
+        <div id="letters" class="mt-3 flex flex-wrap gap-2 text-4xl sm:text-6xl font-black tracking-wider select-none"></div>
+      </div>
+
+      <!-- Guess input -->
+      <div class="flex flex-wrap items-center gap-3 mb-6">
+        <input id="guess" type="text" placeholder="Type a word and press Enter"
+          class="flex-1 min-w-[260px] bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-2xl uppercase tracking-wide">
+        <button id="submitGuess"
+          class="px-6 py-3 bg-green-500 text-gray-900 font-extrabold rounded-lg hover:bg-green-400 text-xl">
+          Add
+        </button>
+        <div id="feedback" class="text-sm text-red-400"></div>
+      </div>
+
+      <!-- Score / list -->
+      <div class="grid md:grid-cols-3 gap-4">
+        <div class="bg-gray-800 rounded-xl p-4">
+          <div class="text-gray-400 text-sm">Found words</div>
+          <div id="count" class="text-3xl font-extrabold">0</div>
+        </div>
+        <div class="bg-gray-800 rounded-xl p-4">
+          <div class="text-gray-400 text-sm">Total points (length)</div>
+          <div id="points" class="text-3xl font-extrabold">0</div>
+        </div>
+        <div class="bg-gray-800 rounded-xl p-4">
+          <div class="text-gray-400 te
