@@ -1,48 +1,35 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>About — ProjectorFirst</title>
-  <meta name="description" content="Learn more about ProjectorFirst, building big, simple apps for nursing homes & senior care." />
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
-  <link rel="icon" href="/logo.svg" type="image/svg+xml" />
-  <script src="https://cdn.tailwindcss.com"></script>
+  <meta charset="UTF-8">
+  <title>About Me</title>
+  <link href="styles.css" rel="stylesheet">
 </head>
-<body class="bg-gray-900 text-white font-sans">
-  <header class="bg-gray-800 py-4 shadow-md">
-    <div class="max-w-4xl mx-auto px-4 flex justify-between items-center">
-      <h1 class="text-2xl font-bold text-green-400">ProjectorFirst</h1>
-     <nav class="space-x-4">
-  <a href="/" class="px-3 py-2 rounded hover:bg-green-400 hover:text-gray-900 transition">Home</a>
-  <a href="/about.html" class="px-3 py-2 rounded hover:bg-green-400 hover:text-gray-900 transition">About</a>
-  <a href="/contact.html" class="px-3 py-2 rounded hover:bg-green-400 hover:text-gray-900 transition">Contact</a>
-  <a href="/apps.html" class="px-3 py-2 rounded hover:bg-green-400 hover:text-gray-900 transition">Apps</a>
-</nav>
-    </div>
-  </header>
+<body class="bg-gray-100 text-gray-900">
+  <div id="nav"></div>
 
-  <main class="max-w-4xl mx-auto p-8">
-    <h2 class="text-3xl font-extrabold mb-4">About ProjectorFirst</h2>
-    <p class="text-gray-300 leading-7 mb-4">
-      ProjectorFirst creates apps designed for nursing homes and senior care facilities. 
-      Our goal is to simplify daily tasks, save time, and make technology accessible 
-      for all staff members.
+  <main class="max-w-3xl mx-auto p-6">
+    <h1 class="text-4xl font-bold mb-4">About Me</h1>
+    <p class="mb-4">
+      I’m Antoinette, HR Director and creator of ProjectorFirst. I design simple, accessible
+      tools for nursing homes and senior care teams. My focus is functionality and speed.
     </p>
-    <p class="text-gray-300 leading-7">
-      We focus on high-contrast visuals, large fonts, and projector-friendly layouts 
-      to support care teams and enhance resident engagement.
+    <p>
+      This site hosts tools like Bingo, Trivia, and Memory Match to make activities easy
+      and engaging for residents. My mission is to create “Big, Simple Apps for Nursing Homes & Senior Care.”
     </p>
   </main>
 
-  <footer class="bg-gray-800 py-4 mt-12 text-center text-gray-400 text-sm">
-    © <span id="year"></span> ProjectorFirst. All rights reserved.
-  </footer>
-
+  <div id="footer"></div>
   <script>
-    document.getElementById('year').textContent = new Date().getFullYear();
+    async function loadIncludes() {
+      const nav = await fetch('includes/nav.html');
+      document.getElementById('nav').innerHTML = await nav.text();
+
+      const footer = await fetch('includes/footer.html');
+      document.getElementById('footer').innerHTML = await footer.text();
+    }
+    loadIncludes();
   </script>
 </body>
 </html>
