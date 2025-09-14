@@ -17,7 +17,7 @@
   </a>
 
   <header class="bg-gray-800 py-4 shadow-md">
-    <div class="max-w-4xl mx-auto px-4 flex justify-between items-center">
+    <div class="max-w-5xl mx-auto px-4 flex justify-between items-center">
       <h1 class="text-2xl font-bold text-green-400">ProjectorFirst</h1>
       <nav class="space-x-2">
         <a href="/" class="px-3 py-2 rounded hover:bg-green-400 hover:text-gray-900 focus:outline-none focus:ring-4 focus:ring-green-300 transition">Home</a>
@@ -28,7 +28,7 @@
     </div>
   </header>
 
-  <main id="main" class="max-w-5xl mx-auto p-6 md:p-10">
+  <main id="main" class="max-w-6xl mx-auto p-6 md:p-10">
     <h2 class="text-3xl md:text-4xl font-extrabold text-center mb-6">Bingo App</h2>
 
     <!-- Status row -->
@@ -73,16 +73,37 @@
               class="bg-gray-700 text-white text-xl md:text-2xl font-semibold px-5 md:px-6 py-4 rounded-2xl shadow hover:bg-gray-600 focus:outline-none focus:ring-4 focus:ring-gray-500">
         Fullscreen (F)
       </button>
+      <button id="toggleBoardBtn"
+              class="bg-blue-400 text-gray-900 text-xl md:text-2xl font-bold px-5 md:px-6 py-4 rounded-2xl shadow hover:bg-blue-300 focus:outline-none focus:ring-4 focus:ring-blue-300">
+        Show Board (B)
+      </button>
     </section>
 
-    <!-- History -->
-    <section>
-      <h3 class="text-2xl md:text-3xl font-bold mb-4 text-center">Call History</h3>
-      <div id="history"
-           class="grid grid-cols-5 sm:grid-cols-10 gap-3 md:gap-4 justify-items-center"
-           aria-label="Numbers already called">
-        <!-- Filled by JS -->
+    <!-- Board -->
+    <section id="boardSection" class="hidden">
+      <h3 class="text-2xl md:text-3xl font-bold mb-4 text-center">Bingo Board</h3>
+
+      <!-- Column headers -->
+      <div class="grid grid-cols-5 gap-2 md:gap-3 mb-2">
+        <div class="text-center bg-blue-500 text-gray-900 font-extrabold text-2xl md:text-3xl py-2 rounded-xl shadow">B</div>
+        <div class="text-center bg-purple-500 text-gray-900 font-extrabold text-2xl md:text-3xl py-2 rounded-xl shadow">I</div>
+        <div class="text-center bg-green-500 text-gray-900 font-extrabold text-2xl md:text-3xl py-2 rounded-xl shadow">N</div>
+        <div class="text-center bg-yellow-400 text-gray-900 font-extrabold text-2xl md:text-3xl py-2 rounded-xl shadow">G</div>
+        <div class="text-center bg-pink-500 text-gray-900 font-extrabold text-2xl md:text-3xl py-2 rounded-xl shadow">O</div>
       </div>
+
+      <!-- Numbers grid: 5 columns x 15 rows -->
+      <div id="boardGrid" class="grid grid-cols-5 gap-2 md:gap-3" aria-label="Bingo board 1 to 75">
+        <!-- Populated by JS -->
+      </div>
+
+      <!-- Legend -->
+      <p class="mt-4 text-center text-base md:text-lg text-gray-300">
+        <span class="inline-block w-5 h-5 align-middle rounded-md bg-green-400 border-2 border-white mr-2"></span>
+        = Called &nbsp;&nbsp;|&nbsp;&nbsp;
+        <span class="inline-block w-5 h-5 align-middle rounded-md ring-4 ring-yellow-300 mr-2"></span>
+        = Most recent call
+      </p>
     </section>
 
     <!-- Help -->
@@ -91,7 +112,8 @@
         Keyboard: <span class="font-semibold text-white">Space</span> = Call Next,
         <span class="font-semibold text-white">Backspace</span> = Undo,
         <span class="font-semibold text-white">R</span> = Reset,
-        <span class="font-semibold text-white">F</span> = Fullscreen.
+        <span class="font-semibold text-white">F</span> = Fullscreen,
+        <span class="font-semibold text-white">B</span> = Show/Hide Board.
       </p>
     </section>
 
@@ -103,10 +125,10 @@
   </footer>
 
   <script>
-    // Accessibility: respect reduced motion for subtle animations
+    // Accessibility: respect reduced motion
     const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-    // Utility: create range and shuffle
+    // Utils
     const range = (start, end) => Array.from({ length: end - start + 1 }, (_, i) => start + i);
     function shuffle(array) {
       for (let i = array.length - 1; i > 0; i--) {
@@ -115,8 +137,6 @@
       }
       return array;
     }
-
-    // Bingo letter for a number
     function letterFor(n) {
       if (n >= 1 && n <= 15) return 'B';
       if (n >= 16 && n <= 30) return 'I';
@@ -130,23 +150,67 @@
     const remainingCount = document.getElementById('remainingCount');
     const currentLetter = document.getElementById('currentLetter');
     const currentNumber = document.getElementById('currentNumber');
-    const historyGrid = document.getElementById('history');
+    const historyGrid = document.getElementById('history'); // may not exist yet; safe no-op
     const srAnnouncement = document.getElementById('srAnnouncement');
 
     const callBtn = document.getElementById('callBtn');
     const undoBtn = document.getElementById('undoBtn');
     const resetBtn = document.getElementById('resetBtn');
     const fullscreenBtn = document.getElementById('fullscreenBtn');
+    const toggleBoardBtn = document.getElementById('toggleBoardBtn');
+    const boardSection = document.getElementById('boardSection');
+    const boardGrid = document.getElementById('boardGrid');
 
     // Game state
     let deck = [];
     let called = [];
 
+    // Board state
+    const cells = new Map(); // n -> element
+    let lastHighlighted = null;
+
     function initGame() {
       deck = shuffle(range(1, 75));
       called = [];
+      renderBoard();
       updateUI();
       setDisplay(null);
+    }
+
+    // Build the 5 bingo columns and cells
+    function renderBoard() {
+      boardGrid.innerHTML = '';
+      cells.clear();
+
+      const columns = [
+        { start: 1,  end: 15, color: 'border-blue-300 text-blue-200' },
+        { start: 16, end: 30, color: 'border-purple-300 text-purple-200' },
+        { start: 31, end: 45, color: 'border-green-300 text-green-200' },
+        { start: 46, end: 60, color: 'border-yellow-300 text-yellow-200' },
+        { start: 61, end: 75, color: 'border-pink-300 text-pink-200' },
+      ];
+
+      for (const col of columns) {
+        const colWrap = document.createElement('div');
+        colWrap.className = 'grid grid-rows-15 gap-2 md:gap-3';
+        for (let n = col.start; n <= col.end; n++) {
+          const cell = document.createElement('div');
+          cell.id = `cell-${n}`;
+          cell.setAttribute('role', 'button');
+          cell.setAttribute('aria-label', `${letterFor(n)} ${n}`);
+          cell.className = [
+            'w-full aspect-square rounded-xl flex items-center justify-center',
+            'text-xl md:text-2xl font-extrabold select-none',
+            'bg-gray-800 border-2', col.color
+          ].join(' ');
+          cell.textContent = n;
+          cells.set(n, cell);
+          colWrap.appendChild(cell);
+        }
+        boardGrid.appendChild(colWrap);
+      }
+      // Apply called highlights (useful on reset or hydration)
+      refreshBoardHighlights();
     }
 
     function setDisplay(n) {
@@ -168,36 +232,77 @@
         });
       }
 
-      // Screen reader announcement
-      const speak = `${letter} ${n}`;
-      srAnnouncement.textContent = speak;
+      srAnnouncement.textContent = `${letter} ${n}`;
     }
 
     function updateUI() {
       calledCount.textContent = called.length;
       remainingCount.textContent = 75 - called.length;
 
-      // History tiles (most recent first)
-      historyGrid.innerHTML = '';
-      const tiles = [...called].reverse();
-      for (const n of tiles) {
-        const letter = letterFor(n);
-        const tile = document.createElement('div');
-        tile.className = 'w-12 h-12 md:w-14 md:h-14 lg:w-16 lg:h-16 rounded-xl flex items-center justify-center text-xl md:text-2xl font-extrabold ' +
-          'bg-gray-800 border-2 ' +
-          (letter === 'B' ? 'border-blue-300 text-blue-200' :
-           letter === 'I' ? 'border-purple-300 text-purple-200' :
-           letter === 'N' ? 'border-green-300 text-green-200' :
-           letter === 'G' ? 'border-yellow-300 text-yellow-200' :
-                            'border-pink-300 text-pink-200');
-        tile.setAttribute('aria-label', `${letter} ${n}`);
-        tile.textContent = `${letter}${n}`;
-        historyGrid.appendChild(tile);
+      // History tiles (if the history grid exists from previous step)
+      if (historyGrid) {
+        historyGrid.innerHTML = '';
+        const tiles = [...called].reverse();
+        for (const n of tiles) {
+          const letter = letterFor(n);
+          const tile = document.createElement('div');
+          tile.className = 'w-12 h-12 md:w-14 md:h-14 lg:w-16 lg:h-16 rounded-xl flex items-center justify-center text-xl md:text-2xl font-extrabold ' +
+            'bg-gray-800 border-2 ' +
+            (letter === 'B' ? 'border-blue-300 text-blue-200' :
+             letter === 'I' ? 'border-purple-300 text-purple-200' :
+             letter === 'N' ? 'border-green-300 text-green-200' :
+             letter === 'G' ? 'border-yellow-300 text-yellow-200' :
+                              'border-pink-300 text-pink-200');
+          tile.setAttribute('aria-label', `${letter} ${n}`);
+          tile.textContent = `${letter}${n}`;
+          historyGrid.appendChild(tile);
+        }
+      }
+
+      refreshBoardHighlights();
+    }
+
+    function refreshBoardHighlights() {
+      // Clear previous "last" ring
+      if (lastHighlighted && cells.has(lastHighlighted)) {
+        const prev = cells.get(lastHighlighted);
+        prev.classList.remove('ring-4', 'ring-yellow-300');
+      }
+
+      // Mark all called numbers
+      for (let n = 1; n <= 75; n++) {
+        const el = cells.get(n);
+        if (!el) continue;
+        if (called.includes(n)) {
+          el.classList.add('bg-green-400', 'text-gray-900', 'border-white');
+          el.classList.remove('bg-gray-800');
+        } else {
+          el.classList.remove('bg-green-400', 'text-gray-900', 'border-white');
+          el.classList.add('bg-gray-800');
+        }
+      }
+
+      // Highlight most recent call
+      if (called.length > 0) {
+        const last = called[called.length - 1];
+        lastHighlighted = last;
+        const el = cells.get(last);
+        if (el) {
+          el.classList.add('ring-4', 'ring-yellow-300');
+          if (!prefersReduced) {
+            el.animate(
+              [{ transform: 'scale(1.0)' }, { transform: 'scale(1.06)' }, { transform: 'scale(1.0)' }],
+              { duration: 220, easing: 'ease-out' }
+            );
+          }
+        }
+      } else {
+        lastHighlighted = null;
       }
     }
 
     function callNext() {
-      if (deck.length === 0) return; // no more numbers
+      if (deck.length === 0) return;
       const n = deck.pop();
       called.push(n);
       setDisplay(n);
@@ -219,14 +324,24 @@
     // Fullscreen for projector use
     async function toggleFullscreen() {
       if (!document.fullscreenElement) {
-        try {
-          await document.documentElement.requestFullscreen();
-        } catch (e) {}
+        try { await document.documentElement.requestFullscreen(); } catch (e) {}
       } else {
-        try {
-          await document.exitFullscreen();
-        } catch (e) {}
+        try { await document.exitFullscreen(); } catch (e) {}
       }
+    }
+
+    // Show/Hide board
+    function toggleBoard() {
+      const isHidden = boardSection.classList.contains('hidden');
+      if (isHidden) {
+        boardSection.classList.remove('hidden');
+        toggleBoardBtn.textContent = 'Hide Board (B)';
+      } else {
+        boardSection.classList.add('hidden');
+        toggleBoardBtn.textContent = 'Show Board (B)';
+      }
+      // Keep focus visible for keyboard users
+      toggleBoardBtn.focus({ preventScroll: true });
     }
 
     // Events
@@ -234,26 +349,18 @@
     undoBtn.addEventListener('click', undo);
     resetBtn.addEventListener('click', resetGame);
     fullscreenBtn.addEventListener('click', toggleFullscreen);
+    toggleBoardBtn.addEventListener('click', toggleBoard);
 
     // Keyboard shortcuts
     window.addEventListener('keydown', (e) => {
-      // Avoid interfering with typing in inputs (future-proof)
       const tag = (e.target && e.target.tagName) || '';
       if (tag === 'INPUT' || tag === 'TEXTAREA') return;
 
-      if (e.code === 'Space') {
-        e.preventDefault();
-        callNext();
-      } else if (e.code === 'Backspace') {
-        e.preventDefault();
-        undo();
-      } else if (e.key.toLowerCase() === 'r') {
-        e.preventDefault();
-        resetGame();
-      } else if (e.key.toLowerCase() === 'f') {
-        e.preventDefault();
-        toggleFullscreen();
-      }
+      if (e.code === 'Space') { e.preventDefault(); callNext(); }
+      else if (e.code === 'Backspace') { e.preventDefault(); undo(); }
+      else if (e.key.toLowerCase() === 'r') { e.preventDefault(); resetGame(); }
+      else if (e.key.toLowerCase() === 'f') { e.preventDefault(); toggleFullscreen(); }
+      else if (e.key.toLowerCase() === 'b') { e.preventDefault(); toggleBoard(); }
     });
 
     // Footer year + boot
