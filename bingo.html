@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -42,17 +43,22 @@
       </div>
     </section>
 
-   <!-- Big display (letter as big as number, with space between) -->
+   <!-- Big display (letter and number both huge, side by side) -->
 <section aria-live="polite" aria-atomic="true" class="mb-6">
   <div id="currentCall"
        class="select-none text-center bg-black border-4 border-green-400 rounded-3xl shadow-xl mx-auto
               flex items-center justify-center"
-       style="height: 38vh;">
-    <div class="leading-none flex items-end gap-8">
+       style="height: 45vh;">
+    <div class="leading-none flex items-center gap-10">
       <div id="currentLetter"
-           class="text-[10rem] md:text-[14rem] font-extrabold text-green-400">—</div>
+           class="text-[14rem] md:text-[18rem] font-extrabold text-green-400">—</div>
       <div id="currentNumber"
-           class="text-[10rem] md:text-[14rem] font-extrabold text-white tracking-tight">—</div>
+           class="text-[14rem] md:text-[18rem] font-extrabold text-white tracking-tight">—</div>
+    </div>
+  </div>
+  <p class="sr-only" id="srAnnouncement"></p>
+</section>
+
     </div>
   </div>
   <p class="sr-only" id="srAnnouncement"></p>
