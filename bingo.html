@@ -1,158 +1,106 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>Bingo Caller | ProjectorFirst</title>
-  <meta name="description" content="Large-font, projector-ready Bingo caller."/>
-  <link rel="icon" href="/logo.svg" type="image/svg+xml"/>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Bingo Caller — ProjectorFirst</title>
+  <meta name="description" content="A big, colorful Bingo Caller for nursing homes and senior care." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+  <link rel="icon" href="/logo.svg" type="image/svg+xml" />
   <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .bingo-number { 
+      font-size: 15rem; /* HUGE number */
+      line-height: 1;
+    }
+  </style>
 </head>
-<body class="bg-gray-900 text-white font-sans">
-
-  <!-- Shared header -->
-  <div data-include="/header.html"></div>
-  <script src="/include.js" defer></script>
-
-  <main class="max-w-6xl mx-auto px-4 py-8">
-    <div class="flex flex-col lg:flex-row gap-8">
-      <!-- Left: Big current call + controls -->
-      <section class="flex-1 bg-gray-800 border border-gray-700 rounded-2xl p-6">
-        <h1 class="text-3xl font-extrabold mb-4">Bingo Caller</h1>
-
-        <!-- Current call -->
-        <div id="currentCall"
-             class="text-[14vw] leading-none lg:text-[9rem] font-black text-green-400 text-center select-none">
-          —
-        </div>
-
-        <!-- Controls -->
-        <div class="mt-6 flex flex-wrap items-center gap-3 justify-center">
-          <button id="nextBtn"
-                  class="px-6 py-3 rounded-2xl bg-green-500 text-gray-900 font-black hover:bg-green-400 transition">
-            Call Next
-          </button>
-          <button id="undoBtn"
-                  class="px-6 py-3 rounded-2xl bg-gray-700 text-white font-bold hover:bg-gray-600 transition">
-            Undo
-          </button>
-          <button id="resetBtn"
-                  class="px-6 py-3 rounded-2xl bg-red-500 text-white font-bold hover:bg-red-400 transition">
-            Reset
-          </button>
-
-          <label class="ml-4 inline-flex items-center gap-2">
-            <input id="autoToggle" type="checkbox" class="w-5 h-5">
-            <span class="text-sm text-gray-300">Auto-call</span>
-          </label>
-          <select id="speedSel" class="bg-gray-900 border border-gray-700 rounded px-3 py-2 text-sm">
-            <option value="6">Every 6s</option>
-            <option value="8">Every 8s</option>
-            <option value="10" selected>Every 10s</option>
-            <option value="12">Every 12s</option>
-            <option value="15">Every 15s</option>
-          </select>
-          <span class="text-xs text-gray-400">Tip: press Space for Next</span>
-        </div>
-      </section>
-
-      <!-- Right: Board + history -->
-      <aside class="w-full lg:w-[44%] flex flex-col gap-6">
-        <!-- Board -->
-        <section class="bg-gray-800 border border-gray-700 rounded-2xl p-6">
-          <div class="grid grid-cols-5 gap-2 text-center">
-            <div class="font-black text-lg text-green-400">B</div>
-            <div class="font-black text-lg text-green-400">I</div>
-            <div class="font-black text-lg text-green-400">N</div>
-            <div class="font-black text-lg text-green-400">G</div>
-            <div class="font-black text-lg text-green-400">O</div>
-          </div>
-          <div id="board" class="mt-3 grid grid-cols-5 gap-2"></div>
-        </section>
-
-        <!-- History -->
-        <section class="bg-gray-800 border border-gray-700 rounded-2xl p-6">
-          <div class="flex items-center justify-between mb-2">
-            <h2 class="text-xl font-bold">History</h2>
-            <div class="text-sm text-gray-400"><span id="count">0</span>/75 called</div>
-          </div>
-          <div id="history"
-               class="min-h-[96px] text-gray-300 text-lg leading-8 break-words">
-          </div>
-        </section>
-      </aside>
+<body class="bg-gradient-to-b from-green-900 via-gray-900 to-black text-white font-sans">
+  <header class="bg-gray-800 py-4 shadow-md">
+    <div class="max-w-4xl mx-auto px-4 flex justify-between items-center">
+      <h1 class="text-2xl font-bold text-green-400">ProjectorFirst</h1>
+      <nav class="space-x-4">
+        <a href="/" class="px-3 py-2 rounded hover:bg-green-400 hover:text-gray-900 transition">Home</a>
+        <a href="/about.html" class="px-3 py-2 rounded hover:bg-green-400 hover:text-gray-900 transition">About</a>
+        <a href="/contact.html" class="px-3 py-2 rounded hover:bg-green-400 hover:text-gray-900 transition">Contact</a>
+        <a href="/apps.html" class="px-3 py-2 rounded hover:bg-green-400 hover:text-gray-900 transition">Apps</a>
+      </nav>
     </div>
+  </header>
+
+  <main class="max-w-5xl mx-auto p-8 text-center">
+    <h2 class="text-3xl font-extrabold mb-6 text-green-300">Bingo Caller</h2>
+    <div id="current" class="bingo-number font-extrabold text-yellow-400 mb-8">---</div>
+
+    <div class="flex justify-center gap-4 mb-8">
+      <button onclick="callNumber()" class="bg-green-400 text-gray-900 px-6 py-3 rounded-lg font-semibold shadow hover:bg-green-300 transition">Next Ball</button>
+      <button onclick="resetGame()" class="bg-red-400 text-gray-900 px-6 py-3 rounded-lg font-semibold shadow hover:bg-red-300 transition">Reset</button>
+    </div>
+
+    <h3 class="text-xl font-bold text-green-400 mb-4">Called Numbers</h3>
+    <div id="history" class="flex flex-wrap justify-center gap-2 text-lg"></div>
   </main>
 
+  <footer class="bg-gray-800 py-4 mt-12 text-center text-gray-400 text-sm">
+    © <span id="year"></span> ProjectorFirst. All rights reserved.
+  </footer>
+
   <script>
-    // ----- Data -----
-    const columns = {
-      B: Array.from({length:15}, (_,i)=>i+1),
-      I: Array.from({length:15}, (_,i)=>i+16),
-      N: Array.from({length:15}, (_,i)=>i+31),
-      G: Array.from({length:15}, (_,i)=>i+46),
-      O: Array.from({length:15}, (_,i)=>i+61),
-    };
-    const all = [...columns.B, ...columns.I, ...columns.N, ...columns.G, ...columns.O];
-    let remaining = all.slice();
-    let stack = []; // history of called numbers
+    document.getElementById('year').textContent = new Date().getFullYear();
 
-    // ----- Elements -----
-    const currentEl = document.getElementById('currentCall');
-    const boardEl   = document.getElementById('board');
-    const historyEl = document.getElementById('history');
-    const countEl   = document.getElementById('count');
-    const nextBtn   = document.getElementById('nextBtn');
-    const undoBtn   = document.getElementById('undoBtn');
-    const resetBtn  = document.getElementById('resetBtn');
-    const autoToggle= document.getElementById('autoToggle');
-    const speedSel  = document.getElementById('speedSel');
+    let numbers = [];
+    let called = [];
 
-    // ----- Build Board -----
-    const letterOf = (n) => n<=15?'B':n<=30?'I':n<=45?'N':n<=60?'G':'O';
-
-    function renderBoard() {
-      boardEl.innerHTML = '';
-      // 5 columns of 15 each
-      const cols = [columns.B, columns.I, columns.N, columns.G, columns.O];
-      for (let row = 0; row < 15; row++) {
-        for (let c = 0; c < 5; c++) {
-          const num = cols[c][row];
-          const cell = document.createElement('div');
-          cell.id = 'cell-' + num;
-          cell.className = 'select-none rounded-md border border-gray-700 p-2 text-center text-lg';
-          cell.textContent = num;
-          boardEl.appendChild(cell);
+    function initGame() {
+      numbers = [];
+      called = [];
+      const letters = ["B","I","N","G","O"];
+      for (let i = 0; i < 5; i++) {
+        for (let j = 1; j <= 15; j++) {
+          numbers.push(`${letters[i]}${j + i*15}`);
         }
       }
-      updateHighlights();
+      shuffle(numbers);
+      document.getElementById("current").textContent = "---";
+      document.getElementById("history").innerHTML = "";
     }
 
-    function updateHighlights() {
-      // clear all
-      all.forEach(n => {
-        const el = document.getElementById('cell-' + n);
-        if (!el) return;
-        el.classList.remove('bg-green-500','text-gray-900','font-black');
-      });
-      // mark called
-      stack.forEach(n => {
-        const el = document.getElementById('cell-' + n);
-        if (!el) return;
-        el.classList.add('bg-green-500','text-gray-900','font-black');
-      });
+    function shuffle(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+    }
+
+    function callNumber() {
+      if (numbers.length > 0) {
+        const num = numbers.pop();
+        called.push(num);
+        document.getElementById("current").textContent = num;
+        renderHistory();
+      } else {
+        document.getElementById("current").textContent = "END";
+      }
     }
 
     function renderHistory() {
-      const labels = stack.map(n => letterOf(n) + n);
-      historyEl.textContent = labels.join('  ');
-      countEl.textContent = stack.length;
+      const historyDiv = document.getElementById("history");
+      historyDiv.innerHTML = "";
+      called.forEach(num => {
+        const span = document.createElement("span");
+        span.className = "bg-gray-700 px-3 py-1 rounded";
+        span.textContent = num;
+        historyDiv.appendChild(span);
+      });
     }
 
-    function renderCurrent() {
-      if (stack.length === 0) {
-        currentEl.textContent = '—';
-        return;
-      }
-      const n = stack[stack.length - 1];
-      currentEl.textContent = lette
+    function resetGame() {
+      initGame();
+    }
+
+    initGame();
+  </script>
+</body>
+</html>
