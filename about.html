@@ -1,1 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>About Me — ProjectorFirst</title>
+  <meta name="description" content="Learn about the creator of ProjectorFirst."/>
+  <meta name="theme-color" content="#22c55e"/>
+  <link rel="icon" href="/logo.svg" type="image/svg+xml"/>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .skip-link{position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden}
+    .skip-link:focus{left:1rem;top:1rem;width:auto;height:auto;padding:.75rem 1rem;background:#22c55e;color:#111;border-radius:.75rem;z-index:50}
+  </style>
+</head>
+<body class="bg-gray-900 text-white font-sans text-2xl leading-relaxed">
+  <a href="#main" class="skip-link">Skip to main content</a>
+
+  <!-- Header -->
+  <header class="bg-gray-800 py-4 shadow-md" role="banner">
+    <div class="max-w-6xl mx-auto px-4 flex items-center justify-between">
+      <a href="/" class="flex items-center gap-3 focus:outline-none focus:ring-4 focus:ring-green-400 rounded-xl">
+        <img src="/logo.svg" alt="ProjectorFirst logo" class="w-10 h-10"/>
+        <span class="text-2xl font-extrabold text-green-400">ProjectorFirst</span>
+      </a>
+      <nav class="space-x-2" aria-label="Primary">
+        <a href="/apps.html" class="px-4 py-2 rounded-xl hover:bg-green-400 hover:text-gray-900 transition focus:outline-none focus:ring-4 focus:ring-green-400">Apps</a>
+        <a href="/about.html" class="px-4 py-2 rounded-xl bg-green-500 text-gray-900 font-bold focus:outline-none focus:ring-4 focus:ring-green-400">About</a>
+        <a href="/contact.html" class="px-4 py-2 rounded-xl hover:bg-green-400 hover:text-gray-900 transition focus:outline-none focus:ring-4 focus:ring-green-400">Contact</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main -->
+  <main id="main" class="max-w-4xl mx-auto px-4 py-14">
+    <h1 class="text-4xl sm:text-5xl font-extrabold mb-6 text-green-400">About Me</h1>
+    <p class="mb-6">
+      I created ProjectorFirst because I wanted to make tools that are easy for everyone to use —
+      especially in senior care settings where clarity and simplicity matter most.
+    </p>
+    <p class="mb-6">
+      I used to be an <span class="font-bold text-green-400">Activity Director</span>.
+      My background is in psychology, with a degree in the subject,
+      and I also hold a <span class="font-bold text-green-400">Master’s in Criminal Justice</span>.
+    </p>
+    <p class="mb-6">
+      These experiences shaped my belief that technology should never get in the way of connection and fun.
+      That’s why ProjectorFirst is designed to be big, simple, and stress-free.
+    </p>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-gray-800 py-6 mt-12" role="contentinfo">
+    <div class="max-w-6xl mx-auto px-4 text-center text-gray-400 text-base">
+      © <span id="year"></span> ProjectorFirst • Big, Simple Apps for Nursing Homes & Senior Care
+    </div>
+  </footer>
+
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>
 
