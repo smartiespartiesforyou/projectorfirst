@@ -4,81 +4,89 @@
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>Apps — ProjectorFirst</title>
-  <meta name="description" content="All games and tools for nursing homes and senior care."/>
+  <meta name="description" content="Launch projector-friendly apps for senior care."/>
+  <meta name="theme-color" content="#22c55e"/>
   <link rel="icon" href="/logo.svg" type="image/svg+xml"/>
   <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .skip-link{position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden}
+    .skip-link:focus{left:1rem;top:1rem;width:auto;height:auto;padding:.75rem 1rem;background:#22c55e;color:#111;border-radius:.75rem;z-index:50}
+  </style>
 </head>
-<body class="bg-gray-900 text-white font-sans">
+<body class="bg-gray-900 text-white font-sans text-2xl leading-relaxed">
+  <a href="#main" class="skip-link">Skip to main content</a>
 
-  <!-- NAV -->
- <div id="navbar"></div>
-<script>
-  fetch('/header.html')
-    .then(res => res.text())
-    .then(html => document.getElementById('navbar').innerHTML = html);
-</script>
-  </script>
+  <!-- Header -->
+  <header class="bg-gray-800 py-4 shadow-md" role="banner">
+    <div class="max-w-6xl mx-auto px-4 flex items-center justify-between">
+      <a href="/" class="flex items-center gap-3 focus:outline-none focus:ring-4 focus:ring-green-400 rounded-xl">
+        <img src="/logo.svg" alt="ProjectorFirst logo" class="w-10 h-10"/>
+        <span class="text-2xl font-extrabold text-green-400">ProjectorFirst</span>
+      </a>
+      <nav class="space-x-2" aria-label="Primary">
+        <a href="/apps.html" class="px-4 py-2 rounded-xl bg-green-500 text-gray-900 font-bold focus:outline-none focus:ring-4 focus:ring-green-400">Apps</a>
+        <a href="/about.html" class="px-4 py-2 rounded-xl hover:bg-green-400 hover:text-gray-900 transition focus:outline-none focus:ring-4 focus:ring-green-400">About</a>
+        <a href="/contact.html" class="px-4 py-2 rounded-xl hover:bg-green-400 hover:text-gray-900 transition focus:outline-none focus:ring-4 focus:ring-green-400">Contact</a>
+      </nav>
+    </div>
+  </header>
 
-  <!-- HEADER -->
-  <section class="bg-gray-800 rounded-xl p-8 sm:p-12 text-center mb-10">
-    <h2 class="text-3xl sm:text-4xl font-extrabold mb-4 text-green-400">App Hub</h2>
-    <p class="text-gray-300 max-w-2xl mx-auto">
-      All your big-font, projector-ready activities and tools in one place.  
-      Click any app below to get started!
+  <!-- Main -->
+  <main id="main" class="max-w-6xl mx-auto px-4 py-14">
+    <h1 class="text-4xl sm:text-5xl font-extrabold mb-8 text-green-400 text-center">Apps</h1>
+    <p class="text-gray-300 text-center max-w-3xl mx-auto mb-10">
+      Big buttons. High contrast. One click to launch. Bingo opens a hub where you can pick themes
+      like <span class="text-green-400 font-bold">Classic</span>, <span class="text-green-400 font-bold">Christmas</span>, and <span class="text-green-400 font-bold">Halloween</span>.
     </p>
-  </section>
 
-  <main class="max-w-6xl mx-auto px-4 pb-12">
-    <!-- GAMES -->
-    <h3 class="text-2xl font-bold text-green-400 mb-4">🎲 Games</h3>
-    <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 mb-10">
-      <a href="/bingo.html" class="card">Bingo Caller</a>
-      <a href="/horse-race.html" class="card">Horse Race</a>
-      <a href="/word-scrambler.html" class="card">Word Scrambler</a>
-      <a href="/word-builder.html" class="card">Word Builder</a>
-      <a href="/memory-match.html" class="card">Memory Match</a>
-      <a href="/trivia.html" class="card">Trivia Board</a>
-    </div>
+    <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      <!-- Bingo Hub -->
+      <a href="/bingo.html" class="block bg-gray-800 border border-gray-700 rounded-2xl p-8 hover:border-green-400 transition focus:outline-none focus:ring-4 focus:ring-green-400">
+        <div class="text-3xl font-extrabold text-green-400 mb-2">🎉 Bingo</div>
+        <p class="text-gray-300">Opens Bingo Hub (Classic + Seasonal themes).</p>
+      </a>
 
-    <!-- TOOLS -->
-    <h3 class="text-2xl font-bold text-green-400 mb-4">🛠️ Tools</h3>
-    <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 mb-10">
-      <a href="/countdown.html" class="card">Countdown Timer</a>
-      <a href="/dice.html" class="card">Dice Roller</a>
-      <a href="/yesno.html" class="card">Yes/No Spinner</a>
-      <a href="/name-picker.html" class="card">Name Picker</a>
-    </div>
+      <!-- Dice Roller -->
+      <a href="/dice.html" class="block bg-gray-800 border border-gray-700 rounded-2xl p-8 hover:border-green-400 transition focus:outline-none focus:ring-4 focus:ring-green-400">
+        <div class="text-3xl font-extrabold text-green-400 mb-2">🎲 Dice Roller</div>
+        <p class="text-gray-300">Big dice, sound, and presets.</p>
+      </a>
 
-    <!-- SEASONAL -->
-    <h3 class="text-2xl font-bold text-green-400 mb-4">🎉 Seasonal</h3>
-    <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-      <a href="/bingo.html" class="card">Seasonal Bingo (Fall, Halloween, Christmas)</a>
+      <!-- Horse Race -->
+      <a href="/horse-race.html" class="block bg-gray-800 border border-gray-700 rounded-2xl p-8 hover:border-green-400 transition focus:outline-none focus:ring-4 focus:ring-green-400">
+        <div class="text-3xl font-extrabold text-green-400 mb-2">🏇 Horse Race</div>
+        <p class="text-gray-300">Roll to move. First to the flag wins.</p>
+      </a>
+
+      <!-- Word Scrambler -->
+      <a href="/scrambler.html" class="block bg-gray-800 border border-gray-700 rounded-2xl p-8 hover:border-green-400 transition focus:outline-none focus:ring-4 focus:ring-green-400">
+        <div class="text-3xl font-extrabold text-green-400 mb-2">🔤 Word Scrambler</div>
+        <p class="text-gray-300">Jumbled words with big reveal.</p>
+      </a>
+
+      <!-- Countdown -->
+      <a href="/countdown.html" class="block bg-gray-800 border border-gray-700 rounded-2xl p-8 hover:border-green-400 transition focus:outline-none focus:ring-4 focus:ring-green-400">
+        <div class="text-3xl font-extrabold text-green-400 mb-2">⏱ Countdown Timer</div>
+        <p class="text-gray-300">Huge numbers and quick presets.</p>
+      </a>
+
+      <!-- Placeholder for future apps -->
+      <div class="block bg-gray-800 border border-dashed border-gray-700 rounded-2xl p-8 text-gray-400">
+        <div class="text-3xl font-extrabold text-gray-400 mb-2">➕ More Coming</div>
+        <p>Music Bingo, Trivia, Photo Slideshows…</p>
+      </div>
     </div>
   </main>
 
-  <!-- FOOTER -->
-<div id="footer"></div>
-<script>
-  fetch('/footer.html')
-    .then(res => res.text())
-    .then(html => document.getElementById('footer').innerHTML = html);
-  </script>
+  <!-- Footer -->
+  <footer class="bg-gray-800 py-6 mt-12" role="contentinfo">
+    <div class="max-w-6xl mx-auto px-4 text-center text-gray-400 text-base">
+      © <span id="year"></span> ProjectorFirst • Big, Simple Apps for Nursing Homes & Senior Care
+    </div>
+  </footer>
 
-  <style>
-    .card {
-      display: block;
-      background: #1f2937;
-      border: 1px solid #374151;
-      border-radius: 0.75rem;
-      padding: 1.5rem;
-      font-weight: 700;
-      text-align: center;
-      transition: border 0.2s, background 0.2s;
-    }
-    .card:hover {
-      border-color: #22c55e;
-      background: #111827;
-    }
-  </style>
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
 </body>
 </html>
