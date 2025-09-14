@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Halloween Bingo — ProjectorFirst</title>
+  <meta name="description" content="Halloween Bingo Caller: giant, projector-friendly display with high-contrast orange/purple theme." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+  <link rel="icon" href="/logo.svg" type="image/svg+xml" />
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-black text-white font-sans">
+  <a href="#main" class="absolute left-2 top-2 bg-orange-400 text-black px-3 py-2 rounded focus:outline-none focus:ring-4 focus:ring-orange-300">
+    Skip to content
+  </a>
+
+  <header class="bg-zinc-900 py-4 shadow-md border-b border-zinc-800">
+    <div class="max-w-5xl mx-auto px-4 flex justify-between items-center">
+      <h1 class="text-2xl font-extrabold text-orange-400">ProjectorFirst</h1>
+      <nav class="space-x-2">
+        <a href="/" class="px-3 py-2 rounded hover:bg-orange-400 hover:text-black focus:outline-none focus:ring-4 focus:ring-orange-300 transition">Home</a>
+        <a href="/bingo-themes.html" class="px-3 py-2 rounded hover:bg-orange-400 hover:text-black focus:outline-none focus:ring-4 focus:ring-orange-300 transition">Bingo Themes</a>
+        <a href="/apps.html" class="px-3 py-2 rounded hover:bg-orange-400 hover:text-black focus:outline-none focus:ring-4 focus:ring-orange-300 transition">Apps</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Extra bottom padding so content doesn’t sit under the strip -->
+  <main id="main" class="max-w-6xl mx-auto p-6 md:p-10 pb-[9rem]">
+    <h2 class="text-3xl md:text-4xl font-extrabold text-center mb-2">Halloween Bingo <span aria-hidden="true">🎃</span></h2>
+    <p class="text-center text-zinc-300 text-lg md:text-xl mb-6">Same simple caller. Spooky, high-contrast colors.</p>
+
+    <!-- Status row -->
+    <section class="flex flex-wrap items-center justify-center gap-4 mb-6">
+      <div class="bg-zinc-900 rounded-2xl px-5 py-3 text-lg md:text-2xl font-semibold border border-zinc-800">
+        Called: <span id="calledCount" class="text-orange-400">0</span>/75
+      </div>
+      <div class="bg-zinc-900 rounded-2xl px-5 py-3 text-lg md:text-2xl font-semibold border border-zinc-800">
+        Remaining: <span id="remainingCount" class="text-purple-300">75</span>
+      </div>
+    </section>
+
+    <!-- Big display: HUGE, side-by-side with space -->
+    <section aria-live="polite" aria-atomic="true" class="mb-6">
+      <div id="currentCall"
+           class="select-none text-center bg-black border-4 border-orange-400 rounded-3xl shadow-[0_0_0_4px_rgba(0,0,0,0.6),0_0_30px_rgba(255,140,0,0.35)] mx-auto
+                  flex items-center justify-center"
+           style="height: 45vh;">
+        <div class="leading-none flex items-center gap-10">
+          <div id="currentLetter"
+               class="text-[14rem] md:text-[18rem] font-extrabold text-orange-400">—</div>
+          <div id="currentNumber"
+               class="text-[14rem] md:text-[18rem] font-extrabold text-white tracking-tight">—</div>
+        </div>
+      </div>
+      <p class="sr-only" id="srAnnouncement"></p>
+    </section>
+
+    <!-- Controls -->
+    <section class="flex flex-wrap items-center justify-center gap-4 mb-4">
+      <button id="callBtn"
+              class="bg-orange-400 text-black text-2xl md:text-3xl font-bold px-6 md:px-8 py-4 md:py-5 rounded-2xl shadow hover:bg-orange-300 focus:outline-none focus:ring-4 focus:ring-orange-300">
+        Call Next (Space)
+      </button>
+      <button id="undoBtn"
+              class="bg-purple-400 text-black text-xl md:text-2xl font-bold px-5 md:px-6 py-4 rounded-2xl shadow hover:bg-purple-300 focus:outline-none focus:ring-4 focus:ring-purple-300">
+        Undo (Backspace)
+      </button>
+      <button id="resetBtn"
+              class="bg-red-500 text-black text-xl md:text-2xl font-bold px-5 md:px-6 py-4 rounded-2xl shadow hover:bg-red-400 focus:outline-none focus:ring-4 focus:ring-red-400">
+        Reset (R)
+      </button>
+      <button id="fullscreenBtn"
+              class="bg-zinc-800 text-white text-xl md:text-2xl font-semibold px-5 md:px-6 py-4 rounded-2xl shadow hover:bg-zinc-700 focus:outline-none focus:ring-4 focus:ring-zinc-600">
+        Fullscreen (F)
+      </button>
+      <a href="/bingo-themes.html"
+         class="bg-zinc-800 text-white text-xl md:text-2xl font-semibold px-5 md:px-6 py-4 rounded-2xl shadow hover:bg-zinc-700 focus:outline-none focus:ring-4 focus:ring-zinc-600">
+        Themes
+      </a>
+    </section>
+
+    <!-- Help -->
+    <section class="text-center text-zinc-300">
+      <p class="text-lg md:text-xl">
+        Keyboard: <span class="font-semibold text-white">Space</span> = Call Next,
+        <span class="font-semibold text-white">Backspace</span> = Undo,
+        <span class="font-semibold text-white">R</span> = Reset,
+        <span class="font-semibold text-white">F</span> = Fullscreen.
+      </p>
+    </section>
+
+    <div class="sr-only" id="live" aria-live="polite"></div>
+  </main>
+
+  <!-- Bottom strip of called numbers (themed) -->
+  <section aria-label="Called numbers"
+           class="fixed left-0 right-0 bottom-0 bg-zinc-900/95 backdrop-blur-sm border-t border-zinc-800">
+    <div class="max-w-7xl mx-auto px-3 md:px-6 py-3">
+      <div id="calledStrip" class="flex flex-wrap gap-2 md:gap-3 justify-center">
+        <!-- Chips injected by JS -->
+      </div>
+      <p class="sr-only" id="stripAnnouncement"></p>
+    </div>
+  </section>
+
+  <footer class="bg-zinc-900 py-4 mt-12 text-center text-zinc-400 text-sm">
+    © <span id="year"></span> ProjectorFirst. All rights reserved.
+  </footer>
+
+  <script>
+    // Accessibility: respect reduced motion
+    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    // Utils
+    const range = (start, end) => Array.from({ length: end - start + 1 }, (_, i) => start + i);
+    function shuffle(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+      return array;
+    }
+    function letterFor(n) {
+      if (n >= 1 && n <= 15) return 'B';
+      if (n >= 16 && n <= 30) return 'I';
+      if (n >= 31 && n <= 45) return 'N';
+      if (n >= 46 && n <= 60) return 'G';
+      return 'O';
+    }
+
+    // DOM refs
+    const calledCount = document.getElementById('calledCount');
+    const remainingCount = document.getElementById('remainingCount');
+    const currentLetter = document.getElementById('currentLetter');
+    const currentNumber = document.getElementById('currentNumber');
+    const srAnnouncement = document.getElementById('srAnnouncement');
+
+    const callBtn = document.getElementById('callBtn');
+    const undoBtn = document.getElementById('undoBtn');
+    const resetBtn = document.getElementById('resetBtn');
+    const fullscreenBtn = document.getElementById('fullscreenBtn');
+
+    const calledStrip = document.getElementById('calledStrip');
+
+    // Game state
+    let deck = [];
+    let called = [];
+    let lastChip = null;
+
+    function initGame() {
+      deck = shuffle(range(1, 75));
+      called = [];
+      updateUI();
+      setDisplay(null);
+      renderStrip();
+    }
+
+    function setDisplay(n) {
+      if (n === null) {
+        currentLetter.textContent = '—';
+        currentNumber.textContent = '—';
+        currentNumber.style.transform = 'scale(1)';
+        return;
+      }
+      const letter = letterFor(n);
+      currentLetter.textContent = letter; // huge letter
+      currentNumber.textContent = n;      // huge number
+
+      if (!prefersReduced) {
+        currentNumber.style.transform = 'scale(1.05)';
+        currentNumber.style.transition = 'transform 120ms ease-out';
+        requestAnimationFrame(() => {
+          setTimeout(() => (currentNumber.style.transform = 'scale(1)'), 120);
+        });
+      }
+
+      srAnnouncement.textContent = `${letter} ${n}`;
+    }
+
+    function updateUI() {
+      calledCount.textContent = called.length;
+      remainingCount.textContent = 75 - called.length;
+      renderStrip();
+    }
+
+    function renderStrip() {
+      calledStrip.innerHTML = '';
+      lastChip = null;
+
+      // Chips: oldest left, newest right
+      for (let i = 0; i < called.length; i++) {
+        const n = called[i];
+        const letter = letterFor(n);
+        const chip = document.createElement('div');
+
+        chip.className = [
+          'px-3 md:px-4 py-2 md:py-2.5 rounded-xl',
+          'text-2xl md:text-3xl font-extrabold select-none',
+          'bg-black border-2 border-orange-300 text-orange-100'
+        ].join(' ');
+
+        chip.textContent = `${letter} ${n}`;
+        chip.setAttribute('aria-label', `${letter} ${n}`);
+
+        calledStrip.appendChild(chip);
+        lastChip = chip;
+      }
+
+      // Highlight most recent chip
+      if (lastChip) {
+        lastChip.classList.add('bg-orange-400', 'text-black', 'border-white', 'ring-4', 'ring-orange-300');
+        if (!prefersReduced) {
+          lastChip.animate(
+            [{ transform: 'scale(1.0)' }, { transform: 'scale(1.06)' }, { transform: 'scale(1.0)' }],
+            { duration: 220, easing: 'ease-out' }
+          );
+        }
+        lastChip.scrollIntoView({ behavior: prefersReduced ? 'auto' : 'smooth', inline: 'end', block: 'nearest' });
+      }
+    }
+
+    function callNext() {
+      if (deck.length === 0) return;
+      const n = deck.pop();
+      called.push(n);
+      setDisplay(n);
+      updateUI();
+    }
+
+    function undo() {
+      if (called.length === 0) return;
+      const n = called.pop();
+      deck.push(n);
+      setDisplay(called.length ? called[called.length - 1] : null);
+      updateUI();
+    }
+
+    function resetGame() {
+      initGame();
+    }
+
+    // Fullscreen for projector use
+    async function toggleFullscreen() {
+      if (!document.fullscreenElement) {
+        try { await document.documentElement.requestFullscreen(); } catch (e) {}
+      } else {
+        try { await document.exitFullscreen(); } catch (e) {}
+      }
+    }
+
+    // Events
+    callBtn.addEventListener('click', callNext);
+    undoBtn.addEventListener('click', undo);
+    resetBtn.addEventListener('click', resetGame);
+    fullscreenBtn.addEventListener('click', toggleFullscreen);
+
+    // Keyboard shortcuts
+    window.addEventListener('keydown', (e) => {
+      const tag = (e.target && e.target.tagName) || '';
+      if (tag === 'INPUT' || tag === 'TEXTAREA') return;
+
+      if (e.code === 'Space') { e.preventDefault(); callNext(); }
+      else if (e.code === 'Backspace') { e.preventDefault(); undo(); }
+      else if (e.key.toLowerCase() === 'r') { e.preventDefault(); resetGame(); }
+      else if (e.key.toLowerCase() === 'f') { e.preventDefault(); toggleFullscreen(); }
+    });
+
+    // Footer year + boot
+    document.getElementById('year').textContent = new Date().getFullYear();
+    initGame();
+  </script>
+</body>
+</html>
