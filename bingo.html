@@ -1,106 +1,92 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Bingo Caller — ProjectorFirst</title>
-  <meta name="description" content="A big, colorful Bingo Caller for nursing homes and senior care." />
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
-  <link rel="icon" href="/logo.svg" type="image/svg+xml" />
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Bingo Hub — ProjectorFirst</title>
+  <meta name="description" content="Choose a Bingo theme: Classic, Christmas, Halloween."/>
+  <meta name="theme-color" content="#22c55e"/>
+  <link rel="icon" href="/logo.svg" type="image/svg+xml"/>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    .bingo-number { 
-      font-size: 15rem; /* HUGE number */
-      line-height: 1;
-    }
+    .skip-link{position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden}
+    .skip-link:focus{left:1rem;top:1rem;width:auto;height:auto;padding:.75rem 1rem;background:#22c55e;color:#111;border-radius:.75rem;z-index:50}
   </style>
 </head>
-<body class="bg-gradient-to-b from-green-900 via-gray-900 to-black text-white font-sans">
-  <header class="bg-gray-800 py-4 shadow-md">
-    <div class="max-w-4xl mx-auto px-4 flex justify-between items-center">
-      <h1 class="text-2xl font-bold text-green-400">ProjectorFirst</h1>
-      <nav class="space-x-4">
-        <a href="/" class="px-3 py-2 rounded hover:bg-green-400 hover:text-gray-900 transition">Home</a>
-        <a href="/about.html" class="px-3 py-2 rounded hover:bg-green-400 hover:text-gray-900 transition">About</a>
-        <a href="/contact.html" class="px-3 py-2 rounded hover:bg-green-400 hover:text-gray-900 transition">Contact</a>
-        <a href="/apps.html" class="px-3 py-2 rounded hover:bg-green-400 hover:text-gray-900 transition">Apps</a>
+<body class="bg-gray-900 text-white font-sans text-2xl leading-relaxed">
+  <a href="#main" class="skip-link">Skip to main content</a>
+
+  <!-- Header -->
+  <header class="bg-gray-800 py-4 shadow-md" role="banner">
+    <div class="max-w-6xl mx-auto px-4 flex items-center justify-between">
+      <a href="/" class="flex items-center gap-3 focus:outline-none focus:ring-4 focus:ring-green-400 rounded-xl">
+        <img src="/logo.svg" alt="ProjectorFirst logo" class="w-10 h-10"/>
+        <span class="text-2xl font-extrabold text-green-400">ProjectorFirst</span>
+      </a>
+      <nav class="space-x-2" aria-label="Primary">
+        <a href="/apps.html" class="px-4 py-2 rounded-xl hover:bg-green-400 hover:text-gray-900 transition focus:outline-none focus:ring-4 focus:ring-green-400">Apps</a>
+        <a href="/about.html" class="px-4 py-2 rounded-xl hover:bg-green-400 hover:text-gray-900 transition focus:outline-none focus:ring-4 focus:ring-green-400">About</a>
+        <a href="/contact.html" class="px-4 py-2 rounded-xl hover:bg-green-400 hover:text-gray-900 transition focus:outline-none focus:ring-4 focus:ring-green-400">Contact</a>
       </nav>
     </div>
   </header>
 
-  <main class="max-w-5xl mx-auto p-8 text-center">
-    <h2 class="text-3xl font-extrabold mb-6 text-green-300">Bingo Caller</h2>
-    <div id="current" class="bingo-number font-extrabold text-yellow-400 mb-8">---</div>
-
-    <div class="flex justify-center gap-4 mb-8">
-      <button onclick="callNumber()" class="bg-green-400 text-gray-900 px-6 py-3 rounded-lg font-semibold shadow hover:bg-green-300 transition">Next Ball</button>
-      <button onclick="resetGame()" class="bg-red-400 text-gray-900 px-6 py-3 rounded-lg font-semibold shadow hover:bg-red-300 transition">Reset</button>
+  <!-- Main -->
+  <main id="main" class="max-w-6xl mx-auto px-4 py-14">
+    <div class="flex items-center justify-between gap-4 mb-8">
+      <h1 class="text-4xl sm:text-5xl font-extrabold text-green-400">Bingo Hub</h1>
+      <a href="/apps.html" class="px-5 py-3 bg-gray-800 rounded-xl hover:bg-gray-700 transition focus:outline-none focus:ring-4 focus:ring-green-400">← Back to Apps</a>
     </div>
 
-    <h3 class="text-xl font-bold text-green-400 mb-4">Called Numbers</h3>
-    <div id="history" class="flex flex-wrap justify-center gap-2 text-lg"></div>
+    <p class="text-gray-300 mb-10 max-w-3xl">
+      Pick a Bingo theme below. Each theme opens on its own page with large numbers, high contrast, and simple controls.
+    </p>
+
+    <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      <!-- Classic -->
+      <a href="/bingo-classic.html" class="block bg-gray-800 border border-gray-700 rounded-2xl p-8 hover:border-green-400 transition focus:outline-none focus:ring-4 focus:ring-green-400">
+        <div class="text-3xl font-extrabold text-green-400 mb-2">🎉 Classic Bingo</div>
+        <p class="text-gray-300">Standard B-I-N-G-O caller.</p>
+      </a>
+
+      <!-- Christmas -->
+      <a href="/bingo-christmas.html" class="block bg-gray-800 border border-gray-700 rounded-2xl p-8 hover:border-green-400 transition focus:outline-none focus:ring-4 focus:ring-green-400">
+        <div class="text-3xl font-extrabold text-green-400 mb-2">🎄 Christmas Bingo</div>
+        <p class="text-gray-300">Festive colors & winter sounds.</p>
+      </a>
+
+      <!-- Halloween -->
+      <a href="/bingo-halloween.html" class="block bg-gray-800 border border-gray-700 rounded-2xl p-8 hover:border-green-400 transition focus:outline-none focus:ring-4 focus:ring-green-400">
+        <div class="text-3xl font-extrabold text-green-400 mb-2">🎃 Halloween Bingo</div>
+        <p class="text-gray-300">Spooky theme, big contrast.</p>
+      </a>
+
+      <!-- Room for more themes -->
+      <div class="block bg-gray-800 border border-dashed border-gray-700 rounded-2xl p-8 text-gray-400">
+        <div class="text-3xl font-extrabold text-gray-400 mb-2">➕ Add More</div>
+        <p>Spring, Summer, Patriotic, Birthday…</p>
+      </div>
+    </div>
+
+    <!-- Quick tips -->
+    <div class="mt-12 bg-gray-800 rounded-2xl p-6">
+      <h2 class="text-2xl font-bold mb-3 text-green-400">Tips</h2>
+      <ul class="list-disc pl-6 text-gray-300">
+        <li>Use full screen (F11) for projectors.</li>
+        <li>Themes are separate pages so you can customize colors and sounds per theme.</li>
+      </ul>
+    </div>
   </main>
 
-  <footer class="bg-gray-800 py-4 mt-12 text-center text-gray-400 text-sm">
-    © <span id="year"></span> ProjectorFirst. All rights reserved.
+  <!-- Footer -->
+  <footer class="bg-gray-800 py-6 mt-12" role="contentinfo">
+    <div class="max-w-6xl mx-auto px-4 text-center text-gray-400 text-base">
+      © <span id="year"></span> ProjectorFirst • Big, Simple Apps for Nursing Homes & Senior Care
+    </div>
   </footer>
 
   <script>
     document.getElementById('year').textContent = new Date().getFullYear();
-
-    let numbers = [];
-    let called = [];
-
-    function initGame() {
-      numbers = [];
-      called = [];
-      const letters = ["B","I","N","G","O"];
-      for (let i = 0; i < 5; i++) {
-        for (let j = 1; j <= 15; j++) {
-          numbers.push(`${letters[i]}${j + i*15}`);
-        }
-      }
-      shuffle(numbers);
-      document.getElementById("current").textContent = "---";
-      document.getElementById("history").innerHTML = "";
-    }
-
-    function shuffle(array) {
-      for (let i = array.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [array[i], array[j]] = [array[j], array[i]];
-      }
-    }
-
-    function callNumber() {
-      if (numbers.length > 0) {
-        const num = numbers.pop();
-        called.push(num);
-        document.getElementById("current").textContent = num;
-        renderHistory();
-      } else {
-        document.getElementById("current").textContent = "END";
-      }
-    }
-
-    function renderHistory() {
-      const historyDiv = document.getElementById("history");
-      historyDiv.innerHTML = "";
-      called.forEach(num => {
-        const span = document.createElement("span");
-        span.className = "bg-gray-700 px-3 py-1 rounded";
-        span.textContent = num;
-        historyDiv.appendChild(span);
-      });
-    }
-
-    function resetGame() {
-      initGame();
-    }
-
-    initGame();
   </script>
 </body>
 </html>
