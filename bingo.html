@@ -1,88 +1,46 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>Bingo Hub — ProjectorFirst</title>
-  <meta name="description" content="Choose a Bingo theme: Classic, Christmas, Halloween."/>
-  <meta name="theme-color" content="#22c55e"/>
-  <link rel="icon" href="/logo.svg" type="image/svg+xml"/>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Bingo App — ProjectorFirst</title>
+  <meta name="description" content="ProjectorFirst Bingo App: Big-font, projector-friendly Bingo caller for nursing homes and senior care." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+  <link rel="icon" href="/logo.svg" type="image/svg+xml" />
   <script src="https://cdn.tailwindcss.com"></script>
-  <style>
-    .skip-link{position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden}
-    .skip-link:focus{left:1rem;top:1rem;width:auto;height:auto;padding:.75rem 1rem;background:#22c55e;color:#111;border-radius:.75rem;z-index:50}
-  </style>
 </head>
-<body class="bg-gray-900 text-white font-sans text-2xl leading-relaxed">
-  <a href="#main" class="skip-link">Skip to main content</a>
+<body class="bg-gray-900 text-white font-sans">
+  <a href="#main" class="absolute left-2 top-2 bg-green-400 text-gray-900 px-3 py-2 rounded focus:outline-none focus:ring-4 focus:ring-green-300">
+    Skip to content
+  </a>
 
-  <!-- Header -->
-  <header class="bg-gray-800 py-4 shadow-md" role="banner">
-    <div class="max-w-6xl mx-auto px-4 flex items-center justify-between">
-      <a href="/" class="flex items-center gap-3 focus:outline-none focus:ring-4 focus:ring-green-400 rounded-xl">
-        <img src="/logo.svg" alt="ProjectorFirst logo" class="w-10 h-10"/>
-        <span class="text-2xl font-extrabold text-green-400">ProjectorFirst</span>
-      </a>
-      <nav class="space-x-2" aria-label="Primary">
-        <a href="/apps.html" class="px-4 py-2 rounded-xl hover:bg-green-400 hover:text-gray-900 transition focus:outline-none focus:ring-4 focus:ring-green-400">Apps</a>
-        <a href="/about.html" class="px-4 py-2 rounded-xl hover:bg-green-400 hover:text-gray-900 transition focus:outline-none focus:ring-4 focus:ring-green-400">About</a>
-        <a href="/contact.html" class="px-4 py-2 rounded-xl hover:bg-green-400 hover:text-gray-900 transition focus:outline-none focus:ring-4 focus:ring-green-400">Contact</a>
+  <header class="bg-gray-800 py-4 shadow-md">
+    <div class="max-w-4xl mx-auto px-4 flex justify-between items-center">
+      <h1 class="text-2xl font-bold text-green-400">ProjectorFirst</h1>
+      <nav class="space-x-2">
+        <a href="/" class="px-3 py-2 rounded hover:bg-green-400 hover:text-gray-900 focus:outline-none focus:ring-4 focus:ring-green-300 transition">Home</a>
+        <a href="/about.html" class="px-3 py-2 rounded hover:bg-green-400 hover:text-gray-900 focus:outline-none focus:ring-4 focus:ring-green-300 transition">About</a>
+        <a href="/contact.html" class="px-3 py-2 rounded hover:bg-green-400 hover:text-gray-900 focus:outline-none focus:ring-4 focus:ring-green-300 transition">Contact</a>
+        <a href="/apps.html" class="px-3 py-2 rounded hover:bg-green-400 hover:text-gray-900 focus:outline-none focus:ring-4 focus:ring-green-300 transition">Apps</a>
       </nav>
     </div>
   </header>
 
-  <!-- Main -->
-  <main id="main" class="max-w-6xl mx-auto px-4 py-14">
-    <div class="flex items-center justify-between gap-4 mb-8">
-      <h1 class="text-4xl sm:text-5xl font-extrabold text-green-400">Bingo Hub</h1>
-      <a href="/apps.html" class="px-5 py-3 bg-gray-800 rounded-xl hover:bg-gray-700 transition focus:outline-none focus:ring-4 focus:ring-green-400">← Back to Apps</a>
-    </div>
-
-    <p class="text-gray-300 mb-10 max-w-3xl">
-      Pick a Bingo theme below. Each theme opens on its own page with large numbers, high contrast, and simple controls.
+  <main id="main" class="max-w-4xl mx-auto p-8 text-center">
+    <h2 class="text-3xl md:text-4xl font-extrabold mb-4">Bingo App</h2>
+    <p class="text-gray-300 text-lg md:text-xl mb-6">
+      This is the future home of your interactive Bingo Caller App!
+      Big, bold numbers for projectors and easy game control for activity leaders.
     </p>
-
-    <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-      <!-- Classic -->
-      <a href="/bingo-classic.html" class="block bg-gray-800 border border-gray-700 rounded-2xl p-8 hover:border-green-400 transition focus:outline-none focus:ring-4 focus:ring-green-400">
-        <div class="text-3xl font-extrabold text-green-400 mb-2">🎉 Classic Bingo</div>
-        <p class="text-gray-300">Standard B-I-N-G-O caller.</p>
-      </a>
-
-      <!-- Christmas -->
-      <a href="/bingo-christmas.html" class="block bg-gray-800 border border-gray-700 rounded-2xl p-8 hover:border-green-400 transition focus:outline-none focus:ring-4 focus:ring-green-400">
-        <div class="text-3xl font-extrabold text-green-400 mb-2">🎄 Christmas Bingo</div>
-        <p class="text-gray-300">Festive colors & winter sounds.</p>
-      </a>
-
-      <!-- Halloween -->
-      <a href="/bingo-halloween.html" class="block bg-gray-800 border border-gray-700 rounded-2xl p-8 hover:border-green-400 transition focus:outline-none focus:ring-4 focus:ring-green-400">
-        <div class="text-3xl font-extrabold text-green-400 mb-2">🎃 Halloween Bingo</div>
-        <p class="text-gray-300">Spooky theme, big contrast.</p>
-      </a>
-
-      <!-- Room for more themes -->
-      <div class="block bg-gray-800 border border-dashed border-gray-700 rounded-2xl p-8 text-gray-400">
-        <div class="text-3xl font-extrabold text-gray-400 mb-2">➕ Add More</div>
-        <p>Spring, Summer, Patriotic, Birthday…</p>
-      </div>
-    </div>
-
-    <!-- Quick tips -->
-    <div class="mt-12 bg-gray-800 rounded-2xl p-6">
-      <h2 class="text-2xl font-bold mb-3 text-green-400">Tips</h2>
-      <ul class="list-disc pl-6 text-gray-300">
-        <li>Use full screen (F11) for projectors.</li>
-        <li>Themes are separate pages so you can customize colors and sounds per theme.</li>
-      </ul>
-    </div>
+    <a href="/apps.html" class="bg-green-400 text-gray-900 px-6 py-3 rounded-lg font-semibold shadow hover:bg-green-300 focus:outline-none focus:ring-4 focus:ring-green-300 transition">
+      Back to Apps
+    </a>
   </main>
 
-  <!-- Footer -->
-  <footer class="bg-gray-800 py-6 mt-12" role="contentinfo">
-    <div class="max-w-6xl mx-auto px-4 text-center text-gray-400 text-base">
-      © <span id="year"></span> ProjectorFirst • Big, Simple Apps for Nursing Homes & Senior Care
-    </div>
+  <footer class="bg-gray-800 py-4 mt-12 text-center text-gray-400 text-sm">
+    © <span id="year"></span> ProjectorFirst. All rights reserved.
   </footer>
 
   <script>
