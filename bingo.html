@@ -28,15 +28,74 @@
     </div>
   </header>
 
-  <main id="main" class="max-w-4xl mx-auto p-8 text-center">
-    <h2 class="text-3xl md:text-4xl font-extrabold mb-4">Bingo App</h2>
-    <p class="text-gray-300 text-lg md:text-xl mb-6">
-      This is the future home of your interactive Bingo Caller App!
-      Big, bold numbers for projectors and easy game control for activity leaders.
-    </p>
-    <a href="/apps.html" class="bg-green-400 text-gray-900 px-6 py-3 rounded-lg font-semibold shadow hover:bg-green-300 focus:outline-none focus:ring-4 focus:ring-green-300 transition">
-      Back to Apps
-    </a>
+  <main id="main" class="max-w-5xl mx-auto p-6 md:p-10">
+    <h2 class="text-3xl md:text-4xl font-extrabold text-center mb-6">Bingo App</h2>
+
+    <!-- Status row -->
+    <section class="flex flex-wrap items-center justify-center gap-4 mb-6">
+      <div class="bg-gray-800 rounded-2xl px-5 py-3 text-lg md:text-2xl font-semibold">
+        Called: <span id="calledCount" class="text-green-400">0</span>/75
+      </div>
+      <div class="bg-gray-800 rounded-2xl px-5 py-3 text-lg md:text-2xl font-semibold">
+        Remaining: <span id="remainingCount" class="text-yellow-300">75</span>
+      </div>
+    </section>
+
+    <!-- Big display -->
+    <section aria-live="polite" aria-atomic="true" class="mb-6">
+      <div id="currentCall"
+           class="select-none text-center bg-black border-4 border-green-400 rounded-3xl shadow-xl mx-auto
+                  flex items-center justify-center"
+           style="height: 38vh;">
+        <div class="leading-none">
+          <div id="currentLetter" class="text-7xl md:text-8xl font-extrabold text-green-400">—</div>
+          <div id="currentNumber" class="text-[10rem] md:text-[14rem] font-extrabold text-white tracking-tight">—</div>
+        </div>
+      </div>
+      <p class="sr-only" id="srAnnouncement"></p>
+    </section>
+
+    <!-- Controls -->
+    <section class="flex flex-wrap items-center justify-center gap-4 mb-8">
+      <button id="callBtn"
+              class="bg-green-400 text-gray-900 text-2xl md:text-3xl font-bold px-6 md:px-8 py-4 md:py-5 rounded-2xl shadow hover:bg-green-300 focus:outline-none focus:ring-4 focus:ring-green-300">
+        Call Next (Space)
+      </button>
+      <button id="undoBtn"
+              class="bg-yellow-300 text-gray-900 text-xl md:text-2xl font-bold px-5 md:px-6 py-4 rounded-2xl shadow hover:bg-yellow-200 focus:outline-none focus:ring-4 focus:ring-yellow-200">
+        Undo (Backspace)
+      </button>
+      <button id="resetBtn"
+              class="bg-red-400 text-gray-900 text-xl md:text-2xl font-bold px-5 md:px-6 py-4 rounded-2xl shadow hover:bg-red-300 focus:outline-none focus:ring-4 focus:ring-red-300">
+        Reset (R)
+      </button>
+      <button id="fullscreenBtn"
+              class="bg-gray-700 text-white text-xl md:text-2xl font-semibold px-5 md:px-6 py-4 rounded-2xl shadow hover:bg-gray-600 focus:outline-none focus:ring-4 focus:ring-gray-500">
+        Fullscreen (F)
+      </button>
+    </section>
+
+    <!-- History -->
+    <section>
+      <h3 class="text-2xl md:text-3xl font-bold mb-4 text-center">Call History</h3>
+      <div id="history"
+           class="grid grid-cols-5 sm:grid-cols-10 gap-3 md:gap-4 justify-items-center"
+           aria-label="Numbers already called">
+        <!-- Filled by JS -->
+      </div>
+    </section>
+
+    <!-- Help -->
+    <section class="mt-8 text-center text-gray-300">
+      <p class="text-lg md:text-xl">
+        Keyboard: <span class="font-semibold text-white">Space</span> = Call Next,
+        <span class="font-semibold text-white">Backspace</span> = Undo,
+        <span class="font-semibold text-white">R</span> = Reset,
+        <span class="font-semibold text-white">F</span> = Fullscreen.
+      </p>
+    </section>
+
+    <div class="sr-only" id="live" aria-live="polite"></div>
   </main>
 
   <footer class="bg-gray-800 py-4 mt-12 text-center text-gray-400 text-sm">
@@ -44,7 +103,162 @@
   </footer>
 
   <script>
+    // Accessibility: respect reduced motion for subtle animations
+    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    // Utility: create range and shuffle
+    const range = (start, end) => Array.from({ length: end - start + 1 }, (_, i) => start + i);
+    function shuffle(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+      return array;
+    }
+
+    // Bingo letter for a number
+    function letterFor(n) {
+      if (n >= 1 && n <= 15) return 'B';
+      if (n >= 16 && n <= 30) return 'I';
+      if (n >= 31 && n <= 45) return 'N';
+      if (n >= 46 && n <= 60) return 'G';
+      return 'O';
+    }
+
+    // DOM refs
+    const calledCount = document.getElementById('calledCount');
+    const remainingCount = document.getElementById('remainingCount');
+    const currentLetter = document.getElementById('currentLetter');
+    const currentNumber = document.getElementById('currentNumber');
+    const historyGrid = document.getElementById('history');
+    const srAnnouncement = document.getElementById('srAnnouncement');
+
+    const callBtn = document.getElementById('callBtn');
+    const undoBtn = document.getElementById('undoBtn');
+    const resetBtn = document.getElementById('resetBtn');
+    const fullscreenBtn = document.getElementById('fullscreenBtn');
+
+    // Game state
+    let deck = [];
+    let called = [];
+
+    function initGame() {
+      deck = shuffle(range(1, 75));
+      called = [];
+      updateUI();
+      setDisplay(null);
+    }
+
+    function setDisplay(n) {
+      if (n === null) {
+        currentLetter.textContent = '—';
+        currentNumber.textContent = '—';
+        currentNumber.style.transform = 'scale(1)';
+        return;
+      }
+      const letter = letterFor(n);
+      currentLetter.textContent = letter;
+      currentNumber.textContent = n;
+
+      if (!prefersReduced) {
+        currentNumber.style.transform = 'scale(1.05)';
+        currentNumber.style.transition = 'transform 120ms ease-out';
+        requestAnimationFrame(() => {
+          setTimeout(() => (currentNumber.style.transform = 'scale(1)'), 120);
+        });
+      }
+
+      // Screen reader announcement
+      const speak = `${letter} ${n}`;
+      srAnnouncement.textContent = speak;
+    }
+
+    function updateUI() {
+      calledCount.textContent = called.length;
+      remainingCount.textContent = 75 - called.length;
+
+      // History tiles (most recent first)
+      historyGrid.innerHTML = '';
+      const tiles = [...called].reverse();
+      for (const n of tiles) {
+        const letter = letterFor(n);
+        const tile = document.createElement('div');
+        tile.className = 'w-12 h-12 md:w-14 md:h-14 lg:w-16 lg:h-16 rounded-xl flex items-center justify-center text-xl md:text-2xl font-extrabold ' +
+          'bg-gray-800 border-2 ' +
+          (letter === 'B' ? 'border-blue-300 text-blue-200' :
+           letter === 'I' ? 'border-purple-300 text-purple-200' :
+           letter === 'N' ? 'border-green-300 text-green-200' :
+           letter === 'G' ? 'border-yellow-300 text-yellow-200' :
+                            'border-pink-300 text-pink-200');
+        tile.setAttribute('aria-label', `${letter} ${n}`);
+        tile.textContent = `${letter}${n}`;
+        historyGrid.appendChild(tile);
+      }
+    }
+
+    function callNext() {
+      if (deck.length === 0) return; // no more numbers
+      const n = deck.pop();
+      called.push(n);
+      setDisplay(n);
+      updateUI();
+    }
+
+    function undo() {
+      if (called.length === 0) return;
+      const n = called.pop();
+      deck.push(n);
+      setDisplay(called.length ? called[called.length - 1] : null);
+      updateUI();
+    }
+
+    function resetGame() {
+      initGame();
+    }
+
+    // Fullscreen for projector use
+    async function toggleFullscreen() {
+      if (!document.fullscreenElement) {
+        try {
+          await document.documentElement.requestFullscreen();
+        } catch (e) {}
+      } else {
+        try {
+          await document.exitFullscreen();
+        } catch (e) {}
+      }
+    }
+
+    // Events
+    callBtn.addEventListener('click', callNext);
+    undoBtn.addEventListener('click', undo);
+    resetBtn.addEventListener('click', resetGame);
+    fullscreenBtn.addEventListener('click', toggleFullscreen);
+
+    // Keyboard shortcuts
+    window.addEventListener('keydown', (e) => {
+      // Avoid interfering with typing in inputs (future-proof)
+      const tag = (e.target && e.target.tagName) || '';
+      if (tag === 'INPUT' || tag === 'TEXTAREA') return;
+
+      if (e.code === 'Space') {
+        e.preventDefault();
+        callNext();
+      } else if (e.code === 'Backspace') {
+        e.preventDefault();
+        undo();
+      } else if (e.key.toLowerCase() === 'r') {
+        e.preventDefault();
+        resetGame();
+      } else if (e.key.toLowerCase() === 'f') {
+        e.preventDefault();
+        toggleFullscreen();
+      }
+    });
+
+    // Footer year + boot
     document.getElementById('year').textContent = new Date().getFullYear();
+    initGame();
   </script>
 </body>
 </html>
