@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Classic Bingo — ProjectorFirst</title>
+  <meta name="description" content="Classic Bingo caller with large display and call history."/>
+  <meta name="theme-color" content="#22c55e"/>
+  <link rel="icon" href="/logo.svg" type="image/svg+xml"/>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .skip-link{position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden}
+    .skip-link:focus{left:1rem;top:1rem;width:auto;height:auto;padding:.75rem 1rem;background:#22c55e;color:#111;border-radius:.75rem;z-index:50}
+  </style>
+</head>
+<body class="bg-gray-900 text-white font-sans text-2xl leading-relaxed">
+  <a href="#main" class="skip-link">Skip to main content</a>
+
+  <!-- Header -->
+  <header class="bg-gray-800 py-4 shadow-md" role="banner">
+    <div class="max-w-6xl mx-auto px-4 flex items-center justify-between">
+      <a href="/" class="flex items-center gap-3 focus:outline-none focus:ring-4 focus:ring-green-400 rounded-xl">
+        <img src="/logo.svg" alt="ProjectorFirst logo" class="w-10 h-10"/>
+        <span class="text-2xl font-extrabold text-green-400">ProjectorFirst</span>
+      </a>
+      <nav class="space-x-2" aria-label="Primary">
+        <a href="/bingo.html" class="px-4 py-2 rounded-xl hover:bg-green-400 hover:text-gray-900 transition focus:outline-none focus:ring-4 focus:ring-green-400">Bingo Hub</a>
+        <a href="/apps.html" class="px-4 py-2 rounded-xl hover:bg-green-400 hover:text-gray-900 transition focus:outline-none focus:ring-4 focus:ring-green-400">Apps</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main -->
+  <main id="main" class="max-w-6xl mx-auto px-4 py-6 sm:py-10">
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+      <h1 class="text-4xl sm:text-5xl font-extrabold text-green-400">Classic Bingo</h1>
+      <div class="text-gray-300 text-xl">
+        Drawn: <span id="count" class="font-bold text-white">0</span> / 75
+      </div>
+    </div>
+
+    <!-- Big Caller Display -->
+    <section class="grid gap-6 lg:grid-cols-[1fr_420px]">
+      <div class="bg-gray-800 rounded-2xl p-6 sm:p-10 flex flex-col items-center justify-center">
+        <div class="flex items-center gap-4 mb-6">
+          <!-- BINGO header with active letter highlight -->
+          <span id="L-B" class="px-3 py-1 rounded-xl bg-gray-700 text-4xl font-extrabold">B</span>
+          <span id="L-I" class="px-3 py-1 rounded-xl bg-gray-700 text-4xl font-extrabold">I</span>
+          <span id="L-N" class="px-3 py-1 rounded-xl bg-gray-700 text-4xl font-extrabold">N</span>
+          <span id="L-G" class="px-3 py-1 rounded-xl bg-gray-700 text-4xl font-extrabold">G</span>
+          <span id="L-O" class="px-3 py-1 rounded-xl bg-gray-700 text-4xl font-extrabold">O</span>
+        </div>
+
+        <!-- Current call -->
+        <div id="current-call" class="text-[22vw] sm:text-[14rem] leading-none font-black text-white tracking-wider text-center select-none"
+             aria-live="assertive" aria-atomic="true">
+          –
+        </div>
+
+        <!-- Controls -->
+        <div class="mt-8 flex flex-wrap items-center justify-center gap-4">
+          <button id="nextBtn" class="px-8 py-4 bg-green-500 text-gray-900 font-black text-3xl rounded-2xl hover:bg-green-400 transition focus:outline-none focus:ring-4 focus:ring-green-400">
+            Next
+          </button>
+          <button id="resetBtn" class="px-6 py-4 bg-gray-700 text-white font-bold text-2xl rounded-2xl hover:bg-gray-600 transition focus:outline-none focus:ring-4 focus:ring-green-400">
+            Reset
+          </button>
+          <button id="fsBtn" class="px-6 py-4 bg-gray-700 text-white font-bold text-2xl rounded-2xl hover:bg-gray-600 transition focus:outline-none focus:ring-4 focus:ring-green-400">
+            Full Screen
+          </button>
+          <label class="flex items-center gap-3 px-4 py-3 rounded-2xl bg-gray-700 cursor-pointer select-none">
+            <input id="soundToggle" type="checkbox" class="w-6 h-6 accent-green-500">
+            <span class="text-xl">Sound</span>
+          </label>
+        </div>
+
+        <p class="mt-4 text-gray-400 text-xl text-center">
+          Shortcuts: <span class="text-gray-300">Space/Enter = Next</span> · <span class="text-gray-300">R = Reset</span> · <span class="text-gray-300">F = Full Screen</span>
+        </p>
+      </div>
+
+      <!-- Call History -->
+      <aside class="bg-gray-800 rounded-2xl p-6">
+        <h2 class="text-2xl font-bold text-green-400 mb-4">Call History</h2>
+        <div id="history" class="grid grid-cols-5 gap-2 text-center">
+          <!-- filled by JS -->
+        </div>
+
+        <div class="mt-8">
+          <h3 class="text-xl font-bold text-gray-200 mb-3">Called Board</h3>
+          <!-- Simple 1–75 board with highlights -->
+          <div id="board" class="grid grid-cols-15 gap-1 text-center text-base sm:text-lg">
+            <!-- filled by JS -->
+          </div>
+          <div class="mt-2 text-gray-400 text-sm">Columns = 1–15(B) · 16–30(I) · 31–45(N) · 46–60(G) · 61–75(O)</div>
+        </div>
+      </aside>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-gray-800 py-6 mt-12" role="contentinfo">
+    <div class="max-w-6xl mx-auto px-4 text-center text-gray-400 text-base">
+      © <span id="year"></span> ProjectorFirst • Big, Simple Apps for Nursing Homes & Senior Care
+    </div>
+  </footer>
+
+  <script>
+    // Year
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // Helpers
+    const letterFor = (n) => n <= 15 ? 'B' : n <= 30 ? 'I' : n <= 45 ? 'N' : n <= 60 ? 'G' : 'O';
+    const highlightLetter = (L) => {
+      ['B','I','N','G','O'].forEach(ch => {
+        const el = document.getElementById('L-' + ch);
+        el.classList.toggle('bg-green-500');
+        el.classList.toggle('text-gray-900');
+        el.classList.toggle('bg-gray-700');
+        el.classList.toggle('text-white');
+        // Reset then reapply to only active letter:
+        if(ch !== L){
+          el.classList.add('bg-gray-700','text-white');
+          el.classList.remove('bg-green-500','text-gray-900');
+        } else {
+          el.classList.add('bg-green-500','text-gray-900');
+          el.classList.remove('bg-gray-700','text-white');
+        }
+      });
+    };
+
+    // Sound (simple "ding")
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    function playDing(){
+      const o = ctx.createOscillator();
+      const g = ctx.createGain();
+      o.type = 'sine';
+      o.frequency.value = 880;
+      g.gain.setValueAtTime(0.0001, ctx.currentTime);
+      g.gain.exponentialRampToValueAtTime(0.2, ctx.currentTime + 0.01);
+      g.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.25);
+      o.connect(g); g.connect(ctx.destination);
+      o.start(); o.stop(ctx.currentTime + 0.3);
+    }
+
+    // State
+    let deck = [];
+    let drawn = [];
+    const currentCall = document.getElementById('current-call');
+    const historyEl = document.getElementById('history');
+    const countEl = document.getElementById('count');
+    const soundToggle = document.getElementById('soundToggle');
+    const boardEl = document.getElementById('board');
+
+    function makeDeck(){
+      const arr = Array.from({length:75}, (_,i)=>i+1);
+      for(let i=arr.length-1;i>0;i--){
+        const j = Math.floor(Math.random()*(i+1));
+        [arr[i],arr[j]] = [arr[j],arr[i]];
+      }
+      return arr;
+    }
+
+    function buildBoard(){
+      boardEl.innerHTML = '';
+      for(let n=1;n<=75;n++){
+        const L = letterFor(n);
+        const cell = document.createElement('div');
+        cell.id = 'cell-'+n;
+        cell.className = 'px-2 py-1 rounded-md bg-gray-700 text-gray-200';
+        cell.textContent = L + ' ' + n;
+        boardEl.appendChild(cell);
+      }
+    }
+
+    function updateBoard(n){
+      const c = document.getElementById('cell-'+n);
+      if(c){
+        c.classList.remove('bg-gray-700','text-gray-200');
+        c.classList.add('bg-green-500','text-gray-900','font-bold');
+      }
+    }
+
+    function renderHistory(){
+      historyEl.innerHTML = '';
+      drawn.slice().reverse().forEach(n=>{
+        const L = letterFor(n);
+        const tag = document.createElement('div');
+        tag.className = 'px-2 py-1 rounded-xl bg-gray-700 text-white';
+        tag.textContent = L + ' ' + n;
+        historyEl.appendChild(tag);
+      });
+    }
+
+    function reset(){
+      deck = makeDeck();
+      drawn = [];
+      currentCall.textContent = '–';
+      countEl.textContent = '0';
+      highlightLetter('B'); // default
+      historyEl.innerHTML = '';
+      buildBoard();
+    }
+
+    function next(){
+      if(deck.length === 0){
+        // All drawn; reshuffle but keep last call on screen
+        alert('All 75 numbers have been called. Resetting deck.');
+        reset();
+        return;
+      }
+      const n = deck.pop();
+      drawn.push(n);
+      const L = letterFor(n);
+      currentCall.textContent = L + ' ' + n;
+      countEl.textContent = drawn.length.toString();
+      highlightLetter(L);
+      updateBoard(n);
+      renderHistory();
+      if(soundToggle.checked){
+        try{ playDing(); } catch(e){}
+      }
+    }
+
+    // Init
+    reset();
+
+    // Controls
+    document.getElementById('nextBtn').addEventListener('click', next);
+    document.getElementById('resetBtn').addEventListener('click', reset);
+    document.getElementById('fsBtn').addEventListener('click', ()=>{
+      const el = document.documentElement;
+      if(!document.fullscreenElement){
+        el.requestFullscreen?.();
+      } else {
+        document.exitFullscreen?.();
+      }
+    });
+
+    // Keyboard shortcuts
+    window.addEventListener('keydown', (e)=>{
+      if(e.key === ' ' || e.key === 'Enter'){ e.preventDefault(); next(); }
+      if(e.key.toLowerCase() === 'r'){ e.preventDefault(); reset(); }
+      if(e.key.toLowerCase() === 'f'){ e.preventDefault();
+        if(!document.fullscreenElement){ document.documentElement.requestFullscreen?.(); }
+        else { document.exitFullscreen?.(); }
+      }
+    });
+  </script>
+</body>
+</html>
