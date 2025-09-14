@@ -28,7 +28,8 @@
     </div>
   </header>
 
-  <main id="main" class="max-w-6xl mx-auto p-6 md:p-10">
+  <!-- Add extra bottom padding so content doesn't sit under the strip -->
+  <main id="main" class="max-w-6xl mx-auto p-6 md:p-10 pb-[9rem]">
     <h2 class="text-3xl md:text-4xl font-extrabold text-center mb-6">Bingo App</h2>
 
     <!-- Status row -->
@@ -41,14 +42,14 @@
       </div>
     </section>
 
-    <!-- Big display -->
+    <!-- Big display (bigger letter + clear space between letter/number) -->
     <section aria-live="polite" aria-atomic="true" class="mb-6">
       <div id="currentCall"
            class="select-none text-center bg-black border-4 border-green-400 rounded-3xl shadow-xl mx-auto
                   flex items-center justify-center"
            style="height: 38vh;">
-        <div class="leading-none">
-          <div id="currentLetter" class="text-7xl md:text-8xl font-extrabold text-green-400">—</div>
+        <div class="leading-none flex items-end gap-6">
+          <div id="currentLetter" class="text-8xl md:text-9xl font-extrabold text-green-400 tracking-wider">—</div>
           <div id="currentNumber" class="text-[10rem] md:text-[14rem] font-extrabold text-white tracking-tight">—</div>
         </div>
       </div>
@@ -56,7 +57,7 @@
     </section>
 
     <!-- Controls -->
-    <section class="flex flex-wrap items-center justify-center gap-4 mb-8">
+    <section class="flex flex-wrap items-center justify-center gap-4 mb-4">
       <button id="callBtn"
               class="bg-green-400 text-gray-900 text-2xl md:text-3xl font-bold px-6 md:px-8 py-4 md:py-5 rounded-2xl shadow hover:bg-green-300 focus:outline-none focus:ring-4 focus:ring-green-300">
         Call Next (Space)
@@ -73,52 +74,32 @@
               class="bg-gray-700 text-white text-xl md:text-2xl font-semibold px-5 md:px-6 py-4 rounded-2xl shadow hover:bg-gray-600 focus:outline-none focus:ring-4 focus:ring-gray-500">
         Fullscreen (F)
       </button>
-      <button id="toggleBoardBtn"
-              class="bg-blue-400 text-gray-900 text-xl md:text-2xl font-bold px-5 md:px-6 py-4 rounded-2xl shadow hover:bg-blue-300 focus:outline-none focus:ring-4 focus:ring-blue-300">
-        Show Board (B)
-      </button>
-    </section>
-
-    <!-- Board -->
-    <section id="boardSection" class="hidden">
-      <h3 class="text-2xl md:text-3xl font-bold mb-4 text-center">Bingo Board</h3>
-
-      <!-- Column headers -->
-      <div class="grid grid-cols-5 gap-2 md:gap-3 mb-2">
-        <div class="text-center bg-blue-500 text-gray-900 font-extrabold text-2xl md:text-3xl py-2 rounded-xl shadow">B</div>
-        <div class="text-center bg-purple-500 text-gray-900 font-extrabold text-2xl md:text-3xl py-2 rounded-xl shadow">I</div>
-        <div class="text-center bg-green-500 text-gray-900 font-extrabold text-2xl md:text-3xl py-2 rounded-xl shadow">N</div>
-        <div class="text-center bg-yellow-400 text-gray-900 font-extrabold text-2xl md:text-3xl py-2 rounded-xl shadow">G</div>
-        <div class="text-center bg-pink-500 text-gray-900 font-extrabold text-2xl md:text-3xl py-2 rounded-xl shadow">O</div>
-      </div>
-
-      <!-- Numbers grid: 5 columns x 15 rows -->
-      <div id="boardGrid" class="grid grid-cols-5 gap-2 md:gap-3" aria-label="Bingo board 1 to 75">
-        <!-- Populated by JS -->
-      </div>
-
-      <!-- Legend -->
-      <p class="mt-4 text-center text-base md:text-lg text-gray-300">
-        <span class="inline-block w-5 h-5 align-middle rounded-md bg-green-400 border-2 border-white mr-2"></span>
-        = Called &nbsp;&nbsp;|&nbsp;&nbsp;
-        <span class="inline-block w-5 h-5 align-middle rounded-md ring-4 ring-yellow-300 mr-2"></span>
-        = Most recent call
-      </p>
     </section>
 
     <!-- Help -->
-    <section class="mt-8 text-center text-gray-300">
+    <section class="text-center text-gray-300">
       <p class="text-lg md:text-xl">
         Keyboard: <span class="font-semibold text-white">Space</span> = Call Next,
         <span class="font-semibold text-white">Backspace</span> = Undo,
         <span class="font-semibold text-white">R</span> = Reset,
-        <span class="font-semibold text-white">F</span> = Fullscreen,
-        <span class="font-semibold text-white">B</span> = Show/Hide Board.
+        <span class="font-semibold text-white">F</span> = Fullscreen.
       </p>
     </section>
 
     <div class="sr-only" id="live" aria-live="polite"></div>
   </main>
+
+  <!-- Bottom strip of called numbers -->
+  <section aria-label="Called numbers"
+           class="fixed left-0 right-0 bottom-0 bg-gray-800/95 backdrop-blur-sm border-t border-gray-700">
+    <div class="max-w-7xl mx-auto px-3 md:px-6 py-3">
+      <div id="calledStrip"
+           class="flex flex-wrap gap-2 md:gap-3 justify-center">
+        <!-- Chips injected by JS -->
+      </div>
+      <p class="sr-only" id="stripAnnouncement"></p>
+    </div>
+  </section>
 
   <footer class="bg-gray-800 py-4 mt-12 text-center text-gray-400 text-sm">
     © <span id="year"></span> ProjectorFirst. All rights reserved.
@@ -150,67 +131,26 @@
     const remainingCount = document.getElementById('remainingCount');
     const currentLetter = document.getElementById('currentLetter');
     const currentNumber = document.getElementById('currentNumber');
-    const historyGrid = document.getElementById('history'); // may not exist yet; safe no-op
     const srAnnouncement = document.getElementById('srAnnouncement');
 
     const callBtn = document.getElementById('callBtn');
     const undoBtn = document.getElementById('undoBtn');
     const resetBtn = document.getElementById('resetBtn');
     const fullscreenBtn = document.getElementById('fullscreenBtn');
-    const toggleBoardBtn = document.getElementById('toggleBoardBtn');
-    const boardSection = document.getElementById('boardSection');
-    const boardGrid = document.getElementById('boardGrid');
+
+    const calledStrip = document.getElementById('calledStrip');
 
     // Game state
     let deck = [];
     let called = [];
-
-    // Board state
-    const cells = new Map(); // n -> element
-    let lastHighlighted = null;
+    let lastChip = null;
 
     function initGame() {
       deck = shuffle(range(1, 75));
       called = [];
-      renderBoard();
       updateUI();
       setDisplay(null);
-    }
-
-    // Build the 5 bingo columns and cells
-    function renderBoard() {
-      boardGrid.innerHTML = '';
-      cells.clear();
-
-      const columns = [
-        { start: 1,  end: 15, color: 'border-blue-300 text-blue-200' },
-        { start: 16, end: 30, color: 'border-purple-300 text-purple-200' },
-        { start: 31, end: 45, color: 'border-green-300 text-green-200' },
-        { start: 46, end: 60, color: 'border-yellow-300 text-yellow-200' },
-        { start: 61, end: 75, color: 'border-pink-300 text-pink-200' },
-      ];
-
-      for (const col of columns) {
-        const colWrap = document.createElement('div');
-        colWrap.className = 'grid grid-rows-15 gap-2 md:gap-3';
-        for (let n = col.start; n <= col.end; n++) {
-          const cell = document.createElement('div');
-          cell.id = `cell-${n}`;
-          cell.setAttribute('role', 'button');
-          cell.setAttribute('aria-label', `${letterFor(n)} ${n}`);
-          cell.className = [
-            'w-full aspect-square rounded-xl flex items-center justify-center',
-            'text-xl md:text-2xl font-extrabold select-none',
-            'bg-gray-800 border-2', col.color
-          ].join(' ');
-          cell.textContent = n;
-          cells.set(n, cell);
-          colWrap.appendChild(cell);
-        }
-        boardGrid.appendChild(colWrap);
-      }
-      // Apply called highlights (useful on reset or hydration)
-      refreshBoardHighlights();
+      renderStrip();
     }
 
     function setDisplay(n) {
@@ -221,8 +161,8 @@
         return;
       }
       const letter = letterFor(n);
-      currentLetter.textContent = letter;
-      currentNumber.textContent = n;
+      currentLetter.textContent = letter;               // bigger letter
+      currentNumber.textContent = n;                    // big number
 
       if (!prefersReduced) {
         currentNumber.style.transform = 'scale(1.05)';
@@ -238,66 +178,51 @@
     function updateUI() {
       calledCount.textContent = called.length;
       remainingCount.textContent = 75 - called.length;
-
-      // History tiles (if the history grid exists from previous step)
-      if (historyGrid) {
-        historyGrid.innerHTML = '';
-        const tiles = [...called].reverse();
-        for (const n of tiles) {
-          const letter = letterFor(n);
-          const tile = document.createElement('div');
-          tile.className = 'w-12 h-12 md:w-14 md:h-14 lg:w-16 lg:h-16 rounded-xl flex items-center justify-center text-xl md:text-2xl font-extrabold ' +
-            'bg-gray-800 border-2 ' +
-            (letter === 'B' ? 'border-blue-300 text-blue-200' :
-             letter === 'I' ? 'border-purple-300 text-purple-200' :
-             letter === 'N' ? 'border-green-300 text-green-200' :
-             letter === 'G' ? 'border-yellow-300 text-yellow-200' :
-                              'border-pink-300 text-pink-200');
-          tile.setAttribute('aria-label', `${letter} ${n}`);
-          tile.textContent = `${letter}${n}`;
-          historyGrid.appendChild(tile);
-        }
-      }
-
-      refreshBoardHighlights();
+      renderStrip();
     }
 
-    function refreshBoardHighlights() {
-      // Clear previous "last" ring
-      if (lastHighlighted && cells.has(lastHighlighted)) {
-        const prev = cells.get(lastHighlighted);
-        prev.classList.remove('ring-4', 'ring-yellow-300');
+    function renderStrip() {
+      calledStrip.innerHTML = '';
+      lastChip = null;
+
+      // Build chips: oldest left, newest right (natural reading order)
+      for (let i = 0; i < called.length; i++) {
+        const n = called[i];
+        const letter = letterFor(n);
+        const chip = document.createElement('div');
+
+        const color =
+          letter === 'B' ? 'border-blue-300 text-blue-100' :
+          letter === 'I' ? 'border-purple-300 text-purple-100' :
+          letter === 'N' ? 'border-green-300 text-green-100' :
+          letter === 'G' ? 'border-yellow-300 text-yellow-100' :
+                           'border-pink-300 text-pink-100';
+
+        chip.className = [
+          'px-3 md:px-4 py-2 md:py-2.5 rounded-xl',
+          'text-2xl md:text-3xl font-extrabold select-none',
+          'bg-gray-900 border-2', color
+        ].join(' ');
+
+        // Bigger letter + a clear space between letter and number
+        chip.textContent = `${letter} ${n}`;
+        chip.setAttribute('aria-label', `${letter} ${n}`);
+
+        calledStrip.appendChild(chip);
+        lastChip = chip;
       }
 
-      // Mark all called numbers
-      for (let n = 1; n <= 75; n++) {
-        const el = cells.get(n);
-        if (!el) continue;
-        if (called.includes(n)) {
-          el.classList.add('bg-green-400', 'text-gray-900', 'border-white');
-          el.classList.remove('bg-gray-800');
-        } else {
-          el.classList.remove('bg-green-400', 'text-gray-900', 'border-white');
-          el.classList.add('bg-gray-800');
+      // Highlight most recent chip
+      if (lastChip) {
+        lastChip.classList.add('bg-green-400', 'text-gray-900', 'border-white', 'ring-4', 'ring-yellow-300');
+        if (!prefersReduced) {
+          lastChip.animate(
+            [{ transform: 'scale(1.0)' }, { transform: 'scale(1.06)' }, { transform: 'scale(1.0)' }],
+            { duration: 220, easing: 'ease-out' }
+          );
         }
-      }
-
-      // Highlight most recent call
-      if (called.length > 0) {
-        const last = called[called.length - 1];
-        lastHighlighted = last;
-        const el = cells.get(last);
-        if (el) {
-          el.classList.add('ring-4', 'ring-yellow-300');
-          if (!prefersReduced) {
-            el.animate(
-              [{ transform: 'scale(1.0)' }, { transform: 'scale(1.06)' }, { transform: 'scale(1.0)' }],
-              { duration: 220, easing: 'ease-out' }
-            );
-          }
-        }
-      } else {
-        lastHighlighted = null;
+        // Ensure it's visible if overflow wraps
+        lastChip.scrollIntoView({ behavior: prefersReduced ? 'auto' : 'smooth', inline: 'end', block: 'nearest' });
       }
     }
 
@@ -330,26 +255,11 @@
       }
     }
 
-    // Show/Hide board
-    function toggleBoard() {
-      const isHidden = boardSection.classList.contains('hidden');
-      if (isHidden) {
-        boardSection.classList.remove('hidden');
-        toggleBoardBtn.textContent = 'Hide Board (B)';
-      } else {
-        boardSection.classList.add('hidden');
-        toggleBoardBtn.textContent = 'Show Board (B)';
-      }
-      // Keep focus visible for keyboard users
-      toggleBoardBtn.focus({ preventScroll: true });
-    }
-
     // Events
     callBtn.addEventListener('click', callNext);
     undoBtn.addEventListener('click', undo);
     resetBtn.addEventListener('click', resetGame);
     fullscreenBtn.addEventListener('click', toggleFullscreen);
-    toggleBoardBtn.addEventListener('click', toggleBoard);
 
     // Keyboard shortcuts
     window.addEventListener('keydown', (e) => {
@@ -360,7 +270,6 @@
       else if (e.code === 'Backspace') { e.preventDefault(); undo(); }
       else if (e.key.toLowerCase() === 'r') { e.preventDefault(); resetGame(); }
       else if (e.key.toLowerCase() === 'f') { e.preventDefault(); toggleFullscreen(); }
-      else if (e.key.toLowerCase() === 'b') { e.preventDefault(); toggleBoard(); }
     });
 
     // Footer year + boot
