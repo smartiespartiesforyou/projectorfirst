@@ -11,11 +11,12 @@
 <body class="bg-gray-900 text-white font-sans">
 
   <!-- NAV -->
-  <div id="navbar"></div>
-  <script>
-    fetch('/nav.html')
-      .then(res => res.text())
-      .then(html => document.getElementById('navbar').innerHTML = html);
+ <div id="navbar"></div>
+<script>
+  fetch('/header.html')
+    .then(res => res.text())
+    .then(html => document.getElementById('navbar').innerHTML = html);
+</script>
   </script>
 
   <!-- HEADER -->
