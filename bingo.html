@@ -42,19 +42,22 @@
       </div>
     </section>
 
-    <!-- Big display (bigger letter + clear space between letter/number) -->
-    <section aria-live="polite" aria-atomic="true" class="mb-6">
-      <div id="currentCall"
-           class="select-none text-center bg-black border-4 border-green-400 rounded-3xl shadow-xl mx-auto
-                  flex items-center justify-center"
-           style="height: 38vh;">
-        <div class="leading-none flex items-end gap-6">
-          <div id="currentLetter" class="text-8xl md:text-9xl font-extrabold text-green-400 tracking-wider">—</div>
-          <div id="currentNumber" class="text-[10rem] md:text-[14rem] font-extrabold text-white tracking-tight">—</div>
-        </div>
-      </div>
-      <p class="sr-only" id="srAnnouncement"></p>
-    </section>
+   <!-- Big display (letter as big as number, with space between) -->
+<section aria-live="polite" aria-atomic="true" class="mb-6">
+  <div id="currentCall"
+       class="select-none text-center bg-black border-4 border-green-400 rounded-3xl shadow-xl mx-auto
+              flex items-center justify-center"
+       style="height: 38vh;">
+    <div class="leading-none flex items-end gap-8">
+      <div id="currentLetter"
+           class="text-[10rem] md:text-[14rem] font-extrabold text-green-400">—</div>
+      <div id="currentNumber"
+           class="text-[10rem] md:text-[14rem] font-extrabold text-white tracking-tight">—</div>
+    </div>
+  </div>
+  <p class="sr-only" id="srAnnouncement"></p>
+</section>
+
 
     <!-- Controls -->
     <section class="flex flex-wrap items-center justify-center gap-4 mb-4">
