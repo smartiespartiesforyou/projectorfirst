@@ -1,33 +1,39 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>About Me</title>
+  <link href="styles.css" rel="stylesheet" />
+  <style>
+    /* Page-local, smaller typography */
+    main { max-width: 560px; margin: 32px auto; padding: 0 16px; }
+    h1 { font-size: 22px; margin: 0 0 12px; }
+    p { font-size: 16px; margin: 0 0 12px; }
+  </style>
 </head>
-<body style="font-family: sans-serif; margin: 40px auto; max-width: 600px; padding: 0 16px;">
+<body>
   <div id="nav"></div>
 
-  <h1>About Me</h1>
-  <p>
-    I am a former Activity Director with a degree in Psychology and a Master’s in Criminal Justice.
-    My work in senior care has shown me how vision and hearing challenges can make it hard for
-    older adults to engage fully in activities.
-  </p>
-  <p>
-    This website is designed to be simple, accessible, and inclusive so everyone can participate,
-    no matter their abilities.
-  </p>
+  <main>
+    <h1>About Me</h1>
+    <p>
+      I am a former Activity Director with a degree in Psychology and a Master’s in Criminal Justice.
+      My work in senior care has shown me how vision and hearing challenges can make it hard for
+      older adults to engage fully in activities.
+    </p>
+    <p>
+      This website is designed to be simple, accessible, and inclusive so everyone can participate,
+      no matter their abilities.
+    </p>
+  </main>
 
   <div id="footer"></div>
 
   <script>
     (async () => {
-      const nav = await fetch('includes/nav.html');
-      document.getElementById('nav').innerHTML = await nav.text();
-
-      const footer = await fetch('includes/footer.html');
-      document.getElementById('footer').innerHTML = await footer.text();
+      const nav = await fetch('includes/nav.html'); document.getElementById('nav').innerHTML = await nav.text();
+      const footer = await fetch('includes/footer.html'); document.getElementById('footer').innerHTML = await footer.text();
     })();
   </script>
 </body>
