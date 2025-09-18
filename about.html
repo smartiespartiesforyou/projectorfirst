@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>About Me — ProjectorFirst</title>
-  <meta name="description" content="Learn about the creator of ProjectorFirst."/>
+  <title>About — ProjectorFirst</title>
+  <meta name="description" content="Learn about ProjectorFirst and our mission to create projector-friendly apps for seniors and care homes."/>
   <meta name="theme-color" content="#22c55e"/>
   <link rel="icon" href="/logo.svg" type="image/svg+xml"/>
   <script src="https://cdn.tailwindcss.com"></script>
@@ -24,29 +24,46 @@
         <span class="text-2xl font-extrabold text-green-400">ProjectorFirst</span>
       </a>
       <nav class="space-x-2" aria-label="Primary">
+        <a href="/index.html" class="px-4 py-2 rounded-xl hover:bg-green-400 hover:text-gray-900 transition focus:outline-none focus:ring-4 focus:ring-green-400">Home</a>
         <a href="/apps.html" class="px-4 py-2 rounded-xl hover:bg-green-400 hover:text-gray-900 transition focus:outline-none focus:ring-4 focus:ring-green-400">Apps</a>
-        <a href="/about.html" class="px-4 py-2 rounded-xl bg-green-500 text-gray-900 font-bold focus:outline-none focus:ring-4 focus:ring-green-400">About</a>
+        <a href="/about.html" aria-current="page" class="px-4 py-2 rounded-xl bg-green-500 text-gray-900 font-bold focus:outline-none focus:ring-4 focus:ring-green-400">About</a>
         <a href="/contact.html" class="px-4 py-2 rounded-xl hover:bg-green-400 hover:text-gray-900 transition focus:outline-none focus:ring-4 focus:ring-green-400">Contact</a>
       </nav>
     </div>
   </header>
 
   <!-- Main -->
-  <main id="main" class="max-w-4xl mx-auto px-4 py-14">
-    <h1 class="text-4xl sm:text-5xl font-extrabold mb-6 text-green-400">About Me</h1>
-    <p class="mb-6">
-      I created ProjectorFirst because I wanted to make tools that are easy for everyone to use —
-      especially in senior care settings where clarity and simplicity matter most.
+  <main id="main" class="max-w-6xl mx-auto px-4 py-14">
+    <h1 class="text-4xl sm:text-5xl font-extrabold mb-8 text-green-400 text-center">About ProjectorFirst</h1>
+    <p class="text-gray-300 text-center max-w-3xl mx-auto mb-12">
+      ProjectorFirst was created with one simple idea: make digital games and tools that are 
+      <span class="text-green-400 font-bold">easy to see</span>, 
+      <span class="text-green-400 font-bold">easy to use</span>, and 
+      <span class="text-green-400 font-bold">fun for everyone</span>.
     </p>
-    <p class="mb-6">
-      I used to be an <span class="font-bold text-green-400">Activity Director</span>.
-      My background is in psychology, with a degree in the subject,
-      and I also hold a <span class="font-bold text-green-400">Master’s in Criminal Justice</span>.
-    </p>
-    <p class="mb-6">
-      These experiences shaped my belief that technology should never get in the way of connection and fun.
-      That’s why ProjectorFirst is designed to be big, simple, and stress-free.
-    </p>
+
+    <div class="grid gap-6 sm:grid-cols-2">
+      <div class="bg-gray-800 border border-gray-700 rounded-2xl p-8">
+        <h2 class="text-3xl font-extrabold text-green-400 mb-4">👵 Built for Seniors</h2>
+        <p class="text-gray-300">
+          Large text, clear buttons, and simple layouts mean everyone can join in — no matter their tech comfort level.
+        </p>
+      </div>
+      <div class="bg-gray-800 border border-gray-700 rounded-2xl p-8">
+        <h2 class="text-3xl font-extrabold text-green-400 mb-4">🏠 Perfect for Care Homes</h2>
+        <p class="text-gray-300">
+          Designed for projectors and TVs so games can be enjoyed together in group activities, recreation rooms, or family visits.
+        </p>
+      </div>
+    </div>
+
+    <div class="bg-gray-800 border border-gray-700 rounded-2xl p-8 mt-8 text-center">
+      <h2 class="text-3xl font-extrabold text-green-400 mb-4">💡 Our Mission</h2>
+      <p class="text-gray-300 max-w-3xl mx-auto">
+        We believe technology should bring people together. By making apps that are bold, bright, and simple,
+        ProjectorFirst helps create moments of joy and connection in senior care.
+      </p>
+    </div>
   </main>
 
   <!-- Footer -->
@@ -61,4 +78,3 @@
   </script>
 </body>
 </html>
-
