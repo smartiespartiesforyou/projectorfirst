@@ -3,18 +3,17 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>ProjectorFirst — Big, Simple Apps for Senior Care</title>
-  <meta name="description" content="Big, simple, projector-ready apps for nursing homes & senior care."/>
+  <title>Home — ProjectorFirst</title>
+  <meta name="description" content="Big, simple projector-friendly apps for senior care."/>
   <meta name="theme-color" content="#22c55e"/>
   <link rel="icon" href="/logo.svg" type="image/svg+xml"/>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    /* High-visibility skip link */
     .skip-link{position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden}
     .skip-link:focus{left:1rem;top:1rem;width:auto;height:auto;padding:.75rem 1rem;background:#22c55e;color:#111;border-radius:.75rem;z-index:50}
   </style>
 </head>
-<body class="text-xl leading-relaxed text-gray-900 bg-white">
+<body class="bg-gray-900 text-white font-sans text-2xl leading-relaxed">
   <a href="#main" class="skip-link">Skip to main content</a>
 
   <!-- Header -->
@@ -25,74 +24,43 @@
         <span class="text-2xl font-extrabold text-green-400">ProjectorFirst</span>
       </a>
       <nav class="space-x-2" aria-label="Primary">
+        <a href="/index.html" aria-current="page" class="px-4 py-2 rounded-xl bg-green-500 text-gray-900 font-bold focus:outline-none focus:ring-4 focus:ring-green-400">Home</a>
         <a href="/apps.html" class="px-4 py-2 rounded-xl hover:bg-green-400 hover:text-gray-900 transition focus:outline-none focus:ring-4 focus:ring-green-400">Apps</a>
+        <a href="/about.html" class="px-4 py-2 rounded-xl hover:bg-green-400 hover:text-gray-900 transition focus:outline-none focus:ring-4 focus:ring-green-400">About</a>
         <a href="/contact.html" class="px-4 py-2 rounded-xl hover:bg-green-400 hover:text-gray-900 transition focus:outline-none focus:ring-4 focus:ring-green-400">Contact</a>
       </nav>
     </div>
   </header>
 
   <!-- Main -->
-  <main id="main">
-    <!-- Hero -->
-    <section class="max-w-6xl mx-auto px-4 py-14 text-center">
-      <h1 class="text-4xl sm:text-6xl font-extrabold leading-tight">
-        Big, Simple Apps<br class="hidden sm:block"/> for Nursing Homes & Senior Care
-      </h1>
-      <p class="mt-4 text-gray-300 max-w-3xl mx-auto">
-        Zero-friction tools designed for projectors and TVs. Large fonts, high contrast, and one-click controls.
-      </p>
-      <div class="mt-8 flex items-center justify-center gap-4 flex-wrap">
-        <a href="/apps.html" class="px-8 py-4 text-xl bg-green-500 text-gray-900 font-black rounded-2xl hover:bg-green-400 transition focus:outline-none focus:ring-4 focus:ring-green-400">Launch Apps</a>
-        <a href="#features" class="px-6 py-4 bg-gray-800 rounded-2xl hover:bg-gray-700 transition focus:outline-none focus:ring-4 focus:ring-green-400">Why it works</a>
-      </div>
-    </section>
+  <main id="main" class="max-w-6xl mx-auto px-4 py-14">
+    <h1 class="text-4xl sm:text-5xl font-extrabold mb-8 text-green-400 text-center">Welcome to ProjectorFirst</h1>
+    <p class="text-gray-300 text-center max-w-3xl mx-auto mb-12">
+      Big, simple apps designed for projectors and TVs. Easy to read, high contrast, and one-click controls — built for seniors and care homes.
+    </p>
 
-    <!-- Popular apps quick links -->
-    <section class="max-w-6xl mx-auto px-4 pb-8" aria-labelledby="popular-heading">
-      <h2 id="popular-heading" class="text-2xl font-bold mb-4">Popular Right Now</h2>
-      <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <a href="/bingo.html" class="block bg-gray-800 border border-gray-700 rounded-2xl p-6 hover:border-green-400 transition focus:outline-none focus:ring-4 focus:ring-green-400">
-          <div class="text-green-400 font-bold mb-1">Bingo Caller</div>
-          <div class="text-gray-400 text-xl">Classic & seasonal themes.</div>
-        </a>
-        <a href="/horse-race.html" class="block bg-gray-800 border border-gray-700 rounded-2xl p-6 hover:border-green-400 transition focus:outline-none focus:ring-4 focus:ring-green-400">
-          <div class="text-green-400 font-bold mb-1">Horse Race</div>
-          <div class="text-gray-400 text-xl">Roll dice to move. First to 🏁 wins.</div>
-        </a>
-        <a href="/scrambler.html" class="block bg-gray-800 border border-gray-700 rounded-2xl p-6 hover:border-green-400 transition focus:outline-none focus:ring-4 focus:ring-green-400">
-          <div class="text-green-400 font-bold mb-1">Word Scrambler</div>
-          <div class="text-gray-400 text-xl">Jumbled words, big reveal.</div>
-        </a>
-        <a href="/countdown.html" class="block bg-gray-800 border border-gray-700 rounded-2xl p-6 hover:border-green-400 transition focus:outline-none focus:ring-4 focus:ring-green-400">
-          <div class="text-green-400 font-bold mb-1">Countdown Timer</div>
-          <div class="text-gray-400 text-xl">Huge numbers, presets.</div>
-        </a>
+    <!-- Feature Highlights -->
+    <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      <div class="bg-gray-800 border border-gray-700 rounded-2xl p-8">
+        <div class="text-3xl font-extrabold text-green-400 mb-2">🔍 Readable</div>
+        <p class="text-gray-300">Large fonts and high contrast for easy viewing.</p>
       </div>
-    </section>
+      <div class="bg-gray-800 border border-gray-700 rounded-2xl p-8">
+        <div class="text-3xl font-extrabold text-green-400 mb-2">🎯 Simple</div>
+        <p class="text-gray-300">One-click apps with no clutter or confusion.</p>
+      </div>
+      <div class="bg-gray-800 border border-gray-700 rounded-2xl p-8">
+        <div class="text-3xl font-extrabold text-green-400 mb-2">📺 Projector-Ready</div>
+        <p class="text-gray-300">Perfect for TVs, big screens, and group activities.</p>
+      </div>
+    </div>
 
-    <!-- Features -->
-    <section id="features" class="max-w-6xl mx-auto px-4 py-10" aria-labelledby="features-heading">
-      <h2 id="features-heading" class="sr-only">Why ProjectorFirst Works</h2>
-      <div class="grid gap-6 md:grid-cols-3">
-        <div class="bg-gray-800 rounded-2xl p-6">
-          <div class="text-green-400 font-bold mb-2">Projector-Ready</div>
-          <p class="text-gray-300">Oversized fonts, high contrast, keyboard shortcuts.</p>
-        </div>
-        <div class="bg-gray-800 rounded-2xl p-6">
-          <div class="text-green-400 font-bold mb-2">Zero Training</div>
-          <p class="text-gray-300">One page = one purpose. Staff can run it instantly.</p>
-        </div>
-        <div class="bg-gray-800 rounded-2xl p-6">
-          <div class="text-green-400 font-bold mb-2">Made for Seniors</div>
-          <p class="text-gray-300">Simple interactions, large buttons, readable layouts.</p>
-        </div>
-      </div>
-      <div class="text-center mt-10">
-        <a href="/apps.html" class="inline-block px-8 py-4 text-xl bg-green-500 text-gray-900 font-black rounded-2xl hover:bg-green-400 transition focus:outline-none focus:ring-4 focus:ring-green-400">
-          Open the App Hub
-        </a>
-      </div>
-    </section>
+    <!-- Call to Action -->
+    <div class="text-center mt-12">
+      <a href="/apps.html" class="inline-block px-8 py-4 rounded-xl bg-green-500 text-gray-900 font-bold text-2xl hover:bg-green-400 transition focus:outline-none focus:ring-4 focus:ring-green-400">
+        Launch Apps
+      </a>
+    </div>
   </main>
 
   <!-- Footer -->
