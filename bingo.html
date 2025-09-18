@@ -1,289 +1,83 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Bingo App — ProjectorFirst</title>
-  <meta name="description" content="ProjectorFirst Bingo App: Big-font, projector-friendly Bingo caller for nursing homes and senior care." />
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
-  <link rel="icon" href="/logo.svg" type="image/svg+xml" />
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Bingo Hub — ProjectorFirst</title>
+  <meta name="description" content="Choose from Classic or seasonal Bingo games."/>
+  <meta name="theme-color" content="#22c55e"/>
+  <link rel="icon" href="/logo.svg" type="image/svg+xml"/>
   <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .skip-link{position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden}
+    .skip-link:focus{left:1rem;top:1rem;width:auto;height:auto;padding:.75rem 1rem;background:#22c55e;color:#111;border-radius:.75rem;z-index:50}
+  </style>
 </head>
-<body class="bg-gray-900 text-white font-sans">
-  <a href="#main" class="absolute left-2 top-2 bg-green-400 text-gray-900 px-3 py-2 rounded focus:outline-none focus:ring-4 focus:ring-green-300">
-    Skip to content
-  </a>
+<body class="bg-gray-900 text-white font-sans text-2xl leading-relaxed">
+  <a href="#main" class="skip-link">Skip to main content</a>
 
-  <header class="bg-gray-800 py-4 shadow-md">
-    <div class="max-w-5xl mx-auto px-4 flex justify-between items-center">
-      <h1 class="text-2xl font-bold text-green-400">ProjectorFirst</h1>
-      <nav class="space-x-2">
-        <a href="/" class="px-3 py-2 rounded hover:bg-green-400 hover:text-gray-900 focus:outline-none focus:ring-4 focus:ring-green-300 transition">Home</a>
-        <a href="/about.html" class="px-3 py-2 rounded hover:bg-green-400 hover:text-gray-900 focus:outline-none focus:ring-4 focus:ring-green-300 transition">About</a>
-        <a href="/contact.html" class="px-3 py-2 rounded hover:bg-green-400 hover:text-gray-900 focus:outline-none focus:ring-4 focus:ring-green-300 transition">Contact</a>
-        <a href="/apps.html" class="px-3 py-2 rounded hover:bg-green-400 hover:text-gray-900 focus:outline-none focus:ring-4 focus:ring-green-300 transition">Apps</a>
+  <!-- Header -->
+  <header class="bg-gray-800 py-4 shadow-md" role="banner">
+    <div class="max-w-6xl mx-auto px-4 flex items-center justify-between">
+      <a href="/" class="flex items-center gap-3 focus:outline-none focus:ring-4 focus:ring-green-400 rounded-xl">
+        <img src="/logo.svg" alt="ProjectorFirst logo" class="w-10 h-10"/>
+        <span class="text-2xl font-extrabold text-green-400">ProjectorFirst</span>
+      </a>
+      <nav class="space-x-2" aria-label="Primary">
+        <a href="/index.html" class="px-4 py-2 rounded-xl hover:bg-green-400 hover:text-gray-900 transition">Home</a>
+        <a href="/apps.html" class="px-4 py-2 rounded-xl hover:bg-green-400 hover:text-gray-900 transition">Apps</a>
+        <a href="/bingo.html" aria-current="page" class="px-4 py-2 rounded-xl bg-green-500 text-gray-900 font-bold">Bingo</a>
+        <a href="/about.html" class="px-4 py-2 rounded-xl hover:bg-green-400 hover:text-gray-900 transition">About</a>
+        <a href="/contact.html" class="px-4 py-2 rounded-xl hover:bg-green-400 hover:text-gray-900 transition">Contact</a>
       </nav>
     </div>
   </header>
 
-  <!-- Add extra bottom padding so content doesn't sit under the strip -->
-  <main id="main" class="max-w-6xl mx-auto p-6 md:p-10 pb-[9rem]">
-    <h2 class="text-3xl md:text-4xl font-extrabold text-center mb-6">Bingo App</h2>
+  <!-- Main -->
+  <main id="main" class="max-w-6xl mx-auto px-4 py-14">
+    <h1 class="text-4xl sm:text-5xl font-extrabold mb-8 text-green-400 text-center">🎉 Bingo Hub</h1>
+    <p class="text-gray-300 text-center max-w-3xl mx-auto mb-12">
+      Choose your Bingo game! Start with <span class="text-green-400 font-bold">Classic</span>, or try one of our 
+      <span class="text-green-400 font-bold">seasonal themes</span>. More games will be added here for every holiday!
+    </p>
 
-    <!-- Status row -->
-    <section class="flex flex-wrap items-center justify-center gap-4 mb-6">
-      <div class="bg-gray-800 rounded-2xl px-5 py-3 text-lg md:text-2xl font-semibold">
-        Called: <span id="calledCount" class="text-green-400">0</span>/75
+    <!-- Bingo Themes -->
+    <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      <!-- Classic Bingo -->
+      <a href="/bingo-classic.html" class="block bg-gray-800 border border-gray-700 rounded-2xl p-8 hover:border-green-400 focus:outline-none focus:ring-4 focus:ring-green-400">
+        <div class="text-3xl font-extrabold text-green-400 mb-2">🟢 Classic Bingo</div>
+        <p class="text-gray-300">The original, bold and simple for everyone.</p>
+      </a>
+
+      <!-- Christmas Bingo -->
+      <a href="/bingo-christmas.html" class="block bg-gray-800 border border-gray-700 rounded-2xl p-8 hover:border-green-400 focus:outline-none focus:ring-4 focus:ring-green-400">
+        <div class="text-3xl font-extrabold text-green-400 mb-2">🎄 Christmas Bingo</div>
+        <p class="text-gray-300">Festive cards with holiday cheer.</p>
+      </a>
+
+      <!-- Halloween Bingo -->
+      <a href="/bingo-halloween.html" class="block bg-gray-800 border border-gray-700 rounded-2xl p-8 hover:border-green-400 focus:outline-none focus:ring-4 focus:ring-green-400">
+        <div class="text-3xl font-extrabold text-green-400 mb-2">🎃 Halloween Bingo</div>
+        <p class="text-gray-300">Spooky fun for all ages.</p>
+      </a>
+
+      <!-- Placeholder for future holidays -->
+      <div class="block bg-gray-800 border border-dashed border-gray-700 rounded-2xl p-8 text-gray-400 text-center">
+        <div class="text-3xl font-extrabold text-gray-400 mb-2">➕ More Holidays</div>
+        <p>Valentine’s, Easter, 4th of July, and more coming soon!</p>
       </div>
-      <div class="bg-gray-800 rounded-2xl px-5 py-3 text-lg md:text-2xl font-semibold">
-        Remaining: <span id="remainingCount" class="text-yellow-300">75</span>
-      </div>
-    </section>
-
-   <!-- Big display (letter and number both huge, side by side) -->
-<section aria-live="polite" aria-atomic="true" class="mb-6">
-  <div id="currentCall"
-       class="select-none text-center bg-black border-4 border-green-400 rounded-3xl shadow-xl mx-auto
-              flex items-center justify-center"
-       style="height: 45vh;">
-    <div class="leading-none flex items-center gap-10">
-      <div id="currentLetter"
-           class="text-[14rem] md:text-[18rem] font-extrabold text-green-400">—</div>
-      <div id="currentNumber"
-           class="text-[14rem] md:text-[18rem] font-extrabold text-white tracking-tight">—</div>
     </div>
-  </div>
-  <p class="sr-only" id="srAnnouncement"></p>
-</section>
-
-    </div>
-  </div>
-  <p class="sr-only" id="srAnnouncement"></p>
-</section>
-
-
-    <!-- Controls -->
-    <section class="flex flex-wrap items-center justify-center gap-4 mb-4">
-      <button id="callBtn"
-              class="bg-green-400 text-gray-900 text-2xl md:text-3xl font-bold px-6 md:px-8 py-4 md:py-5 rounded-2xl shadow hover:bg-green-300 focus:outline-none focus:ring-4 focus:ring-green-300">
-        Call Next (Space)
-      </button>
-      <button id="undoBtn"
-              class="bg-yellow-300 text-gray-900 text-xl md:text-2xl font-bold px-5 md:px-6 py-4 rounded-2xl shadow hover:bg-yellow-200 focus:outline-none focus:ring-4 focus:ring-yellow-200">
-        Undo (Backspace)
-      </button>
-      <button id="resetBtn"
-              class="bg-red-400 text-gray-900 text-xl md:text-2xl font-bold px-5 md:px-6 py-4 rounded-2xl shadow hover:bg-red-300 focus:outline-none focus:ring-4 focus:ring-red-300">
-        Reset (R)
-      </button>
-      <button id="fullscreenBtn"
-              class="bg-gray-700 text-white text-xl md:text-2xl font-semibold px-5 md:px-6 py-4 rounded-2xl shadow hover:bg-gray-600 focus:outline-none focus:ring-4 focus:ring-gray-500">
-        Fullscreen (F)
-      </button>
-    </section>
-
-    <!-- Help -->
-    <section class="text-center text-gray-300">
-      <p class="text-lg md:text-xl">
-        Keyboard: <span class="font-semibold text-white">Space</span> = Call Next,
-        <span class="font-semibold text-white">Backspace</span> = Undo,
-        <span class="font-semibold text-white">R</span> = Reset,
-        <span class="font-semibold text-white">F</span> = Fullscreen.
-      </p>
-    </section>
-
-    <div class="sr-only" id="live" aria-live="polite"></div>
   </main>
 
-  <!-- Bottom strip of called numbers -->
-  <section aria-label="Called numbers"
-           class="fixed left-0 right-0 bottom-0 bg-gray-800/95 backdrop-blur-sm border-t border-gray-700">
-    <div class="max-w-7xl mx-auto px-3 md:px-6 py-3">
-      <div id="calledStrip"
-           class="flex flex-wrap gap-2 md:gap-3 justify-center">
-        <!-- Chips injected by JS -->
-      </div>
-      <p class="sr-only" id="stripAnnouncement"></p>
+  <!-- Footer -->
+  <footer class="bg-gray-800 py-6 mt-12" role="contentinfo">
+    <div class="max-w-6xl mx-auto px-4 text-center text-gray-400 text-base">
+      © <span id="year"></span> ProjectorFirst • Big, Simple Apps for Nursing Homes & Senior Care
     </div>
-  </section>
-
-  <footer class="bg-gray-800 py-4 mt-12 text-center text-gray-400 text-sm">
-    © <span id="year"></span> ProjectorFirst. All rights reserved.
   </footer>
 
   <script>
-    // Accessibility: respect reduced motion
-    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-    // Utils
-    const range = (start, end) => Array.from({ length: end - start + 1 }, (_, i) => start + i);
-    function shuffle(array) {
-      for (let i = array.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [array[i], array[j]] = [array[j], array[i]];
-      }
-      return array;
-    }
-    function letterFor(n) {
-      if (n >= 1 && n <= 15) return 'B';
-      if (n >= 16 && n <= 30) return 'I';
-      if (n >= 31 && n <= 45) return 'N';
-      if (n >= 46 && n <= 60) return 'G';
-      return 'O';
-    }
-
-    // DOM refs
-    const calledCount = document.getElementById('calledCount');
-    const remainingCount = document.getElementById('remainingCount');
-    const currentLetter = document.getElementById('currentLetter');
-    const currentNumber = document.getElementById('currentNumber');
-    const srAnnouncement = document.getElementById('srAnnouncement');
-
-    const callBtn = document.getElementById('callBtn');
-    const undoBtn = document.getElementById('undoBtn');
-    const resetBtn = document.getElementById('resetBtn');
-    const fullscreenBtn = document.getElementById('fullscreenBtn');
-
-    const calledStrip = document.getElementById('calledStrip');
-
-    // Game state
-    let deck = [];
-    let called = [];
-    let lastChip = null;
-
-    function initGame() {
-      deck = shuffle(range(1, 75));
-      called = [];
-      updateUI();
-      setDisplay(null);
-      renderStrip();
-    }
-
-    function setDisplay(n) {
-      if (n === null) {
-        currentLetter.textContent = '—';
-        currentNumber.textContent = '—';
-        currentNumber.style.transform = 'scale(1)';
-        return;
-      }
-      const letter = letterFor(n);
-      currentLetter.textContent = letter;               // bigger letter
-      currentNumber.textContent = n;                    // big number
-
-      if (!prefersReduced) {
-        currentNumber.style.transform = 'scale(1.05)';
-        currentNumber.style.transition = 'transform 120ms ease-out';
-        requestAnimationFrame(() => {
-          setTimeout(() => (currentNumber.style.transform = 'scale(1)'), 120);
-        });
-      }
-
-      srAnnouncement.textContent = `${letter} ${n}`;
-    }
-
-    function updateUI() {
-      calledCount.textContent = called.length;
-      remainingCount.textContent = 75 - called.length;
-      renderStrip();
-    }
-
-    function renderStrip() {
-      calledStrip.innerHTML = '';
-      lastChip = null;
-
-      // Build chips: oldest left, newest right (natural reading order)
-      for (let i = 0; i < called.length; i++) {
-        const n = called[i];
-        const letter = letterFor(n);
-        const chip = document.createElement('div');
-
-        const color =
-          letter === 'B' ? 'border-blue-300 text-blue-100' :
-          letter === 'I' ? 'border-purple-300 text-purple-100' :
-          letter === 'N' ? 'border-green-300 text-green-100' :
-          letter === 'G' ? 'border-yellow-300 text-yellow-100' :
-                           'border-pink-300 text-pink-100';
-
-        chip.className = [
-          'px-3 md:px-4 py-2 md:py-2.5 rounded-xl',
-          'text-2xl md:text-3xl font-extrabold select-none',
-          'bg-gray-900 border-2', color
-        ].join(' ');
-
-        // Bigger letter + a clear space between letter and number
-        chip.textContent = `${letter} ${n}`;
-        chip.setAttribute('aria-label', `${letter} ${n}`);
-
-        calledStrip.appendChild(chip);
-        lastChip = chip;
-      }
-
-      // Highlight most recent chip
-      if (lastChip) {
-        lastChip.classList.add('bg-green-400', 'text-gray-900', 'border-white', 'ring-4', 'ring-yellow-300');
-        if (!prefersReduced) {
-          lastChip.animate(
-            [{ transform: 'scale(1.0)' }, { transform: 'scale(1.06)' }, { transform: 'scale(1.0)' }],
-            { duration: 220, easing: 'ease-out' }
-          );
-        }
-        // Ensure it's visible if overflow wraps
-        lastChip.scrollIntoView({ behavior: prefersReduced ? 'auto' : 'smooth', inline: 'end', block: 'nearest' });
-      }
-    }
-
-    function callNext() {
-      if (deck.length === 0) return;
-      const n = deck.pop();
-      called.push(n);
-      setDisplay(n);
-      updateUI();
-    }
-
-    function undo() {
-      if (called.length === 0) return;
-      const n = called.pop();
-      deck.push(n);
-      setDisplay(called.length ? called[called.length - 1] : null);
-      updateUI();
-    }
-
-    function resetGame() {
-      initGame();
-    }
-
-    // Fullscreen for projector use
-    async function toggleFullscreen() {
-      if (!document.fullscreenElement) {
-        try { await document.documentElement.requestFullscreen(); } catch (e) {}
-      } else {
-        try { await document.exitFullscreen(); } catch (e) {}
-      }
-    }
-
-    // Events
-    callBtn.addEventListener('click', callNext);
-    undoBtn.addEventListener('click', undo);
-    resetBtn.addEventListener('click', resetGame);
-    fullscreenBtn.addEventListener('click', toggleFullscreen);
-
-    // Keyboard shortcuts
-    window.addEventListener('keydown', (e) => {
-      const tag = (e.target && e.target.tagName) || '';
-      if (tag === 'INPUT' || tag === 'TEXTAREA') return;
-
-      if (e.code === 'Space') { e.preventDefault(); callNext(); }
-      else if (e.code === 'Backspace') { e.preventDefault(); undo(); }
-      else if (e.key.toLowerCase() === 'r') { e.preventDefault(); resetGame(); }
-      else if (e.key.toLowerCase() === 'f') { e.preventDefault(); toggleFullscreen(); }
-    });
-
-    // Footer year + boot
     document.getElementById('year').textContent = new Date().getFullYear();
-    initGame();
   </script>
 </body>
 </html>
