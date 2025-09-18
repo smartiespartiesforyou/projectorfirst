@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>Classic Bingo — ProjectorFirst</title>
-  <meta name="description" content="Classic Bingo caller with large display and call history."/>
+  <title>Bingo — Classic Caller</title>
+  <meta name="description" content="Clean, high-contrast Bingo caller for projectors and TVs."/>
   <meta name="theme-color" content="#22c55e"/>
   <link rel="icon" href="/logo.svg" type="image/svg+xml"/>
   <script src="https://cdn.tailwindcss.com"></script>
@@ -24,82 +24,73 @@
         <span class="text-2xl font-extrabold text-green-400">ProjectorFirst</span>
       </a>
       <nav class="space-x-2" aria-label="Primary">
-        <a href="/bingo.html" class="px-4 py-2 rounded-xl hover:bg-green-400 hover:text-gray-900 transition focus:outline-none focus:ring-4 focus:ring-green-400">Bingo Hub</a>
-        <a href="/apps.html" class="px-4 py-2 rounded-xl hover:bg-green-400 hover:text-gray-900 transition focus:outline-none focus:ring-4 focus:ring-green-400">Apps</a>
+        <a href="/index.html" class="px-4 py-2 rounded-xl hover:bg-green-400 hover:text-gray-900 transition">Home</a>
+        <a href="/apps.html" class="px-4 py-2 rounded-xl hover:bg-green-400 hover:text-gray-900 transition">Apps</a>
+        <a href="/bingo.html" class="px-4 py-2 rounded-xl bg-green-500 text-gray-900 font-bold">Bingo</a>
       </nav>
     </div>
   </header>
 
   <!-- Main -->
-  <main id="main" class="max-w-6xl mx-auto px-4 py-6 sm:py-10">
-    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
-      <h1 class="text-4xl sm:text-5xl font-extrabold text-green-400">Classic Bingo</h1>
-      <div class="text-gray-300 text-xl">
-        Drawn: <span id="count" class="font-bold text-white">0</span> / 75
+  <main id="main" class="max-w-5xl mx-auto px-4 py-8">
+    <h1 class="sr-only">Bingo — Classic Caller</h1>
+
+    <!-- Big Current Call Box -->
+    <section aria-live="polite" class="mx-auto w-full max-w-xl">
+      <div class="relative aspect-square w-full rounded-3xl border-[6px] border-green-400 bg-black flex items-center justify-center shadow-[0_0_0_8px_rgba(34,197,94,0.2)]">
+        <!-- Letter -->
+        <div id="prefix" class="absolute left-4 top-4 text-green-400 font-extrabold text-[18vw] sm:text-[120px] leading-none select-none">—</div>
+        <!-- Number -->
+        <div id="number" class="text-white font-extrabold text-[28vw] sm:text-[180px] leading-none select-none">—</div>
       </div>
+    </section>
+
+    <!-- Controls -->
+    <div class="mt-6 flex flex-wrap items-center justify-center gap-3">
+      <button id="btnNext"
+        class="px-6 py-4 bg-green-500 text-gray-900 font-bold rounded-2xl hover:bg-green-400 focus:outline-none focus:ring-4 focus:ring-green-400">
+        Call Next (Space)
+      </button>
+      <button id="btnUndo"
+        class="px-6 py-4 bg-amber-400 text-gray-900 font-bold rounded-2xl hover:bg-amber-300 focus:outline-none focus:ring-4 focus:ring-green-400">
+        Undo (Backspace)
+      </button>
+      <button id="btnReset"
+        class="px-5 py-3 bg-rose-500 text-white font-bold rounded-2xl hover:bg-rose-400 focus:outline-none focus:ring-4 focus:ring-green-400">
+        Reset (R)
+      </button>
+      <button id="btnFull"
+        class="px-5 py-3 bg-purple-500 text-white font-bold rounded-2xl hover:bg-purple-400 focus:outline-none focus:ring-4 focus:ring-green-400">
+        Fullscreen (F)
+      </button>
+      <button id="btnSound"
+        class="px-5 py-3 bg-gray-700 text-white font-bold rounded-2xl hover:bg-gray-600 focus:outline-none focus:ring-4 focus:ring-green-400"
+        aria-pressed="true">
+        🔊 Sound
+      </button>
     </div>
 
-    <!-- Big Caller Display -->
-    <section class="grid gap-6 lg:grid-cols-[1fr_420px]">
-      <div class="bg-gray-800 rounded-2xl p-6 sm:p-10 flex flex-col items-center justify-center">
-        <div class="flex items-center gap-4 mb-6">
-          <!-- BINGO header with active letter highlight -->
-          <span id="L-B" class="px-3 py-1 rounded-xl bg-gray-700 text-4xl font-extrabold">B</span>
-          <span id="L-I" class="px-3 py-1 rounded-xl bg-gray-700 text-4xl font-extrabold">I</span>
-          <span id="L-N" class="px-3 py-1 rounded-xl bg-gray-700 text-4xl font-extrabold">N</span>
-          <span id="L-G" class="px-3 py-1 rounded-xl bg-gray-700 text-4xl font-extrabold">G</span>
-          <span id="L-O" class="px-3 py-1 rounded-xl bg-gray-700 text-4xl font-extrabold">O</span>
-        </div>
-
-        <!-- Current call -->
-        <div id="current-call" class="text-[22vw] sm:text-[14rem] leading-none font-black text-white tracking-wider text-center select-none"
-             aria-live="assertive" aria-atomic="true">
-          –
-        </div>
-
-        <!-- Controls -->
-        <div class="mt-8 flex flex-wrap items-center justify-center gap-4">
-          <button id="nextBtn" class="px-8 py-4 bg-green-500 text-gray-900 font-black text-3xl rounded-2xl hover:bg-green-400 transition focus:outline-none focus:ring-4 focus:ring-green-400">
-            Next
-          </button>
-          <button id="resetBtn" class="px-6 py-4 bg-gray-700 text-white font-bold text-2xl rounded-2xl hover:bg-gray-600 transition focus:outline-none focus:ring-4 focus:ring-green-400">
-            Reset
-          </button>
-          <button id="fsBtn" class="px-6 py-4 bg-gray-700 text-white font-bold text-2xl rounded-2xl hover:bg-gray-600 transition focus:outline-none focus:ring-4 focus:ring-green-400">
-            Full Screen
-          </button>
-          <label class="flex items-center gap-3 px-4 py-3 rounded-2xl bg-gray-700 cursor-pointer select-none">
-            <input id="soundToggle" type="checkbox" class="w-6 h-6 accent-green-500">
-            <span class="text-xl">Sound</span>
-          </label>
-        </div>
-
-        <p class="mt-4 text-gray-400 text-xl text-center">
-          Shortcuts: <span class="text-gray-300">Space/Enter = Next</span> · <span class="text-gray-300">R = Reset</span> · <span class="text-gray-300">F = Full Screen</span>
-        </p>
+    <!-- Recent Calls -->
+    <div class="mt-6 mx-auto max-w-3xl">
+      <div class="flex items-center justify-between">
+        <h2 class="text-2xl font-extrabold text-gray-200">Recent Calls</h2>
+        <div class="text-base text-gray-400">Space = Next • ⌫ Undo • R Reset • F Fullscreen</div>
       </div>
+      <div id="recent" class="mt-3 flex flex-wrap gap-2"></div>
+    </div>
 
-      <!-- Call History -->
-      <aside class="bg-gray-800 rounded-2xl p-6">
-        <h2 class="text-2xl font-bold text-green-400 mb-4">Call History</h2>
-        <div id="history" class="grid grid-cols-5 gap-2 text-center">
-          <!-- filled by JS -->
-        </div>
-
-        <div class="mt-8">
-          <h3 class="text-xl font-bold text-gray-200 mb-3">Called Board</h3>
-          <!-- Simple 1–75 board with highlights -->
-          <div id="board" class="grid grid-cols-15 gap-1 text-center text-base sm:text-lg">
-            <!-- filled by JS -->
-          </div>
-          <div class="mt-2 text-gray-400 text-sm">Columns = 1–15(B) · 16–30(I) · 31–45(N) · 46–60(G) · 61–75(O)</div>
-        </div>
-      </aside>
-    </section>
+    <!-- Legend (colors by letter) -->
+    <div class="mt-6 mx-auto max-w-3xl text-gray-400 text-base">
+      <span class="inline-flex items-center gap-2 mr-4"><span class="w-7 h-7 rounded-xl bg-red-500 inline-block"></span> B</span>
+      <span class="inline-flex items-center gap-2 mr-4"><span class="w-7 h-7 rounded-xl bg-indigo-400 inline-block"></span> I</span>
+      <span class="inline-flex items-center gap-2 mr-4"><span class="w-7 h-7 rounded-xl bg-green-400 inline-block"></span> N</span>
+      <span class="inline-flex items-center gap-2 mr-4"><span class="w-7 h-7 rounded-xl bg-yellow-400 inline-block"></span> G</span>
+      <span class="inline-flex items-center gap-2"><span class="w-7 h-7 rounded-xl bg-purple-400 inline-block"></span> O</span>
+    </div>
   </main>
 
   <!-- Footer -->
-  <footer class="bg-gray-800 py-6 mt-12" role="contentinfo">
+  <footer class="bg-gray-800 py-6 mt-10" role="contentinfo">
     <div class="max-w-6xl mx-auto px-4 text-center text-gray-400 text-base">
       © <span id="year"></span> ProjectorFirst • Big, Simple Apps for Nursing Homes & Senior Care
     </div>
@@ -109,143 +100,121 @@
     // Year
     document.getElementById('year').textContent = new Date().getFullYear();
 
-    // Helpers
-    const letterFor = (n) => n <= 15 ? 'B' : n <= 30 ? 'I' : n <= 45 ? 'N' : n <= 60 ? 'G' : 'O';
-    const highlightLetter = (L) => {
-      ['B','I','N','G','O'].forEach(ch => {
-        const el = document.getElementById('L-' + ch);
-        el.classList.toggle('bg-green-500');
-        el.classList.toggle('text-gray-900');
-        el.classList.toggle('bg-gray-700');
-        el.classList.toggle('text-white');
-        // Reset then reapply to only active letter:
-        if(ch !== L){
-          el.classList.add('bg-gray-700','text-white');
-          el.classList.remove('bg-green-500','text-gray-900');
-        } else {
-          el.classList.add('bg-green-500','text-gray-900');
-          el.classList.remove('bg-gray-700','text-white');
-        }
-      });
+    // --- Helpers & state ---
+    const ranges = {
+      B: Array.from({length:15},(_,i)=>i+1),
+      I: Array.from({length:15},(_,i)=>i+16),
+      N: Array.from({length:15},(_,i)=>i+31),
+      G: Array.from({length:15},(_,i)=>i+46),
+      O: Array.from({length:15},(_,i)=>i+61)
     };
+    const prefixFor = n => n<=15?'B':n<=30?'I':n<=45?'N':n<=60?'G':'O';
 
-    // Sound (simple "ding")
-    const ctx = new (window.AudioContext || window.webkitAudioContext)();
-    function playDing(){
+    let bag = shuffle([...ranges.B,...ranges.I,...ranges.N,...ranges.G,...ranges.O]);
+    let history = [];
+    let soundOn = true;
+
+    const elPrefix = document.getElementById('prefix');
+    const elNumber = document.getElementById('number');
+    const elRecent = document.getElementById('recent');
+    const btnNext = document.getElementById('btnNext');
+    const btnUndo = document.getElementById('btnUndo');
+    const btnReset = document.getElementById('btnReset');
+    const btnFull = document.getElementById('btnFull');
+    const btnSound = document.getElementById('btnSound');
+
+    // --- UI actions ---
+    function shuffle(a){ for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]];} return a; }
+
+    function beep(){
+      if(!soundOn) return;
+      const ctx = new (window.AudioContext||window.webkitAudioContext)();
       const o = ctx.createOscillator();
       const g = ctx.createGain();
       o.type = 'sine';
-      o.frequency.value = 880;
-      g.gain.setValueAtTime(0.0001, ctx.currentTime);
-      g.gain.exponentialRampToValueAtTime(0.2, ctx.currentTime + 0.01);
-      g.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.25);
+      o.frequency.value = 660;
       o.connect(g); g.connect(ctx.destination);
-      o.start(); o.stop(ctx.currentTime + 0.3);
+      g.gain.setValueAtTime(0.001, ctx.currentTime);
+      g.gain.exponentialRampToValueAtTime(0.2, ctx.currentTime+0.01);
+      g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime+0.25);
+      o.start(); o.stop(ctx.currentTime+0.26);
     }
 
-    // State
-    let deck = [];
-    let drawn = [];
-    const currentCall = document.getElementById('current-call');
-    const historyEl = document.getElementById('history');
-    const countEl = document.getElementById('count');
-    const soundToggle = document.getElementById('soundToggle');
-    const boardEl = document.getElementById('board');
-
-    function makeDeck(){
-      const arr = Array.from({length:75}, (_,i)=>i+1);
-      for(let i=arr.length-1;i>0;i--){
-        const j = Math.floor(Math.random()*(i+1));
-        [arr[i],arr[j]] = [arr[j],arr[i]];
-      }
-      return arr;
+    function draw(){
+      if(!bag.length) return;
+      const n = bag.pop();
+      history.push(n);
+      showCurrent();
+      updateRecent();
+      beep();
     }
 
-    function buildBoard(){
-      boardEl.innerHTML = '';
-      for(let n=1;n<=75;n++){
-        const L = letterFor(n);
-        const cell = document.createElement('div');
-        cell.id = 'cell-'+n;
-        cell.className = 'px-2 py-1 rounded-md bg-gray-700 text-gray-200';
-        cell.textContent = L + ' ' + n;
-        boardEl.appendChild(cell);
-      }
-    }
-
-    function updateBoard(n){
-      const c = document.getElementById('cell-'+n);
-      if(c){
-        c.classList.remove('bg-gray-700','text-gray-200');
-        c.classList.add('bg-green-500','text-gray-900','font-bold');
-      }
-    }
-
-    function renderHistory(){
-      historyEl.innerHTML = '';
-      drawn.slice().reverse().forEach(n=>{
-        const L = letterFor(n);
-        const tag = document.createElement('div');
-        tag.className = 'px-2 py-1 rounded-xl bg-gray-700 text-white';
-        tag.textContent = L + ' ' + n;
-        historyEl.appendChild(tag);
-      });
+    function undo(){
+      if(!history.length) return;
+      bag.push(history.pop());
+      showCurrent();
+      updateRecent();
     }
 
     function reset(){
-      deck = makeDeck();
-      drawn = [];
-      currentCall.textContent = '–';
-      countEl.textContent = '0';
-      highlightLetter('B'); // default
-      historyEl.innerHTML = '';
-      buildBoard();
+      history = [];
+      bag = shuffle([...ranges.B,...ranges.I,...ranges.N,...ranges.G,...ranges.O]);
+      showCurrent(); updateRecent();
     }
 
-    function next(){
-      if(deck.length === 0){
-        // All drawn; reshuffle but keep last call on screen
-        alert('All 75 numbers have been called. Resetting deck.');
-        reset();
-        return;
-      }
-      const n = deck.pop();
-      drawn.push(n);
-      const L = letterFor(n);
-      currentCall.textContent = L + ' ' + n;
-      countEl.textContent = drawn.length.toString();
-      highlightLetter(L);
-      updateBoard(n);
-      renderHistory();
-      if(soundToggle.checked){
-        try{ playDing(); } catch(e){}
-      }
+    function showCurrent(){
+      if(!history.length){ elPrefix.textContent='—'; elNumber.textContent='—'; return; }
+      const n = history[history.length-1];
+      elPrefix.textContent = prefixFor(n);
+      elNumber.textContent = String(n);
     }
 
-    // Init
-    reset();
+    function badge(letter, n, isCurrent){
+      const color =
+        letter==='B'?'bg-red-500 text-white':
+        letter==='I'?'bg-indigo-400 text-gray-900':
+        letter==='N'?'bg-green-400 text-gray-900':
+        letter==='G'?'bg-yellow-400 text-gray-900':
+        'bg-purple-400 text-gray-900';
+      const ring = isCurrent ? ' ring-4 ring-green-400' : '';
+      const title = `${letter} ${n}`;
+      return `<span class="inline-flex items-center px-3 py-1 rounded-2xl font-bold ${color}${ring}" title="${title}">${letter}&nbsp;${n}</span>`;
+    }
 
-    // Controls
-    document.getElementById('nextBtn').addEventListener('click', next);
-    document.getElementById('resetBtn').addEventListener('click', reset);
-    document.getElementById('fsBtn').addEventListener('click', ()=>{
-      const el = document.documentElement;
-      if(!document.fullscreenElement){
-        el.requestFullscreen?.();
-      } else {
-        document.exitFullscreen?.();
-      }
+    function updateRecent(){
+      elRecent.innerHTML = '';
+      const last = history.slice(-8).reverse(); // newest first
+      last.forEach((n,idx)=>{
+        const l = prefixFor(n);
+        elRecent.insertAdjacentHTML('beforeend', badge(l, n, idx===0));
+      });
+    }
+
+    // --- buttons & keys ---
+    btnNext.addEventListener('click', draw);
+    btnUndo.addEventListener('click', undo);
+    btnReset.addEventListener('click', reset);
+    btnSound.addEventListener('click', ()=>{
+      soundOn = !soundOn;
+      btnSound.textContent = soundOn ? '🔊 Sound' : '🔇 Sound';
+      btnSound.setAttribute('aria-pressed', String(soundOn));
+    });
+    btnFull.addEventListener('click', ()=>{
+      const el = document.fullscreenElement;
+      if(el){ document.exitFullscreen(); }
+      else { document.documentElement.requestFullscreen().catch(()=>{}); }
     });
 
-    // Keyboard shortcuts
     window.addEventListener('keydown', (e)=>{
-      if(e.key === ' ' || e.key === 'Enter'){ e.preventDefault(); next(); }
-      if(e.key.toLowerCase() === 'r'){ e.preventDefault(); reset(); }
-      if(e.key.toLowerCase() === 'f'){ e.preventDefault();
-        if(!document.fullscreenElement){ document.documentElement.requestFullscreen?.(); }
-        else { document.exitFullscreen?.(); }
-      }
+      if(e.code==='Space'){ e.preventDefault(); draw(); }
+      else if(e.code==='Backspace'){ e.preventDefault(); undo(); }
+      else if(e.key==='r' || e.key==='R'){ reset(); }
+      else if(e.key==='f' || e.key==='F'){ btnFull.click(); }
     });
+
+    // init
+    showCurrent();
+    updateRecent();
   </script>
 </body>
 </html>
