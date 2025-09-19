@@ -12,23 +12,31 @@
     body { background: #ffffff; color: #000000; }
 
     .caller-box {
-      width: 400px;
-      height: 400px;
+      /* responsive square that scales with the screen */
+      width: min(90vw, 70vh, 640px);
+      height: min(90vw, 70vh, 640px);
+
       border: 6px solid #1e3a8a;
       border-radius: 1rem;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 12rem;   /* BIG number and letter */
+
+      /* auto-fit the letter+number to the box */
+      font-size: clamp(6rem, 22vmin, 16rem);
+      line-height: 1;
+      white-space: nowrap;   /* keep "B 12" on one line */
       font-weight: bold;
+
       background: #000;
       color: #fff;
+      margin: 0 auto;
     }
 
     .recent-calls span {
       display: inline-block;
       margin: 0.5rem;
-      font-size: 3rem;   /* bigger recent calls */
+      font-size: clamp(2rem, 5vmin, 3rem); /* responsive size */
       font-weight: bold;
       color: #1e3a8a;
     }
@@ -54,7 +62,7 @@
     <h1 class="text-5xl font-extrabold text-blue-900 mb-8">🎉 Classic Bingo Caller</h1>
 
     <!-- Caller Box -->
-    <div id="callerBox" class="caller-box mx-auto mb-8">—</div>
+    <div id="callerBox" class="caller-box mb-8">—</div>
 
     <!-- Controls -->
     <div class="flex flex-wrap justify-center gap-4 mb-6">
