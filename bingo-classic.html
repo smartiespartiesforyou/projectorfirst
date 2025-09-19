@@ -12,42 +12,41 @@
     body { background: #ffffff; color: #000000; }
 
     .caller-box {
-      /* responsive square that scales with the screen */
       width: min(90vw, 70vh, 640px);
       height: min(90vw, 70vh, 640px);
-
       border: 6px solid #1e3a8a;
       border-radius: 1rem;
       display: flex;
       align-items: center;
       justify-content: center;
-
-      /* auto-fit the letter+number to the box */
       font-size: clamp(6rem, 22vmin, 16rem);
       line-height: 1;
-      white-space: nowrap;   /* keep "B 12" on one line */
+      white-space: nowrap;
       font-weight: bold;
-
       background: #000;
       color: #fff;
       margin: 0 auto;
     }
 
-   .recent-calls span {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 70px;
-  height: 70px;
-  margin: 0.25rem;
-  border-radius: 50%;
-  background: #1e3a8a;   /* dark blue ball */
-  color: #fff;           /* white text */
-  font-size: 1.5rem;
-  font-weight: bold;
-}
-
+    .recent-calls span {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 70px;
+      height: 70px;
+      margin: 0.25rem;
+      border-radius: 50%;
+      color: #fff;
+      font-size: 1.5rem;
+      font-weight: bold;
     }
+
+    /* Letter-based colors */
+    .ball-B { background: #1e3a8a; } /* Blue */
+    .ball-I { background: #dc2626; } /* Red */
+    .ball-N { background: #16a34a; } /* Green */
+    .ball-G { background: #f97316; } /* Orange */
+    .ball-O { background: #9333ea; } /* Purple */
 
     .btn {
       font-size: 1.75rem;
@@ -59,7 +58,6 @@
 
     .btn-next { background: #1e3a8a; color: white; }
     .btn-next:hover { background: #1d4ed8; }
-
     .btn-undo { background: #facc15; color: black; }
     .btn-reset { background: #dc2626; color: white; }
     .btn-fullscreen { background: #6d28d9; color: white; }
@@ -84,24 +82,9 @@
     <button onclick="toggleSound()" id="soundBtn" class="btn border-2 border-blue-900 text-blue-900 bg-white">🔊 Sound</button>
 
     <!-- Recent Calls -->
-    <h2 class="text-2xl font-bold text-blue-900 mt-10 mb-4">Recent Calls</h2>
+    <h2 class="text-2xl font-bold text-blue-900 mt-10 mb-4">Previously Called</h2>
     <div id="recentCalls" class="recent-calls"></div>
   </main>
-
-.recent-calls span {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 70px;
-  height: 70px;
-  margin: 0.25rem;
-  border-radius: 50%;
-  background: #1e3a8a;   /* dark blue ball */
-  color: #fff;           /* white text */
-  font-size: 1.5rem;
-  font-weight: bold;
-}
-
 
   <script>
     const letters = ["B","I","N","G","O"];
@@ -156,7 +139,11 @@
 
     function updateRecent() {
       const recentDiv = document.getElementById("recentCalls");
-      recentDiv.innerHTML = history.slice(-10).reverse().map(c => `<span>${c.letter} ${c.number}</span>`).join("");
+      recentDiv.innerHTML = history
+        .slice(-10)
+        .reverse()
+        .map(c => `<span class="ball-${c.letter}">${c.letter} ${c.number}</span>`)
+        .join("");
     }
 
     function toggleSound() {
