@@ -3,218 +3,149 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>Bingo — Classic Caller</title>
-  <meta name="description" content="Clean, high-contrast Bingo caller for projectors and TVs."/>
-  <meta name="theme-color" content="#22c55e"/>
+  <title>Classic Bingo Caller — ProjectorFirst</title>
+  <meta name="description" content="Classic Bingo Caller — simple, big-screen friendly bingo caller."/>
+  <meta name="theme-color" content="#1e3a8a"/>
   <link rel="icon" href="/logo.svg" type="image/svg+xml"/>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    .skip-link{position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden}
-    .skip-link:focus{left:1rem;top:1rem;width:auto;height:auto;padding:.75rem 1rem;background:#22c55e;color:#111;border-radius:.75rem;z-index:50}
+    body { background: #ffffff; color: #000000; }
+    .caller-box {
+      width: 300px;
+      height: 300px;
+      border: 6px solid #1e3a8a;
+      border-radius: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 8rem;
+      font-weight: bold;
+      background: #000;
+      color: #fff;
+    }
+    .btn {
+      font-size: 1.5rem;
+      font-weight: bold;
+      padding: 1rem 2rem;
+      border-radius: 1rem;
+      transition: background 0.2s;
+    }
+    .btn-next { background: #1e3a8a; color: white; }
+    .btn-next:hover { background: #1d4ed8; }
+    .btn-undo { background: #facc15; color: black; }
+    .btn-reset { background: #dc2626; color: white; }
+    .btn-fullscreen { background: #6d28d9; color: white; }
+    .recent-calls span {
+      display: inline-block;
+      margin: 0.25rem;
+      font-size: 2rem;
+      font-weight: bold;
+      color: #1e3a8a;
+    }
   </style>
 </head>
-<body class="bg-gray-900 text-white font-sans text-2xl leading-relaxed">
-  <a href="#main" class="skip-link">Skip to main content</a>
+<body class="flex flex-col items-center justify-start min-h-screen py-10">
+  <main class="w-full max-w-4xl text-center">
+    <h1 class="text-5xl font-extrabold text-blue-900 mb-8">🎉 Classic Bingo Caller</h1>
 
-  <!-- Header -->
-  <header class="bg-gray-800 py-4 shadow-md" role="banner">
-    <div class="max-w-6xl mx-auto px-4 flex items-center justify-between">
-      <a href="/" class="flex items-center gap-3 focus:outline-none focus:ring-4 focus:ring-green-400 rounded-xl">
-        <img src="/logo.svg" alt="ProjectorFirst logo" class="w-10 h-10"/>
-        <span class="text-2xl font-extrabold text-green-400">ProjectorFirst</span>
-      </a>
-      <nav class="space-x-2" aria-label="Primary">
-        <a href="/index.html" class="px-4 py-2 rounded-xl hover:bg-green-400 hover:text-gray-900 transition">Home</a>
-        <a href="/apps.html" class="px-4 py-2 rounded-xl hover:bg-green-400 hover:text-gray-900 transition">Apps</a>
-        <a href="/bingo.html" class="px-4 py-2 rounded-xl bg-green-500 text-gray-900 font-bold">Bingo</a>
-      </nav>
-    </div>
-  </header>
-
-  <!-- Main -->
-  <main id="main" class="max-w-5xl mx-auto px-4 py-8">
-    <h1 class="sr-only">Bingo — Classic Caller</h1>
-
-    <!-- Big Current Call Box -->
-    <section aria-live="polite" class="mx-auto w-full max-w-xl">
-      <div class="relative aspect-square w-full rounded-3xl border-[6px] border-green-400 bg-black flex items-center justify-center shadow-[0_0_0_8px_rgba(34,197,94,0.2)]">
-        <!-- Letter -->
-        <div id="prefix" class="absolute left-4 top-4 text-green-400 font-extrabold text-[18vw] sm:text-[120px] leading-none select-none">—</div>
-        <!-- Number -->
-        <div id="number" class="text-white font-extrabold text-[28vw] sm:text-[180px] leading-none select-none">—</div>
-      </div>
-    </section>
+    <!-- Caller Box -->
+    <div id="callerBox" class="caller-box mx-auto mb-8">—</div>
 
     <!-- Controls -->
-    <div class="mt-6 flex flex-wrap items-center justify-center gap-3">
-      <button id="btnNext"
-        class="px-6 py-4 bg-green-500 text-gray-900 font-bold rounded-2xl hover:bg-green-400 focus:outline-none focus:ring-4 focus:ring-green-400">
-        Call Next (Space)
-      </button>
-      <button id="btnUndo"
-        class="px-6 py-4 bg-amber-400 text-gray-900 font-bold rounded-2xl hover:bg-amber-300 focus:outline-none focus:ring-4 focus:ring-green-400">
-        Undo (Backspace)
-      </button>
-      <button id="btnReset"
-        class="px-5 py-3 bg-rose-500 text-white font-bold rounded-2xl hover:bg-rose-400 focus:outline-none focus:ring-4 focus:ring-green-400">
-        Reset (R)
-      </button>
-      <button id="btnFull"
-        class="px-5 py-3 bg-purple-500 text-white font-bold rounded-2xl hover:bg-purple-400 focus:outline-none focus:ring-4 focus:ring-green-400">
-        Fullscreen (F)
-      </button>
-      <button id="btnSound"
-        class="px-5 py-3 bg-gray-700 text-white font-bold rounded-2xl hover:bg-gray-600 focus:outline-none focus:ring-4 focus:ring-green-400"
-        aria-pressed="true">
-        🔊 Sound
-      </button>
+    <div class="flex flex-wrap justify-center gap-4 mb-6">
+      <button onclick="callNext()" class="btn btn-next">Call Next (Space)</button>
+      <button onclick="undoCall()" class="btn btn-undo">Undo (Backspace)</button>
+      <button onclick="resetCaller()" class="btn btn-reset">Reset (R)</button>
+      <button onclick="toggleFullscreen()" class="btn btn-fullscreen">Fullscreen (F)</button>
     </div>
+
+    <!-- Sound Button -->
+    <button onclick="toggleSound()" id="soundBtn" class="btn border-2 border-blue-900 text-blue-900 bg-white">🔊 Sound</button>
 
     <!-- Recent Calls -->
-    <div class="mt-6 mx-auto max-w-3xl">
-      <div class="flex items-center justify-between">
-        <h2 class="text-2xl font-extrabold text-gray-200">Recent Calls</h2>
-        <div class="text-base text-gray-400">Space = Next • ⌫ Undo • R Reset • F Fullscreen</div>
-      </div>
-      <div id="recent" class="mt-3 flex flex-wrap gap-2"></div>
-    </div>
-
-    <!-- Legend (colors by letter) -->
-    <div class="mt-6 mx-auto max-w-3xl text-gray-400 text-base">
-      <span class="inline-flex items-center gap-2 mr-4"><span class="w-7 h-7 rounded-xl bg-red-500 inline-block"></span> B</span>
-      <span class="inline-flex items-center gap-2 mr-4"><span class="w-7 h-7 rounded-xl bg-indigo-400 inline-block"></span> I</span>
-      <span class="inline-flex items-center gap-2 mr-4"><span class="w-7 h-7 rounded-xl bg-green-400 inline-block"></span> N</span>
-      <span class="inline-flex items-center gap-2 mr-4"><span class="w-7 h-7 rounded-xl bg-yellow-400 inline-block"></span> G</span>
-      <span class="inline-flex items-center gap-2"><span class="w-7 h-7 rounded-xl bg-purple-400 inline-block"></span> O</span>
-    </div>
+    <h2 class="text-2xl font-bold text-blue-900 mt-10 mb-4">Recent Calls</h2>
+    <div id="recentCalls" class="recent-calls"></div>
   </main>
 
-  <!-- Footer -->
-  <footer class="bg-gray-800 py-6 mt-10" role="contentinfo">
-    <div class="max-w-6xl mx-auto px-4 text-center text-gray-400 text-base">
-      © <span id="year"></span> ProjectorFirst • Big, Simple Apps for Nursing Homes & Senior Care
-    </div>
-  </footer>
-
   <script>
-    // Year
-    document.getElementById('year').textContent = new Date().getFullYear();
-
-    // --- Helpers & state ---
-    const ranges = {
-      B: Array.from({length:15},(_,i)=>i+1),
-      I: Array.from({length:15},(_,i)=>i+16),
-      N: Array.from({length:15},(_,i)=>i+31),
-      G: Array.from({length:15},(_,i)=>i+46),
-      O: Array.from({length:15},(_,i)=>i+61)
-    };
-    const prefixFor = n => n<=15?'B':n<=30?'I':n<=45?'N':n<=60?'G':'O';
-
-    let bag = shuffle([...ranges.B,...ranges.I,...ranges.N,...ranges.G,...ranges.O]);
+    const letters = ["B","I","N","G","O"];
+    let allNumbers = [];
     let history = [];
     let soundOn = true;
 
-    const elPrefix = document.getElementById('prefix');
-    const elNumber = document.getElementById('number');
-    const elRecent = document.getElementById('recent');
-    const btnNext = document.getElementById('btnNext');
-    const btnUndo = document.getElementById('btnUndo');
-    const btnReset = document.getElementById('btnReset');
-    const btnFull = document.getElementById('btnFull');
-    const btnSound = document.getElementById('btnSound');
-
-    // --- UI actions ---
-    function shuffle(a){ for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]];} return a; }
-
-    function beep(){
-      if(!soundOn) return;
-      const ctx = new (window.AudioContext||window.webkitAudioContext)();
-      const o = ctx.createOscillator();
-      const g = ctx.createGain();
-      o.type = 'sine';
-      o.frequency.value = 660;
-      o.connect(g); g.connect(ctx.destination);
-      g.gain.setValueAtTime(0.001, ctx.currentTime);
-      g.gain.exponentialRampToValueAtTime(0.2, ctx.currentTime+0.01);
-      g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime+0.25);
-      o.start(); o.stop(ctx.currentTime+0.26);
-    }
-
-    function draw(){
-      if(!bag.length) return;
-      const n = bag.pop();
-      history.push(n);
-      showCurrent();
-      updateRecent();
-      beep();
-    }
-
-    function undo(){
-      if(!history.length) return;
-      bag.push(history.pop());
-      showCurrent();
-      updateRecent();
-    }
-
-    function reset(){
+    function initGame() {
+      allNumbers = [];
+      for (let i=0; i<letters.length; i++) {
+        let min = i*15+1, max = i*15+15;
+        for (let n=min; n<=max; n++) {
+          allNumbers.push({letter: letters[i], number: n});
+        }
+      }
+      shuffle(allNumbers);
       history = [];
-      bag = shuffle([...ranges.B,...ranges.I,...ranges.N,...ranges.G,...ranges.O]);
-      showCurrent(); updateRecent();
+      document.getElementById("callerBox").textContent = "—";
+      document.getElementById("recentCalls").innerHTML = "";
     }
 
-    function showCurrent(){
-      if(!history.length){ elPrefix.textContent='—'; elNumber.textContent='—'; return; }
-      const n = history[history.length-1];
-      elPrefix.textContent = prefixFor(n);
-      elNumber.textContent = String(n);
+    function shuffle(arr) {
+      for (let i=arr.length-1; i>0; i--) {
+        const j = Math.floor(Math.random()* (i+1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
     }
 
-    function badge(letter, n, isCurrent){
-      const color =
-        letter==='B'?'bg-red-500 text-white':
-        letter==='I'?'bg-indigo-400 text-gray-900':
-        letter==='N'?'bg-green-400 text-gray-900':
-        letter==='G'?'bg-yellow-400 text-gray-900':
-        'bg-purple-400 text-gray-900';
-      const ring = isCurrent ? ' ring-4 ring-green-400' : '';
-      const title = `${letter} ${n}`;
-      return `<span class="inline-flex items-center px-3 py-1 rounded-2xl font-bold ${color}${ring}" title="${title}">${letter}&nbsp;${n}</span>`;
+    function callNext() {
+      if (allNumbers.length === 0) return;
+      const call = allNumbers.pop();
+      history.push(call);
+      document.getElementById("callerBox").textContent = call.letter + " " + call.number;
+      updateRecent();
+      if (soundOn) {
+        const utter = new SpeechSynthesisUtterance(call.letter + " " + call.number);
+        speechSynthesis.speak(utter);
+      }
     }
 
-    function updateRecent(){
-      elRecent.innerHTML = '';
-      const last = history.slice(-8).reverse(); // newest first
-      last.forEach((n,idx)=>{
-        const l = prefixFor(n);
-        elRecent.insertAdjacentHTML('beforeend', badge(l, n, idx===0));
-      });
+    function undoCall() {
+      if (history.length === 0) return;
+      const last = history.pop();
+      allNumbers.push(last);
+      document.getElementById("callerBox").textContent = "—";
+      updateRecent();
     }
 
-    // --- buttons & keys ---
-    btnNext.addEventListener('click', draw);
-    btnUndo.addEventListener('click', undo);
-    btnReset.addEventListener('click', reset);
-    btnSound.addEventListener('click', ()=>{
+    function resetCaller() {
+      initGame();
+    }
+
+    function updateRecent() {
+      const recentDiv = document.getElementById("recentCalls");
+      recentDiv.innerHTML = history.slice(-10).reverse().map(c => `<span>${c.letter} ${c.number}</span>`).join("");
+    }
+
+    function toggleSound() {
       soundOn = !soundOn;
-      btnSound.textContent = soundOn ? '🔊 Sound' : '🔇 Sound';
-      btnSound.setAttribute('aria-pressed', String(soundOn));
-    });
-    btnFull.addEventListener('click', ()=>{
-      const el = document.fullscreenElement;
-      if(el){ document.exitFullscreen(); }
-      else { document.documentElement.requestFullscreen().catch(()=>{}); }
+      document.getElementById("soundBtn").textContent = soundOn ? "🔊 Sound" : "🔇 Muted";
+    }
+
+    function toggleFullscreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen();
+      } else {
+        if (document.exitFullscreen) {
+          document.exitFullscreen();
+        }
+      }
+    }
+
+    document.addEventListener("keydown", e => {
+      if (e.code === "Space") { e.preventDefault(); callNext(); }
+      if (e.code === "Backspace") { e.preventDefault(); undoCall(); }
+      if (e.code === "KeyR") { resetCaller(); }
+      if (e.code === "KeyF") { toggleFullscreen(); }
     });
 
-    window.addEventListener('keydown', (e)=>{
-      if(e.code==='Space'){ e.preventDefault(); draw(); }
-      else if(e.code==='Backspace'){ e.preventDefault(); undo(); }
-      else if(e.key==='r' || e.key==='R'){ reset(); }
-      else if(e.key==='f' || e.key==='F'){ btnFull.click(); }
-    });
-
-    // init
-    showCurrent();
-    updateRecent();
+    initGame();
   </script>
 </body>
 </html>
