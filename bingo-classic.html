@@ -33,12 +33,20 @@
       margin: 0 auto;
     }
 
-    .recent-calls span {
-      display: inline-block;
-      margin: 0.5rem;
-      font-size: clamp(2rem, 5vmin, 3rem); /* responsive size */
-      font-weight: bold;
-      color: #1e3a8a;
+   .recent-calls span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 70px;
+  height: 70px;
+  margin: 0.25rem;
+  border-radius: 50%;
+  background: #1e3a8a;   /* dark blue ball */
+  color: #fff;           /* white text */
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
     }
 
     .btn {
@@ -79,6 +87,21 @@
     <h2 class="text-2xl font-bold text-blue-900 mt-10 mb-4">Recent Calls</h2>
     <div id="recentCalls" class="recent-calls"></div>
   </main>
+
+.recent-calls span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 70px;
+  height: 70px;
+  margin: 0.25rem;
+  border-radius: 50%;
+  background: #1e3a8a;   /* dark blue ball */
+  color: #fff;           /* white text */
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
 
   <script>
     const letters = ["B","I","N","G","O"];
