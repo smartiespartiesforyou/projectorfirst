@@ -3,75 +3,84 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>Bingo Hub — ProjectorFirst</title>
-  <meta name="description" content="Choose from Classic or seasonal Bingo games."/>
-  <meta name="theme-color" content="#22c55e"/>
+  <title>Bingo — ProjectorFirst</title>
+  <meta name="description" content="Bingo Hub — simple, projector-friendly bingo tools for seniors."/>
+  <meta name="theme-color" content="#1e3a8a"/>
   <link rel="icon" href="/logo.svg" type="image/svg+xml"/>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     .skip-link{position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden}
-    .skip-link:focus{left:1rem;top:1rem;width:auto;height:auto;padding:.75rem 1rem;background:#22c55e;color:#111;border-radius:.75rem;z-index:50}
+    .skip-link:focus{left:1rem;top:1rem;width:auto;height:auto;padding:.75rem 1rem;background:#1e3a8a;color:#fff;border-radius:.75rem;z-index:50}
   </style>
 </head>
-<body class="bg-gray-900 text-white font-sans text-2xl leading-relaxed">
+<body class="bg-white text-black">
   <a href="#main" class="skip-link">Skip to main content</a>
 
   <!-- Header -->
-  <header class="bg-gray-800 py-4 shadow-md" role="banner">
+  <header class="bg-white border-b border-black/10 py-4 shadow-sm" role="banner">
     <div class="max-w-6xl mx-auto px-4 flex items-center justify-between">
-      <a href="/" class="flex items-center gap-3 focus:outline-none focus:ring-4 focus:ring-green-400 rounded-xl">
-        <img src="/logo.svg" alt="ProjectorFirst logo" class="w-10 h-10"/>
-        <span class="text-2xl font-extrabold text-green-400">ProjectorFirst</span>
+      <a href="/" class="flex items-center gap-3 focus:outline-none focus:ring-4 focus:ring-blue-400 rounded-xl">
+        <img src="/logo.svg" alt="ProjectorFirst logo" class="w-12 h-12"/>
+        <span class="text-3xl font-extrabold text-blue-900">ProjectorFirst</span>
       </a>
       <nav class="space-x-2" aria-label="Primary">
-        <a href="/index.html" class="px-4 py-2 rounded-xl hover:bg-green-400 hover:text-gray-900 transition">Home</a>
-        <a href="/apps.html" class="px-4 py-2 rounded-xl hover:bg-green-400 hover:text-gray-900 transition">Apps</a>
-        <a href="/bingo.html" aria-current="page" class="px-4 py-2 rounded-xl bg-green-500 text-gray-900 font-bold">Bingo</a>
-        <a href="/about.html" class="px-4 py-2 rounded-xl hover:bg-green-400 hover:text-gray-900 transition">About</a>
-        <a href="/contact.html" class="px-4 py-2 rounded-xl hover:bg-green-400 hover:text-gray-900 transition">Contact</a>
+        <a href="/index.html"
+           class="px-5 py-3 rounded-xl bg-blue-900/90 text-white text-xl font-bold hover:bg-blue-800 transition focus:outline-none focus:ring-4 focus:ring-blue-400">
+          Home
+        </a>
+        <!-- Not marking Apps as current here to avoid confusion on the Bingo hub -->
+        <a href="/apps.html"
+           class="px-5 py-3 rounded-xl bg-blue-900/90 text-white text-xl font-bold hover:bg-blue-800 transition focus:outline-none focus:ring-4 focus:ring-blue-400">
+          Apps
+        </a>
+        <a href="/about.html"
+           class="px-5 py-3 rounded-xl bg-blue-900/90 text-white text-xl font-bold hover:bg-blue-800 transition focus:outline-none focus:ring-4 focus:ring-blue-400">
+          About
+        </a>
+        <a href="/contact.html"
+           class="px-5 py-3 rounded-xl bg-blue-900/90 text-white text-xl font-bold hover:bg-blue-800 transition focus:outline-none focus:ring-4 focus:ring-blue-400">
+          Contact
+        </a>
       </nav>
     </div>
   </header>
 
   <!-- Main -->
-  <main id="main" class="max-w-6xl mx-auto px-4 py-14">
-    <h1 class="text-4xl sm:text-5xl font-extrabold mb-8 text-green-400 text-center">🎉 Bingo Hub</h1>
-    <p class="text-gray-300 text-center max-w-3xl mx-auto mb-12">
-      Choose your Bingo game! Start with <span class="text-green-400 font-bold">Classic</span>, or try one of our 
-      <span class="text-green-400 font-bold">seasonal themes</span>. More games will be added here for every holiday!
+  <main id="main" class="max-w-5xl mx-auto px-4 py-14">
+    <h1 class="text-5xl sm:text-6xl font-extrabold mb-10 text-blue-900 text-center">
+      Bingo Hub
+    </h1>
+    <p class="text-2xl leading-relaxed mb-12 text-center">
+      Simple, projector-friendly bingo tools for your group.
     </p>
 
-    <!-- Bingo Themes -->
-    <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-      <!-- Classic Bingo -->
-      <a href="/bingo-classic.html" class="block bg-gray-800 border border-gray-700 rounded-2xl p-8 hover:border-green-400 focus:outline-none focus:ring-4 focus:ring-green-400">
-        <div class="text-3xl font-extrabold text-green-400 mb-2">🟢 Classic Bingo</div>
-        <p class="text-gray-300">The original, bold and simple for everyone.</p>
+    <!-- Two-Card Grid (same structure) -->
+    <div class="grid gap-8 sm:grid-cols-2">
+      <!-- Caller -->
+      <a href="/bingo-caller.html" class="block bg-white border-2 border-blue-900 rounded-2xl p-10 shadow-sm text-center hover:bg-blue-50 transition focus:outline-none focus:ring-4 focus:ring-blue-400">
+        <h2 class="text-3xl font-extrabold text-blue-900 mb-4">🚀 Start Caller</h2>
+        <p class="text-xl leading-relaxed">Jumbo 75-ball caller with clear history and big buttons.</p>
       </a>
 
-      <!-- Christmas Bingo -->
-      <a href="/bingo-christmas.html" class="block bg-gray-800 border border-gray-700 rounded-2xl p-8 hover:border-green-400 focus:outline-none focus:ring-4 focus:ring-green-400">
-        <div class="text-3xl font-extrabold text-green-400 mb-2">🎄 Christmas Bingo</div>
-        <p class="text-gray-300">Festive cards with holiday cheer.</p>
+      <!-- Printable Cards -->
+      <a href="/bingo-cards.html" class="block bg-white border-2 border-blue-900 rounded-2xl p-10 shadow-sm text-center hover:bg-blue-50 transition focus:outline-none focus:ring-4 focus:ring-blue-400">
+        <h2 class="text-3xl font-extrabold text-blue-900 mb-4">🖨️ Printable Cards</h2>
+        <p class="text-xl leading-relaxed">High-contrast, big-type cards — ready to print and cut.</p>
       </a>
+    </div>
 
-      <!-- Halloween Bingo -->
-      <a href="/bingo-halloween.html" class="block bg-gray-800 border border-gray-700 rounded-2xl p-8 hover:border-green-400 focus:outline-none focus:ring-4 focus:ring-green-400">
-        <div class="text-3xl font-extrabold text-green-400 mb-2">🎃 Halloween Bingo</div>
-        <p class="text-gray-300">Spooky fun for all ages.</p>
+    <!-- Back Button -->
+    <div class="text-center mt-12">
+      <a href="/apps.html"
+         class="inline-block px-10 py-5 rounded-xl bg-blue-900 text-white font-bold text-3xl hover:bg-blue-800 transition focus:outline-none focus:ring-4 focus:ring-blue-400">
+        Back to Apps
       </a>
-
-      <!-- Placeholder for future holidays -->
-      <div class="block bg-gray-800 border border-dashed border-gray-700 rounded-2xl p-8 text-gray-400 text-center">
-        <div class="text-3xl font-extrabold text-gray-400 mb-2">➕ More Holidays</div>
-        <p>Valentine’s, Easter, 4th of July, and more coming soon!</p>
-      </div>
     </div>
   </main>
 
   <!-- Footer -->
-  <footer class="bg-gray-800 py-6 mt-12" role="contentinfo">
-    <div class="max-w-6xl mx-auto px-4 text-center text-gray-400 text-base">
+  <footer class="bg-white border-t border-black/10 py-6 mt-12" role="contentinfo">
+    <div class="max-w-6xl mx-auto px-4 text-center text-lg">
       © <span id="year"></span> ProjectorFirst • Big, Simple Apps for Nursing Homes & Senior Care
     </div>
   </footer>
