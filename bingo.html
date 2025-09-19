@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>Bingo — ProjectorFirst</title>
-  <meta name="description" content="Bingo Hub — simple, projector-friendly bingo tools for seniors."/>
+  <title>Bingo Hub — ProjectorFirst</title>
+  <meta name="description" content="Choose your Bingo game — Classic, or one of our seasonal holiday themes."/>
   <meta name="theme-color" content="#1e3a8a"/>
   <link rel="icon" href="/logo.svg" type="image/svg+xml"/>
   <script src="https://cdn.tailwindcss.com"></script>
@@ -28,7 +28,6 @@
            class="px-5 py-3 rounded-xl bg-blue-900/90 text-white text-xl font-bold hover:bg-blue-800 transition focus:outline-none focus:ring-4 focus:ring-blue-400">
           Home
         </a>
-        <!-- Not marking Apps as current here to avoid confusion on the Bingo hub -->
         <a href="/apps.html"
            class="px-5 py-3 rounded-xl bg-blue-900/90 text-white text-xl font-bold hover:bg-blue-800 transition focus:outline-none focus:ring-4 focus:ring-blue-400">
           Apps
@@ -47,26 +46,39 @@
 
   <!-- Main -->
   <main id="main" class="max-w-5xl mx-auto px-4 py-14">
-    <h1 class="text-5xl sm:text-6xl font-extrabold mb-10 text-blue-900 text-center">
-      Bingo Hub
+    <h1 class="text-5xl sm:text-6xl font-extrabold mb-6 text-blue-900 text-center">
+      🎉 Bingo Hub
     </h1>
     <p class="text-2xl leading-relaxed mb-12 text-center">
-      Simple, projector-friendly bingo tools for your group.
+      Choose your Bingo game! Start with <strong>Classic</strong>, or try one of our seasonal themes.  
+      More games will be added here for every holiday!
     </p>
 
-    <!-- Two-Card Grid (same structure) -->
-    <div class="grid gap-8 sm:grid-cols-2">
-      <!-- Caller -->
-      <a href="/bingo-caller.html" class="block bg-white border-2 border-blue-900 rounded-2xl p-10 shadow-sm text-center hover:bg-blue-50 transition focus:outline-none focus:ring-4 focus:ring-blue-400">
-        <h2 class="text-3xl font-extrabold text-blue-900 mb-4">🚀 Start Caller</h2>
-        <p class="text-xl leading-relaxed">Jumbo 75-ball caller with clear history and big buttons.</p>
+    <!-- Grid of Bingo Variants -->
+    <div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+      <!-- Classic Bingo -->
+      <a href="/bingo-caller.html" class="block bg-white border-2 border-blue-900 rounded-2xl p-8 shadow-sm text-center hover:bg-blue-50 transition focus:outline-none focus:ring-4 focus:ring-blue-400">
+        <h2 class="text-2xl font-extrabold text-blue-900 mb-3">🟢 Classic Bingo</h2>
+        <p class="text-xl leading-relaxed">The original, bold and simple for everyone.</p>
       </a>
 
-      <!-- Printable Cards -->
-      <a href="/bingo-cards.html" class="block bg-white border-2 border-blue-900 rounded-2xl p-10 shadow-sm text-center hover:bg-blue-50 transition focus:outline-none focus:ring-4 focus:ring-blue-400">
-        <h2 class="text-3xl font-extrabold text-blue-900 mb-4">🖨️ Printable Cards</h2>
-        <p class="text-xl leading-relaxed">High-contrast, big-type cards — ready to print and cut.</p>
+      <!-- Christmas Bingo -->
+      <a href="/bingo-christmas.html" class="block bg-white border-2 border-blue-900 rounded-2xl p-8 shadow-sm text-center hover:bg-blue-50 transition focus:outline-none focus:ring-4 focus:ring-blue-400">
+        <h2 class="text-2xl font-extrabold text-blue-900 mb-3">🎄 Christmas Bingo</h2>
+        <p class="text-xl leading-relaxed">Festive cards with holiday cheer.</p>
       </a>
+
+      <!-- Halloween Bingo -->
+      <a href="/bingo-halloween.html" class="block bg-white border-2 border-blue-900 rounded-2xl p-8 shadow-sm text-center hover:bg-blue-50 transition focus:outline-none focus:ring-4 focus:ring-blue-400">
+        <h2 class="text-2xl font-extrabold text-blue-900 mb-3">🎃 Halloween Bingo</h2>
+        <p class="text-xl leading-relaxed">Spooky fun for all ages.</p>
+      </a>
+
+      <!-- More Holidays -->
+      <div class="block bg-gray-100 border-2 border-gray-400 rounded-2xl p-8 shadow-inner text-center">
+        <h2 class="text-2xl font-extrabold text-gray-600 mb-3">➕ More Holidays</h2>
+        <p class="text-xl leading-relaxed">Valentine’s, Easter, 4th of July, and more coming soon!</p>
+      </div>
     </div>
 
     <!-- Back Button -->
