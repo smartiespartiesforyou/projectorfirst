@@ -4,71 +4,80 @@
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>About — ProjectorFirst</title>
-  <meta name="description" content="Learn about ProjectorFirst and our mission to create projector-friendly apps for seniors and care homes."/>
-  <meta name="theme-color" content="#22c55e"/>
+  <meta name="description" content="About ProjectorFirst — big, simple projector-friendly apps for senior care."/>
+  <meta name="theme-color" content="#1e3a8a"/>
   <link rel="icon" href="/logo.svg" type="image/svg+xml"/>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     .skip-link{position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden}
-    .skip-link:focus{left:1rem;top:1rem;width:auto;height:auto;padding:.75rem 1rem;background:#22c55e;color:#111;border-radius:.75rem;z-index:50}
+    .skip-link:focus{left:1rem;top:1rem;width:auto;height:auto;padding:.75rem 1rem;background:#1e3a8a;color:#fff;border-radius:.75rem;z-index:50}
   </style>
 </head>
-<body class="bg-gray-900 text-white font-sans text-2xl leading-relaxed">
+<body class="bg-white text-black">
   <a href="#main" class="skip-link">Skip to main content</a>
 
   <!-- Header -->
-  <header class="bg-gray-800 py-4 shadow-md" role="banner">
+  <header class="bg-white border-b border-black/10 py-4 shadow-sm" role="banner">
     <div class="max-w-6xl mx-auto px-4 flex items-center justify-between">
-      <a href="/" class="flex items-center gap-3 focus:outline-none focus:ring-4 focus:ring-green-400 rounded-xl">
-        <img src="/logo.svg" alt="ProjectorFirst logo" class="w-10 h-10"/>
-        <span class="text-2xl font-extrabold text-green-400">ProjectorFirst</span>
+      <a href="/" class="flex items-center gap-3 focus:outline-none focus:ring-4 focus:ring-blue-400 rounded-xl">
+        <img src="/logo.svg" alt="ProjectorFirst logo" class="w-12 h-12"/>
+        <span class="text-3xl font-extrabold text-blue-900">ProjectorFirst</span>
       </a>
       <nav class="space-x-2" aria-label="Primary">
-        <a href="/index.html" class="px-4 py-2 rounded-xl hover:bg-green-400 hover:text-gray-900 transition focus:outline-none focus:ring-4 focus:ring-green-400">Home</a>
-        <a href="/apps.html" class="px-4 py-2 rounded-xl hover:bg-green-400 hover:text-gray-900 transition focus:outline-none focus:ring-4 focus:ring-green-400">Apps</a>
-        <a href="/about.html" aria-current="page" class="px-4 py-2 rounded-xl bg-green-500 text-gray-900 font-bold focus:outline-none focus:ring-4 focus:ring-green-400">About</a>
-        <a href="/contact.html" class="px-4 py-2 rounded-xl hover:bg-green-400 hover:text-gray-900 transition focus:outline-none focus:ring-4 focus:ring-green-400">Contact</a>
+        <a href="/index.html"
+           class="px-5 py-3 rounded-xl bg-blue-900/90 text-white text-xl font-bold hover:bg-blue-800 transition focus:outline-none focus:ring-4 focus:ring-blue-400">
+          Home
+        </a>
+        <a href="/apps.html"
+           class="px-5 py-3 rounded-xl bg-blue-900/90 text-white text-xl font-bold hover:bg-blue-800 transition focus:outline-none focus:ring-4 focus:ring-blue-400">
+          Apps
+        </a>
+        <a href="/about.html" aria-current="page"
+           class="px-5 py-3 rounded-xl bg-blue-900 text-white text-xl font-bold focus:outline-none focus:ring-4 focus:ring-blue-400">
+          About
+        </a>
+        <a href="/contact.html"
+           class="px-5 py-3 rounded-xl bg-blue-900/90 text-white text-xl font-bold hover:bg-blue-800 transition focus:outline-none focus:ring-4 focus:ring-blue-400">
+          Contact
+        </a>
       </nav>
     </div>
   </header>
 
   <!-- Main -->
-  <main id="main" class="max-w-6xl mx-auto px-4 py-14">
-    <h1 class="text-4xl sm:text-5xl font-extrabold mb-8 text-green-400 text-center">About ProjectorFirst</h1>
-    <p class="text-gray-300 text-center max-w-3xl mx-auto mb-12">
-      ProjectorFirst was created with one simple idea: make digital games and tools that are 
-      <span class="text-green-400 font-bold">easy to see</span>, 
-      <span class="text-green-400 font-bold">easy to use</span>, and 
-      <span class="text-green-400 font-bold">fun for everyone</span>.
+  <main id="main" class="max-w-4xl mx-auto px-4 py-14">
+    <h1 class="text-5xl sm:text-6xl font-extrabold mb-8 text-blue-900 text-center">
+      About ProjectorFirst
+    </h1>
+    <p class="text-2xl leading-relaxed mb-8 text-center">
+      ProjectorFirst was created to make technology more accessible for seniors and care communities.
+      We focus on <strong>big fonts, simple layouts, and one-click apps</strong> that work beautifully on projectors and TVs.
+    </p>
+    <p class="text-2xl leading-relaxed mb-8 text-center">
+      Our goal is to support nursing homes, senior centers, and caregivers by providing easy-to-use digital activities
+      that bring people together. No small buttons. No clutter. Just clear, fun tools.
     </p>
 
-    <div class="grid gap-6 sm:grid-cols-2">
-      <div class="bg-gray-800 border border-gray-700 rounded-2xl p-8">
-        <h2 class="text-3xl font-extrabold text-green-400 mb-4">👵 Built for Seniors</h2>
-        <p class="text-gray-300">
-          Large text, clear buttons, and simple layouts mean everyone can join in — no matter their tech comfort level.
-        </p>
-      </div>
-      <div class="bg-gray-800 border border-gray-700 rounded-2xl p-8">
-        <h2 class="text-3xl font-extrabold text-green-400 mb-4">🏠 Perfect for Care Homes</h2>
-        <p class="text-gray-300">
-          Designed for projectors and TVs so games can be enjoyed together in group activities, recreation rooms, or family visits.
-        </p>
-      </div>
+    <!-- Mission Statement Card -->
+    <div class="bg-white border-2 border-blue-900 rounded-2xl p-10 shadow-sm text-center">
+      <h2 class="text-3xl font-extrabold text-blue-900 mb-4">💙 Our Mission</h2>
+      <p class="text-2xl leading-relaxed">
+        To empower seniors with technology that feels natural, accessible, and enjoyable on the big screen.
+      </p>
     </div>
 
-    <div class="bg-gray-800 border border-gray-700 rounded-2xl p-8 mt-8 text-center">
-      <h2 class="text-3xl font-extrabold text-green-400 mb-4">💡 Our Mission</h2>
-      <p class="text-gray-300 max-w-3xl mx-auto">
-        We believe technology should bring people together. By making apps that are bold, bright, and simple,
-        ProjectorFirst helps create moments of joy and connection in senior care.
-      </p>
+    <!-- Back Button -->
+    <div class="text-center mt-12">
+      <a href="/index.html"
+         class="inline-block px-10 py-5 rounded-xl bg-blue-900 text-white font-bold text-3xl hover:bg-blue-800 transition focus:outline-none focus:ring-4 focus:ring-blue-400">
+        Back to Home
+      </a>
     </div>
   </main>
 
   <!-- Footer -->
-  <footer class="bg-gray-800 py-6 mt-12" role="contentinfo">
-    <div class="max-w-6xl mx-auto px-4 text-center text-gray-400 text-base">
+  <footer class="bg-white border-t border-black/10 py-6 mt-12" role="contentinfo">
+    <div class="max-w-6xl mx-auto px-4 text-center text-lg">
       © <span id="year"></span> ProjectorFirst • Big, Simple Apps for Nursing Homes & Senior Care
     </div>
   </footer>
