@@ -1,115 +1,118 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Apps — ProjectorFirst</title>
-  <meta name="description" content="Browse ProjectorFirst apps — simple, projector-friendly activities for seniors."/>
   <meta name="theme-color" content="#1e3a8a"/>
-  <link rel="icon" href="/logo.svg" type="image/svg+xml"/>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    .skip-link{position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden}
-    .skip-link:focus{left:1rem;top:1rem;width:auto;height:auto;padding:.75rem 1rem;background:#1e3a8a;color:#fff;border-radius:.75rem;z-index:50}
+    body { background:#fff; color:#111; }
+    .card {
+      border: 3px solid #1e3a8a; /* strong blue border */
+      border-radius: 1.25rem;    /* 2xl-ish */
+      padding: 1.25rem;
+      background: #fff;
+      transition: transform .08s ease, box-shadow .08s ease;
+      box-shadow: 0 6px 0 #1e3a8a22;
+    }
+    .card:hover { transform: translateY(-2px); box-shadow: 0 10px 0 #1e3a8a22; }
+    .btn {
+      display: inline-block;
+      background:#1e3a8a; color:#fff;
+      padding: .9rem 1.4rem; border-radius: 1rem;
+      font-weight: 800; font-size: 1.2rem;
+    }
+    .btn:hover { background:#1d4ed8; }
   </style>
 </head>
-<body class="bg-white text-black">
-  <a href="#main" class="skip-link">Skip to main content</a>
-
-  <!-- Header -->
-  <header class="bg-white border-b border-black/10 py-4 shadow-sm" role="banner">
-    <div class="max-w-6xl mx-auto px-4 flex items-center justify-between">
-      <a href="/" class="flex items-center gap-3 focus:outline-none focus:ring-4 focus:ring-blue-400 rounded-xl">
-        <img src="/logo.svg" alt="ProjectorFirst logo" class="w-12 h-12"/>
-        <span class="text-3xl font-extrabold text-blue-900">ProjectorFirst</span>
-      </a>
-      <nav class="space-x-2" aria-label="Primary">
-        <a href="/index.html"
-           class="px-5 py-3 rounded-xl bg-blue-900/90 text-white text-xl font-bold hover:bg-blue-800 transition focus:outline-none focus:ring-4 focus:ring-blue-400">
-          Home
-        </a>
-        <a href="/apps.html" aria-current="page"
-           class="px-5 py-3 rounded-xl bg-blue-900 text-white text-xl font-bold focus:outline-none focus:ring-4 focus:ring-blue-400">
-          Apps
-        </a>
-        <a href="/about.html"
-           class="px-5 py-3 rounded-xl bg-blue-900/90 text-white text-xl font-bold hover:bg-blue-800 transition focus:outline-none focus:ring-4 focus:ring-blue-400">
-          About
-        </a>
-        <a href="/contact.html"
-           class="px-5 py-3 rounded-xl bg-blue-900/90 text-white text-xl font-bold hover:bg-blue-800 transition focus:outline-none focus:ring-4 focus:ring-blue-400">
-          Contact
-        </a>
-      </nav>
-    </div>
+<body class="min-h-screen">
+  <header class="max-w-5xl mx-auto px-4 py-6">
+    <h1 class="text-4xl md:text-5xl font-extrabold text-blue-800 mb-2">Apps</h1>
+    <p class="text-lg text-gray-700">Big, simple, projector-friendly games for everyone.</p>
   </header>
 
-  <!-- Main -->
-  <main id="main" class="max-w-5xl mx-auto px-4 py-14">
-    <h1 class="text-5xl sm:text-6xl font-extrabold mb-10 text-blue-900 text-center">
-      Our Apps
-    </h1>
-    <p class="text-2xl leading-relaxed mb-12 text-center">
-      Explore simple, projector-friendly activities designed for seniors and care communities.
-    </p>
+  <main class="max-w-5xl mx-auto px-4 pb-12">
+    <!-- Grid: 1 col on mobile, 2 on md, 3 on lg -->
+    <div class="grid gap-5 sm:gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
 
-    <!-- Apps Grid (all cards are perfect squares) -->
- <!-- Apps Grid (two neat columns, rectangular cards) -->
-<div class="grid gap-6 sm:grid-cols-2">
-  <!-- Bingo -->
-  <a href="/bingo.html"
-     class="block bg-white border-2 border-blue-900 rounded-2xl p-8 md:p-10 shadow-sm
-            text-center hover:bg-blue-50 transition focus:outline-none focus:ring-4 focus:ring-blue-400
-            flex flex-col justify-center min-h-[180px] md:min-h-[200px]">
-    <h2 class="text-3xl font-extrabold text-blue-900 mb-4">🎉 Bingo</h2>
-    <p class="text-xl leading-relaxed">Big, clear bingo boards for group fun on the big screen.</p>
-  </a>
+      <!-- Bingo -->
+      <article class="card">
+        <div class="flex items-center gap-3 mb-3">
+          <span class="text-4xl" aria-hidden="true">🎱</span>
+          <h2 class="text-2xl font-extrabold text-blue-800">Bingo Caller</h2>
+        </div>
+        <p class="text-lg text-gray-800 mb-4">
+          Classic 1–75 caller with big numbers and a <span class="font-semibold">Theme</span> dropdown.
+        </p>
+        <a href="bingo.html" class="btn w-full text-center" aria-label="Open Bingo Caller">Open Bingo</a>
+      </article>
 
-  <!-- Dice Roller -->
-  <a href="/dice.html"
-     class="block bg-white border-2 border-blue-900 rounded-2xl p-8 md:p-10 shadow-sm
-            text-center hover:bg-blue-50 transition focus:outline-none focus:ring-4 focus:ring-blue-400
-            flex flex-col justify-center min-h-[180px] md:min-h-[200px]">
-    <h2 class="text-3xl font-extrabold text-blue-900 mb-4">🎲 Dice Roller</h2>
-    <p class="text-xl leading-relaxed">Extra-large dice rolls for games and activities everyone can see.</p>
-  </a>
+      <!-- Dice Roller -->
+      <article class="card">
+        <div class="flex items-center gap-3 mb-3">
+          <span class="text-4xl" aria-hidden="true">🎲</span>
+          <h2 class="text-2xl font-extrabold text-blue-800">Dice Roller</h2>
+        </div>
+        <p class="text-lg text-gray-800 mb-4">
+          Big, readable dice for group play and quick challenges.
+        </p>
+        <a href="dice.html" class="btn w-full text-center" aria-label="Open Dice Roller">Open Dice</a>
+      </article>
 
-  <!-- Slot Machine -->
-  <a href="/slot.html"
-     class="block bg-white border-2 border-blue-900 rounded-2xl p-8 md:p-10 shadow-sm
-            text-center hover:bg-blue-50 transition focus:outline-none focus:ring-4 focus:ring-blue-400
-            flex flex-col justify-center min-h-[180px] md:min-h-[200px]">
-    <h2 class="text-3xl font-extrabold text-blue-900 mb-4">🎰 Slot Machine</h2>
-    <p class="text-xl leading-relaxed">Huge reels, bold symbols, and optional sound — easy to see and play.</p>
-  </a>
+      <!-- Trivia -->
+      <article class="card">
+        <div class="flex items-center gap-3 mb-3">
+          <span class="text-4xl" aria-hidden="true">❓</span>
+          <h2 class="text-2xl font-extrabold text-blue-800">Trivia (True/False)</h2>
+        </div>
+        <p class="text-lg text-gray-800 mb-4">
+          Huge questions, big buttons, and a <span class="font-semibold">Theme</span> picker.
+        </p>
+        <a href="trivia.html" class="btn w-full text-center" aria-label="Open Trivia">Open Trivia</a>
+      </article>
 
-  <!-- Pokeno -->
-  <a href="/pokeno.html"
-     class="block bg-white border-2 border-blue-900 rounded-2xl p-8 md:p-10 shadow-sm
-            text-center hover:bg-blue-50 transition focus:outline-none focus:ring-4 focus:ring-blue-400
-            flex flex-col justify-center min-h-[180px] md:min-h-[200px]">
-    <h2 class="text-3xl font-extrabold text-blue-900 mb-4">🃏 Pokeno</h2>
-    <p class="text-xl leading-relaxed">One huge drawn card with a simple history strip — perfect for group play.</p>
-  </a>
-</div>
-    <!-- Back Button -->
-    <div class="text-center mt-12">
-      <a href="/index.html"
-         class="inline-block px-10 py-5 rounded-xl bg-blue-900 text-white font-bold text-3xl hover:bg-blue-800 transition focus:outline-none focus:ring-4 focus:ring-blue-400">
-        Back to Home
-      </a>
+      <!-- Memory Match -->
+      <article class="card">
+        <div class="flex items-center gap-3 mb-3">
+          <span class="text-4xl" aria-hidden="true">🧩</span>
+          <h2 class="text-2xl font-extrabold text-blue-800">Memory Match</h2>
+        </div>
+        <p class="text-lg text-gray-800 mb-4">
+          4×4 board with giant icons and coordinate labels for easy calling.
+        </p>
+        <a href="memory.html" class="btn w-full text-center" aria-label="Open Memory Match">Open Memory</a>
+      </article>
+
+      <!-- Pop the Balloon -->
+      <article class="card">
+        <div class="flex items-center gap-3 mb-3">
+          <span class="text-4xl" aria-hidden="true">🎈</span>
+          <h2 class="text-2xl font-extrabold text-blue-800">Pop the Balloon</h2>
+        </div>
+        <p class="text-lg text-gray-800 mb-4">
+          Word guessing with balloons—guess letters before they all pop. <span class="font-semibold">Themes</span> included.
+        </p>
+        <a href="balloon.html" class="btn w-full text-center" aria-label="Open Pop the Balloon">Open Balloon Game</a>
+      </article>
+
+      <!-- Pictionary Reveal -->
+      <article class="card">
+        <div class="flex items-center gap-3 mb-3">
+          <span class="text-4xl" aria-hidden="true">🖼️</span>
+          <h2 class="text-2xl font-extrabold text-blue-800">Pictionary — Reveal</h2>
+        </div>
+        <p class="text-lg text-gray-800 mb-4">
+          Hidden emoji picture revealed tile by tile. Big, bold, and team-friendly.
+        </p>
+        <a href="pictionary.html" class="btn w-full text-center" aria-label="Open Pictionary Reveal">Open Pictionary</a>
+      </article>
+
     </div>
   </main>
 
-  <!-- Footer -->
-  <footer class="bg-white border-t border-black/10 py-6 mt-12" role="contentinfo">
-    <div class="max-w-6xl mx-auto px-4 text-center text-lg">
-      © <span id="year"></span> ProjectorFirst • Big, Simple Apps for Nursing Homes & Senior Care
-    </div>
+  <footer class="max-w-5xl mx-auto px-4 pb-10 pt-4 text-center text-gray-500">
+    <a href="index.html" class="underline text-blue-700 font-semibold">Back to Home</a>
   </footer>
-
-  <script>
-    document.getElementById('year').textContent = new Date().getFullYear();
-  </script>
 </body>
 </html>
