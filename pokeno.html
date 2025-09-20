@@ -1,217 +1,177 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Pokeno Card Caller — ProjectorFirst</title>
-  <meta name="description" content="Projector-friendly Pokeno card caller for activities." />
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
-  <link rel="icon" href="/logo.svg" type="image/svg+xml" />
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Pokeno • ProjectorFirst</title>
+  <meta name="color-scheme" content="light"/>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    /* Big current card */
-    .card-face {
-      width: 95vw;
-      max-width: 800px;          /* bigger cap */
-      aspect-ratio: 3/4;
-      border-radius: 1rem;
-      background: white;
-      color: black;
-      box-shadow: 0 18px 50px rgba(0,0,0,.55);
-      display: grid;
-      grid-template-rows: 1fr auto 1fr;
-      align-items: center;
-      justify-items: center;
-      padding: 1.2rem;
+    /* Big card look */
+    .card {
+      border: 10px solid #111827; /* gray-900 */
+      border-radius: 1.25rem;     /* rounded-2xl */
+      background: #f9fafb;        /* gray-50 */
+      box-shadow: 0 10px 30px rgba(0,0,0,.15);
     }
-    .rank-big { font-size: 14rem; line-height: .85; font-weight: 800; }
-    .suit-big { font-size: 10rem; line-height: 1; font-weight: 800; }
-    .corner   { font-size: 3rem; font-weight: 800; align-self: start; justify-self: start; }
-    .red   { color: #ef4444; }
-    .black { color: #111827; }
-
-    /* Mini cards for recent history */
     .mini-card {
-      width: 6.5rem;
-      aspect-ratio: 3/4;
-      border-radius: .5rem;
-      background: white;
-      color: black;
-      box-shadow: 0 6px 18px rgba(0,0,0,.35);
-      display: grid;
-      grid-template-rows: 1fr auto 1fr;
-      align-items: center;
-      justify-items: center;
-      padding: .35rem;
+      border: 6px solid #111827;
+      border-radius: 1rem;
+      background: #ffffff;
     }
-    .mini-rank { font-size: 2.2rem; font-weight: 800; line-height: 1; }
-    .mini-suit { font-size: 1.6rem; font-weight: 800; line-height: 1; }
-    .mini-corner { font-size: .9rem; font-weight: 800; align-self: start; justify-self: start; }
-
-    /* Pills if you want full list later */
-    .history-pill { border-radius: .5rem; padding: .35rem .55rem; border: 1px solid rgba(255,255,255,.2); font-weight: 700; }
+    @media (prefers-reduced-motion: reduce){
+      .roll { animation: none !important; }
+    }
   </style>
 </head>
-<body class="bg-gradient-to-b from-emerald-900 via-gray-900 to-black text-white font-sans">
-  <header class="bg-gray-800 py-4 shadow-md">
-    <div class="max-w-6xl mx-auto px-4 flex justify-between items-center">
-      <h1 class="text-2xl font-bold text-green-400">ProjectorFirst</h1>
-      <nav class="space-x-4">
-        <a href="/" class="px-3 py-2 rounded hover:bg-green-400 hover:text-gray-900 transition">Home</a>
-        <a href="/about.html" class="px-3 py-2 rounded hover:bg-green-400 hover:text-gray-900 transition">About</a>
-        <a href="/contact.html" class="px-3 py-2 rounded hover:bg-green-400 hover:text-gray-900 transition">Contact</a>
-        <a href="/apps.html" class="px-3 py-2 rounded hover:bg-green-400 hover:text-gray-900 transition">Apps</a>
-      </nav>
+<body class="bg-white text-black">
+  <!-- Header -->
+  <header class="border-b border-gray-200 bg-white">
+    <div class="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
+      <a href="/apps.html" class="text-lg md:text-xl font-medium text-blue-700 hover:underline">
+        ← Back to Apps
+      </a>
+      <div class="text-xl md:text-2xl font-bold">ProjectorFirst</div>
     </div>
   </header>
 
-  <main class="max-w-6xl mx-auto p-6 text-center">
-    <h2 class="text-4xl font-extrabold mb-6 text-green-300">Pokeno Card Caller</h2>
-
-    <!-- Current Card -->
-    <div class="flex justify-center mb-8">
-      <div id="card" class="card-face">
-        <div id="cornerTop" class="corner black">A♠</div>
-        <div id="rank" class="rank-big black">A</div>
-        <div id="suit" class="suit-big black">♠</div>
-      </div>
-    </div>
+  <!-- Main -->
+  <main class="max-w-6xl mx-auto px-4 py-8 md:py-12" id="main">
+    <h1 class="text-4xl md:text-5xl font-extrabold mb-6">Pokeno</h1>
+    <p class="text-xl md:text-2xl text-gray-800 mb-8">
+      Press <span class="font-semibold">Draw Card</span>. The big card shows for the room. Recent cards appear below.
+    </p>
 
     <!-- Controls -->
-    <div class="flex justify-center gap-4 flex-wrap mb-8">
-      <button onclick="nextCard()"  class="bg-green-400 text-gray-900 px-8 py-4 text-xl rounded-lg font-bold shadow hover:bg-green-300 transition">Next Card</button>
-      <button onclick="resetDeck()" class="bg-red-400 text-gray-900 px-8 py-4 text-xl rounded-lg font-bold shadow hover:bg-red-300 transition">Reset</button>
-      <button onclick="toggleFullScreen()" class="bg-blue-400 text-gray-900 px-8 py-4 text-xl rounded-lg font-bold shadow hover:bg-blue-300 transition">Full Screen</button>
+    <div class="flex flex-wrap items-center gap-4 mb-8">
+      <button id="drawBtn"
+        class="px-8 py-5 text-3xl md:text-4xl font-bold rounded-2xl bg-blue-700 text-white hover:bg-blue-800 shadow focus:outline-none focus:ring-4 focus:ring-blue-300">
+        Draw Card
+      </button>
+      <button id="resetBtn"
+        class="px-6 py-4 text-2xl md:text-3xl font-bold rounded-2xl bg-gray-200 text-gray-900 hover:bg-gray-300 shadow focus:outline-none focus:ring-4 focus:ring-blue-300">
+        Reset Deck
+      </button>
+      <label class="flex items-center gap-3 text-lg md:text-2xl">
+        <input id="soundToggle" type="checkbox" class="w-6 h-6" checked>
+        Sound on
+      </label>
+      <span class="text-xl md:text-2xl text-gray-700">Deck left: <span id="deckLeft">52</span></span>
     </div>
 
-    <!-- Last few cards -->
-    <h3 class="text-xl font-bold text-green-400 mb-3">Last Cards</h3>
-    <div id="recent" class="flex flex-wrap justify-center gap-3 mb-10"></div>
+    <!-- Big drawn card -->
+    <section aria-label="Drawn card" class="flex items-center justify-center my-6">
+      <div id="bigCard" class="card w-[16rem] h-[22rem] md:w-[22rem] md:h-[30rem] flex items-center justify-center">
+        <div id="bigCardFace" class="leading-none text-[7rem] md:text-[10rem] select-none" aria-live="polite">—</div>
+      </div>
+    </section>
 
-    <!-- (Optional) Full history pills could go here if you want later -->
-    <!-- <div id="history" class="flex flex-wrap justify-center gap-2 text-lg"></div> -->
+    <!-- History strip -->
+    <section aria-label="Recent cards" class="mt-10">
+      <h2 class="text-2xl md:text-3xl font-extrabold text-blue-900 mb-4">Recent Cards</h2>
+      <div id="history" class="flex gap-3 md:gap-4 overflow-x-auto pb-2">
+        <!-- mini-cards injected here -->
+      </div>
+    </section>
   </main>
 
-  <footer class="bg-gray-800 py-4 mt-12 text-center text-gray-400 text-sm">
-    © <span id="year"></span> ProjectorFirst. All rights reserved.
+  <!-- Footer -->
+  <footer class="bg-white border-t border-gray-200 py-6 mt-12" role="contentinfo">
+    <div class="max-w-6xl mx-auto px-4 text-center text-lg">
+      © <span id="year"></span> ProjectorFirst • Big, Simple Apps for Nursing Homes & Senior Care
+    </div>
   </footer>
 
-  <audio id="ding" src="https://actions.google.com/sounds/v1/alarms/beep_short.ogg" preload="auto"></audio>
+  <!-- Sounds -->
+  <audio id="drawSound" src="https://assets.mixkit.co/sfx/preview/mixkit-unlock-game-notification-253.wav"></audio>
+  <audio id="shuffleSound" src="https://assets.mixkit.co/sfx/preview/mixkit-achievement-bell-600.wav"></audio>
 
   <script>
     document.getElementById('year').textContent = new Date().getFullYear();
 
-    const RANKS = ["A","2","3","4","5","6","7","8","9","10","J","Q","K"];
-    const SUITS = [
-      { sym:"♠", name:"spades",   color:"black" },
-      { sym:"♥", name:"hearts",   color:"red"   },
-      { sym:"♦", name:"diamonds", color:"red"   },
-      { sym:"♣", name:"clubs",    color:"black" }
+    // ===== Deck utilities =====
+    const ranks = ["A","K","Q","J","10","9","8","7","6","5","4","3","2"];
+    const suits = [
+      {s:"♠", color:"#111827", name:"Spades"},
+      {s:"♥", color:"#b91c1c", name:"Hearts"},
+      {s:"♦", color:"#b91c1c", name:"Diamonds"},
+      {s:"♣", color:"#111827", name:"Clubs"}
     ];
-
-    let deck = [];
-    let called = [];
-
-    function buildDeck(){
-      deck = [];
-      for (const s of SUITS){
-        for (const r of RANKS){
-          deck.push({ rank:r, suit:s.sym, color:s.color, label:`${r}${s.sym}` });
+    function makeDeck(){
+      const deck = [];
+      for (const r of ranks){
+        for (const su of suits){
+          deck.push({r, s: su.s, color: su.color, name: `${r} of ${su.name}`});
         }
       }
+      return deck;
     }
 
-    function shuffle(arr){
-      for (let i = arr.length-1; i>0; i--){
-        const j = Math.floor(Math.random()*(i+1));
-        [arr[i],arr[j]] = [arr[j],arr[i]];
-      }
-    }
+    // ===== State & Elements =====
+    let drawDeck = [];
+    const bigCardFace = document.getElementById("bigCardFace");
+    const historyEl = document.getElementById("history");
+    const deckLeftEl = document.getElementById("deckLeft");
+    const drawBtn = document.getElementById("drawBtn");
+    const resetBtn = document.getElementById("resetBtn");
 
-    function playSound(){
-      const ding = document.getElementById('ding');
-      ding.currentTime = 0;
-      ding.play();
-    }
+    const soundToggle = document.getElementById("soundToggle");
+    const drawSound = document.getElementById("drawSound");
+    const shuffleSound = document.getElementById("shuffleSound");
 
-    function paintCurrent(card){
-      const rankEl = document.getElementById('rank');
-      const suitEl = document.getElementById('suit');
-      const cornerTop = document.getElementById('cornerTop');
-      const cardBox = document.getElementById('card');
-
-      rankEl.textContent = card.rank;
-      suitEl.textContent = card.suit;
-      cornerTop.textContent = card.label;
-
-      [rankEl, suitEl, cornerTop].forEach(el=>{
-        el.classList.remove('red','black');
-        el.classList.add(card.color);
-      });
-
-      cardBox.style.outline = card.color === 'red' ? '8px solid rgba(239,68,68,.25)'
-                                                   : '8px solid rgba(17,24,39,.25)';
-      cardBox.style.outlineOffset = '8px';
-    }
-
-    function renderRecent(){
-      const cont = document.getElementById('recent');
-      cont.innerHTML = '';
-      const last = called.slice(-6).reverse(); // newest first
-      last.forEach(c=>{
-        const wrap = document.createElement('div');
-        wrap.className = 'mini-card';
-        const corner = document.createElement('div');
-        corner.className = 'mini-corner ' + (c.color === 'red' ? 'red' : 'black');
-        corner.textContent = c.label;
-        const r = document.createElement('div');
-        r.className = 'mini-rank ' + (c.color === 'red' ? 'red' : 'black');
-        r.textContent = c.rank;
-        const s = document.createElement('div');
-        s.className = 'mini-suit ' + (c.color === 'red' ? 'red' : 'black');
-        s.textContent = c.suit;
-        wrap.appendChild(corner);
-        wrap.appendChild(r);
-        wrap.appendChild(s);
-        cont.appendChild(wrap);
-      });
-    }
-
-    function nextCard(){
-      if (deck.length === 0){
-        document.getElementById('rank').textContent = 'END';
-        document.getElementById('suit').textContent = '';
-        document.getElementById('cornerTop').textContent = 'No cards left';
-        return;
-      }
-      const card = deck.pop();
-      called.push(card);
-      paintCurrent(card);
-      renderRecent();
-      playSound();
-    }
+    function playSafe(a){ if(!soundToggle.checked) return; try{ a.currentTime=0; a.play(); }catch(e){} }
 
     function resetDeck(){
-      called = [];
-      buildDeck();
-      shuffle(deck);
-      paintCurrent({rank:'A', suit:'♠', color:'black', label:'A♠'});
-      renderRecent();
+      drawDeck = makeDeck();
+      deckLeftEl.textContent = String(drawDeck.length);
+      bigCardFace.textContent = "—";
+      historyEl.innerHTML = "";
+      playSafe(shuffleSound);
+      drawBtn.disabled = false;
+      drawBtn.classList.remove("opacity-60","cursor-not-allowed");
     }
 
-    function toggleFullScreen(){
-      if (!document.fullscreenElement){
-        document.documentElement.requestFullscreen().catch(err=>{
-          alert(`Full-screen error: ${err.message}`);
-        });
-      } else {
-        document.exitFullscreen();
+    function drawCard(){
+      if (!drawDeck.length) {
+        drawBtn.disabled = true;
+        drawBtn.classList.add("opacity-60","cursor-not-allowed");
+        return;
+      }
+      // Pick random index
+      const i = Math.floor(Math.random()*drawDeck.length);
+      const [card] = drawDeck.splice(i,1);
+      deckLeftEl.textContent = String(drawDeck.length);
+
+      // Big face update
+      bigCardFace.textContent = card.r + card.s;
+      bigCardFace.style.color = card.color;
+      bigCardFace.setAttribute("aria-label", card.name);
+
+      // History mini-card (newest on the left)
+      const mini = document.createElement("div");
+      mini.className = "mini-card w-20 h-28 md:w-24 md:h-32 flex items-center justify-center";
+      mini.innerHTML = `<span class="text-3xl md:text-4xl" style="color:${card.color}">${card.r}${card.s}</span>`;
+      historyEl.prepend(mini);
+
+      // Limit history to ~30 cards for readability
+      const max = 30;
+      while (historyEl.children.length > max) historyEl.removeChild(historyEl.lastChild);
+
+      playSafe(drawSound);
+
+      // If deck ended, disable Draw
+      if (!drawDeck.length) {
+        drawBtn.disabled = true;
+        drawBtn.classList.add("opacity-60","cursor-not-allowed");
       }
     }
 
-    // init
+    // Wire up
+    drawBtn.addEventListener("click", drawCard);
+    drawBtn.addEventListener("keyup", e => { if(e.key==="Enter"||e.key===" ") drawCard(); });
+    resetBtn.addEventListener("click", resetDeck);
+
+    // Start fresh
     resetDeck();
   </script>
 </body>
