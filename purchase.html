@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Subscribe • ProjectorFirst</title>
+
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- PayPal SDK for Subscriptions -->
+  <script
+    src="https://www.paypal.com/sdk/js?client-id=YOUR_PAYPAL_CLIENT_ID&vault=true&intent=subscription&enable-funding=venmo,card"
+    data-sdk-integration-source="projectorfirst"
+  ></script>
+</head>
+<body class="bg-white text-black">
+  <header class="border-b border-gray-200 bg-white">
+    <div class="max-w-2xl mx-auto px-4 py-3 flex items-center justify-between">
+      <a href="/index.html" class="text-base md:text-lg font-medium text-blue-700 hover:underline">
+        ← Back to Home
+      </a>
+      <div class="text-lg md:text-xl font-bold">ProjectorFirst</div>
+    </div>
+  </header>
+
+  <main class="max-w-2xl mx-auto px-4 py-8 md:py-12">
+    <h1 class="text-3xl md:text-4xl font-extrabold mb-4">
+      Subscribe for Full Access
+    </h1>
+    <p class="text-lg md:text-xl mb-6 text-gray-800">
+      $9.99 per month, cancel anytime. Securely billed by PayPal.
+    </p>
+
+    <div class="rounded-2xl border border-gray-300 bg-gray-50 shadow-sm p-6 md:p-8 mb-6">
+      <p class="text-5xl md:text-6xl font-extrabold">$9.99<span class="text-xl font-medium">/mo</span></p>
+      <ul class="text-lg md:text-xl text-gray-800 space-y-2 mt-4">
+        <li>• Unlimited access to premium page</li>
+        <li>• Works on all devices</li>
+        <li>• Cancel anytime</li>
+      </ul>
+
+      <div class="flex items-center gap-3 mt-6 mb-4">
+        <div class="text-2xl">🔒</div>
+        <p class="text-base md:text-lg text-gray-700">
+          Payments handled by <span class="font-semibold">PayPal</span>. Use PayPal, Venmo, or credit/debit card.
+        </p>
+      </div>
+
+      <!-- PayPal subscription button -->
+      <div id="paypal-button-container"></div>
+    </div>
+  </main>
+
+  <script>
+    // TODO: set this to your private page URL
+    const SUCCESS_REDIRECT = "/paid.html";
+
+    paypal.Buttons({
+      style: {
+        layout: "vertical",
+        color: "gold",
+        shape: "pill",
+        label: "subscribe",
+        height: 48
+      },
+      createSubscription: function (data, actions) {
+        return actions.subscription.create({
+          plan_id: "REPLACE_WITH_YOUR_PLAN_ID" // TODO: use the real PayPal Plan ID
+        });
+      },
+      onApprove: function (data, actions) {
+        // Redirect to your premium page after successful subscription
+        window.location.href = SUCCESS_REDIRECT + "?subscribed=1";
+      },
+      onError: function (err) {
+        alert("Something went wrong with the subscription. Please try again.");
+        console.error(err);
+      }
+    }).render("#paypal-button-container");
+  </script>
+</body>
+</html>
