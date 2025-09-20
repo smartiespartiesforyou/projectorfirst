@@ -1,167 +1,146 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>Trivia Board — ProjectorFirst</title>
-  <meta name="description" content="Big-font trivia for group play: categories, reveal, next."/>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>True or False Trivia</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gray-900 text-white min-h-screen">
-  <main class="max-w-6xl mx-auto px-6 py-8">
-    <h1 class="text-3xl sm:text-4xl font-extrabold text-green-400 text-center mb-3">Trivia Board</h1>
-    <p class="text-center text-gray-400 mb-6">Space = Next • Enter = Reveal • C = Change category • R = Reset</p>
+<body class="bg-white text-gray-900 flex items-center justify-center min-h-screen">
+  <div class="max-w-2xl w-full p-6 text-center">
+    <h1 class="text-4xl font-bold mb-6 text-blue-700">True or False Trivia</h1>
 
-    <!-- Controls -->
-    <section class="bg-gray-800 rounded-xl p-4 sm:p-6 mb-6">
-      <div class="flex flex-wrap items-end gap-4">
-        <div>
-          <label class="block text-sm text-gray-400 mb-1">Category</label>
-          <select id="category" class="bg-gray-900 border border-gray-700 rounded-lg px-3 py-2"></select>
-        </div>
-        <label class="flex items-center gap-2">
-          <input id="noRepeat" type="checkbox" class="accent-green-500" checked>
-          <span class="text-sm text-gray-300">No repeats until all asked</span>
-        </label>
-        <button id="nextBtn" class="ml-auto px-6 py-3 bg-green-500 text-gray-900 font-bold rounded-lg hover:bg-green-400">Next Question</button>
-        <button id="revealBtn" class="px-6 py-3 bg-blue-500 text-gray-900 font-bold rounded-lg hover:bg-blue-400">Reveal Answer</button>
-        <button id="resetBtn" class="px-6 py-3 bg-gray-700 rounded-lg hover:bg-gray-600">Reset</button>
-      </div>
-    </section>
+    <!-- THEME PICKER -->
+    <div class="mb-6">
+      <label for="theme" class="block text-left text-lg font-semibold text-blue-700 mb-2">
+        Theme
+      </label>
+      <select id="theme"
+              class="w-full text-xl p-3 border-2 border-blue-600 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-400">
+        <option value="mixed">Mixed</option>
+        <option value="countries">Countries</option>
+        <option value="animals">Animals</option>
+        <option value="science">Science</option>
+      </select>
+    </div>
 
-    <!-- Board -->
-    <section class="bg-gray-800 rounded-xl p-5 sm:p-8">
-      <div class="text-gray-400 text-sm mb-2" id="status">—</div>
-      <div id="question" class="text-3xl sm:text-5xl font-black tracking-wide mb-4 select-none">Press “Next Question”</div>
-      <div id="answer" class="text-2xl sm:text-4xl text-gray-300 hidden select-none"></div>
-    </section>
-  </main>
+    <!-- Question -->
+    <div id="question" class="text-5xl font-bold mb-10 leading-snug">Loading question...</div>
+
+    <!-- Answer Buttons directly under question -->
+    <div class="grid gap-6 mb-8">
+      <button id="trueBtn"
+              class="bg-green-600 hover:bg-green-800 text-white text-2xl py-5 px-8 rounded-2xl">
+        TRUE
+      </button>
+      <button id="falseBtn"
+              class="bg-red-600 hover:bg-red-800 text-white text-2xl py-5 px-8 rounded-2xl">
+        FALSE
+      </button>
+    </div>
+
+    <!-- Feedback -->
+    <div id="feedback" class="mb-6 text-2xl font-semibold"></div>
+
+    <!-- Next Question Button -->
+    <button id="nextBtn"
+            class="hidden bg-blue-600 hover:bg-blue-800 text-white text-xl py-3 px-6 rounded-2xl">
+      Next Question
+    </button>
+  </div>
 
   <script>
-    // ===== Edit your questions here (simple and local) =====
-    // Each category has an array of {q, a}
-    const BANK = {
-      "General": [
-        { q: "What color are emeralds?", a: "Green" },
-        { q: "How many days are in a leap year?", a: "366" },
-        { q: "What is H2O commonly called?", a: "Water" },
-        { q: "What planet is known as the Red Planet?", a: "Mars" },
-        { q: "How many continents are there?", a: "Seven" }
+    // ====== QUESTION BANK (organized by theme) ======
+    const bank = {
+      mixed: [
+        { question: "The Eiffel Tower is in Paris.", correct: true },
+        { question: "Sharks are mammals.", correct: false },
+        { question: "The Pacific Ocean is larger than the Atlantic.", correct: true },
+        { question: "The human body has 206 bones.", correct: true },
+        { question: "Bananas grow on trees.", correct: false }
       ],
-      "Music": [
-        { q: "What instrument has 88 keys?", a: "Piano" },
-        { q: "Who is known as the King of Pop?", a: "Michael Jackson" },
-        { q: "Which clef is used for higher notes?", a: "Treble clef" },
-        { q: "How many strings does a violin have?", a: "Four" },
-        { q: "What is the Italian word for 'soft' in music?", a: "Piano" }
+      countries: [
+        { question: "Canada's capital is Ottawa.", correct: true },
+        { question: "Sydney is the capital of Australia.", correct: false },
+        { question: "Japan's currency is the Yen.", correct: true },
+        { question: "Brazil is in North America.", correct: false },
+        { question: "Cairo is the capital of Egypt.", correct: true }
       ],
-      "History": [
-        { q: "Who was the first U.S. President?", a: "George Washington" },
-        { q: "In what year did the Titanic sink?", a: "1912" },
-        { q: "What wall fell in 1989?", a: "The Berlin Wall" },
-        { q: "Which war ended in 1945?", a: "World War II" },
-        { q: "Who wrote the Declaration of Independence’s first draft?", a: "Thomas Jefferson" }
+      animals: [
+        { question: "Bats are mammals.", correct: true },
+        { question: "All snakes are venomous.", correct: false },
+        { question: "An octopus has three hearts.", correct: true },
+        { question: "Penguins live at the North Pole.", correct: false },
+        { question: "Giraffes have the same number of neck bones as humans.", correct: true }
       ],
-      "Movies": [
-        { q: "What wizard school does Harry Potter attend?", a: "Hogwarts" },
-        { q: "Which shark movie was directed by Spielberg?", a: "Jaws" },
-        { q: "“I’ll be back” is from which film?", a: "The Terminator" },
-        { q: "What is the green ogre’s name in a 2001 film?", a: "Shrek" },
-        { q: "Who plays Forrest Gump?", a: "Tom Hanks" }
+      science: [
+        { question: "Water boils at 100°C at sea level.", correct: true },
+        { question: "Humans have more than five senses.", correct: true },
+        { question: "Pluto is still classified as a planet.", correct: false },
+        { question: "Lightning is hotter than the surface of the sun.", correct: true },
+        { question: "Sound travels faster than light.", correct: false }
       ]
     };
-    // =======================================================
 
-    const categorySel = document.getElementById('category');
-    const noRepeatEl = document.getElementById('noRepeat');
-    const nextBtn = document.getElementById('nextBtn');
-    const revealBtn = document.getElementById('revealBtn');
-    const resetBtn = document.getElementById('resetBtn');
-    const qEl = document.getElementById('question');
-    const aEl = document.getElementById('answer');
-    const statusEl = document.getElementById('status');
+    // ====== STATE ======
+    let currentTheme = "mixed";
+    let questions = [...bank[currentTheme]];
+    let currentIndex = 0;
 
-    let usedIdx = new Map(); // category -> Set of used indices
-    let current = null;      // {q, a}
-    let currentCat = "";
-
-    function populateCategories(){
-      categorySel.innerHTML = "";
-      Object.keys(BANK).forEach(cat=>{
-        const opt = document.createElement('option');
-        opt.value = cat; opt.textContent = cat;
-        categorySel.appendChild(opt);
-      });
-      currentCat = categorySel.value;
-      if (!usedIdx.has(currentCat)) usedIdx.set(currentCat, new Set());
-      updateStatus();
-    }
-
-    function updateStatus(){
-      const total = BANK[currentCat].length;
-      const used = usedIdx.get(currentCat)?.size || 0;
-      statusEl.textContent = `Category: ${currentCat} • Asked: ${used}/${total}`;
-    }
-
-    function pickQuestion(){
-      const arr = BANK[currentCat];
-      if (!arr || arr.length === 0){ qEl.textContent = "No questions in this category."; return; }
-
-      const used = usedIdx.get(currentCat) || new Set();
-      if (noRepeatEl.checked && used.size === arr.length){
-        used.clear(); // cycle after exhausting
-        usedIdx.set(currentCat, used);
+    // Shuffle for variety
+    function shuffle(arr) {
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
       }
-
-      let idx;
-      let guard = 0;
-      do {
-        idx = Math.floor(Math.random() * arr.length);
-        guard++;
-      } while (noRepeatEl.checked && used.has(idx) && guard < 1000);
-
-      current = arr[idx];
-      if (noRepeatEl.checked) { used.add(idx); usedIdx.set(currentCat, used); }
-
-      qEl.textContent = current.q;
-      aEl.textContent = current.a;
-      aEl.classList.add('hidden');
-      updateStatus();
+      return arr;
     }
 
-    function revealAnswer(){
-      if (!current) return;
-      aEl.classList.remove('hidden');
+    function loadTheme(theme) {
+      currentTheme = theme in bank ? theme : "mixed";
+      questions = shuffle([...bank[currentTheme]]);
+      currentIndex = 0;
+      loadQuestion();
     }
 
-    function resetCategory(){
-      usedIdx.set(currentCat, new Set());
-      current = null;
-      qEl.textContent = "Press “Next Question”";
-      aEl.textContent = "";
-      aEl.classList.add('hidden');
-      updateStatus();
+    function loadQuestion() {
+      const q = questions[currentIndex];
+      document.getElementById("question").textContent = q ? q.question : "No questions found.";
+      document.getElementById("feedback").textContent = "";
+      document.getElementById("nextBtn").classList.add("hidden");
     }
 
-    // events
-    nextBtn.addEventListener('click', pickQuestion);
-    revealBtn.addEventListener('click', revealAnswer);
-    resetBtn.addEventListener('click', resetCategory);
-    categorySel.addEventListener('change', ()=>{
-      currentCat = categorySel.value;
-      if (!usedIdx.has(currentCat)) usedIdx.set(currentCat, new Set());
-      resetCategory();
+    function checkAnswer(answerIsTrue) {
+      const q = questions[currentIndex];
+      const feedback = document.getElementById("feedback");
+      if (!q) return;
+
+      if (answerIsTrue === q.correct) {
+        feedback.textContent = "✅ Correct!";
+        feedback.className = "mb-6 text-green-600 text-2xl font-semibold";
+      } else {
+        feedback.textContent = "❌ Wrong!";
+        feedback.className = "mb-6 text-red-600 text-2xl font-semibold";
+      }
+      document.getElementById("nextBtn").classList.remove("hidden");
+    }
+
+    function nextQuestion() {
+      currentIndex = (currentIndex + 1) % questions.length;
+      loadQuestion();
+    }
+
+    // ====== HOOK UP UI ======
+    document.getElementById("trueBtn").onclick = () => checkAnswer(true);
+    document.getElementById("falseBtn").onclick = () => checkAnswer(false);
+    document.getElementById("nextBtn").onclick = nextQuestion;
+
+    document.getElementById("theme").addEventListener("change", (e) => {
+      loadTheme(e.target.value);
     });
 
-    document.addEventListener('keydown', (e)=>{
-      if (e.code === 'Space') { e.preventDefault(); pickQuestion(); }
-      else if (e.key === 'Enter') revealAnswer();
-      else if (e.key.toLowerCase() === 'c') categorySel.focus();
-      else if (e.key.toLowerCase() === 'r') resetCategory();
-    });
-
-    // init
-    populateCategories();
+    // Initial load
+    loadTheme(currentTheme);
   </script>
 </body>
 </html>

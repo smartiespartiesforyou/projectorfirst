@@ -3,101 +3,225 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>Bingo Hub — ProjectorFirst</title>
-  <meta name="description" content="Choose your Bingo game — Classic, or one of our seasonal holiday themes."/>
+  <title>Classic Bingo Caller — ProjectorFirst</title>
+  <meta name="description" content="Classic Bingo Caller — simple, big-screen friendly bingo caller."/>
   <meta name="theme-color" content="#1e3a8a"/>
   <link rel="icon" href="/logo.svg" type="image/svg+xml"/>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    .skip-link{position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden}
-    .skip-link:focus{left:1rem;top:1rem;width:auto;height:auto;padding:.75rem 1rem;background:#1e3a8a;color:#fff;border-radius:.75rem;z-index:50}
+    body { background: #ffffff; color: #000000; }
+
+    .caller-box {
+      width: min(90vw, 70vh, 640px);
+      height: min(90vw, 70vh, 640px);
+      border: 6px solid #1e3a8a;
+      border-radius: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: clamp(6rem, 22vmin, 16rem);
+      line-height: 1;
+      white-space: nowrap;
+      font-weight: bold;
+      background: #000;
+      color: #fff;
+      margin: 0 auto;
+    }
+
+    .recent-calls span {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 70px;
+      height: 70px;
+      margin: 0.25rem;
+      border-radius: 50%;
+      color: #fff;
+      font-size: 1.5rem;
+      font-weight: bold;
+    }
+
+    /* Letter-based colors */
+    .ball-B { background: #1e3a8a; } /* Blue */
+    .ball-I { background: #dc2626; } /* Red */
+    .ball-N { background: #16a34a; } /* Green */
+    .ball-G { background: #f97316; } /* Orange */
+    .ball-O { background: #9333ea; } /* Purple */
+
+    .btn {
+      font-size: 1.75rem;
+      font-weight: bold;
+      padding: 1.25rem 2.5rem;
+      border-radius: 1rem;
+      transition: background 0.2s;
+    }
+
+    .btn-next { background: #1e3a8a; color: white; }
+    .btn-next:hover { background: #1d4ed8; }
+    .btn-undo { background: #facc15; color: black; }
+    .btn-reset { background: #dc2626; color: white; }
+    .btn-fullscreen { background: #6d28d9; color: white; }
   </style>
 </head>
-<body class="bg-white text-black">
-  <a href="#main" class="skip-link">Skip to main content</a>
+<body class="flex flex-col items-center justify-start min-h-screen py-10">
+  <main class="w-full max-w-4xl text-center">
+    <h1 class="text-5xl font-extrabold text-blue-900 mb-6">🎉 Classic Bingo Caller</h1>
 
-  <!-- Header -->
-  <header class="bg-white border-b border-black/10 py-4 shadow-sm" role="banner">
-    <div class="max-w-6xl mx-auto px-4 flex items-center justify-between">
-      <a href="/" class="flex items-center gap-3 focus:outline-none focus:ring-4 focus:ring-blue-400 rounded-xl">
-        <img src="/logo.svg" alt="ProjectorFirst logo" class="w-12 h-12"/>
-        <span class="text-3xl font-extrabold text-blue-900">ProjectorFirst</span>
-      </a>
-      <nav class="space-x-2" aria-label="Primary">
-        <a href="/index.html"
-           class="px-5 py-3 rounded-xl bg-blue-900/90 text-white text-xl font-bold hover:bg-blue-800 transition focus:outline-none focus:ring-4 focus:ring-blue-400">
-          Home
-        </a>
-        <a href="/apps.html"
-           class="px-5 py-3 rounded-xl bg-blue-900/90 text-white text-xl font-bold hover:bg-blue-800 transition focus:outline-none focus:ring-4 focus:ring-blue-400">
-          Apps
-        </a>
-        <a href="/about.html"
-           class="px-5 py-3 rounded-xl bg-blue-900/90 text-white text-xl font-bold hover:bg-blue-800 transition focus:outline-none focus:ring-4 focus:ring-blue-400">
-          About
-        </a>
-        <a href="/contact.html"
-           class="px-5 py-3 rounded-xl bg-blue-900/90 text-white text-xl font-bold hover:bg-blue-800 transition focus:outline-none focus:ring-4 focus:ring-blue-400">
-          Contact
-        </a>
-      </nav>
-    </div>
-  </header>
-
-  <!-- Main -->
-  <main id="main" class="max-w-5xl mx-auto px-4 py-14">
-    <h1 class="text-5xl sm:text-6xl font-extrabold mb-6 text-blue-900 text-center">
-      🎉 Bingo Hub
-    </h1>
-    <p class="text-2xl leading-relaxed mb-12 text-center">
-      Choose your Bingo game! Start with <strong>Classic</strong>, or try one of our seasonal themes.  
-      More games will be added here for every holiday!
-    </p>
-
-    <!-- Grid of Bingo Variants -->
-    <div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-      <!-- Classic Bingo -->
-      <<a href="/bingo-classic.html" class="block bg-white border-2 border-blue-900 rounded-2xl p-10 shadow-sm text-center hover:bg-blue-50 transition focus:outline-none focus:ring-4 focus:ring-blue-400">
-  <h2 class="text-3xl font-extrabold text-blue-900 mb-4">🚀 Classic Bingo</h2>
-  <p class="text-xl leading-relaxed">The original, bold and simple for everyone.</p>
-</a>
-      <!-- Christmas Bingo -->
-      <a href="/bingo-christmas.html" class="block bg-white border-2 border-blue-900 rounded-2xl p-8 shadow-sm text-center hover:bg-blue-50 transition focus:outline-none focus:ring-4 focus:ring-blue-400">
-        <h2 class="text-2xl font-extrabold text-blue-900 mb-3">🎄 Christmas Bingo</h2>
-        <p class="text-xl leading-relaxed">Festive cards with holiday cheer.</p>
-      </a>
-
-      <!-- Halloween Bingo -->
-      <a href="/bingo-halloween.html" class="block bg-white border-2 border-blue-900 rounded-2xl p-8 shadow-sm text-center hover:bg-blue-50 transition focus:outline-none focus:ring-4 focus:ring-blue-400">
-        <h2 class="text-2xl font-extrabold text-blue-900 mb-3">🎃 Halloween Bingo</h2>
-        <p class="text-xl leading-relaxed">Spooky fun for all ages.</p>
-      </a>
-
-      <!-- More Holidays -->
-      <div class="block bg-gray-100 border-2 border-gray-400 rounded-2xl p-8 shadow-inner text-center">
-        <h2 class="text-2xl font-extrabold text-gray-600 mb-3">➕ More Holidays</h2>
-        <p class="text-xl leading-relaxed">Valentine’s, Easter, 4th of July, and more coming soon!</p>
-      </div>
+    <!-- THEME PICKER (non-intrusive, matches other pages) -->
+    <div class="mb-6 text-left">
+      <label for="theme" class="block text-lg font-semibold text-blue-900 mb-2">Theme</label>
+      <select id="theme"
+              class="w-full text-xl p-3 border-2 border-blue-900 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-400">
+        <!-- Options populated by JS to keep future-proof -->
+      </select>
     </div>
 
-    <!-- Back Button -->
-    <div class="text-center mt-12">
-      <a href="/apps.html"
-         class="inline-block px-10 py-5 rounded-xl bg-blue-900 text-white font-bold text-3xl hover:bg-blue-800 transition focus:outline-none focus:ring-4 focus:ring-blue-400">
-        Back to Apps
-      </a>
+    <!-- Caller Box -->
+    <div id="callerBox" class="caller-box mb-8">—</div>
+
+    <!-- Controls -->
+    <div class="flex flex-wrap justify-center gap-4 mb-6">
+      <button onclick="callNext()" class="btn btn-next">Call Next (Space)</button>
+      <button onclick="undoCall()" class="btn btn-undo">Undo (Backspace)</button>
+      <button onclick="resetCaller()" class="btn btn-reset">Reset (R)</button>
+      <button onclick="toggleFullscreen()" class="btn btn-fullscreen">Fullscreen (F)</button>
     </div>
+
+    <!-- Sound Button -->
+    <button onclick="toggleSound()" id="soundBtn" class="btn border-2 border-blue-900 text-blue-900 bg-white">🔊 Sound</button>
+
+    <!-- Recent Calls -->
+    <h2 class="text-2xl font-bold text-blue-900 mt-10 mb-4">Previously Called</h2>
+    <div id="recentCalls" class="recent-calls"></div>
   </main>
 
-  <!-- Footer -->
-  <footer class="bg-white border-t border-black/10 py-6 mt-12" role="contentinfo">
-    <div class="max-w-6xl mx-auto px-4 text-center text-lg">
-      © <span id="year"></span> ProjectorFirst • Big, Simple Apps for Nursing Homes & Senior Care
-    </div>
-  </footer>
-
   <script>
-    document.getElementById('year').textContent = new Date().getFullYear();
+    // =========================
+    // THEMES (ready for future expansion)
+    // =========================
+    const THEMES = {
+      classic75: {
+        label: "Classic 1–75 (B I N G O)",
+        letters: ["B","I","N","G","O"],
+        ranges: [ [1,15], [16,30], [31,45], [46,60], [61,75] ],
+        speakPrefix: (L, n) => `${L} ${n}`,
+        ballClassFromLetter: L => `ball-${L}` // preserves your colored circles
+      },
+      // Example placeholder for future themes:
+      // uk90: { label: "UK 1–90", letters: ["B","I","N","G","O"], ranges: [ [1,18],[19,36],[37,54],[55,72],[73,90] ], ... }
+      // wordsAnimals: { label: "Animal Words", words: ["CAT","DOG",...], ... } // would change rendering logic
+    };
+
+    let currentThemeKey = "classic75";
+    let letters = [];
+    let ranges = [];
+    let allNumbers = [];
+    let history = [];
+    let soundOn = true;
+
+    // Populate theme dropdown
+    function initThemePicker() {
+      const sel = document.getElementById("theme");
+      sel.innerHTML = "";
+      Object.entries(THEMES).forEach(([key, cfg]) => {
+        const opt = document.createElement("option");
+        opt.value = key;
+        opt.textContent = cfg.label;
+        if (key === currentThemeKey) opt.selected = true;
+        sel.appendChild(opt);
+      });
+      sel.addEventListener("change", (e) => {
+        currentThemeKey = e.target.value;
+        applyTheme();
+      });
+    }
+
+    function applyTheme() {
+      const cfg = THEMES[currentThemeKey];
+      letters = cfg.letters;
+      ranges = cfg.ranges;
+      initGame(); // rebuild pool with the selected theme
+    }
+
+    function initGame() {
+      allNumbers = [];
+      history = [];
+      // Build the call pool from theme config (Classic 1–75 by default)
+      for (let i = 0; i < letters.length; i++) {
+        const [min, max] = ranges[i];
+        for (let n = min; n <= max; n++) {
+          allNumbers.push({letter: letters[i], number: n});
+        }
+      }
+      shuffle(allNumbers);
+      document.getElementById("callerBox").textContent = "—";
+      document.getElementById("recentCalls").innerHTML = "";
+    }
+
+    function shuffle(arr) {
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+    }
+
+    function callNext() {
+      if (allNumbers.length === 0) return;
+      const call = allNumbers.pop();
+      history.push(call);
+      document.getElementById("callerBox").textContent = call.letter + " " + call.number;
+      updateRecent();
+      if (soundOn) {
+        const cfg = THEMES[currentThemeKey];
+        const phrase = cfg.speakPrefix(call.letter, call.number);
+        const utter = new SpeechSynthesisUtterance(phrase);
+        speechSynthesis.speak(utter);
+      }
+    }
+
+    function undoCall() {
+      if (history.length === 0) return;
+      const last = history.pop();
+      allNumbers.push(last);
+      document.getElementById("callerBox").textContent = "—";
+      updateRecent();
+    }
+
+    function resetCaller() { initGame(); }
+
+    function updateRecent() {
+      const recentDiv = document.getElementById("recentCalls");
+      const cfg = THEMES[currentThemeKey];
+      recentDiv.innerHTML = history
+        .slice(-10)
+        .reverse()
+        .map(c => `<span class="${cfg.ballClassFromLetter(c.letter)}">${c.letter} ${c.number}</span>`)
+        .join("");
+    }
+
+    function toggleSound() {
+      soundOn = !soundOn;
+      document.getElementById("soundBtn").textContent = soundOn ? "🔊 Sound" : "🔇 Muted";
+    }
+
+    function toggleFullscreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen();
+      } else {
+        if (document.exitFullscreen) document.exitFullscreen();
+      }
+    }
+
+    document.addEventListener("keydown", e => {
+      if (e.code === "Space") { e.preventDefault(); callNext(); }
+      if (e.code === "Backspace") { e.preventDefault(); undoCall(); }
+      if (e.code === "KeyR") { resetCaller(); }
+      if (e.code === "KeyF") { toggleFullscreen(); }
+    });
+
+    // Init
+    initThemePicker();
+    applyTheme();
   </script>
 </body>
 </html>

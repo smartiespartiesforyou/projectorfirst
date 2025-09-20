@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Memory Match (4×4)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-white text-gray-900 min-h-screen">
+  <div class="max-w-6xl mx-auto p-6">
+    <h1 class="text-4xl font-bold text-blue-700 text-center mb-6">Memory Match</h1>
+
+    <div class="flex items-center justify-center gap-4 mb-6">
+      <button id="resetBtn"
+              class="bg-blue-600 hover:bg-blue-800 text-white text-xl py-3 px-6 rounded-2xl">
+        New Game
+      </button>
+      <span class="text-lg text-gray-700">Call out coordinates like <span class="font-semibold">B3 and D2</span></span>
+    </div>
+
+    <!-- GRID (wider so each square is bigger) -->
+    <div id="grid"
+         class="grid grid-cols-2 sm:grid-cols-4 gap-5 max-w-5xl mx-auto"
+         aria-label="Memory grid">
+      <!-- Cards will be injected here -->
+    </div>
+
+    <!-- Status -->
+    <div id="status" class="text-center mt-6 text-2xl font-semibold text-blue-700"></div>
+  </div>
+
+  <script>
+    // ===== SETTINGS =====
+    const rows = ["A","B","C","D"]; // 4 rows
+    const cols = [1,2,3,4];         // 4 columns
+    const totalPairs = 8;           // 16 cards total (8 pairs)
+
+    // High-contrast, easy to see emojis
+    const emojiPool = ["🍎","🐶","🎵","🌟","🚗","🧩","🍀","📚","🎈","🐢","🍩","🕰️","🦋","⚽","🌻","🍪","🍊","🐘","🎲","🧸"];
+
+    // ===== STATE =====
+    let firstCard = null;
+    let secondCard = null;
+    let busy = false; // lock while checking
+    let matchesFound = 0;
+
+    // Utility: Fisher–Yates shuffle
+    function shuffle(arr) {
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    }
+
+    // Build deck: pick 8 emojis, duplicate, shuffle
+    function buildDeck() {
+      const picks = shuffle([...emojiPool]).slice(0, totalPairs);
+      const pairDeck = shuffle([...picks, ...picks]);
+      // Map onto coordinates A1..D4
+      const coords = [];
+      rows.forEach(r => cols.forEach(c => coords.push(`${r}${c}`)));
+      return coords.map((coord, i) => ({ coord, emoji: pairDeck[i], matched: false }));
+    }
+
+    let deck = [];
+
+    function renderGrid() {
+      const grid = document.getElementById("grid");
+      grid.innerHTML = "";
+      deck.forEach((card, idx) => {
+        const btn = document.createElement("button");
+        btn.className = [
+          "relative aspect-square w-full",
+          "rounded-2xl border-[6px] border-blue-600",
+          "bg-white focus:outline-none focus:ring-4 focus:ring-blue-300",
+          "flex items-center justify-center"
+        ].join(" ");
+
+        btn.setAttribute("aria-label", `Card ${card.coord}`);
+        btn.dataset.index = idx;
+
+        // Back (label side) — large for readability
+        const back = document.createElement("div");
+        back.className = "back absolute inset-0 flex items-center justify-center";
+        back.innerHTML = `<span class="text-4xl sm:text-5xl font-extrabold text-blue-700">${card.coord}</span>`;
+
+        // Front (emoji side) — HUGE so it fills the square
+        const front = document.createElement("div");
+        front.className = "front absolute inset-0 hidden items-center justify-center";
+        /* 
+          Jumbo sizes by screen:
+            - base: ~5.5rem
+            - sm:   ~7rem
+            - md:   ~8.5rem
+            - lg+:  ~10rem
+        */
+        front.innerHTML = `<span class="leading-none text-[5.5rem] sm:text-[7rem] md:text-[8.5rem] lg:text-[10rem]">${card.emoji}</span>`;
+
+        // If matched, show front permanently and color border green
+        if (card.matched) {
+          front.classList.remove("hidden");
+          btn.classList.add("border-green-600");
+        }
+
+        btn.appendChild(back);
+        btn.appendChild(front);
+
+        btn.addEventListener("click", () => handleFlip(btn));
+        grid.appendChild(btn);
+      });
+    }
+
+    function showFront(btn, show) {
+      const front = btn.querySelector(".front");
+      const back  = btn.querySelector(".back");
+      if (show) {
+        front.classList.remove("hidden");
+        back.classList.add("hidden");
+      } else {
+        front.classList.add("hidden");
+        back.classList.remove("hidden");
+      }
+    }
+
+    function handleFlip(btn) {
+      if (busy) return;
+
+      const i = parseInt(btn.dataset.index, 10);
+      const card = deck[i];
+      if (card.matched) return;
+
+      // If already face-up and selected, ignore
+      const frontVisible = !btn.querySelector(".front").classList.contains("hidden");
+      if (frontVisible) return;
+
+      showFront(btn, true);
+
+      if (!firstCard) {
+        firstCard = { btn, i, card };
+        btn.classList.add("ring-4","ring-blue-300");
+      } else if (!secondCard && btn !== firstCard.btn) {
+        secondCard = { btn, i, card };
+        busy = true;
+        checkMatch();
+      }
+    }
+
+    function checkMatch() {
+      const status = document.getElementById("status");
+      const isMatch = firstCard.card.emoji === secondCard.card.emoji;
+
+      if (isMatch) {
+        // Mark matched, keep face-up
+        deck[firstCard.i].matched = true;
+        deck[secondCard.i].matched = true;
+        firstCard.btn.classList.remove("ring-4","ring-blue-300");
+        secondCard.btn.classList.remove("ring-4","ring-blue-300");
+        firstCard.btn.classList.add("border-green-600");
+        secondCard.btn.classList.add("border-green-600");
+
+        matchesFound += 1;
+        status.textContent = `Matched! Pairs found: ${matchesFound} / ${totalPairs}`;
+        resetTurn();
+
+        if (matchesFound === totalPairs) {
+          status.textContent = "🎉 All pairs matched! Great memory!";
+        }
+      } else {
+        // Not a match: flip back after delay
+        status.textContent = "Not a match… flipping back.";
+        setTimeout(() => {
+          showFront(firstCard.btn, false);
+          showFront(secondCard.btn, false);
+          firstCard.btn.classList.remove("ring-4","ring-blue-300");
+          secondCard.btn.classList.remove("ring-4","ring-blue-300");
+          resetTurn();
+        }, 1300);
+      }
+    }
+
+    function resetTurn() {
+      firstCard = null;
+      secondCard = null;
+      busy = false;
+    }
+
+    function newGame() {
+      matchesFound = 0;
+      deck = buildDeck();
+      renderGrid();
+      document.getElementById("status").textContent = "Pick two cards to begin!";
+    }
+
+    document.getElementById("resetBtn").addEventListener("click", newGame);
+
+    // Init
+    newGame();
+  </script>
+</body>
+</html>
