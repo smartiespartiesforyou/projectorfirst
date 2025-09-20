@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Movies</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    // Simple helpers for big, senior-friendly controls
+    function findVideo(btn){ return btn.closest("[data-movie]").querySelector("video"); }
+    function playPause(btn){
+      const v = findVideo(btn);
+      if (v.paused) { v.play(); btn.textContent = "Pause"; }
+      else { v.pause(); btn.textContent = "Play"; }
+    }
+    function skip(btn, secs){
+      const v = findVideo(btn);
+      v.currentTime = Math.max(0, Math.min(v.duration || 0, v.currentTime + secs));
+    }
+    function mute(btn){
+      const v = findVideo(btn);
+      v.muted = !v.muted;
+      btn.textContent = v.muted ? "Unmute" : "Mute";
+    }
+    function onPlay(e){
+      // when native control used, sync the Play button label
+      const card = e.target.closest("[data-movie]");
+      const btn = card.querySelector('[data-action="playpause"]');
+      if (btn) btn.textContent = "Pause";
+    }
+    function onPause(e){
+      const card = e.target.closest("[data-movie]");
+      const btn = card.querySelector('[data-action="playpause"]');
+      if (btn) btn.textContent = "Play";
+    }
+    document.addEventListener("DOMContentLoaded", () => {
+      document.querySelectorAll("video").forEach(v => {
+        v.addEventListener("play", onPlay);
+        v.addEventListener("pause", onPause);
+      });
+    });
+  </script>
+</head>
+<body class="bg-white text-slate-900 min-h-screen flex flex-col items-center p-6">
+  <h1 class="text-5xl font-extrabold text-blue-900 mb-6 text-center">Movies</h1>
+
+  <p class="text-blue-900 text-lg font-semibold mb-4 text-center">
+    Tap a movie, press <span class="font-extrabold">Play</span>, and use the big buttons below for rewind/forward.
+  </p>
+
+  <div class="w-full max-w-5xl grid gap-6 md:grid-cols-2">
+    <!-- MOVIE CARD 1 -->
+    <section data-movie class="border-4 border-blue-900 rounded-2xl p-4 bg-white">
+      <h2 class="text-2xl font-extrabold text-blue-900 mb-3">Sample Movie 1</h2>
+      <video
+        class="w-full rounded-xl mb-3"
+        controls
+        preload="metadata"
+        playsinline
+        poster="/videos/poster1.jpg"
+      >
+        <!-- Put your actual file at /videos/movie1.mp4 (H.264 + AAC recommended) -->
+        <source src="/videos/movie1.mp4" type="video/mp4" />
+        <!-- Optional captions file at /videos/movie1.vtt -->
+        <track kind="captions" src="/videos/movie1.vtt" srclang="en" label="English" default>
+        Your browser does not support the video tag.
+      </video>
+
+      <!-- Big custom controls -->
+      <div class="flex flex-wrap gap-3">
+        <button data-action="playpause" onclick="playPause(this)"
+          class="bg-blue-900 hover:bg-blue-800 text-white px-6 py-3 rounded-2xl text-xl font-extrabold focus:outline-none focus:ring-4 focus:ring-blue-300">
+          Play
+        </button>
+        <button onclick="skip(this,-10)"
+          class="bg-white border-4 border-blue-900 text-blue-900 px-6 py-3 rounded-2xl text-xl font-extrabold hover:bg-blue-50 focus:outline-none focus:ring-4 focus:ring-blue-300">
+          ⏪ 10s
+        </button>
+        <button onclick="skip(this,10)"
+          class="bg-white border-4 border-blue-900 text-blue-900 px-6 py-3 rounded-2xl text-xl font-extrabold hover:bg-blue-50 focus:outline-none focus:ring-4 focus:ring-blue-300">
+          10s ⏩
+        </button>
+        <button onclick="mute(this)"
+          class="bg-white border-4 border-blue-900 text-blue-900 px-6 py-3 rounded-2xl text-xl font-extrabold hover:bg-blue-50 focus:outline-none focus:ring-4 focus:ring-blue-300">
+          Mute
+        </button>
+        <a href="/videos/movie1.mp4" download
+          class="ml-auto bg-white border-4 border-blue-900 text-blue-900 px-6 py-3 rounded-2xl text-xl font-extrabold hover:bg-blue-50 focus:outline-none focus:ring-4 focus:ring-blue-300">
+          Download
+        </a>
+      </div>
+    </section>
+
+    <!-- MOVIE CARD 2 -->
+    <section data-movie class="border-4 border-blue-900 rounded-2xl p-4 bg-white">
+      <h2 class="text-2xl font-extrabold text-blue-900 mb-3">Sample Movie 2</h2>
+      <video class="w-full rounded-xl mb-3" controls preload="metadata" playsinline poster="/videos/poster2.jpg">
+        <source src="/videos/movie2.mp4" type="video/mp4" />
+        <track kind="captions" src="/videos/movie2.vtt" srclang="en" label="English">
+      </video>
+      <div class="flex flex-wrap gap-3">
+        <button data-action="playpause" onclick="playPause(this)" class="bg-blue-900 hover:bg-blue-800 text-white px-6 py-3 rounded-2xl text-xl font-extrabold focus:outline-none focus:ring-4 focus:ring-blue-300">Play</button>
+        <button onclick="skip(this,-10)" class="bg-white border-4 border-blue-900 text-blue-900 px-6 py-3 rounded-2xl text-xl font-extrabold hover:bg-blue-50 focus:outline-none focus:ring-4 focus:ring-blue-300">⏪ 10s</button>
+        <button onclick="skip(this,10)" class="bg-white border-4 border-blue-900 text-blue-900 px-6 py-3 rounded-2xl text-xl font-extrabold hover:bg-blue-50 focus:outline-none focus:ring-4 focus:ring-blue-300">10s ⏩</button>
+        <button onclick="mute(this)" class="bg-white border-4 border-blue-900 text-blue-900 px-6 py-3 rounded-2xl text-xl font-extrabold hover:bg-blue-50 focus:outline-none focus:ring-4 focus:ring-blue-300">Mute</button>
+        <a href="/videos/movie2.mp4" download class="ml-auto bg-white border-4 border-blue-900 text-blue-900 px-6 py-3 rounded-2xl text-xl font-extrabold hover:bg-blue-50 focus:outline-none focus:ring-4 focus:ring-blue-300">Download</a>
+      </div>
+    </section>
+
+    <!-- MOVIE CARD 3 -->
+    <section data-movie class="border-4 border-blue-900 rounded-2xl p-4 bg-white">
+      <h2 class="text-2xl font-extrabold text-blue-900 mb-3">Sample Movie 3</h2>
+      <video class="w-full rounded-xl mb-3" controls preload="metadata" playsinline poster="/videos/poster3.jpg">
+        <source src="/videos/movie3.mp4" type="video/mp4" />
+        <track kind="captions" src="/videos/movie3.vtt" srclang="en" label="English">
+      </video>
+      <div class="flex flex-wrap gap-3">
+        <button data-action="playpause" onclick="playPause(this)" class="bg-blue-900 hover:bg-blue-800 text-white px-6 py-3 rounded-2xl text-xl font-extrabold focus:outline-none focus:ring-4 focus:ring-blue-300">Play</button>
+        <button onclick="skip(this,-10)" class="bg-white border-4 border-blue-900 text-blue-900 px-6 py-3 rounded-2xl text-xl font-extrabold hover:bg-blue-50 focus:outline-none focus:ring-4 focus:ring-blue-300">⏪ 10s</button>
+        <button onclick="skip(this,10)" class="bg-white border-4 border-blue-900 text-blue-900 px-6 py-3 rounded-2xl text-xl font-extrabold hover:bg-blue-50 focus:outline-none focus:ring-4 focus:ring-blue-300">10s ⏩</button>
+        <button onclick="mute(this)" class="bg-white border-4 border-blue-900 text-blue-900 px-6 py-3 rounded-2xl text-xl font-extrabold hover:bg-blue-50 focus:outline-none focus:ring-4 focus:ring-blue-300">Mute</button>
+        <a href="/videos/movie3.mp4" download class="ml-auto bg-white border-4 border-blue-900 text-blue-900 px-6 py-3 rounded-2xl text-xl font-extrabold hover:bg-blue-50 focus:outline-none focus:ring-4 focus:ring-blue-300">Download</a>
+      </div>
+    </section>
+  </div>
+
+  <!-- Hint -->
+  <p class="mt-6 text-blue-900 text-lg font-semibold text-center">
+    Tip: Put your videos in <code class="font-mono">/videos/</code> (MP4, H.264 video + AAC audio) and optional captions in <code class="font-mono">.vtt</code>.
+  </p>
+</body>
+</html>

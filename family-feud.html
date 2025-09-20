@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Family Feud</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    function revealAnswer(id, btn) {
+      const el = document.getElementById(id);
+      el.classList.remove('hidden');
+      if (btn) {
+        btn.setAttribute('aria-expanded', 'true');
+        btn.disabled = true;
+        btn.classList.add('opacity-60','cursor-not-allowed');
+      }
+    }
+  </script>
+</head>
+<body class="bg-white text-slate-900 min-h-screen flex flex-col items-center p-6">
+  <h1 class="text-5xl font-extrabold mb-8 text-blue-900">Family Feud</h1>
+
+  <div class="w-full max-w-2xl space-y-5">
+    <!-- Question -->
+    <div class="rounded-2xl p-6 text-2xl font-bold text-center border-4 border-blue-900 text-blue-900 bg-white">
+      Name something people do when they wake up.
+    </div>
+
+    <!-- Answers -->
+    <div class="space-y-4">
+      <div class="rounded-xl p-4 flex justify-between items-center border border-blue-200 bg-white">
+        <button
+          onclick="revealAnswer('ans1', this)"
+          class="bg-blue-900 hover:bg-blue-800 text-white px-6 py-3 rounded-2xl font-bold text-xl focus:outline-none focus:ring-4 focus:ring-blue-300"
+          aria-controls="ans1" aria-expanded="false">
+          Reveal 1
+        </button>
+        <span id="ans1" class="hidden text-2xl font-semibold text-blue-900">Brush Teeth</span>
+      </div>
+
+      <div class="rounded-xl p-4 flex justify-between items-center border border-blue-200 bg-white">
+        <button
+          onclick="revealAnswer('ans2', this)"
+          class="bg-blue-900 hover:bg-blue-800 text-white px-6 py-3 rounded-2xl font-bold text-xl focus:outline-none focus:ring-4 focus:ring-blue-300"
+          aria-controls="ans2" aria-expanded="false">
+          Reveal 2
+        </button>
+        <span id="ans2" class="hidden text-2xl font-semibold text-blue-900">Check Phone</span>
+      </div>
+
+      <div class="rounded-xl p-4 flex justify-between items-center border border-blue-200 bg-white">
+        <button
+          onclick="revealAnswer('ans3', this)"
+          class="bg-blue-900 hover:bg-blue-800 text-white px-6 py-3 rounded-2xl font-bold text-xl focus:outline-none focus:ring-4 focus:ring-blue-300"
+          aria-controls="ans3" aria-expanded="false">
+          Reveal 3
+        </button>
+        <span id="ans3" class="hidden text-2xl font-semibold text-blue-900">Drink Coffee</span>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

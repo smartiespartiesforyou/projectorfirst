@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Spot the Difference</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    // Five differences (percent of the panel’s width/height)
+    const differences = [
+      { x: 22, y: 28, r: 6 }, // e.g., missing bird
+      { x: 60, y: 35, r: 6 }, // window size
+      { x: 75, y: 70, r: 6 }, // flower color
+      { x: 40, y: 82, r: 6 }, // path stone
+      { x: 88, y: 18, r: 6 }, // sun ray
+    ];
+    let found = [];
+
+    function percentCoords(e, panel) {
+      const rect = panel.getBoundingClientRect();
+      const x = ((e.clientX - rect.left) / rect.width) * 100;
+      const y = ((e.clientY - rect.top) / rect.height) * 100;
+      return { x, y };
+    }
+
+    function onClickPanel(e) {
+      const panel = e.currentTarget; // the wrapper with position:relative
+      const { x, y } = percentCoords(e, panel);
+
+      differences.forEach((d, i) => {
+        if (found.includes(i)) return;
+        const dx = x - d.x;
+        const dy = y - d.y;
+        const dist = Math.sqrt(dx*dx + dy*dy);
+        if (dist < d.r) {
+          found.push(i);
+          placeMark(panel, d.x, d.y);
+          placeMark(document.getElementById("panelLeft"), d.x, d.y);  // mirror mark on left
+          placeMark(document.getElementById("panelRight"), d.x, d.y); // mirror mark on right
+          updateCounter();
+        }
+      });
+    }
+
+    function placeMark(panel, x, y) {
+      const m = document.createElement("div");
+      m.className = "absolute border-4 border-red-600 rounded-full pointer-events-none";
+      m.style.width = "44px";
+      m.style.height = "44px";
+      m.style.left = `calc(${x}% - 22px)`;
+      m.style.top  = `calc(${y}% - 22px)`;
+      panel.appendChild(m);
+    }
+
+    function updateCounter() {
+      const total = differences.length;
+      const count = found.length;
+      const el = document.getElementById("counter");
+      el.textContent = `Found ${count} of ${total} differences`;
+      if (count === total) el.textContent = "🎉 All differences found!";
+    }
+
+    function resetGame() {
+      found = [];
+      document.querySelectorAll(".mark").forEach(n => n.remove());
+      document.querySelectorAll(".panel").forEach(p => {
+        // remove previous marks (those added by placeMark)
+        Array.from(p.querySelectorAll("div")).forEach(d => {
+          if (d !== p.firstElementChild) d.remove();
+        });
+      });
+      updateCounter();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    window.onload = updateCounter;
+  </script>
+</head>
+<body class="bg-white text-slate-900 min-h-screen flex flex-col items-center p-6">
+  <h1 class="text-5xl font-extrabold text-blue-900 mb-3 text-center">Spot the Difference</h1>
+  <div id="counter" class="text-xl font-bold mb-4 text-blue-900">Found 0 of 5 differences</div>
+
+  <div class="flex flex-col md:flex-row gap-6 items-start">
+    <!-- LEFT PANEL (original) -->
+    <div id="panelLeft" class="panel relative border-4 border-blue-900 rounded-2xl overflow-hidden"
+         style="width: 400px; height: 300px;">
+      <!-- Inline SVG scene (left/original) -->
+      <svg viewBox="0 0 400 300" class="w-full h-full select-none" aria-hidden="true">
+        <!-- sky -->
+        <rect x="0" y="0" width="400" height="300" fill="#E6F0FF"/>
+        <!-- sun (left has full rays) -->
+        <circle cx="350" cy="50" r="26" fill="#FFD166"/>
+        <g stroke="#FFD166" stroke-width="6">
+          <line x1="350" y1="8"   x2="350" y2="26"/>
+          <line x1="308" y1="50"  x2="326" y2="50"/>
+          <line x1="350" y1="92"  x2="350" y2="74"/>
+          <line x1="392" y1="50"  x2="374" y2="50"/>
+        </g>
+        <!-- ground -->
+        <rect x="0" y="220" width="400" height="80" fill="#B8E986"/>
+        <!-- house -->
+        <rect x="120" y="150" width="140" height="90" fill="#FFFFFF" stroke="#0F2A6B" stroke-width="4"/>
+        <polygon points="110,150 190,110 270,150" fill="#0F2A6B"/>
+        <!-- door -->
+        <rect x="178" y="185" width="24" height="55" fill="#0F2A6B"/>
+        <!-- window (left is small) -->
+        <rect x="138" y="170" width="34" height="26" fill="#E6F0FF" stroke="#0F2A6B" stroke-width="3"/>
+        <!-- path stones (left has extra stone) -->
+        <circle cx="190" cy="250" r="7" fill="#C9C9C9"/>
+        <circle cx="205" cy="265" r="7" fill="#C9C9C9"/>
+        <circle cx="175" cy="265" r="7" fill="#C9C9C9"/> <!-- extra stone -->
+        <!-- flower (left is red) -->
+        <circle cx="300" cy="240" r="10" fill="#E63946"/>
+        <rect x="298" y="240" width="4" height="20" fill="#2A9D8F"/>
+        <!-- bird (left has a bird) -->
+        <path d="M70 60 q10 -10 20 0 q-10 -8 -20 0" stroke="#0F2A6B" stroke-width="3" fill="none"/>
+      </svg>
+    </div>
+
+    <!-- RIGHT PANEL (changed) -->
+    <div id="panelRight" class="panel relative border-4 border-blue-900 rounded-2xl overflow-hidden"
+         style="width: 400px; height: 300px;" onclick="onClickPanel(event)">
+      <!-- Inline SVG scene (right/with differences) -->
+      <svg viewBox="0 0 400 300" class="w-full h-full select-none" aria-hidden="true">
+        <!-- sky -->
+        <rect x="0" y="0" width="400" height="300" fill="#E6F0FF"/>
+        <!-- sun (right is missing one ray at 12 o'clock) -->
+        <circle cx="350" cy="50" r="26" fill="#FFD166"/>
+        <g stroke="#FFD166" stroke-width="6">
+          <!-- top ray removed -->
+          <line x1="308" y1="50"  x2="326" y2="50"/>
+          <line x1="350" y1="92"  x2="350" y2="74"/>
+          <line x1="392" y1="50"  x2="374" y2="50"/>
+        </g>
+        <!-- ground -->
+        <rect x="0" y="220" width="400" height="80" fill="#B8E986"/>
+        <!-- house -->
+        <rect x="120" y="150" width="140" height="90" fill="#FFFFFF" stroke="#0F2A6B" stroke-width="4"/>
+        <polygon points="110,150 190,110 270,150" fill="#0F2A6B"/>
+        <!-- door -->
+        <rect x="178" y="185" width="24" height="55" fill="#0F2A6B"/>
+        <!-- window (right is larger) -->
+        <rect x="138" y="166" width="44" height="34" fill="#E6F0FF" stroke="#0F2A6B" stroke-width="3"/>
+        <!-- path stones (right is missing the leftmost stone) -->
+        <circle cx="190" cy="250" r="7" fill="#C9C9C9"/>
+        <circle cx="205" cy="265" r="7" fill="#C9C9C9"/>
+        <!-- flower (right is blue) -->
+        <circle cx="300" cy="240" r="10" fill="#457B9D"/>
+        <rect x="298" y="240" width="4" height="20" fill="#2A9D8F"/>
+        <!-- bird (right has no bird) -->
+      </svg>
+
+      <!-- Transparent click layer (so clicks anywhere register uniformly) -->
+      <div class="absolute inset-0" onclick="onClickPanel(event)"></div>
+    </div>
+  </div>
+
+  <!-- Helper text + Reset -->
+  <div class="mt-6 flex gap-3 items-center">
+    <button class="bg-blue-900 hover:bg-blue-800 text-white px-6 py-3 rounded-2xl text-xl font-extrabold
+                   focus:outline-none focus:ring-4 focus:ring-blue-300"
+            onclick="resetGame()">
+      Reset
+    </button>
+    <p class="text-blue-900 text-lg font-semibold">Tip: Tap on the right picture to mark differences.</p>
+  </div>
+</body
