@@ -43,7 +43,7 @@
       font-weight: bold;
     }
 
-    /* Letter-based colors (same for all themes) */
+    /* Fixed colors for all themes */
     .ball-B { background: #1e3a8a; } /* Blue */
     .ball-I { background: #dc2626; } /* Red */
     .ball-N { background: #16a34a; } /* Green */
@@ -57,7 +57,6 @@
       border-radius: 1rem;
       transition: background 0.2s;
     }
-
     .btn-next { background: #1e3a8a; color: white; }
     .btn-next:hover { background: #1d4ed8; }
     .btn-undo { background: #facc15; color: black; }
@@ -100,27 +99,7 @@
   </main>
 
   <script>
-    // THEMES — with holiday symbols
-    const THEMES = {
-      classic75: makeTheme("Classic 1–75 (B I N G O)"),
-      uk90:      makeTheme("UK 1–90", [[1,18],[19,36],[37,54],[55,72],[73,90]]),
-      kids50:    makeTheme("Kids 1–50", [[1,10],[11,20],[21,30],[31,40],[41,50]]),
-      mini30:    makeTheme("Mini 1–30", [[1,6],[7,12],[13,18],[19,24],[25,30]]),
-      rapid75:   makeTheme("Rapid 1–75 (faster speech)", [[1,15],[16,30],[31,45],[46,60],[61,75]], 1.4),
-
-      halloween75:   makeTheme("Halloween 1–75", null, 1.0, "🎃"),
-      thanksgiving75:makeTheme("Thanksgiving 1–75", null, 1.0, "🦃"),
-      christmas75:   makeTheme("Christmas 1–75", null, 1.0, "🎄"),
-      easter75:      makeTheme("Easter 1–75", null, 1.0, "🐣"),
-      memorial75:    makeTheme("Memorial Day 1–75", null, 1.0, "⭐"),
-      flagday75:     makeTheme("Flag Day 1–75", null, 1.0, "🇺🇸"),
-      independence75:makeTheme("Independence Day 1–75", null, 1.0, "🎆"),
-      laborday75:    makeTheme("Labor Day 1–75", null, 1.0, "🛠️"),
-      newyear75:     makeTheme("New Year’s 1–75", null, 1.0, "🎉"),
-      valentines75:  makeTheme("Valentine’s 1–75", null, 1.0, "💘"),
-      stpatricks75:  makeTheme("St. Patrick’s 1–75", null, 1.0, "☘️")
-    };
-
+    // Helper to create consistent themes
     function makeTheme(label, ranges = [[1,15],[16,30],[31,45],[46,60],[61,75]], rate = 1.0, symbol = "") {
       return {
         label,
@@ -132,6 +111,27 @@
         symbol
       };
     }
+
+    // THEMES — single dropdown, fixed colors; holidays add a small symbol
+    const THEMES = {
+      classic75: makeTheme("Classic 1–75 (B I N G O)"),
+      uk90:      makeTheme("UK 1–90", [[1,18],[19,36],[37,54],[55,72],[73,90]]),
+      kids50:    makeTheme("Kids 1–50", [[1,10],[11,20],[21,30],[31,40],[41,50]]),
+      mini30:    makeTheme("Mini 1–30", [[1,6],[7,12],[13,18],[19,24],[25,30]]),
+      rapid75:   makeTheme("Rapid 1–75 (faster speech)", [[1,15],[16,30],[31,45],[46,60],[61,75]], 1.4),
+
+      halloween75:    makeTheme("Halloween 1–75", undefined, 1.0, "🎃"),
+      thanksgiving75: makeTheme("Thanksgiving 1–75", undefined, 1.0, "🦃"),
+      christmas75:    makeTheme("Christmas 1–75", undefined, 1.0, "🎄"),
+      easter75:       makeTheme("Easter 1–75", undefined, 1.0, "🐣"),
+      memorial75:     makeTheme("Memorial Day 1–75", undefined, 1.0, "⭐"),
+      flagday75:      makeTheme("Flag Day 1–75", undefined, 1.0, "🇺🇸"),
+      independence75: makeTheme("Independence Day 1–75", undefined, 1.0, "🎆"),
+      laborday75:     makeTheme("Labor Day 1–75", undefined, 1.0, "🛠️"),
+      newyear75:      makeTheme("New Year’s 1–75", undefined, 1.0, "🎉"),
+      valentines75:   makeTheme("Valentine’s 1–75", undefined, 1.0, "💘"),
+      stpatricks75:   makeTheme("St. Patrick’s 1–75", undefined, 1.0, "☘️")
+    };
 
     let currentThemeKey = "classic75";
     let letters = [];
@@ -211,8 +211,8 @@
     function resetCaller() { initGame(); }
 
     function updateRecent() {
-      const recentDiv = document.getElementById("recentCalls");
       const cfg = THEMES[currentThemeKey];
+      const recentDiv = document.getElementById("recentCalls");
       recentDiv.innerHTML = history
         .slice(-10)
         .reverse()
