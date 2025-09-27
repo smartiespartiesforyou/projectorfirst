@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Name That Tune</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-white text-gray-900 min-h-screen">
+  <div class="max-w-5xl mx-auto p-6 text-center">
+    <!-- Title -->
+    <h1 class="text-5xl font-extrabold mb-4 text-blue-900">Name That Tune</h1>
+    <!-- Back to Apps -->
+    <div class="flex justify-center mb-6">
+      <a href="apps.html"
+         class="inline-flex items-center gap-2 px-6 py-3 bg-blue-900 text-white rounded-xl font-extrabold text-xl shadow hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300">
+        ← Back to Apps
+      </a>
+    </div>
+
+    <!-- Controls -->
+    <div class="flex flex-wrap justify-center gap-4 mb-6">
+      <button id="startBtn"
+              class="bg-blue-600 hover:bg-blue-800 text-white px-6 py-3 rounded-xl font-bold text-xl shadow">
+        ▶️ Play Random Song
+      </button>
+      <button id="revealBtn"
+              class="bg-white border-4 border-blue-900 text-blue-900 px-6 py-3 rounded-xl font-bold text-xl shadow hover:bg-gray-50"
+              disabled>
+        Reveal Answer
+      </button>
+      <button id="newBtn"
+              class="bg-blue-600 hover:bg-blue-800 text-white px-6 py-3 rounded-xl font-bold text-xl shadow"
+              disabled>
+        Next Song
+      </button>
+    </div>
+
+    <!-- Audio Player (hidden) -->
+    <audio id="player" class="hidden"></audio>
+
+    <!-- Answer -->
+    <div id="answer"
+         class="text-4xl md:text-5xl font-extrabold text-blue-900 mt-10 hidden"></div>
+  </div>
+
+  <script>
+    // Add your music file names here (just the filenames, stored in /music/)
+    const songs = [
+      "Elvis - Can't Help Falling in Love.mp3",
+      "The Beatles - Let It Be.mp3",
+      "Aretha Franklin - Respect.mp3",
+      "Louis Armstrong - What a Wonderful World.mp3"
+    ];
+
+    let currentSong = null;
+
+    const player = document.getElementById("player");
+    const answerBox = document.getElementById("answer");
+    const startBtn = document.getElementById("startBtn");
+    const revealBtn = document.getElementById("revealBtn");
+    const newBtn = document.getElementById("newBtn");
+
+    function playRandomSong() {
+      const randomIndex = Math.floor(Math.random() * songs.length);
+      currentSong = songs[randomIndex];
+      player.src = "music/" + currentSong;
+      player.play();
+
+      // Hide answer
+      answerBox.classList.add("hidden");
+      answerBox.textContent = "";
+
+      // Update button states
+      revealBtn.disabled = false;
+      newBtn.disabled = true;
+    }
+
+    function revealAnswer() {
+      if (currentSong) {
+        answerBox.textContent = currentSong.replace(".mp3", "");
+        answerBox.classList.remove("hidden");
+        newBtn.disabled = false;
+        revealBtn.disabled = true;
+      }
+    }
+
+    function nextSong() {
+      playRandomSong();
+    }
+
+    startBtn.addEventListener("click", playRandomSong);
+    revealBtn.addEventListener("click", revealAnswer);
+    newBtn.addEventListener("click", nextSong);
+  </script>
+</body>
+</html>
