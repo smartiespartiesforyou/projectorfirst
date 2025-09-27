@@ -7,8 +7,14 @@
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-white text-gray-900 min-h-screen">
+
   <div class="max-w-6xl mx-auto p-6">
-    <h1 class="text-4xl font-bold text-blue-700 text-center mb-6">Memory Match</h1>
+    <!-- Title + Back to Apps (Bingo/Dice style) -->
+    <h1 class="text-5xl font-extrabold mb-4 text-blue-900 text-center">Memory Match</h1>
+    <a href="apps.html"
+       class="inline-flex items-center gap-2 px-6 py-3 bg-blue-900 text-white rounded-xl font-extrabold text-xl shadow hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 mb-6">
+      ← Back to Apps
+    </a>
 
     <div class="flex items-center justify-center gap-4 mb-6">
       <button id="resetBtn"
@@ -18,7 +24,7 @@
       <span class="text-lg text-gray-700">Call out coordinates like <span class="font-semibold">B3 and D2</span></span>
     </div>
 
-    <!-- GRID (wider so each square is bigger) -->
+    <!-- GRID -->
     <div id="grid"
          class="grid grid-cols-2 sm:grid-cols-4 gap-5 max-w-5xl mx-auto"
          aria-label="Memory grid">
@@ -31,20 +37,20 @@
 
   <script>
     // ===== SETTINGS =====
-    const rows = ["A","B","C","D"]; // 4 rows
-    const cols = [1,2,3,4];         // 4 columns
-    const totalPairs = 8;           // 16 cards total (8 pairs)
+    const rows = ["A","B","C","D"]; 
+    const cols = [1,2,3,4];         
+    const totalPairs = 8;           
 
-    // High-contrast, easy to see emojis
-    const emojiPool = ["🍎","🐶","🎵","🌟","🚗","🧩","🍀","📚","🎈","🐢","🍩","🕰️","🦋","⚽","🌻","🍪","🍊","🐘","🎲","🧸"];
+    // Instead of emojis, just numbers 1–8
+    const numberPool = Array.from({ length: totalPairs }, (_, i) => i + 1);
 
     // ===== STATE =====
     let firstCard = null;
     let secondCard = null;
-    let busy = false; // lock while checking
+    let busy = false;
     let matchesFound = 0;
+    let deck = [];
 
-    // Utility: Fisher–Yates shuffle
     function shuffle(arr) {
       for (let i = arr.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
@@ -53,17 +59,13 @@
       return arr;
     }
 
-    // Build deck: pick 8 emojis, duplicate, shuffle
     function buildDeck() {
-      const picks = shuffle([...emojiPool]).slice(0, totalPairs);
+      const picks = shuffle([...numberPool]);
       const pairDeck = shuffle([...picks, ...picks]);
-      // Map onto coordinates A1..D4
       const coords = [];
       rows.forEach(r => cols.forEach(c => coords.push(`${r}${c}`)));
-      return coords.map((coord, i) => ({ coord, emoji: pairDeck[i], matched: false }));
+      return coords.map((coord, i) => ({ coord, value: pairDeck[i], matched: false }));
     }
-
-    let deck = [];
 
     function renderGrid() {
       const grid = document.getElementById("grid");
@@ -76,28 +78,19 @@
           "bg-white focus:outline-none focus:ring-4 focus:ring-blue-300",
           "flex items-center justify-center"
         ].join(" ");
-
         btn.setAttribute("aria-label", `Card ${card.coord}`);
         btn.dataset.index = idx;
 
-        // Back (label side) — large for readability
+        // Back (coordinate label)
         const back = document.createElement("div");
         back.className = "back absolute inset-0 flex items-center justify-center";
         back.innerHTML = `<span class="text-4xl sm:text-5xl font-extrabold text-blue-700">${card.coord}</span>`;
 
-        // Front (emoji side) — HUGE so it fills the square
+        // Front (number side) — really big
         const front = document.createElement("div");
         front.className = "front absolute inset-0 hidden items-center justify-center";
-        /* 
-          Jumbo sizes by screen:
-            - base: ~5.5rem
-            - sm:   ~7rem
-            - md:   ~8.5rem
-            - lg+:  ~10rem
-        */
-        front.innerHTML = `<span class="leading-none text-[5.5rem] sm:text-[7rem] md:text-[8.5rem] lg:text-[10rem]">${card.emoji}</span>`;
+        front.innerHTML = `<span class="leading-none text-[5.5rem] sm:text-[7rem] md:text-[8.5rem] lg:text-[10rem] font-black text-blue-900">${card.value}</span>`;
 
-        // If matched, show front permanently and color border green
         if (card.matched) {
           front.classList.remove("hidden");
           btn.classList.add("border-green-600");
@@ -105,7 +98,6 @@
 
         btn.appendChild(back);
         btn.appendChild(front);
-
         btn.addEventListener("click", () => handleFlip(btn));
         grid.appendChild(btn);
       });
@@ -125,12 +117,10 @@
 
     function handleFlip(btn) {
       if (busy) return;
-
       const i = parseInt(btn.dataset.index, 10);
       const card = deck[i];
       if (card.matched) return;
 
-      // If already face-up and selected, ignore
       const frontVisible = !btn.querySelector(".front").classList.contains("hidden");
       if (frontVisible) return;
 
@@ -148,26 +138,22 @@
 
     function checkMatch() {
       const status = document.getElementById("status");
-      const isMatch = firstCard.card.emoji === secondCard.card.emoji;
+      const isMatch = firstCard.card.value === secondCard.card.value;
 
       if (isMatch) {
-        // Mark matched, keep face-up
         deck[firstCard.i].matched = true;
         deck[secondCard.i].matched = true;
         firstCard.btn.classList.remove("ring-4","ring-blue-300");
         secondCard.btn.classList.remove("ring-4","ring-blue-300");
         firstCard.btn.classList.add("border-green-600");
         secondCard.btn.classList.add("border-green-600");
-
         matchesFound += 1;
         status.textContent = `Matched! Pairs found: ${matchesFound} / ${totalPairs}`;
         resetTurn();
-
         if (matchesFound === totalPairs) {
           status.textContent = "🎉 All pairs matched! Great memory!";
         }
       } else {
-        // Not a match: flip back after delay
         status.textContent = "Not a match… flipping back.";
         setTimeout(() => {
           showFront(firstCard.btn, false);
@@ -194,7 +180,6 @@
 
     document.getElementById("resetBtn").addEventListener("click", newGame);
 
-    // Init
     newGame();
   </script>
 </body>
