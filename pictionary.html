@@ -57,7 +57,7 @@
     <!-- Status -->
     <div id="status" class="text-center mt-6 text-2xl font-semibold text-blue-700"></div>
     <p class="text-center text-lg text-gray-700 mt-2">
-      Tip: Players can call coordinates like <span class="font-semibold">B3</span> — click that tile, or press <span class="font-semibold">Reveal One</span>.
+      Tip: Players call a coordinate like <span class="font-semibold">B3</span> — click that exact tile, or use <span class="font-semibold">Reveal One</span>.
     </p>
   </div>
 
@@ -136,7 +136,7 @@
       covered = Array(totalTiles).fill(true);
       for (let i = 0; i < totalTiles; i++) {
         const btn = document.createElement("button");
-        btn.className = "tile bg-blue-700 hover:bg-blue-800 text-white border border-blue-900 flex items-center justify-center text-xl font-bold";
+        btn.className = "tile bg-blue-700 hover:bg-blue-800 text-white border border-blue-900 flex items-center justify-center text-4xl md:text-5xl font-extrabold";
         btn.dataset.index = i;
         btn.innerHTML = coordsFromIndex(i);
         btn.addEventListener("click", () => revealTile(i, btn));
