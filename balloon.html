@@ -8,7 +8,14 @@
 </head>
 <body class="bg-white text-gray-900 min-h-screen">
   <div class="max-w-5xl mx-auto p-6">
-    <h1 class="text-4xl font-bold text-blue-700 text-center mb-6">Pop the Balloon</h1>
+    <h1 class="text-5xl font-extrabold text-blue-900 text-center mb-6">Pop the Balloon</h1>
+    <!-- Back to Apps -->
+    <div class="flex justify-center mb-8">
+      <a href="apps.html"
+         class="inline-flex items-center gap-2 px-6 py-3 bg-blue-900 text-white rounded-xl font-extrabold text-xl shadow hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300">
+        ← Back to Apps
+      </a>
+    </div>
 
     <!-- Controls Row -->
     <div class="grid md:grid-cols-3 gap-4 items-end mb-6">
@@ -40,68 +47,44 @@
 
     <!-- Balloons -->
     <div id="balloons"
-         class="flex items-center justify-center gap-2 sm:gap-3 mb-6"
-         aria-label="Remaining balloons">
-      <!-- Balloons render here -->
-    </div>
+         class="flex items-center justify-center gap-4 mb-10"
+         aria-label="Remaining balloons"></div>
 
     <!-- Word display -->
     <div id="word"
-         class="flex flex-wrap items-center justify-center gap-2 sm:gap-3 mb-6"
-         aria-label="Hidden word">
-      <!-- Letters render here -->
-    </div>
+         class="flex flex-wrap items-center justify-center gap-4 mb-10"
+         aria-label="Hidden word"></div>
 
     <!-- Feedback / Status -->
     <div id="status"
-         class="text-center text-2xl font-semibold text-blue-700 mb-6"
+         class="text-center text-3xl font-bold text-blue-700 mb-10"
          aria-live="polite"></div>
 
-    <!-- Keyboard -->
-    <div id="keyboard"
-         class="grid grid-cols-7 sm:grid-cols-13 gap-2 max-w-4xl mx-auto"
-         aria-label="Letter keyboard">
-      <!-- Letter buttons render here -->
+    <!-- Used letters -->
+    <div id="usedLetters"
+         class="flex flex-wrap justify-center gap-4 text-5xl font-extrabold text-blue-900">
     </div>
   </div>
 
   <script>
-    // =========================
-    // WORD BANK (by theme)
-    // =========================
+    // WORD BANKS
     const BANK = {
-      animals: [
-        "ELEPHANT","KANGAROO","ALLIGATOR","PORCUPINE","CHAMELEON",
-        "ARMADILLO","RHINOCEROS","HIPPOPOTAMUS","FLAMINGO","WOLVERINE"
-      ],
-      countries: [
-        "ARGENTINA","VENEZUELA","AUSTRALIA","NETHERLANDS","PHILIPPINES",
-        "SWITZERLAND","ZIMBABWE","KAZAKHSTAN","SINGAPORE","GUATEMALA"
-      ],
-      foods: [
-        "SPAGHETTI","PINEAPPLE","CHOCOLATE","CROISSANT","BLUEBERRY",
-        "WATERMELON","LASAGNA","CANNELLONI","MARSHMALLOW","ARTICHOKE"
-      ],
+      animals: ["ELEPHANT","KANGAROO","ALLIGATOR","PORCUPINE","CHAMELEON","ARMADILLO","RHINOCEROS","HIPPOPOTAMUS","FLAMINGO","WOLVERINE"],
+      countries: ["ARGENTINA","VENEZUELA","AUSTRALIA","NETHERLANDS","PHILIPPINES","SWITZERLAND","ZIMBABWE","KAZAKHSTAN","SINGAPORE","GUATEMALA"],
+      foods: ["SPAGHETTI","PINEAPPLE","CHOCOLATE","CROISSANT","BLUEBERRY","WATERMELON","LASAGNA","CANNELLONI","MARSHMALLOW","ARTICHOKE"],
     };
 
-    // =========================
-    // STATE
-    // =========================
     const MAX_MISSES = 6;
     let theme = "animals";
     let word = "";
-    let revealed = [];   // array of booleans per char
-    let used = new Set();// guessed letters
+    let revealed = [];
+    let used = new Set();
     let misses = 0;
     let finished = false;
 
-    // =========================
-    // HELPERS
-    // =========================
     function pickWord() {
       const list = BANK[theme];
-      const choice = list[Math.floor(Math.random() * list.length)];
-      return choice.toUpperCase();
+      return list[Math.floor(Math.random() * list.length)].toUpperCase();
     }
 
     function resetRound() {
@@ -116,7 +99,7 @@
 
     function setStatus(msg, color = "text-blue-700") {
       const el = document.getElementById("status");
-      el.className = `text-center text-2xl font-semibold ${color} mb-6`;
+      el.className = `text-center text-3xl font-bold ${color} mb-10`;
       el.textContent = msg;
     }
 
@@ -124,18 +107,11 @@
       const wrap = document.getElementById("balloons");
       wrap.innerHTML = "";
       const remaining = MAX_MISSES - misses;
-      // show remaining balloons, then popped icons
       for (let i = 0; i < remaining; i++) {
-        const span = document.createElement("span");
-        span.textContent = "🎈";
-        span.className = "text-4xl sm:text-5xl";
-        wrap.appendChild(span);
+        wrap.innerHTML += `<span class="text-6xl">🎈</span>`;
       }
       for (let i = 0; i < misses; i++) {
-        const span = document.createElement("span");
-        span.textContent = "💥";
-        span.className = "text-4xl sm:text-5xl";
-        wrap.appendChild(span);
+        wrap.innerHTML += `<span class="text-6xl">💥</span>`;
       }
     }
 
@@ -144,23 +120,17 @@
       wrap.innerHTML = "";
       Array.from(word).forEach((ch, i) => {
         const box = document.createElement("div");
-        // Keep spaces and dashes visible
         if (ch === " ") {
-          box.className = "w-6 sm:w-8";
+          box.className = "w-10";
           box.textContent = " ";
         } else if (ch === "-") {
-          box.className = "text-4xl sm:text-5xl font-bold text-gray-700";
+          box.className = "text-5xl font-bold text-gray-700";
           box.textContent = "-";
         } else {
           const shown = revealed[i];
-          box.className = [
-            "flex items-center justify-center",
-            "h-14 sm:h-16 min-w-[3rem] sm:min-w-[3.5rem]",
-            "px-3 rounded-2xl border-4",
-            shown ? "border-green-600" : "border-blue-600",
-            "bg-white"
-          ].join(" ");
-          box.innerHTML = `<span class="leading-none ${shown ? "text-4xl sm:text-5xl font-extrabold" : "text-3xl sm:text-4xl"}">
+          box.className = "flex items-center justify-center h-20 w-16 sm:w-20 rounded-2xl border-4 bg-white " +
+                          (shown ? "border-green-600" : "border-blue-600");
+          box.innerHTML = `<span class="leading-none ${shown ? "text-5xl font-extrabold" : "text-4xl"}">
             ${shown ? ch : "_"}
           </span>`;
         }
@@ -168,26 +138,11 @@
       });
     }
 
-    function renderKeyboard() {
-      const wrap = document.getElementById("keyboard");
+    function renderUsedLetters() {
+      const wrap = document.getElementById("usedLetters");
       wrap.innerHTML = "";
-      const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
-      letters.forEach(letter => {
-        const btn = document.createElement("button");
-        const disabled = used.has(letter) || finished;
-        btn.textContent = letter;
-        btn.disabled = disabled;
-        btn.className = [
-          "py-3 sm:py-4",
-          "rounded-2xl border-2",
-          "text-xl sm:text-2xl font-semibold",
-          disabled
-            ? "bg-gray-200 text-gray-500 border-gray-300 cursor-not-allowed"
-            : "bg-white text-gray-900 border-blue-600 hover:bg-blue-50",
-          "focus:outline-none focus:ring-4 focus:ring-blue-300"
-        ].join(" ");
-        btn.addEventListener("click", () => handleGuess(letter));
-        wrap.appendChild(btn);
+      [...used].forEach(letter => {
+        wrap.innerHTML += `<span>${letter}</span>`;
       });
     }
 
@@ -195,21 +150,21 @@
       if (finished || used.has(letter)) return;
       used.add(letter);
 
-      // Check letter
-      const indices = [];
+      let correct = false;
       for (let i = 0; i < word.length; i++) {
-        if (word[i] === letter) indices.push(i);
+        if (word[i] === letter) {
+          revealed[i] = true;
+          correct = true;
+        }
       }
 
-      if (indices.length) {
-        indices.forEach(i => (revealed[i] = true));
+      if (correct) {
         setStatus(`✅ Nice! The letter ${letter} is in the word.`, "text-green-700");
       } else {
         misses++;
         setStatus(`💥 Not there. Balloon popped! (${MAX_MISSES - misses} left)`, "text-red-700");
       }
 
-      // Check win/lose
       if (revealed.every((v, i) => v || word[i] === " " || word[i] === "-")) {
         finished = true;
         setStatus("🎉 You saved the balloons! Word solved!", "text-green-700");
@@ -220,29 +175,32 @@
 
       renderBalloons();
       renderWord();
-      renderKeyboard();
+      renderUsedLetters();
     }
 
     function renderAll() {
       renderBalloons();
       renderWord();
-      renderKeyboard();
+      renderUsedLetters();
     }
 
-    // =========================
-    // HOOK UP UI
-    // =========================
-    document.getElementById("theme").addEventListener("change", (e) => {
+    // Hook up
+    document.getElementById("theme").addEventListener("change", e => {
       theme = e.target.value;
       resetRound();
     });
-
     document.getElementById("newBtn").addEventListener("click", resetRound);
 
-    // =========================
-    // INIT
-    // =========================
+    // Start
     resetRound();
+
+    // Key listener for group play
+    document.addEventListener("keydown", e => {
+      const letter = e.key.toUpperCase();
+      if (letter >= "A" && letter <= "Z") {
+        handleGuess(letter);
+      }
+    });
   </script>
 </body>
 </html>
