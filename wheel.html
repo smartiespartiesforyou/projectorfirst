@@ -6,49 +6,47 @@
   <title>Spin Wheel - ProjectorFirst</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    /* Big, high-contrast wheel. Scales down on small screens. */
+    /* Simple, readable, BIG */
+    :root { --size: min(94vw, 680px); }
     .wheel {
-      --wheel-size: min(92vw, 560px); /* BIG on desktop, responsive on mobile */
-      width: var(--wheel-size);
-      height: var(--wheel-size);
+      width: var(--size);
+      height: var(--size);
       border-radius: 50%;
-      border: 10px solid #000;
+      border: 12px solid #000;
+      background:
+        conic-gradient(
+          #FFE066 0deg 60deg,
+          #A0E59B 60deg 120deg,
+          #FF9AA2 120deg 180deg,
+          #9EC5FE 180deg 240deg,
+          #FFE066 240deg 300deg,
+          #A0E59B 300deg 360deg
+        );
+      box-shadow: 0 8px 0 #0003 inset;
+      transition: transform 4.2s cubic-bezier(.2,.9,.1,1);
       position: relative;
       overflow: hidden;
-      transition: transform 4.5s cubic-bezier(0.2, 0.9, 0.1, 1);
-      background: #fff;
     }
-    .segment {
-      position: absolute;
-      width: 50%;
-      height: 50%;
-      left: 50%;
-      top: 50%;
-      transform-origin: 0% 0%;
-      clip-path: polygon(0% 0%, 100% 0%, 0% 100%);
+    .pointer {
+      width: 0; height: 0;
+      border-left: 22px solid transparent;
+      border-right: 22px solid transparent;
+      border-bottom: 36px solid #000;
+      margin-bottom: 14px;
     }
     .label {
       position: absolute;
-      left: 50%;
-      top: 50%;
+      left: 50%; top: 50%;
       transform-origin: left center;
-      font-weight: 800;
+      font-weight: 900;
       color: #000;
-      font-size: clamp(16px, 2.4vw, 28px);
-      letter-spacing: 0.5px;
-      text-shadow: 1px 1px 0 #fff;
+      background: rgba(255,255,255,.8);
+      padding: .25rem .5rem;
+      border-radius: .75rem;
+      font-size: clamp(18px, 2.8vw, 32px);
       user-select: none;
+      white-space: nowrap;
     }
-    /* Pointer at the top */
-    .pointer {
-      width: 0;
-      height: 0;
-      border-left: 18px solid transparent;
-      border-right: 18px solid transparent;
-      border-bottom: 28px solid #000; /* black pointer */
-      filter: drop-shadow(0 2px 0 #000);
-    }
-    /* Motion accessibility */
     @media (prefers-reduced-motion: reduce) {
       .wheel { transition: none; }
     }
@@ -56,118 +54,86 @@
 </head>
 <body class="bg-white text-black min-h-screen flex flex-col">
 
-  <!-- Site Header with Back to Apps (consistent) -->
+  <!-- Header with consistent Back to Apps -->
   <header class="w-full bg-black text-white">
-    <div class="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between">
+    <div class="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
       <a href="apps.html"
-         class="inline-flex items-center gap-2 px-4 py-2 bg-white text-black rounded-2xl font-bold text-lg shadow focus:outline-none focus:ring-4 focus:ring-yellow-400"
-         aria-label="Back to Apps">
+         class="inline-flex items-center gap-2 px-4 py-2 bg-white text-black rounded-2xl font-extrabold text-xl shadow focus:outline-none focus:ring-4 focus:ring-yellow-400">
         ← Back to Apps
       </a>
       <h1 class="text-2xl md:text-3xl font-extrabold">ProjectorFirst</h1>
       <span aria-hidden="true" class="opacity-0">spacer</span>
     </div>
-    <nav class="max-w-4xl mx-auto px-4 pb-3 text-center text-lg">
-      <a href="index.html" class="px-3 underline-offset-2 hover:underline">Home</a>
-      <a href="about.html" class="px-3 underline-offset-2 hover:underline">About</a>
-      <a href="apps.html" class="px-3 underline-offset-2 hover:underline">Apps</a>
-      <a href="bingo.html" class="px-3 underline-offset-2 hover:underline">Bingo</a>
-      <a href="dice.html" class="px-3 underline-offset-2 hover:underline">Dice Roller</a>
-      <a href="wheel.html" class="px-3 font-extrabold underline">Spin Wheel</a>
-    </nav>
   </header>
 
   <!-- Main -->
-  <main class="flex-1 flex flex-col items-center justify-start pt-6 md:pt-10 px-4">
-    <div class="pointer mb-4" aria-hidden="true"></div>
+  <main class="flex-1 flex flex-col items-center pt-6 md:pt-10 px-4">
+    <div class="pointer" aria-hidden="true"></div>
 
     <div id="wheel" class="wheel" role="group" aria-label="Prize Wheel"></div>
 
     <button id="spinBtn"
-      class="mt-6 px-8 py-4 text-2xl bg-black text-white rounded-2xl shadow-lg font-extrabold focus:outline-none focus:ring-4 focus:ring-yellow-400"
-      aria-label="Spin the wheel">
+      class="mt-6 px-10 py-5 text-3xl bg-black text-white rounded-2xl shadow-lg font-extrabold focus:outline-none focus:ring-4 focus:ring-yellow-400">
       SPIN
     </button>
 
     <div id="result"
-         class="mt-6 text-3xl md:text-4xl font-extrabold"
-         role="status" aria-live="polite">
-      <!-- Result appears here -->
-    </div>
+         class="mt-6 text-4xl font-extrabold"
+         role="status" aria-live="polite"></div>
   </main>
 
   <script>
-    // ------- CONFIG: Edit these labels anytime -------
-    const labels = [
-      "$5 Gift",
-      "No Win",
-      "Sticker",
-      "No Win",
-      "$10 Gift",
-      "No Win",
-      "Free Snack",
-      "No Win"
-    ];
-    // High-contrast alternating colors:
-    const colors = ["#FDE047", "#86EFAC", "#FCA5A5", "#93C5FD", "#FDE047", "#86EFAC", "#FCA5A5", "#93C5FD"];
-    // -------------------------------------------------
+    // ======= Edit your labels here (include "No Win" where you want) =======
+    const labels = ["$5 Gift", "No Win", "Sticker", "No Win", "$10 Gift", "Free Snack"];
+    // =======================================================================
 
     const wheel = document.getElementById("wheel");
-    const resultEl = document.getElementById("result");
     const spinBtn = document.getElementById("spinBtn");
+    const resultEl = document.getElementById("result");
     const seg = 360 / labels.length;
 
-    // Build segments + labels
+    // Place labels neatly on the wheel
     labels.forEach((text, i) => {
-      // Segment wedge
-      const segEl = document.createElement("div");
-      segEl.className = "segment";
-      segEl.style.background = colors[i % colors.length];
-      segEl.style.transform = `rotate(${i * seg}deg) skewY(${90 - seg}deg)`; // neat pie slices
-      wheel.appendChild(segEl);
-
-      // Text label at the middle of the slice
       const angle = i * seg + seg / 2;
-      const labelEl = document.createElement("div");
-      labelEl.className = "label";
-      labelEl.style.transform = `rotate(${angle}deg) translate(calc(var(--wheel-size) * 0.33)) rotate(${-angle}deg)`;
-      labelEl.textContent = text;
-      wheel.appendChild(labelEl);
+      const el = document.createElement("div");
+      el.className = "label";
+      el.textContent = text;
+      // move outward ~35% of radius, keep text upright
+      el.style.transform = `rotate(${angle}deg) translate(calc(var(--size) * 0.33)) rotate(${-angle}deg)`;
+      wheel.appendChild(el);
     });
 
     let rotation = 0;
-    let spinning = false;
+    let locking = false;
 
-    function chooseIndex() {
+    function pickIndex() {
       return Math.floor(Math.random() * labels.length);
     }
 
-    function spinWheel() {
-      if (spinning) return;
-      spinning = true;
+    function spin() {
+      if (locking) return;
+      locking = true;
       spinBtn.disabled = true;
+      resultEl.textContent = "";
 
-      const index = chooseIndex();
+      const index = pickIndex();
       const centerAngle = index * seg + seg / 2;
-
-      // We want the chosen segment's center to land at the top pointer (270° from the +X axis).
-      const spins = 6; // full spins for drama
-      const target = spins * 360 + (270 - centerAngle);
+      const spins = 6; // dramatic but not dizzying
+      const target = spins * 360 + (270 - centerAngle); // pointer is at 270°
 
       rotation += target;
       wheel.style.transform = `rotate(${rotation}deg)`;
 
-      // Announce result after the spin finishes
-      const handleEnd = () => {
-        resultEl.textContent = labels[index] === "No Win" ? "No Win — Try Again!" : `You won: ${labels[index]}!`;
-        spinning = false;
+      wheel.addEventListener("transitionend", function done() {
+        wheel.removeEventListener("transitionend", done);
+        const prize = labels[index];
+        resultEl.textContent = prize === "No Win" ? "No Win — Try Again!" : `You won: ${prize}!`;
         spinBtn.disabled = false;
-        wheel.removeEventListener("transitionend", handleEnd);
-      };
-      wheel.addEventListener("transitionend", handleEnd, { once: true });
+        locking = false;
+      }, { once: true });
     }
 
-    spinBtn.addEventListener("click", spinWheel);
+    spinBtn.addEventListener("click", spin);
   </script>
 </body>
 </html>
