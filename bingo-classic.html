@@ -19,7 +19,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: clamp(6rem, 22vmin, 16rem);
+      font-size: clamp(8rem, 28vmin, 20rem); /* Bigger */
       line-height: 1;
       white-space: nowrap;
       font-weight: bold;
@@ -32,12 +32,12 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      width: 70px;
-      height: 70px;
+      width: 90px;   /* Bigger balls */
+      height: 90px;  /* Bigger balls */
       margin: 0.25rem;
       border-radius: 50%;
       color: #fff;
-      font-size: 1.5rem;
+      font-size: 2rem; /* Bigger text inside balls */
       font-weight: bold;
     }
 
@@ -67,12 +67,11 @@
   <main class="w-full max-w-4xl text-center">
     <h1 class="text-5xl font-extrabold text-blue-900 mb-6">🎉 Classic Bingo Caller</h1>
 
-    <!-- THEME PICKER (non-intrusive, matches other pages) -->
+    <!-- THEME PICKER -->
     <div class="mb-6 text-left">
       <label for="theme" class="block text-lg font-semibold text-blue-900 mb-2">Theme</label>
       <select id="theme"
               class="w-full text-xl p-3 border-2 border-blue-900 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-400">
-        <!-- Options populated by JS to keep future-proof -->
       </select>
     </div>
 
@@ -96,20 +95,14 @@
   </main>
 
   <script>
-    // =========================
-    // THEMES (ready for future expansion)
-    // =========================
     const THEMES = {
       classic75: {
         label: "Classic 1–75 (B I N G O)",
         letters: ["B","I","N","G","O"],
         ranges: [ [1,15], [16,30], [31,45], [46,60], [61,75] ],
         speakPrefix: (L, n) => `${L} ${n}`,
-        ballClassFromLetter: L => `ball-${L}` // preserves your colored circles
+        ballClassFromLetter: L => `ball-${L}`
       },
-      // Example placeholder for future themes:
-      // uk90: { label: "UK 1–90", letters: ["B","I","N","G","O"], ranges: [ [1,18],[19,36],[37,54],[55,72],[73,90] ], ... }
-      // wordsAnimals: { label: "Animal Words", words: ["CAT","DOG",...], ... } // would change rendering logic
     };
 
     let currentThemeKey = "classic75";
@@ -119,7 +112,6 @@
     let history = [];
     let soundOn = true;
 
-    // Populate theme dropdown
     function initThemePicker() {
       const sel = document.getElementById("theme");
       sel.innerHTML = "";
@@ -140,13 +132,12 @@
       const cfg = THEMES[currentThemeKey];
       letters = cfg.letters;
       ranges = cfg.ranges;
-      initGame(); // rebuild pool with the selected theme
+      initGame();
     }
 
     function initGame() {
       allNumbers = [];
       history = [];
-      // Build the call pool from theme config (Classic 1–75 by default)
       for (let i = 0; i < letters.length; i++) {
         const [min, max] = ranges[i];
         for (let n = min; n <= max; n++) {
@@ -219,7 +210,6 @@
       if (e.code === "KeyF") { toggleFullscreen(); }
     });
 
-    // Init
     initThemePicker();
     applyTheme();
   </script>
