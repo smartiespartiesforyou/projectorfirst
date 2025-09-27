@@ -121,21 +121,23 @@
       const wrap = document.getElementById("tiles");
       wrap.innerHTML = "";
       covered = Array(totalTiles).fill(true);
+
       for (let i = 0; i < totalTiles; i++) {
         const btn = document.createElement("button");
-        btn.className = "tile bg-blue-700 hover:bg-blue-800 text-white border border-blue-900 flex items-center justify-center text-5xl font-extrabold";
-        btn.textContent = i + 1; // Just numbers 1–16
+        btn.className = "tile bg-blue-700 hover:bg-blue-800 text-white border border-blue-900 flex items-center justify-center text-6xl font-extrabold";
+        btn.textContent = i + 1; // numbers 1–16
         btn.dataset.index = i;
-        btn.addEventListener("click", () => revealTile(i, btn));
+        btn.addEventListener("click", () => revealTile(btn));
         wrap.appendChild(btn);
       }
       updateStatus();
     }
 
-    function revealTile(i, btn) {
+    function revealTile(btn) {
+      const i = parseInt(btn.dataset.index);
       if (!covered[i]) return;
       covered[i] = false;
-      btn.remove(); // Remove THIS button, not by index lookup
+      btn.remove(); // removes THIS square
       updateStatus();
       if (covered.every(v => v === false)) {
         setStatus(`🎉 All tiles revealed — Answer: ${item.name}`, "text-green-700");
@@ -147,7 +149,7 @@
       if (!remaining.length) return;
       const pick = randPick(remaining);
       const btn = document.querySelector(`.tile[data-index="${pick}"]`);
-      if (btn) revealTile(pick, btn);
+      if (btn) revealTile(btn);
     }
 
     function revealAll() {
