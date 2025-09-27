@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Spin Wheel</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .wheel {
+      width: 300px;
+      height: 300px;
+      border-radius: 50%;
+      border: 8px solid black;
+      position: relative;
+      overflow: hidden;
+      transition: transform 4s ease-out;
+    }
+    .segment {
+      position: absolute;
+      width: 50%;
+      height: 50%;
+      background: lightgray;
+      transform-origin: 100% 100%;
+      clip-path: polygon(0% 0%, 100% 0%, 100% 100%);
+    }
+  </style>
+</head>
+<body class="bg-white text-black flex flex-col items-center justify-center h-screen">
+
+  <h1 class="text-3xl font-bold mb-6">Spin the Wheel!</h1>
+
+  <div class="wheel" id="wheel">
+    <!-- 6 segments (we can add more later) -->
+    <div class="segment" style="transform: rotate(0deg); background: #f87171;"></div>
+    <div class="segment" style="transform: rotate(60deg); background: #fbbf24;"></div>
+    <div class="segment" style="transform: rotate(120deg); background: #34d399;"></div>
+    <div class="segment" style="transform: rotate(180deg); background: #60a5fa;"></div>
+    <div class="segment" style="transform: rotate(240deg); background: #a78bfa;"></div>
+    <div class="segment" style="transform: rotate(300deg); background: #f472b6;"></div>
+  </div>
+
+  <button 
+    onclick="spinWheel()" 
+    class="mt-6 px-6 py-3 text-xl bg-black text-white rounded-2xl shadow-lg">
+    Spin
+  </button>
+
+  <script>
+    let wheel = document.getElementById("wheel");
+    let currentRotation = 0;
+
+    function spinWheel() {
+      let extraSpins = 360 * 5; // always spin at least 5 times
+      let randomDeg = Math.floor(Math.random() * 360);
+      currentRotation += extraSpins + randomDeg;
+      wheel.style.transform = `rotate(${currentRotation}deg)`;
+    }
+  </script>
+
+</body>
+</html>
