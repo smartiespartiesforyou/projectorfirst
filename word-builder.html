@@ -40,6 +40,23 @@
     .btn-fullscreen { background: #6d28d9; color: white; }
     .btn-timer { background: #f59e0b; color: white; }
     .btn-timer:hover { background: #d97706; }
+
+    /* Word list horizontal layout */
+    #wordList {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 1rem;
+    }
+    #wordList li {
+      background: #e0e7ff;
+      color: #1e3a8a;
+      padding: 0.5rem 1rem;
+      border-radius: 0.5rem;
+      font-size: 2rem;
+      font-weight: bold;
+      list-style: none;
+    }
   </style>
 </head>
 <body class="flex flex-col items-center justify-start min-h-screen py-10 bg-white text-black">
@@ -70,7 +87,7 @@
     <!-- Word List -->
     <div class="mt-8">
       <h2 class="text-3xl font-bold text-blue-900 mb-4">Words Found</h2>
-      <ul id="wordList" class="text-2xl font-semibold text-gray-800 space-y-2"></ul>
+      <ul id="wordList"></ul>
     </div>
   </main>
 
