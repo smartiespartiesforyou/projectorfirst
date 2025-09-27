@@ -12,7 +12,6 @@
     body { background: #ffffff; color: #000000; }
 
     .caller-box {
-      position: relative;
       width: min(90vw, 70vh, 640px);
       height: min(90vw, 70vh, 640px);
       border: 6px solid #1e3a8a;
@@ -27,7 +26,6 @@
       background: #000;
       color: #fff;
       margin: 0 auto;
-      overflow: hidden;
     }
 
     .recent-calls span {
@@ -43,7 +41,7 @@
       font-weight: bold;
     }
 
-    /* Letter-based colors (same for all themes) */
+    /* Letter-based colors (unchanged for ALL themes) */
     .ball-B { background: #1e3a8a; } /* Blue */
     .ball-I { background: #dc2626; } /* Red */
     .ball-N { background: #16a34a; } /* Green */
@@ -69,7 +67,7 @@
   <main class="w-full max-w-4xl text-center">
     <h1 class="text-5xl font-extrabold text-blue-900 mb-6">🎉 Classic Bingo Caller</h1>
 
-    <!-- ONE DROPDOWN -->
+    <!-- ONE THEME DROPDOWN -->
     <div class="mb-6 text-left">
       <label for="theme" class="block text-lg font-semibold text-blue-900 mb-2">Theme</label>
       <select id="theme"
@@ -78,10 +76,7 @@
     </div>
 
     <!-- Caller Box -->
-    <div id="callerBox" class="caller-box mb-8">
-      <span id="callerText">—</span>
-      <span id="themeSymbol" style="position:absolute; bottom:10px; right:10px; font-size:2.5rem;"></span>
-    </div>
+    <div id="callerBox" class="caller-box mb-8">—</div>
 
     <!-- Controls -->
     <div class="flex flex-wrap justify-center gap-4 mb-6">
@@ -100,36 +95,76 @@
   </main>
 
   <script>
-    // THEMES — with holiday symbols
+    // =========================================
+    // THEMES — single dropdown, fixed colors
+    // (Holiday themes = labels only; same color scheme)
+    // =========================================
     const THEMES = {
-      classic75: makeTheme("Classic 1–75 (B I N G O)"),
-      uk90:      makeTheme("UK 1–90", [[1,18],[19,36],[37,54],[55,72],[73,90]]),
-      kids50:    makeTheme("Kids 1–50", [[1,10],[11,20],[21,30],[31,40],[41,50]]),
-      mini30:    makeTheme("Mini 1–30", [[1,6],[7,12],[13,18],[19,24],[25,30]]),
-      rapid75:   makeTheme("Rapid 1–75 (faster speech)", [[1,15],[16,30],[31,45],[46,60],[61,75]], 1.4),
+      // Core modes
+      classic75: {
+        label: "Classic 1–75 (B I N G O)",
+        letters: ["B","I","N","G","O"],
+        ranges: [[1,15],[16,30],[31,45],[46,60],[61,75]],
+        speakPrefix: (L, n) => `${L} ${n}`,
+        speakRate: 1.0,
+        ballClassFromLetter: L => `ball-${L}`
+      },
+      uk90: {
+        label: "UK 1–90",
+        letters: ["B","I","N","G","O"],
+        ranges: [[1,18],[19,36],[37,54],[55,72],[73,90]],
+        speakPrefix: (L, n) => `${L} ${n}`,
+        speakRate: 1.0,
+        ballClassFromLetter: L => `ball-${L}`
+      },
+      kids50: {
+        label: "Kids 1–50",
+        letters: ["B","I","N","G","O"],
+        ranges: [[1,10],[11,20],[21,30],[31,40],[41,50]],
+        speakPrefix: (L, n) => `${L} ${n}`,
+        speakRate: 0.95,
+        ballClassFromLetter: L => `ball-${L}`
+      },
+      mini30: {
+        label: "Mini 1–30",
+        letters: ["B","I","N","G","O"],
+        ranges: [[1,6],[7,12],[13,18],[19,24],[25,30]],
+        speakPrefix: (L, n) => `${L} ${n}`,
+        speakRate: 0.95,
+        ballClassFromLetter: L => `ball-${L}`
+      },
+      rapid75: {
+        label: "Rapid 1–75 (faster speech)",
+        letters: ["B","I","N","G","O"],
+        ranges: [[1,15],[16,30],[31,45],[46,60],[61,75]],
+        speakPrefix: (L, n) => `${L} ${n}`,
+        speakRate: 1.4,
+        ballClassFromLetter: L => `ball-${L}`
+      },
 
-      halloween75:   makeTheme("Halloween 1–75", null, 1.0, "🎃"),
-      thanksgiving75:makeTheme("Thanksgiving 1–75", null, 1.0, "🦃"),
-      christmas75:   makeTheme("Christmas 1–75", null, 1.0, "🎄"),
-      easter75:      makeTheme("Easter 1–75", null, 1.0, "🐣"),
-      memorial75:    makeTheme("Memorial Day 1–75", null, 1.0, "⭐"),
-      flagday75:     makeTheme("Flag Day 1–75", null, 1.0, "🇺🇸"),
-      independence75:makeTheme("Independence Day 1–75", null, 1.0, "🎆"),
-      laborday75:    makeTheme("Labor Day 1–75", null, 1.0, "🛠️"),
-      newyear75:     makeTheme("New Year’s 1–75", null, 1.0, "🎉"),
-      valentines75:  makeTheme("Valentine’s 1–75", null, 1.0, "💘"),
-      stpatricks75:  makeTheme("St. Patrick’s 1–75", null, 1.0, "☘️")
+      // Holiday labels (same 1–75 pool, same colors)
+      halloween75:   makeHoliday("Halloween 1–75"),
+      thanksgiving75:makeHoliday("Thanksgiving 1–75"),
+      christmas75:   makeHoliday("Christmas 1–75"),
+      easter75:      makeHoliday("Easter 1–75"),
+      memorial75:    makeHoliday("Memorial Day 1–75"),
+      flagday75:     makeHoliday("Flag Day 1–75"),
+      independence75:makeHoliday("Independence Day 1–75"),
+      laborday75:    makeHoliday("Labor Day 1–75"),
+      newyear75:     makeHoliday("New Year’s 1–75"),
+      valentines75:  makeHoliday("Valentine’s 1–75"),
+      stpatricks75:  makeHoliday("St. Patrick’s 1–75")
     };
 
-    function makeTheme(label, ranges = [[1,15],[16,30],[31,45],[46,60],[61,75]], rate = 1.0, symbol = "") {
+    // Helper to keep colors identical; only the label changes
+    function makeHoliday(label){
       return {
         label,
         letters: ["B","I","N","G","O"],
-        ranges,
+        ranges: [[1,15],[16,30],[31,45],[46,60],[61,75]],
         speakPrefix: (L, n) => `${L} ${n}`,
-        speakRate: rate,
-        ballClassFromLetter: L => `ball-${L}`,
-        symbol
+        speakRate: 1.0,
+        ballClassFromLetter: L => `ball-${L}`
       };
     }
 
@@ -161,7 +196,6 @@
       letters = cfg.letters;
       ranges = cfg.ranges;
       initGame();
-      document.getElementById("themeSymbol").textContent = cfg.symbol || "";
     }
 
     function initGame() {
@@ -174,7 +208,7 @@
         }
       }
       shuffle(allNumbers);
-      document.getElementById("callerText").textContent = "—";
+      document.getElementById("callerBox").textContent = "—";
       document.getElementById("recentCalls").innerHTML = "";
     }
 
@@ -189,7 +223,7 @@
       if (allNumbers.length === 0) return;
       const call = allNumbers.pop();
       history.push(call);
-      document.getElementById("callerText").textContent = call.letter + " " + call.number;
+      document.getElementById("callerBox").textContent = call.letter + " " + call.number;
       updateRecent();
       if (soundOn) {
         const cfg = THEMES[currentThemeKey];
@@ -204,7 +238,7 @@
       if (history.length === 0) return;
       const last = history.pop();
       allNumbers.push(last);
-      document.getElementById("callerText").textContent = "—";
+      document.getElementById("callerBox").textContent = "—";
       updateRecent();
     }
 
