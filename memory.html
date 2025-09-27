@@ -21,7 +21,7 @@
 
     <!-- Controls -->
     <div class="flex flex-col items-center gap-4 mb-6">
-      <div class="flex gap-3">
+      <div class="flex flex-wrap gap-3 justify-center">
         <button id="resetBtn"
                 class="bg-blue-600 hover:bg-blue-800 text-white text-xl py-3 px-6 rounded-2xl">
           New Game
@@ -31,7 +31,12 @@
                 class="border-2 border-blue-600 rounded-xl px-3 py-2 text-lg font-semibold text-blue-900">
           <option value="numbers">Numbers</option>
           <option value="emojis">Emojis</option>
-          <option value="holidays">Holidays</option>
+          <option value="christmas">🎄 Christmas</option>
+          <option value="halloween">🎃 Halloween</option>
+          <option value="thanksgiving">🦃 Thanksgiving</option>
+          <option value="newyear">🎆 New Year</option>
+          <option value="easter">🐣 Easter</option>
+          <option value="stpatricks">☘️ St. Patrick’s</option>
         </select>
       </div>
       <span class="text-lg text-gray-700">Flip two cards — find the pairs!</span>
@@ -50,10 +55,17 @@
   <script>
     // ===== SETTINGS =====
     const totalPairs = 8; // 16 cards
+
+    // THEMES
     const themes = {
       numbers: Array.from({ length: totalPairs }, (_, i) => i + 1),
       emojis: ["🍎","🐶","🎵","🌟","🚗","🧩","🍀","📚","🎈","🐢","🍩","🕰️","🦋","⚽","🌻","🍪"],
-      holidays: ["🎃","🎄","🎆","🦃","🎁","🎂","🧨","🎇","🕎","❄️","☘️","🥂","🪔","💝","🦌","🍀"]
+      christmas: ["🎄","🎅","🤶","🦌","🎁","⛄","❄️","🔔","🕯️","🍪","🌟","🥛"],
+      halloween: ["🎃","👻","🕷️","🕸️","🧛","🧟","🦇","🍬","🍭","☠️","⚰️","🧙"],
+      thanksgiving: ["🦃","🥧","🍂","🌽","🥔","🍞","🍗","🍴","🍎","🍷"],
+      newyear: ["🎆","🎇","🥂","🍾","🎉","🕛","🎊","🪩"],
+      easter: ["🐣","🐰","🥚","🌸","🧺","🍫","🌼","🐥"],
+      stpatricks: ["☘️","🍀","🍺","🌈","💰","🪙","🎩","🐑"]
     };
 
     // ===== STATE =====
@@ -74,7 +86,7 @@
 
     function buildDeck() {
       let pool = [...themes[currentTheme]];
-      if (pool.length < totalPairs) pool = [...pool, ...pool]; // ensure enough
+      if (pool.length < totalPairs) pool = [...pool, ...pool];
       const picks = shuffle(pool).slice(0, totalPairs);
       const pairDeck = shuffle([...picks, ...picks]);
       return pairDeck.map((val, i) => ({ id: i + 1, value: val, matched: false }));
@@ -93,10 +105,10 @@
         ].join(" ");
         btn.dataset.index = idx;
 
-        // Back = giant card number (like Pictionary)
+        // Back = giant card number (bigger for visibility)
         const back = document.createElement("div");
         back.className = "back absolute inset-0 flex items-center justify-center";
-        back.innerHTML = `<span class="text-5xl md:text-6xl font-extrabold text-blue-700">${card.id}</span>`;
+        back.innerHTML = `<span class="leading-none text-[6rem] sm:text-[7rem] md:text-[8rem] lg:text-[9rem] font-extrabold text-blue-700">${card.id}</span>`;
 
         // Front = theme content
         const front = document.createElement("div");
