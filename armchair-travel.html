@@ -26,6 +26,10 @@
         <option value="italy">🇮🇹 Italy</option>
         <option value="africa">🦁 Africa</option>
         <option value="world">🌍 Around the World</option>
+        <option value="parks">🏞️ National Parks</option>
+        <option value="oceans">🌊 Oceans</option>
+        <option value="route66">🛣️ Route 66</option>
+        <option value="louisiana">🎷 Louisiana</option>
       </select>
       <button id="startBtn"
               class="bg-blue-600 hover:bg-blue-800 text-white px-6 py-2 rounded-xl font-bold text-lg">
@@ -64,67 +68,85 @@
   </div>
 
   <script>
-    // Each slide gets a primary image and a fallback image from another source.
+    // Slides with primary + fallback image sources (hotlink-safe)
     const slides = {
       italy: [
-        {
-          img: "https://upload.wikimedia.org/wikipedia/commons/a/a4/Venice_grand_canal.jpg",
-          alt: "Venice canals",
+        { img: "https://upload.wikimedia.org/wikipedia/commons/a/a4/Venice_grand_canal.jpg", alt: "Venice canals",
           fallback: "https://images.unsplash.com/photo-1473953801984-2890c8fdb9f8?q=80&w=1600&auto=format&fit=crop",
-          caption: "Venice is famous for its canals. The city has no cars, only boats."
-        },
-        {
-          img: "https://upload.wikimedia.org/wikipedia/commons/d/d5/Colosseum_in_Rome%2C_Italy_-_April_2007.jpg",
-          alt: "Colosseum in Rome",
+          caption: "Venice is famous for its canals. The city has no cars, only boats." },
+        { img: "https://upload.wikimedia.org/wikipedia/commons/d/d5/Colosseum_in_Rome%2C_Italy_-_April_2007.jpg", alt: "Colosseum in Rome",
           fallback: "https://images.unsplash.com/photo-1549887534-1541e9323c83?q=80&w=1600&auto=format&fit=crop",
-          caption: "Rome’s Colosseum could hold 50,000 spectators for gladiator games."
-        },
-        {
-          img: "https://upload.wikimedia.org/wikipedia/commons/0/08/Florence_Duomo_and_City_View.jpg",
-          alt: "Florence Duomo",
+          caption: "Rome’s Colosseum could hold 50,000 spectators for gladiator games." },
+        { img: "https://upload.wikimedia.org/wikipedia/commons/0/08/Florence_Duomo_and_City_View.jpg", alt: "Florence Duomo",
           fallback: "https://images.unsplash.com/photo-1505765050516-f72dcac9c60e?q=80&w=1600&auto=format&fit=crop",
-          caption: "Florence is the birthplace of the Renaissance, full of art and history."
-        }
+          caption: "Florence is the birthplace of the Renaissance, full of art and history." }
       ],
       africa: [
-        {
-          img: "https://upload.wikimedia.org/wikipedia/commons/9/98/Serengeti_Landscape.jpg",
-          alt: "Serengeti grasslands",
+        { img: "https://upload.wikimedia.org/wikipedia/commons/9/98/Serengeti_Landscape.jpg", alt: "Serengeti grasslands",
           fallback: "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=1600&auto=format&fit=crop",
-          caption: "The Serengeti is home to lions, elephants, zebras, and the Great Migration."
-        },
-        {
-          img: "https://upload.wikimedia.org/wikipedia/commons/3/3f/Victoria_Falls_-_panoramio.jpg",
-          alt: "Victoria Falls",
+          caption: "The Serengeti is home to lions, elephants, zebras, and the Great Migration." },
+        { img: "https://upload.wikimedia.org/wikipedia/commons/3/3f/Victoria_Falls_-_panoramio.jpg", alt: "Victoria Falls",
           fallback: "https://images.unsplash.com/photo-1534274988757-a28bf1a57c17?q=80&w=1600&auto=format&fit=crop",
-          caption: "Victoria Falls is one of the largest waterfalls in the world."
-        },
-        {
-          img: "https://upload.wikimedia.org/wikipedia/commons/e/e5/Table_Mountain_Cape_Town_South_Africa.jpg",
-          alt: "Table Mountain, Cape Town",
+          caption: "Victoria Falls is one of the largest waterfalls in the world." },
+        { img: "https://upload.wikimedia.org/wikipedia/commons/e/e5/Table_Mountain_Cape_Town_South_Africa.jpg", alt: "Table Mountain, Cape Town",
           fallback: "https://images.unsplash.com/photo-1501594907352-04cda38ebc29?q=80&w=1600&auto=format&fit=crop",
-          caption: "Cape Town’s Table Mountain offers incredible views of South Africa."
-        }
+          caption: "Cape Town’s Table Mountain offers incredible views of South Africa." }
       ],
       world: [
-        {
-          img: "https://upload.wikimedia.org/wikipedia/commons/e/e6/Eiffel_Tower_and_Seine%2C_Paris_2_April_2014.jpg",
-          alt: "Eiffel Tower in Paris",
+        { img: "https://upload.wikimedia.org/wikipedia/commons/e/e6/Eiffel_Tower_and_Seine%2C_Paris_2_April_2014.jpg", alt: "Eiffel Tower in Paris",
           fallback: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=1600&auto=format&fit=crop",
-          caption: "Paris is called the City of Light and is home to the Eiffel Tower."
-        },
-        {
-          img: "https://upload.wikimedia.org/wikipedia/commons/1/10/Great_Wall_of_China_July_2006.JPG",
-          alt: "Great Wall of China",
+          caption: "Paris is called the City of Light and is home to the Eiffel Tower." },
+        { img: "https://upload.wikimedia.org/wikipedia/commons/1/10/Great_Wall_of_China_July_2006.JPG", alt: "Great Wall of China",
           fallback: "https://images.unsplash.com/photo-1501785888041-af3ef285b470?q=80&w=1600&auto=format&fit=crop",
-          caption: "The Great Wall of China stretches over 13,000 miles."
-        },
-        {
-          img: "https://upload.wikimedia.org/wikipedia/commons/a/a1/Statue_of_Liberty_7.jpg",
-          alt: "Statue of Liberty",
+          caption: "The Great Wall of China stretches over 13,000 miles." },
+        { img: "https://upload.wikimedia.org/wikipedia/commons/a/a1/Statue_of_Liberty_7.jpg", alt: "Statue of Liberty",
           fallback: "https://images.unsplash.com/photo-1552083375-1447ce886485?q=80&w=1600&auto=format&fit=crop",
-          caption: "The Statue of Liberty was a gift from France to the United States."
-        }
+          caption: "The Statue of Liberty was a gift from France to the United States." }
+      ],
+      // NEW THEMES
+      parks: [
+        { img: "https://upload.wikimedia.org/wikipedia/commons/a/a0/Grand_Canyon_view_from_Pima_Point_2010.jpg", alt: "Grand Canyon",
+          fallback: "https://images.unsplash.com/photo-1501785888041-af3ef285b470?q=80&w=1600&auto=format&fit=crop",
+          caption: "Grand Canyon National Park reveals layers of Earth carved by the Colorado River." },
+        { img: "https://upload.wikimedia.org/wikipedia/commons/6/66/Grand_Prismatic_Spring_and_Midway_Geyser_Basin_from_above.jpg", alt: "Yellowstone Grand Prismatic Spring",
+          fallback: "https://images.unsplash.com/photo-1549880338-65ddcdfd017b?q=80&w=1600&auto=format&fit=crop",
+          caption: "Yellowstone’s Grand Prismatic Spring glows with brilliant natural colors." },
+        { img: "https://upload.wikimedia.org/wikipedia/commons/5/50/YosemitePark2_amk.jpg", alt: "Yosemite Valley",
+          fallback: "https://images.unsplash.com/photo-1500496733677-44b1a7c1ac2a?q=80&w=1600&auto=format&fit=crop",
+          caption: "Yosemite’s granite cliffs and waterfalls are some of America’s most iconic views." }
+      ],
+      oceans: [
+        { img: "https://upload.wikimedia.org/wikipedia/commons/5/5a/Pacific_Ocean_-_panoramio_%281%29.jpg", alt: "Pacific Ocean waves",
+          fallback: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=1600&auto=format&fit=crop",
+          caption: "The Pacific Ocean is the largest on Earth, covering more than a third of the planet." },
+        { img: "https://upload.wikimedia.org/wikipedia/commons/0/0a/Coral_Reef_in_the_Red_Sea.jpg", alt: "Colorful coral reef",
+          fallback: "https://images.unsplash.com/photo-1505761671935-60b3a7427bad?q=80&w=1600&auto=format&fit=crop",
+          caption: "Coral reefs are vibrant underwater cities full of fish and sea life." },
+        { img: "https://upload.wikimedia.org/wikipedia/commons/3/3a/Portland_Head_Light.jpg", alt: "Lighthouse on the coast",
+          fallback: "https://images.unsplash.com/photo-1470214304380-aadaedcfff80?q=80&w=1600&auto=format&fit=crop",
+          caption: "Lighthouses guide ships safely along rocky coastlines." }
+      ],
+      route66: [
+        { img: "https://upload.wikimedia.org/wikipedia/commons/7/77/Route_66_sign_in_Arizona.jpg", alt: "Route 66 sign, Arizona",
+          fallback: "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=1600&auto=format&fit=crop",
+          caption: "Route 66 is the ‘Mother Road,’ stretching from Chicago to Santa Monica." },
+        { img: "https://upload.wikimedia.org/wikipedia/commons/0/08/Cadillac_Ranch%2C_Amarillo%2C_Texas.jpg", alt: "Cadillac Ranch, Texas",
+          fallback: "https://images.unsplash.com/photo-1558981403-c5f9899a28bc?q=80&w=1600&auto=format&fit=crop",
+          caption: "Cadillac Ranch’s half-buried cars are a quirky Route 66 landmark." },
+        { img: "https://upload.wikimedia.org/wikipedia/commons/0/0b/Santa_Monica_Pier_2013.jpg", alt: "Santa Monica Pier",
+          fallback: "https://images.unsplash.com/photo-1494526585095-c41746248156?q=80&w=1600&auto=format&fit=crop",
+          caption: "The historic end of Route 66 is the sunny Santa Monica Pier." }
+      ],
+      louisiana: [
+        { img: "https://upload.wikimedia.org/wikipedia/commons/2/2a/New_Orleans_French_Quarter.jpg", alt: "French Quarter balconies",
+          fallback: "https://images.unsplash.com/photo-1490735891913-40897cdaabbc?q=80&w=1600&auto=format&fit=crop",
+          caption: "New Orleans’ French Quarter is known for iron balconies and jazz in the streets." },
+        { img: "https://upload.wikimedia.org/wikipedia/commons/d/d3/Atchafalaya_Basin.jpg", alt: "Louisiana bayou",
+          fallback: "https://images.unsplash.com/photo-1533499513792-8f5fa3b6f5a2?q=80&w=1600&auto=format&fit=crop",
+          caption: "Quiet bayous wind through cypress trees and Spanish moss." },
+        { img: "https://upload.wikimedia.org/wikipedia/commons/5/5e/Oak_Alley_Plantation.jpg", alt: "Oak Alley live oaks",
+          fallback: "https://images.unsplash.com/photo-1568640347023-4b0b8b9ac2a4?q=80&w=1600&auto=format&fit=crop",
+          caption: "Avenue of live oaks creates a grand canopy at Oak Alley." }
       ]
     };
 
@@ -161,7 +183,7 @@
       imgEl.alt = s.alt || "";
       imgEl.src = s.img;
 
-      // If the primary image fails, try the fallback; if that fails, show text notice.
+      // Fallback if main image fails
       imgEl.onerror = () => {
         if (imgEl.src !== s.fallback) {
           imgEl.src = s.fallback;
