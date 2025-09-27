@@ -56,15 +56,9 @@
 
     <!-- Status -->
     <div id="status" class="text-center mt-6 text-2xl font-semibold text-blue-700"></div>
-    <p class="text-center text-lg text-gray-700 mt-2">
-      Tip: Players call a coordinate like <span class="font-semibold">B3</span> — click that exact tile, or use <span class="font-semibold">Reveal One</span>.
-    </p>
   </div>
 
   <script>
-    const ROWS = ["A","B","C","D"];
-    const COLS = [1,2,3,4];
-
     const BANK = {
       animals: [
         {emoji:"🦒", name:"GIRAFFE"},
@@ -107,16 +101,10 @@
     let theme = "animals";
     let item = null;
     let covered = [];
-    const totalTiles = ROWS.length * COLS.length;
+    const totalTiles = 16;
 
     function randPick(arr) {
       return arr[Math.floor(Math.random() * arr.length)];
-    }
-
-    function coordsFromIndex(i) {
-      const r = Math.floor(i / COLS.length);
-      const c = i % COLS.length;
-      return ROWS[r] + (c + 1);
     }
 
     function setStatus(msg, color="text-blue-700") {
@@ -126,8 +114,7 @@
     }
 
     function renderPicture() {
-      const pic = document.getElementById("picture");
-      pic.textContent = item.emoji;
+      document.getElementById("picture").textContent = item.emoji;
     }
 
     function renderTiles() {
@@ -136,20 +123,19 @@
       covered = Array(totalTiles).fill(true);
       for (let i = 0; i < totalTiles; i++) {
         const btn = document.createElement("button");
-        btn.className = "tile bg-blue-700 hover:bg-blue-800 text-white border border-blue-900 flex items-center justify-center text-4xl md:text-5xl font-extrabold";
+        btn.className = "tile bg-blue-700 hover:bg-blue-800 text-white border border-blue-900 flex items-center justify-center text-5xl font-extrabold";
+        btn.textContent = i + 1; // Just numbers 1–16
         btn.dataset.index = i;
-        btn.innerHTML = coordsFromIndex(i);
         btn.addEventListener("click", () => revealTile(i, btn));
         wrap.appendChild(btn);
       }
       updateStatus();
     }
 
-    function revealTile(i, btnEl=null) {
+    function revealTile(i, btn) {
       if (!covered[i]) return;
       covered[i] = false;
-      const btn = btnEl || document.querySelector(`.tile[data-index="${i}"]`);
-      if (btn) btn.remove();
+      btn.remove(); // Remove THIS button, not by index lookup
       updateStatus();
       if (covered.every(v => v === false)) {
         setStatus(`🎉 All tiles revealed — Answer: ${item.name}`, "text-green-700");
@@ -159,13 +145,15 @@
     function revealOneRandom() {
       const remaining = covered.map((v,i)=>v?i:-1).filter(i=>i!==-1);
       if (!remaining.length) return;
-      revealTile(randPick(remaining));
+      const pick = randPick(remaining);
+      const btn = document.querySelector(`.tile[data-index="${pick}"]`);
+      if (btn) revealTile(pick, btn);
     }
 
     function revealAll() {
-      for (let i = 0; i < totalTiles; i++) {
-        if (covered[i]) revealTile(i);
-      }
+      document.querySelectorAll(".tile").forEach(btn => btn.remove());
+      covered = Array(totalTiles).fill(false);
+      setStatus(`🎉 All tiles revealed — Answer: ${item.name}`, "text-green-700");
     }
 
     function updateStatus() {
