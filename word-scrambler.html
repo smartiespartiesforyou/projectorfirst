@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Word Scramble</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-white text-gray-900 min-h-screen">
+
+  <div class="max-w-4xl mx-auto p-6 text-center">
+    <!-- Title -->
+    <h1 class="text-5xl font-extrabold mb-4 text-blue-900">Word Scramble</h1>
+    <!-- Back to Apps -->
+    <div class="flex justify-center mb-6">
+      <a href="apps.html"
+         class="inline-flex items-center gap-2 px-6 py-3 bg-blue-900 text-white rounded-xl font-extrabold text-xl shadow hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300">
+        ← Back to Apps
+      </a>
+    </div>
+
+    <!-- Scrambled word -->
+    <div id="scramble"
+         class="text-7xl md:text-8xl font-black text-blue-900 tracking-widest my-10">
+      Loading...
+    </div>
+
+    <!-- Controls -->
+    <div class="flex justify-center gap-4">
+      <button id="newWordBtn"
+              class="bg-blue-600 hover:bg-blue-800 text-white text-2xl py-3 px-6 rounded-2xl shadow focus:outline-none focus:ring-4 focus:ring-blue-300">
+        New Word
+      </button>
+      <button id="revealBtn"
+              class="bg-white border-4 border-blue-900 text-blue-900 text-2xl py-3 px-6 rounded-2xl shadow hover:bg-gray-50 focus:outline-none focus:ring-4 focus:ring-blue-300">
+        Reveal Answer
+      </button>
+    </div>
+
+    <!-- Answer reveal -->
+    <div id="answer"
+         class="text-4xl md:text-5xl font-bold text-green-700 mt-8 hidden">
+    </div>
+  </div>
+
+  <script>
+    // Word list (add more categories if you want)
+    const words = [
+      "APPLE","HOUSE","RIVER","TRAIN","CHAIR","BREAD","MUSIC","CLOCK","HORSE","SCHOOL",
+      "PIZZA","BRIDGE","WATER","PLANT","STARS","LIGHT","TABLE","SMILE","HEART","CLOUD"
+    ];
+
+    let currentWord = "";
+
+    // Shuffle letters in a word
+    function shuffleWord(word) {
+      const arr = word.split("");
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr.join("");
+    }
+
+    function newWord() {
+      const rand = words[Math.floor(Math.random() * words.length)];
+      currentWord = rand;
+      document.getElementById("scramble").textContent = shuffleWord(rand);
+      document.getElementById("answer").classList.add("hidden");
+      document.getElementById("answer").textContent = rand;
+    }
+
+    function revealAnswer() {
+      document.getElementById("answer").classList.remove("hidden");
+    }
+
+    document.getElementById("newWordBtn").addEventListener("click", newWord);
+    document.getElementById("revealBtn").addEventListener("click", revealAnswer);
+
+    // Start with first word
+    newWord();
+  </script>
+</body>
+</html>
