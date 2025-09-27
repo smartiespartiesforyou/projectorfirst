@@ -1,141 +1,27 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Apps — ProjectorFirst</title>
-  <meta name="theme-color" content="#1e3a8a"/>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <style>
-    body { background:#fff; color:#111; }
-    .card{
-      border:3px solid #1e3a8a; border-radius:1.25rem; padding:1.25rem;
-      background:#fff; box-shadow:0 6px 0 #1e3a8a22;
-      transition:transform .08s ease, box-shadow .08s ease;
-      display:flex; flex-direction:column; justify-content:space-between; min-height: 250px;
-    }
-    .card:hover{ transform:translateY(-2px); box-shadow:0 10px 0 #1e3a8a22; }
-    .btn{
-      display:inline-block; background:#1e3a8a; color:#fff; padding:.9rem 1.4rem;
-      border-radius:1rem; font-weight:800; font-size:1.2rem; text-align:center;
-    }
-    .btn:hover{ background:#1d4ed8; }
-  </style>
-</head>
-<body class="min-h-screen">
-  <header class="max-w-5xl mx-auto px-4 py-6">
-    <h1 class="text-4xl md:text-5xl font-extrabold text-blue-800 mb-2">Apps</h1>
-    <p class="text-lg text-gray-700">Big, simple, projector-friendly games for everyone.</p>
-  </header>
-
-  <main class="max-w-5xl mx-auto px-4 pb-12">
-    <div class="grid gap-5 sm:gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-
-      <!-- Bingo -->
-      <article class="card">
-        <div>
-          <div class="flex items-center gap-3 mb-3"><span class="text-4xl">🎱</span>
-            <h2 class="text-2xl font-extrabold text-blue-800">Bingo Caller</h2></div>
-          <p class="text-lg text-gray-800 mb-4">Classic 1–75 caller with big numbers and a <span class="font-semibold">Theme</span> dropdown.</p>
-        </div>
-        <a href="bingo.html" class="btn" aria-label="Open Bingo">Open Bingo</a>
-      </article>
-
-      <!-- Dice Roller -->
-      <article class="card">
-        <div>
-          <div class="flex items-center gap-3 mb-3"><span class="text-4xl">🎲</span>
-            <h2 class="text-2xl font-extrabold text-blue-800">Dice Roller</h2></div>
-          <p class="text-lg text-gray-800 mb-4">Big, readable dice for group play and quick challenges.</p>
-        </div>
-        <a href="dice.html" class="btn" aria-label="Open Dice Roller">Open Dice</a>
-      </article>
-
-      <!-- Trivia -->
-      <article class="card">
-        <div>
-          <div class="flex items-center gap-3 mb-3"><span class="text-4xl">❓</span>
-            <h2 class="text-2xl font-extrabold text-blue-800">Trivia (True/False)</h2></div>
-          <p class="text-lg text-gray-800 mb-4">Huge questions, big buttons, and a <span class="font-semibold">Theme</span> picker.</p>
-        </div>
-        <a href="trivia.html" class="btn" aria-label="Open Trivia">Open Trivia</a>
-      </article>
-
-      <!-- Memory Match -->
-      <article class="card">
-        <div>
-          <div class="flex items-center gap-3 mb-3"><span class="text-4xl">🧩</span>
-            <h2 class="text-2xl font-extrabold text-blue-800">Memory Match</h2></div>
-          <p class="text-lg text-gray-800 mb-4">Match pairs of icons — animals, food, and holiday themes included.</p>
-        </div>
-        <a href="memory.html" class="btn" aria-label="Open Memory Match">Open Memory</a>
-      </article>
-
-      <!-- Pop the Balloon -->
-      <article class="card">
-        <div>
-          <div class="flex items-center gap-3 mb-3"><span class="text-4xl">🎈</span>
-            <h2 class="text-2xl font-extrabold text-blue-800">Pop the Balloon</h2></div>
-          <p class="text-lg text-gray-800 mb-4">Word guessing with balloons—guess letters before they all pop. <span class="font-semibold">Themes</span> included.</p>
-        </div>
-        <a href="balloon.html" class="btn" aria-label="Open Pop the Balloon">Open Balloon Game</a>
-      </article>
-
-      <!-- Pictionary Reveal -->
-      <article class="card">
-        <div>
-          <div class="flex items-center gap-3 mb-3"><span class="text-4xl">🖼️</span>
-            <h2 class="text-2xl font-extrabold text-blue-800">Pictionary — Reveal</h2></div>
-          <p class="text-lg text-gray-800 mb-4">Hidden emoji picture revealed tile by tile. Big, bold, and team-friendly.</p>
-        </div>
-        <a href="pictionary.html" class="btn" aria-label="Open Pictionary">Open Pictionary</a>
-      </article>
-
-      <!-- Word Scramble -->
-      <article class="card">
-        <div>
-          <div class="flex items-center gap-3 mb-3"><span class="text-4xl">🔤</span>
-            <h2 class="text-2xl font-extrabold text-blue-800">Word Scramble</h2></div>
-          <p class="text-lg text-gray-800 mb-4">Unscramble giant jumbled words on screen. Includes <span class="font-semibold">Animals, Food, Holidays</span>.</p>
-        </div>
-        <a href="word-scramble.html" class="btn" aria-label="Open Word Scramble">Open Scramble</a>
-      </article>
-
-      <!-- Family Feud -->
-      <article class="card">
-        <div>
-          <div class="flex items-center gap-3 mb-3"><span class="text-4xl">🎤</span>
-            <h2 class="text-2xl font-extrabold text-blue-800">Family Feud</h2></div>
-          <p class="text-lg text-gray-800 mb-4">Survey-style team game. Reveal answers, award points, and keep score on the big screen.</p>
-        </div>
-        <a href="family-feud.html" class="btn" aria-label="Open Family Feud">Open Family Feud</a>
-      </article>
-
-      <!-- Pokeno -->
-      <article class="card">
-        <div>
-          <div class="flex items-center gap-3 mb-3"><span class="text-4xl">🎴</span>
-            <h2 class="text-2xl font-extrabold text-blue-800">Pokeno</h2></div>
-          <p class="text-lg text-gray-800 mb-4">Classic mix of poker and bingo. Flip giant cards; players mark their boards.</p>
-        </div>
-        <a href="pokeno.html" class="btn" aria-label="Open Pokeno">Open Pokeno</a>
-      </article>
-
-      <!-- Armchair Travel -->
-      <article class="card">
-        <div>
-          <div class="flex items-center gap-3 mb-3"><span class="text-4xl">🌍</span>
-            <h2 class="text-2xl font-extrabold text-blue-800">Armchair Travel</h2></div>
-          <p class="text-lg text-gray-800 mb-4">Big photos + simple facts. Trips include <span class="font-semibold">Italy, Africa, National Parks, Oceans, Route 66, Louisiana</span>.</p>
-        </div>
-        <a href="armchair-travel.html" class="btn" aria-label="Open Armchair Travel">Open Travel</a>
-      </article>
-
+<!-- Name That Tune -->
+<article class="card">
+  <div>
+    <div class="flex items-center gap-3 mb-3">
+      <span class="text-4xl">🎵</span>
+      <h2 class="text-2xl font-extrabold text-blue-800">Name That Tune</h2>
     </div>
-  </main>
+    <p class="text-lg text-gray-800 mb-4">
+      Play short clips and guess the song title or artist. Big text and simple controls.
+    </p>
+  </div>
+  <a href="name-that-tune.html" class="btn" aria-label="Open Name That Tune">Open Name That Tune</a>
+</article>
 
-  <footer class="max-w-5xl mx-auto px-4 pb-10 pt-4 text-center text-gray-500">
-    <a href="index.html" class="underline text-blue-700 font-semibold">Back to Home</a>
-  </footer>
-</body>
-</html>
+<!-- Remember This -->
+<article class="card">
+  <div>
+    <div class="flex items-center gap-3 mb-3">
+      <span class="text-4xl">🧠</span>
+      <h2 class="text-2xl font-extrabold text-blue-800">Remember This</h2>
+    </div>
+    <p class="text-lg text-gray-800 mb-4">
+      Flash images or words, then test memory recall. Simple, bold, and group-friendly.
+    </p>
+  </div>
+  <a href="remember-this.html" class="btn" aria-label="Open Remember This">Open Remember This</a>
+</article>

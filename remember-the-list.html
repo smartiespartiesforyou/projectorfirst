@@ -5,12 +5,19 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Remember the List</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .card { position: relative; }
+    .mark {
+      position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+      font-weight: 900; line-height: 1; pointer-events: none;
+      text-shadow: 0 6px 14px rgba(0,0,0,.25);
+    }
+  </style>
 </head>
 <body class="bg-white text-gray-900 min-h-screen">
   <div class="max-w-6xl mx-auto p-6 text-center">
-    <!-- Title -->
+
     <h1 class="text-5xl font-extrabold mb-4 text-blue-900">Remember the List</h1>
-    <!-- Back to Apps -->
     <div class="flex justify-center mb-6">
       <a href="apps.html"
          class="inline-flex items-center gap-2 px-6 py-3 bg-blue-900 text-white rounded-xl font-extrabold text-xl shadow hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300">
@@ -18,17 +25,17 @@
       </a>
     </div>
 
-    <!-- Instructions / Timer -->
+    <!-- Phase header / timer -->
     <div id="phaseBar" class="text-2xl md:text-3xl font-bold text-blue-900 mb-4">
       Look at the grocery list. You’ll have <span id="seconds" class="text-red-600">30</span> seconds!
     </div>
 
-    <!-- SHOW PHASE: the list to remember -->
+    <!-- SHOW PHASE (WORDS ONLY) -->
     <div id="showPhase" class="mb-8">
-      <div id="targetList"
-           class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-3 gap-4 justify-center max-w-3xl mx-auto">
-        <!-- items injected -->
-      </div>
+      <ul id="targetList"
+          class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 justify-center max-w-3xl mx-auto text-left">
+        <!-- words injected -->
+      </ul>
       <div class="mt-6">
         <button id="skipBtn"
                 class="bg-blue-600 hover:bg-blue-800 text-white text-xl px-6 py-3 rounded-2xl shadow focus:outline-none focus:ring-4 focus:ring-blue-300">
@@ -37,7 +44,7 @@
       </div>
     </div>
 
-    <!-- GUESS PHASE: pick the six items -->
+    <!-- GUESS PHASE (PICTURES) -->
     <div id="guessPhase" class="hidden">
       <div class="text-xl md:text-2xl font-bold text-blue-900 mb-2">
         Choose the <span class="underline">six</span> items that were on the list.
@@ -46,7 +53,7 @@
 
       <div id="board"
            class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 gap-4 max-w-5xl mx-auto">
-        <!-- option cards injected -->
+        <!-- picture cards injected -->
       </div>
 
       <div class="mt-6 flex justify-center gap-4">
@@ -62,34 +69,13 @@
       </div>
     </div>
 
-    <!-- RESULT PHASE -->
-    <div id="resultPhase" class="hidden">
-      <div id="resultHeader" class="text-3xl md:text-4xl font-extrabold mb-4 text-blue-900"></div>
-
-      <div class="grid md:grid-cols-2 gap-6 max-w-5xl mx-auto text-left">
-        <div class="border-4 border-green-600 rounded-2xl p-4">
-          <div class="text-2xl font-extrabold text-green-700 mb-2">✔ The Correct List</div>
-          <ul id="correctList" class="space-y-2 text-2xl"></ul>
-        </div>
-        <div class="border-4 border-blue-600 rounded-2xl p-4">
-          <div class="text-2xl font-extrabold text-blue-700 mb-2">Your Picks</div>
-          <ul id="yourPicks" class="space-y-2 text-2xl"></ul>
-        </div>
-      </div>
-
-      <div class="mt-8">
-        <button id="playAgainBtn"
-                class="bg-blue-900 text-white text-xl px-6 py-3 rounded-2xl shadow hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300">
-          Play Again
-        </button>
-      </div>
-    </div>
+    <!-- RESULTS SUMMARY -->
+    <div id="resultBar" class="hidden text-3xl md:text-4xl font-extrabold mt-8 text-blue-900"></div>
   </div>
 
   <script>
-    // ---------- ITEM BANK (Groceries) ----------
-    // Simple text + emoji for quick recognition.
-    const GROCERY_BANK = [
+    // ========== ITEM BANK ==========
+    const BANK = [
       {name:"Milk",emoji:"🥛"},{name:"Eggs",emoji:"🥚"},{name:"Bread",emoji:"🍞"},
       {name:"Butter",emoji:"🧈"},{name:"Cheese",emoji:"🧀"},{name:"Yogurt",emoji:"🥣"},
       {name:"Chicken",emoji:"🍗"},{name:"Fish",emoji:"🐟"},{name:"Beef",emoji:"🥩"},
@@ -105,16 +91,17 @@
       {name:"Peanut Butter",emoji:"🥜"},{name:"Jam",emoji:"🍓"},{name:"Ice Cream",emoji:"🍨"}
     ];
 
-    // ---------- STATE ----------
+    // ========== STATE ==========
     const SHOW_SECONDS = 30;
-    let countdown = SHOW_SECONDS;
     let timerId = null;
+    let countdown = SHOW_SECONDS;
 
-    let targets = [];       // the 6 items to remember
-    let boardItems = [];    // 6 targets + distractors (e.g., 24 total)
-    let picks = new Set();  // selected names
+    let targets = [];       // 6 items to remember
+    let boardItems = [];    // 24 items to choose from (6 correct + 18 distractors)
+    let picks = new Set();  // chosen item names
+    let locked = false;     // after submit
 
-    // ---------- UTIL ----------
+    // ========== UTILS ==========
     function sample(array, n){
       const copy = [...array];
       for (let i = copy.length - 1; i > 0; i--) {
@@ -123,119 +110,117 @@
       }
       return copy.slice(0, n);
     }
+    const byName = n => i => i.name === n;
 
-    function byName(name){ return (item)=>item.name === name; }
-
-    // ---------- RENDER HELPERS ----------
-    function renderTargetList(){
-      const wrap = document.getElementById("targetList");
-      wrap.innerHTML = "";
+    // ========== RENDERERS ==========
+    function renderWordList(){
+      const ul = document.getElementById("targetList");
+      ul.innerHTML = "";
       targets.forEach(t=>{
-        const card = document.createElement("div");
-        card.className = "border-4 border-blue-900 rounded-2xl p-4 bg-white flex items-center justify-center gap-3";
-        card.innerHTML = `<span class="text-5xl">${t.emoji}</span>
-                          <span class="text-3xl md:text-4xl font-extrabold text-blue-900">${t.name}</span>`;
-        wrap.appendChild(card);
+        const li = document.createElement("li");
+        li.className = "border-4 border-blue-900 rounded-2xl px-5 py-4 bg-white";
+        li.innerHTML = `<span class="text-3xl md:text-4xl font-extrabold text-blue-900">${t.name}</span>`;
+        ul.appendChild(li);
       });
     }
 
     function renderBoard(){
       const wrap = document.getElementById("board");
       wrap.innerHTML = "";
-      boardItems.forEach(item=>{
-        const btn = document.createElement("button");
-        btn.className =
-          "group border-4 border-blue-600 rounded-2xl px-3 py-4 bg-white flex flex-col items-center justify-center gap-2 " +
-          "focus:outline-none focus:ring-4 focus:ring-blue-300 text-blue-900";
-        btn.setAttribute("data-name", item.name);
+      const correctSet = new Set(targets.map(t=>t.name));
 
-        const picked = picks.has(item.name);
-        if (picked) btn.classList.add("ring-4","ring-blue-300","border-blue-900");
+      boardItems.forEach(item=>{
+        const selected = picks.has(item.name);
+        const isCorrect = correctSet.has(item.name);
+
+        const btn = document.createElement("button");
+        btn.className = "card border-4 rounded-2xl px-3 py-4 bg-white flex flex-col items-center justify-center gap-2 " +
+                        (locked
+                          ? (selected
+                              ? (isCorrect ? "border-green-600" : "border-red-600")
+                              : (isCorrect ? "border-green-400" : "border-blue-600"))
+                          : (selected ? "ring-4 ring-blue-300 border-blue-900" : "border-blue-600"));
+        btn.dataset.name = item.name;
+        btn.disabled = locked;
 
         btn.innerHTML =
-          `<span class="text-6xl leading-none">${item.emoji}</span>
-           <span class="text-2xl md:text-3xl font-extrabold leading-tight">${item.name}</span>`;
+          `<span class="text-[4.5rem] sm:text-[5.5rem] leading-none">${item.emoji}</span>
+           <span class="text-xl md:text-2xl font-extrabold text-blue-900">${item.name}</span>`;
+
+        // Overlay marks after submit
+        if (locked && selected && !isCorrect){
+          const mark = document.createElement("div");
+          mark.className = "mark text-[6rem] sm:text-[7rem] text-red-600";
+          mark.textContent = "✘";
+          btn.appendChild(mark);
+        }
+        if (locked && selected && isCorrect){
+          const mark = document.createElement("div");
+          mark.className = "mark text-[5rem] sm:text-[6rem] text-green-600";
+          mark.textContent = "✓";
+          btn.appendChild(mark);
+        }
 
         btn.addEventListener("click", ()=>{
-          if (picks.has(item.name)) {
-            picks.delete(item.name);
-          } else {
-            if (picks.size >= 6) return; // cap at 6
+          if (locked) return;
+          if (picks.has(item.name)) picks.delete(item.name);
+          else {
+            if (picks.size >= 6) return;
             picks.add(item.name);
           }
           document.getElementById("pickedCount").textContent = picks.size;
           document.getElementById("submitBtn").disabled = (picks.size !== 6);
-          renderBoard(); // re-render highlight
+          renderBoard();
         });
 
         wrap.appendChild(btn);
       });
     }
 
-    // ---------- PHASE CONTROL ----------
+    function showResultBar(){
+      const correctNames = new Set(targets.map(t=>t.name));
+      let score = 0;
+      picks.forEach(p => { if (correctNames.has(p)) score++; });
+      const bar = document.getElementById("resultBar");
+      bar.textContent = `You found ${score} of 6!`;
+      bar.classList.remove("hidden");
+    }
+
+    // ========== PHASES ==========
     function toShowPhase(){
+      locked = false;
+      picks.clear();
+      document.getElementById("resultBar").classList.add("hidden");
+
       document.getElementById("showPhase").classList.remove("hidden");
       document.getElementById("guessPhase").classList.add("hidden");
-      document.getElementById("resultPhase").classList.add("hidden");
+
+      countdown = SHOW_SECONDS;
       document.getElementById("phaseBar").innerHTML =
         `Look at the grocery list. You’ll have <span id="seconds" class="text-red-600">${SHOW_SECONDS}</span> seconds!`;
-      countdown = SHOW_SECONDS;
+
+      renderWordList();
+
       tick();
+      clearInterval(timerId);
       timerId = setInterval(tick, 1000);
     }
 
     function toGuessPhase(){
       clearInterval(timerId);
+
+      // Build board (6 targets + 18 distractors = 24)
+      const distractorPool = BANK.filter(x=>!targets.some(t=>t.name===x.name));
+      const distractors = sample(distractorPool, 18);
+      boardItems = sample([...targets, ...distractors], 24);
+
       document.getElementById("showPhase").classList.add("hidden");
       document.getElementById("guessPhase").classList.remove("hidden");
-      document.getElementById("resultPhase").classList.add("hidden");
-      document.getElementById("phaseBar").textContent =
-        "Now pick the six items you remember!";
-      picks.clear();
+      document.getElementById("phaseBar").textContent = "Now pick the six items you remember!";
       document.getElementById("pickedCount").textContent = "0";
       document.getElementById("submitBtn").disabled = true;
 
-      // Build board: 6 targets + 18 distractors = 24
-      const distractorPool = GROCERY_BANK.filter(x=>!targets.some(t=>t.name===x.name));
-      const distractors = sample(distractorPool, 18);
-      boardItems = sample([...targets, ...distractors], 24);
       renderBoard();
-    }
-
-    function toResultPhase(){
-      document.getElementById("showPhase").classList.add("hidden");
-      document.getElementById("guessPhase").classList.add("hidden");
-      document.getElementById("resultPhase").classList.remove("hidden");
-
-      const correctNames = new Set(targets.map(t=>t.name));
-      let score = 0;
-      picks.forEach(p=>{ if (correctNames.has(p)) score++; });
-
-      const header = document.getElementById("resultHeader");
-      header.textContent = `You found ${score} of 6!`;
-
-      // Correct list
-      const cl = document.getElementById("correctList");
-      cl.innerHTML = "";
-      targets.forEach(t=>{
-        const li = document.createElement("li");
-        li.innerHTML = `<span class="text-4xl">${t.emoji}</span>
-                        <span class="ml-3 font-extrabold">${t.name}</span>`;
-        cl.appendChild(li);
-      });
-
-      // Your picks (mark ✓ or ✗)
-      const yp = document.getElementById("yourPicks");
-      yp.innerHTML = "";
-      [...picks].forEach(name=>{
-        const item = GROCERY_BANK.find(byName(name)) || {emoji:"❓",name};
-        const ok = correctNames.has(name);
-        const li = document.createElement("li");
-        li.innerHTML = `<span class="text-4xl">${item.emoji}</span>
-                        <span class="ml-3 font-extrabold">${item.name}</span>
-                        <span class="ml-3 ${ok?"text-green-700":"text-red-700"}">${ok?"✔":"✘"}</span>`;
-        yp.appendChild(li);
-      });
     }
 
     function tick(){
@@ -248,18 +233,21 @@
       }
     }
 
-    // ---------- NEW ROUND ----------
     function newRound(){
-      targets = sample(GROCERY_BANK, 6);
-      renderTargetList();
+      targets = sample(BANK, 6);
       toShowPhase();
     }
 
-    // ---------- HOOKS ----------
+    // ========== HOOKS ==========
     document.getElementById("skipBtn").addEventListener("click", toGuessPhase);
     document.getElementById("restartBtn").addEventListener("click", newRound);
-    document.getElementById("playAgainBtn").addEventListener("click", newRound);
-    document.getElementById("submitBtn").addEventListener("click", toResultPhase);
+
+    document.getElementById("submitBtn").addEventListener("click", ()=>{
+      if (picks.size !== 6) return;
+      locked = true;           // freeze choices
+      renderBoard();           // draw ✓ and big ✘ overlays
+      showResultBar();         // show score
+    });
 
     // Start
     newRound();
