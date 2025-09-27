@@ -4,7 +4,7 @@
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>Trivia Game — ProjectorFirst</title>
-  <meta name="description" content="Projector-friendly trivia game with multiple themes."/>
+  <meta name="description" content="Projector-friendly trivia game with true/false questions."/>
   <meta name="theme-color" content="#1e3a8a"/>
   <link rel="icon" href="/logo.svg" type="image/svg+xml"/>
   <script src="https://cdn.tailwindcss.com"></script>
@@ -19,8 +19,10 @@
     }
     .btn-primary { background: #1e3a8a; color: white; }
     .btn-primary:hover { background: #1d4ed8; }
-    .btn-answer { background: #16a34a; color: white; }
-    .btn-answer:hover { background: #15803d; }
+    .btn-true { background: #16a34a; color: white; }
+    .btn-true:hover { background: #15803d; }
+    .btn-false { background: #dc2626; color: white; }
+    .btn-false:hover { background: #b91c1c; }
     .question-box {
       font-size: 2.5rem;
       font-weight: bold;
@@ -29,9 +31,8 @@
       color: #1e3a8a;
     }
     .answer-box {
-      font-size: 2rem;
+      font-size: 2.5rem;
       font-weight: bold;
-      color: #dc2626;
       min-height: 4rem;
     }
   </style>
@@ -60,124 +61,125 @@
     <!-- Controls -->
     <div class="flex flex-wrap justify-center gap-4 mt-6">
       <button onclick="nextQuestion()" class="btn btn-primary">Next Question</button>
-      <button onclick="showAnswer()" class="btn btn-answer">Show Answer</button>
+      <button onclick="checkAnswer(true)" class="btn btn-true">True</button>
+      <button onclick="checkAnswer(false)" class="btn btn-false">False</button>
     </div>
   </main>
 
   <script>
     // ========================
-    // QUESTION BANK
+    // TRUE/FALSE QUESTION BANK
     // ========================
     const QUESTIONS = {
       general: [
-        {q:"What is the capital of France?",a:"Paris"},
-        {q:"How many continents are there?",a:"7"},
-        {q:"What is the largest mammal?",a:"Blue Whale"},
-        {q:"What is 9 x 9?",a:"81"},
-        {q:"What is the tallest mountain in the world?",a:"Mount Everest"},
-        {q:"How many colors are in a rainbow?",a:"7"},
-        {q:"What is the capital of the USA?",a:"Washington, D.C."},
-        {q:"How many legs does a spider have?",a:"8"},
-        {q:"What is the fastest land animal?",a:"Cheetah"},
-        {q:"What is H2O commonly known as?",a:"Water"},
-        {q:"What is the opposite of hot?",a:"Cold"},
-        {q:"How many hours are in a day?",a:"24"},
-        {q:"What is 100 divided by 10?",a:"10"},
-        {q:"What’s the capital of Italy?",a:"Rome"},
-        {q:"Which animal is known as the King of the Jungle?",a:"Lion"},
-        {q:"What shape has 3 sides?",a:"Triangle"},
-        {q:"What do bees make?",a:"Honey"},
-        {q:"What is the capital of Japan?",a:"Tokyo"},
-        {q:"How many planets are in our solar system?",a:"8"},
-        {q:"What fruit keeps the doctor away?",a:"Apple"}
+        {q:"The capital of France is Paris.",a:true},
+        {q:"There are 8 continents on Earth.",a:false},
+        {q:"The Great Wall of China is visible from space.",a:false},
+        {q:"A triangle has three sides.",a:true},
+        {q:"The Pacific Ocean is the largest ocean.",a:true},
+        {q:"Shakespeare wrote 'Romeo and Juliet.'",a:true},
+        {q:"The sun rises in the west.",a:false},
+        {q:"Dogs are mammals.",a:true},
+        {q:"The human body has 300 bones.",a:false},
+        {q:"Mount Everest is the tallest mountain on Earth.",a:true},
+        {q:"There are 60 minutes in an hour.",a:true},
+        {q:"The capital of Italy is Madrid.",a:false},
+        {q:"Bananas grow on trees.",a:false},
+        {q:"The Amazon River is the longest river in the world.",a:false},
+        {q:"An octagon has eight sides.",a:true},
+        {q:"The Statue of Liberty was a gift from France.",a:true},
+        {q:"Goldfish have a memory span of only 3 seconds.",a:false},
+        {q:"The Eiffel Tower is in Berlin.",a:false},
+        {q:"Water boils at 100°C at sea level.",a:true},
+        {q:"The moon is bigger than Earth.",a:false}
       ],
       holidays: [
-        {q:"What day is Christmas celebrated?",a:"December 25"},
-        {q:"What holiday has fireworks in the USA?",a:"Independence Day"},
-        {q:"What flower is associated with Easter?",a:"Lily"},
-        {q:"When is Halloween?",a:"October 31"},
-        {q:"When is New Year’s Day?",a:"January 1"},
-        {q:"What holiday honors military veterans?",a:"Veterans Day"},
-        {q:"What day is Valentine’s Day?",a:"February 14"},
-        {q:"What food is traditional on Thanksgiving?",a:"Turkey"},
-        {q:"What is the Irish holiday celebrated on March 17?",a:"St. Patrick’s Day"},
-        {q:"When is Labor Day in the USA?",a:"First Monday in September"},
-        {q:"What do children collect on Halloween?",a:"Candy"},
-        {q:"What colors are associated with Christmas?",a:"Red and Green"},
-        {q:"What holiday uses eggs and bunnies?",a:"Easter"},
-        {q:"What holiday do we honor workers?",a:"Labor Day"},
-        {q:"What day is Memorial Day?",a:"Last Monday in May"},
-        {q:"What day is Flag Day?",a:"June 14"},
-        {q:"What month is Black History Month?",a:"February"},
-        {q:"What is lit on Hanukkah?",a:"Menorah"},
-        {q:"What’s the holiday with costumes and trick-or-treating?",a:"Halloween"},
-        {q:"What country started Oktoberfest?",a:"Germany"}
+        {q:"Christmas is celebrated on December 25.",a:true},
+        {q:"Halloween is in July.",a:false},
+        {q:"People celebrate New Year’s Day on January 1.",a:true},
+        {q:"Easter always falls on the same date.",a:false},
+        {q:"Independence Day in the USA is July 4.",a:true},
+        {q:"Thanksgiving is celebrated with turkey in the USA.",a:true},
+        {q:"Valentine’s Day is on February 14.",a:true},
+        {q:"Labor Day in the USA is in October.",a:false},
+        {q:"Memorial Day honors soldiers who died in service.",a:true},
+        {q:"St. Patrick’s Day is in March.",a:true},
+        {q:"Flag Day in the USA is June 14.",a:true},
+        {q:"Hanukkah lasts 12 nights.",a:false},
+        {q:"Kwanzaa is celebrated in December.",a:true},
+        {q:"Fireworks are often used on the Fourth of July.",a:true},
+        {q:"Mother’s Day is always in April.",a:false},
+        {q:"Father’s Day is in June in the USA.",a:true},
+        {q:"Oktoberfest began in Germany.",a:true},
+        {q:"Easter uses eggs and bunnies as symbols.",a:true},
+        {q:"Christmas colors are pink and yellow.",a:false},
+        {q:"New Year’s Eve is December 31.",a:true}
       ],
       movies: [
-        {q:"Who played Jack in Titanic?",a:"Leonardo DiCaprio"},
-        {q:"What is the name of the wizard school in Harry Potter?",a:"Hogwarts"},
-        {q:"What superhero is also known as Bruce Wayne?",a:"Batman"},
-        {q:"What is the first name of Mr. Potter in 'It's a Wonderful Life'?",a:"Mr. Potter"},
-        {q:"What movie features a cowboy named Woody?",a:"Toy Story"},
-        {q:"Who directed Jaws?",a:"Steven Spielberg"},
-        {q:"What is the name of Simba’s father in The Lion King?",a:"Mufasa"},
-        {q:"What movie has the character Elsa?",a:"Frozen"},
-        {q:"What is the name of the talking snowman in Frozen?",a:"Olaf"},
-        {q:"What movie is about a clownfish named Nemo?",a:"Finding Nemo"},
-        {q:"What color are Dorothy’s shoes in The Wizard of Oz?",a:"Ruby Red"},
-        {q:"What movie has a ring that must be destroyed?",a:"The Lord of the Rings"},
-        {q:"What film has a character named Forrest who loves running?",a:"Forrest Gump"},
-        {q:"Who starred in Mission Impossible?",a:"Tom Cruise"},
-        {q:"What’s the name of the green ogre in a famous movie?",a:"Shrek"},
-        {q:"What movie has R2-D2 and C-3PO?",a:"Star Wars"},
-        {q:"Who is the villain in 101 Dalmatians?",a:"Cruella de Vil"},
-        {q:"What movie features a boy who never grows up?",a:"Peter Pan"},
-        {q:"What Pixar film is about emotions inside a girl’s head?",a:"Inside Out"},
-        {q:"Who voiced Woody in Toy Story?",a:"Tom Hanks"}
+        {q:"Leonardo DiCaprio starred in Titanic.",a:true},
+        {q:"The wizarding school in Harry Potter is called Hogwarts.",a:true},
+        {q:"Batman’s real name is Clark Kent.",a:false},
+        {q:"Toy Story features a cowboy named Woody.",a:true},
+        {q:"Steven Spielberg directed Jaws.",a:true},
+        {q:"The Lion King’s main character is named Mufasa.",a:false},
+        {q:"Frozen has a character named Elsa.",a:true},
+        {q:"Olaf is a reindeer in Frozen.",a:false},
+        {q:"Finding Nemo is about a clownfish.",a:true},
+        {q:"Dorothy’s shoes in The Wizard of Oz are silver.",a:false},
+        {q:"The Lord of the Rings is about a magic ring.",a:true},
+        {q:"Forrest Gump loves running.",a:true},
+        {q:"Tom Cruise starred in Mission Impossible.",a:true},
+        {q:"Shrek is a green ogre.",a:true},
+        {q:"R2-D2 is from Star Trek.",a:false},
+        {q:"Cruella de Vil is the villain in 101 Dalmatians.",a:true},
+        {q:"Peter Pan never grows up.",a:true},
+        {q:"Inside Out is about superheroes.",a:false},
+        {q:"Tom Hanks voiced Woody in Toy Story.",a:true},
+        {q:"Frozen is set in the desert.",a:false}
       ],
       science: [
-        {q:"What planet is known as the Red Planet?",a:"Mars"},
-        {q:"What gas do plants breathe in?",a:"Carbon Dioxide"},
-        {q:"What force keeps us on the ground?",a:"Gravity"},
-        {q:"What is the center of an atom called?",a:"Nucleus"},
-        {q:"What’s the hottest planet in the solar system?",a:"Venus"},
-        {q:"What organ pumps blood?",a:"Heart"},
-        {q:"What do bees collect from flowers?",a:"Nectar"},
-        {q:"What is the boiling point of water (°C)?",a:"100"},
-        {q:"What part of the body controls thinking?",a:"Brain"},
-        {q:"What planet do we live on?",a:"Earth"},
-        {q:"What gas do humans breathe in?",a:"Oxygen"},
-        {q:"What is the biggest planet in the solar system?",a:"Jupiter"},
-        {q:"What’s the hardest natural substance?",a:"Diamond"},
-        {q:"What’s the process of plants making food?",a:"Photosynthesis"},
-        {q:"How many bones are in the human body?",a:"206"},
-        {q:"What’s the fastest bird?",a:"Peregrine Falcon"},
-        {q:"What type of blood cells fight infection?",a:"White Blood Cells"},
-        {q:"What galaxy is Earth in?",a:"Milky Way"},
-        {q:"What is frozen water called?",a:"Ice"},
-        {q:"What’s the chemical symbol for Gold?",a:"Au"}
+        {q:"Mars is called the Red Planet.",a:true},
+        {q:"Plants take in oxygen and release carbon dioxide.",a:false},
+        {q:"Gravity keeps us on the ground.",a:true},
+        {q:"The nucleus is the center of an atom.",a:true},
+        {q:"Venus is the hottest planet.",a:true},
+        {q:"The heart pumps blood.",a:true},
+        {q:"The brain controls thinking.",a:true},
+        {q:"Earth is the fourth planet from the sun.",a:false},
+        {q:"Humans breathe in oxygen.",a:true},
+        {q:"Jupiter is the largest planet.",a:true},
+        {q:"Diamonds are the hardest natural substance.",a:true},
+        {q:"Photosynthesis is how plants make food.",a:true},
+        {q:"Humans have 500 bones.",a:false},
+        {q:"The Peregrine Falcon is the fastest bird.",a:true},
+        {q:"White blood cells fight infection.",a:true},
+        {q:"The Milky Way is a galaxy.",a:true},
+        {q:"Water freezes at 0°C.",a:true},
+        {q:"Gold’s chemical symbol is Ag.",a:false},
+        {q:"The sun is a star.",a:true},
+        {q:"Sharks are mammals.",a:false}
       ],
       sports: [
-        {q:"How many players on a baseball team?",a:"9"},
-        {q:"Which sport uses a racket and shuttlecock?",a:"Badminton"},
-        {q:"What sport uses a hoop and ball?",a:"Basketball"},
-        {q:"In what sport do you kick a ball into a goal?",a:"Soccer"},
-        {q:"What sport is played at Wimbledon?",a:"Tennis"},
-        {q:"What is a strike in bowling?",a:"Knocking down all pins in one roll"},
-        {q:"What color flag means stop in auto racing?",a:"Red"},
-        {q:"What sport has a quarterback?",a:"Football"},
-        {q:"What sport has bases and home runs?",a:"Baseball"},
-        {q:"In golf, what is 1 under par called?",a:"Birdie"},
-        {q:"What sport uses a puck?",a:"Hockey"},
-        {q:"What Olympic sport uses a balance beam?",a:"Gymnastics"},
-        {q:"What sport has a net and spiking?",a:"Volleyball"},
-        {q:"In what sport is the Stanley Cup awarded?",a:"Hockey"},
-        {q:"What do you hit in tennis?",a:"Ball"},
-        {q:"In bowling, how many pins are there?",a:"10"},
-        {q:"In soccer, what is the maximum number of players on the field per team?",a:"11"},
-        {q:"What sport has a goalie?",a:"Hockey and Soccer"},
-        {q:"What sport uses pom-poms?",a:"Cheerleading"},
-        {q:"What sport has the Super Bowl?",a:"Football"}
+        {q:"A baseball team has 9 players.",a:true},
+        {q:"Soccer is played with a puck.",a:false},
+        {q:"Basketball uses a hoop and ball.",a:true},
+        {q:"Tennis is played at Wimbledon.",a:true},
+        {q:"A strike in bowling means all pins are knocked down.",a:true},
+        {q:"The quarterback is a position in football.",a:true},
+        {q:"A birdie in golf is 1 under par.",a:true},
+        {q:"Hockey uses a puck.",a:true},
+        {q:"The Stanley Cup is for basketball.",a:false},
+        {q:"A volleyball game has spiking.",a:true},
+        {q:"There are 12 pins in bowling.",a:false},
+        {q:"Soccer teams have 11 players on the field.",a:true},
+        {q:"Cheerleading uses pom-poms.",a:true},
+        {q:"The Super Bowl is a hockey championship.",a:false},
+        {q:"A marathon is 26.2 miles long.",a:true},
+        {q:"The Olympics happen every 2 years.",a:false},
+        {q:"The Tour de France is a cycling race.",a:true},
+        {q:"Baseball has touchdowns.",a:false},
+        {q:"Gymnastics can use a balance beam.",a:true},
+        {q:"Michael Jordan played baseball professionally.",a:true}
       ]
     };
 
@@ -210,6 +212,7 @@
       shuffle(questionPool);
       document.getElementById("questionBox").textContent = "Press 'Next Question' to begin";
       document.getElementById("answerBox").textContent = "";
+      currentQuestion = null;
     }
 
     function shuffle(arr) {
@@ -228,9 +231,14 @@
       document.getElementById("answerBox").textContent = "";
     }
 
-    function showAnswer() {
-      if (currentQuestion) {
-        document.getElementById("answerBox").textContent = currentQuestion.a;
+    function checkAnswer(choice) {
+      if (!currentQuestion) return;
+      if (choice === currentQuestion.a) {
+        document.getElementById("answerBox").textContent = "✅ Correct!";
+        document.getElementById("answerBox").style.color = "green";
+      } else {
+        document.getElementById("answerBox").textContent = "❌ Wrong!";
+        document.getElementById("answerBox").style.color = "red";
       }
     }
 
