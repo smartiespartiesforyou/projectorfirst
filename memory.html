@@ -9,18 +9,28 @@
 <body class="bg-white text-gray-900 min-h-screen">
 
   <div class="max-w-6xl mx-auto p-6">
-    <!-- Title + Back to Apps (Bingo/Dice style) -->
+    <!-- Title + Back to Apps -->
     <h1 class="text-5xl font-extrabold mb-4 text-blue-900 text-center">Memory Match</h1>
     <a href="apps.html"
        class="inline-flex items-center gap-2 px-6 py-3 bg-blue-900 text-white rounded-xl font-extrabold text-xl shadow hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 mb-6">
       ← Back to Apps
     </a>
 
-    <div class="flex items-center justify-center gap-4 mb-6">
-      <button id="resetBtn"
-              class="bg-blue-600 hover:bg-blue-800 text-white text-xl py-3 px-6 rounded-2xl">
-        New Game
-      </button>
+    <!-- Controls -->
+    <div class="flex flex-col items-center gap-4 mb-6">
+      <div class="flex gap-3">
+        <button id="resetBtn"
+                class="bg-blue-600 hover:bg-blue-800 text-white text-xl py-3 px-6 rounded-2xl">
+          New Game
+        </button>
+        <label for="themeSelect" class="text-lg font-bold text-blue-900 self-center">Theme:</label>
+        <select id="themeSelect"
+                class="border-2 border-blue-600 rounded-xl px-3 py-2 text-lg font-semibold text-blue-900">
+          <option value="numbers">Numbers</option>
+          <option value="emojis">Emojis</option>
+          <option value="holidays">Holidays</option>
+        </select>
+      </div>
       <span class="text-lg text-gray-700">Call out coordinates like <span class="font-semibold">B3 and D2</span></span>
     </div>
 
@@ -28,7 +38,6 @@
     <div id="grid"
          class="grid grid-cols-2 sm:grid-cols-4 gap-5 max-w-5xl mx-auto"
          aria-label="Memory grid">
-      <!-- Cards will be injected here -->
     </div>
 
     <!-- Status -->
@@ -37,14 +46,19 @@
 
   <script>
     // ===== SETTINGS =====
-    const rows = ["A","B","C","D"]; 
-    const cols = [1,2,3,4];         
-    const totalPairs = 8;           
+    const rows = ["A","B","C","D"];
+    const cols = [1,2,3,4];
+    const totalPairs = 8;
 
-    // Instead of emojis, just numbers 1–8
-    const numberPool = Array.from({ length: totalPairs }, (_, i) => i + 1);
+    // THEMES
+    const themes = {
+      numbers: Array.from({ length: totalPairs }, (_, i) => i + 1),
+      emojis: ["🍎","🐶","🎵","🌟","🚗","🧩","🍀","📚","🎈","🐢","🍩","🕰️","🦋","⚽","🌻","🍪"],
+      holidays: ["🎃","🎄","🎆","🦃","🎁","🎂","🧨","🎇","🕎","❄️","☘️","🥂","🪔","💝","🦌","🍀"]
+    };
 
     // ===== STATE =====
+    let currentTheme = "numbers";
     let firstCard = null;
     let secondCard = null;
     let busy = false;
@@ -60,7 +74,9 @@
     }
 
     function buildDeck() {
-      const picks = shuffle([...numberPool]);
+      let pool = [...themes[currentTheme]];
+      if (pool.length < totalPairs) pool = [...pool, ...pool]; // ensure enough
+      const picks = shuffle(pool).slice(0, totalPairs);
       const pairDeck = shuffle([...picks, ...picks]);
       const coords = [];
       rows.forEach(r => cols.forEach(c => coords.push(`${r}${c}`)));
@@ -81,15 +97,21 @@
         btn.setAttribute("aria-label", `Card ${card.coord}`);
         btn.dataset.index = idx;
 
-        // Back (coordinate label)
+        // Back = giant coordinate
         const back = document.createElement("div");
         back.className = "back absolute inset-0 flex items-center justify-center";
-        back.innerHTML = `<span class="text-4xl sm:text-5xl font-extrabold text-blue-700">${card.coord}</span>`;
+        back.innerHTML = `<span class="text-5xl md:text-6xl font-extrabold text-blue-700">${card.coord}</span>`;
 
-        // Front (number side) — really big
+        // Front = theme content
         const front = document.createElement("div");
         front.className = "front absolute inset-0 hidden items-center justify-center";
-        front.innerHTML = `<span class="leading-none text-[5.5rem] sm:text-[7rem] md:text-[8.5rem] lg:text-[10rem] font-black text-blue-900">${card.value}</span>`;
+        let content;
+        if (currentTheme === "numbers") {
+          content = `<span class="leading-none text-[6rem] md:text-[8rem] font-black text-blue-900">${card.value}</span>`;
+        } else {
+          content = `<span class="leading-none text-[5.5rem] sm:text-[7rem] md:text-[8.5rem] lg:text-[10rem]">${card.value}</span>`;
+        }
+        front.innerHTML = content;
 
         if (card.matched) {
           front.classList.remove("hidden");
@@ -120,12 +142,9 @@
       const i = parseInt(btn.dataset.index, 10);
       const card = deck[i];
       if (card.matched) return;
-
       const frontVisible = !btn.querySelector(".front").classList.contains("hidden");
       if (frontVisible) return;
-
       showFront(btn, true);
-
       if (!firstCard) {
         firstCard = { btn, i, card };
         btn.classList.add("ring-4","ring-blue-300");
@@ -139,7 +158,6 @@
     function checkMatch() {
       const status = document.getElementById("status");
       const isMatch = firstCard.card.value === secondCard.card.value;
-
       if (isMatch) {
         deck[firstCard.i].matched = true;
         deck[secondCard.i].matched = true;
@@ -179,6 +197,10 @@
     }
 
     document.getElementById("resetBtn").addEventListener("click", newGame);
+    document.getElementById("themeSelect").addEventListener("change", e => {
+      currentTheme = e.target.value;
+      newGame();
+    });
 
     newGame();
   </script>
