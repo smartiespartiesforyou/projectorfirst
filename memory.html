@@ -9,12 +9,15 @@
 <body class="bg-white text-gray-900 min-h-screen">
 
   <div class="max-w-6xl mx-auto p-6">
-    <!-- Title + Back to Apps -->
+    <!-- Title -->
     <h1 class="text-5xl font-extrabold mb-4 text-blue-900 text-center">Memory Match</h1>
-    <a href="apps.html"
-       class="inline-flex items-center gap-2 px-6 py-3 bg-blue-900 text-white rounded-xl font-extrabold text-xl shadow hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 mb-6">
-      ← Back to Apps
-    </a>
+    <!-- Centered Back to Apps -->
+    <div class="flex justify-center mb-6">
+      <a href="apps.html"
+         class="inline-flex items-center gap-2 px-6 py-3 bg-blue-900 text-white rounded-xl font-extrabold text-xl shadow hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300">
+        ← Back to Apps
+      </a>
+    </div>
 
     <!-- Controls -->
     <div class="flex flex-col items-center gap-4 mb-6">
@@ -31,7 +34,7 @@
           <option value="holidays">Holidays</option>
         </select>
       </div>
-      <span class="text-lg text-gray-700">Call out coordinates like <span class="font-semibold">B3 and D2</span></span>
+      <span class="text-lg text-gray-700">Flip two cards — find the pairs!</span>
     </div>
 
     <!-- GRID -->
@@ -46,11 +49,7 @@
 
   <script>
     // ===== SETTINGS =====
-    const rows = ["A","B","C","D"];
-    const cols = [1,2,3,4];
-    const totalPairs = 8;
-
-    // THEMES
+    const totalPairs = 8; // 16 cards
     const themes = {
       numbers: Array.from({ length: totalPairs }, (_, i) => i + 1),
       emojis: ["🍎","🐶","🎵","🌟","🚗","🧩","🍀","📚","🎈","🐢","🍩","🕰️","🦋","⚽","🌻","🍪"],
@@ -78,9 +77,7 @@
       if (pool.length < totalPairs) pool = [...pool, ...pool]; // ensure enough
       const picks = shuffle(pool).slice(0, totalPairs);
       const pairDeck = shuffle([...picks, ...picks]);
-      const coords = [];
-      rows.forEach(r => cols.forEach(c => coords.push(`${r}${c}`)));
-      return coords.map((coord, i) => ({ coord, value: pairDeck[i], matched: false }));
+      return pairDeck.map((val, i) => ({ id: i + 1, value: val, matched: false }));
     }
 
     function renderGrid() {
@@ -94,13 +91,12 @@
           "bg-white focus:outline-none focus:ring-4 focus:ring-blue-300",
           "flex items-center justify-center"
         ].join(" ");
-        btn.setAttribute("aria-label", `Card ${card.coord}`);
         btn.dataset.index = idx;
 
-        // Back = giant coordinate
+        // Back = giant card number (like Pictionary)
         const back = document.createElement("div");
         back.className = "back absolute inset-0 flex items-center justify-center";
-        back.innerHTML = `<span class="text-5xl md:text-6xl font-extrabold text-blue-700">${card.coord}</span>`;
+        back.innerHTML = `<span class="text-5xl md:text-6xl font-extrabold text-blue-700">${card.id}</span>`;
 
         // Front = theme content
         const front = document.createElement("div");
