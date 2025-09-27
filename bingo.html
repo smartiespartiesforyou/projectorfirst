@@ -19,7 +19,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: clamp(8rem, 28vmin, 20rem); /* Bigger */
+      font-size: clamp(8rem, 28vmin, 20rem);
       line-height: 1;
       white-space: nowrap;
       font-weight: bold;
@@ -32,12 +32,12 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      width: 90px;   /* Bigger balls */
-      height: 90px;  /* Bigger balls */
+      width: 90px;
+      height: 90px;
       margin: 0.25rem;
       border-radius: 50%;
       color: #fff;
-      font-size: 2rem; /* Bigger text inside balls */
+      font-size: 2rem;
       font-weight: bold;
     }
 
@@ -95,14 +95,50 @@
   </main>
 
   <script>
+    // =========================
+    // THEMES — add as many as you like
+    // =========================
     const THEMES = {
       classic75: {
         label: "Classic 1–75 (B I N G O)",
         letters: ["B","I","N","G","O"],
         ranges: [ [1,15], [16,30], [31,45], [46,60], [61,75] ],
         speakPrefix: (L, n) => `${L} ${n}`,
+        speakRate: 1.0,
         ballClassFromLetter: L => `ball-${L}`
       },
+      uk90: {
+        label: "UK 1–90",
+        letters: ["B","I","N","G","O"],
+        ranges: [ [1,18], [19,36], [37,54], [55,72], [73,90] ],
+        speakPrefix: (L, n) => `${L} ${n}`,
+        speakRate: 1.0,
+        ballClassFromLetter: L => `ball-${L}`
+      },
+      kids50: {
+        label: "Kids 1–50",
+        letters: ["B","I","N","G","O"],
+        ranges: [ [1,10], [11,20], [21,30], [31,40], [41,50] ],
+        speakPrefix: (L, n) => `${L} ${n}`,
+        speakRate: 0.95,
+        ballClassFromLetter: L => `ball-${L}`
+      },
+      mini30: {
+        label: "Mini 1–30",
+        letters: ["B","I","N","G","O"],
+        ranges: [ [1,6], [7,12], [13,18], [19,24], [25,30] ],
+        speakPrefix: (L, n) => `${L} ${n}`,
+        speakRate: 0.95,
+        ballClassFromLetter: L => `ball-${L}`
+      },
+      rapid75: {
+        label: "Rapid 1–75 (faster speech)",
+        letters: ["B","I","N","G","O"],
+        ranges: [ [1,15], [16,30], [31,45], [46,60], [61,75] ],
+        speakPrefix: (L, n) => `${L} ${n}`,
+        speakRate: 1.4, // faster reading
+        ballClassFromLetter: L => `ball-${L}`
+      }
     };
 
     let currentThemeKey = "classic75";
@@ -166,6 +202,7 @@
         const cfg = THEMES[currentThemeKey];
         const phrase = cfg.speakPrefix(call.letter, call.number);
         const utter = new SpeechSynthesisUtterance(phrase);
+        utter.rate = cfg.speakRate || 1.0; // theme-based speed
         speechSynthesis.speak(utter);
       }
     }
