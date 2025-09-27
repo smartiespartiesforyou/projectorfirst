@@ -10,6 +10,11 @@
   <div class="max-w-5xl mx-auto p-6">
     <h1 class="text-4xl font-bold text-blue-700 text-center mb-6">Pictionary — Reveal Mode</h1>
 
+    <!-- Back to Apps -->
+    <div class="mb-6 text-center">
+      <a href="apps.html" class="px-6 py-3 bg-blue-600 hover:bg-blue-800 text-white text-xl rounded-2xl">⬅ Back to Apps</a>
+    </div>
+
     <!-- Controls -->
     <div class="grid md:grid-cols-3 gap-4 items-end mb-6">
       <div>
@@ -40,15 +45,13 @@
       </div>
     </div>
 
-    <!-- Board (square) -->
-    <div class="relative mx-auto aspect-square w-full max-w-3xl rounded-2xl border-4 border-blue-600 overflow-hidden">
-      <!-- Hidden picture (emoji) -->
-      <div id="picture" class="absolute inset-0 flex items-center justify-center select-none"></div>
+    <!-- Board -->
+    <div class="relative mx-auto aspect-square w-full max-w-3xl rounded-2xl border-4 border-blue-600 overflow-hidden bg-gray-100">
+      <!-- Hidden picture -->
+      <div id="picture" class="absolute inset-0 flex items-center justify-center select-none text-[60vmin] leading-none"></div>
 
-      <!-- Tile grid overlay (NO GAPS) -->
-      <div id="tiles" class="absolute inset-0 grid grid-cols-4 grid-rows-4 gap-0">
-        <!-- Tiles injected here -->
-      </div>
+      <!-- Tile grid overlay -->
+      <div id="tiles" class="absolute inset-0 grid grid-cols-4 grid-rows-4 gap-0"></div>
     </div>
 
     <!-- Status -->
@@ -59,11 +62,9 @@
   </div>
 
   <script>
-    // ===== CONFIG =====
-    const ROWS = ["A","B","C","D"]; // 4 x 4 grid
+    const ROWS = ["A","B","C","D"];
     const COLS = [1,2,3,4];
 
-    // Each item has an emoji (the picture) and a name (the answer shown at the end)
     const BANK = {
       animals: [
         {emoji:"🦒", name:"GIRAFFE"},
@@ -90,7 +91,7 @@
         {emoji:"🍆", name:"EGGPLANT"}
       ],
       objects: [
-        {emoji:"⛺️", name:"TENT"},
+        {emoji:"⛺", name:"TENT"},
         {emoji:"🚲", name:"BICYCLE"},
         {emoji:"🕰️", name:"CLOCK"},
         {emoji:"🎒", name:"BACKPACK"},
@@ -103,13 +104,11 @@
       ]
     };
 
-    // ===== STATE =====
     let theme = "animals";
-    let item = null;              // {emoji, name}
-    let covered = [];             // boolean per tile
+    let item = null;
+    let covered = [];
     const totalTiles = ROWS.length * COLS.length;
 
-    // ===== HELPERS =====
     function randPick(arr) {
       return arr[Math.floor(Math.random() * arr.length)];
     }
@@ -128,13 +127,7 @@
 
     function renderPicture() {
       const pic = document.getElementById("picture");
-      // Make the emoji HUGE so every tile removal reveals picture immediately
-      pic.innerHTML = `
-        <span class="leading-none select-none
-                     text-[60vmin] md:text-[70vmin] lg:text-[80vmin]
-                     scale-[1.1]">
-          ${item.emoji}
-        </span>`;
+      pic.textContent = item.emoji;
     }
 
     function renderTiles() {
@@ -143,17 +136,9 @@
       covered = Array(totalTiles).fill(true);
       for (let i = 0; i < totalTiles; i++) {
         const btn = document.createElement("button");
-        btn.className = [
-          "tile",
-          "bg-blue-700 hover:bg-blue-800 text-white",
-          "border-4 border-blue-900",
-          "flex items-center justify-center",
-          "text-2xl md:text-3xl font-extrabold",
-          "select-none"
-        ].join(" ");
+        btn.className = "tile bg-blue-700 hover:bg-blue-800 text-white border border-blue-900 flex items-center justify-center text-xl font-bold";
         btn.dataset.index = i;
-        btn.setAttribute("aria-label", `Tile ${coordsFromIndex(i)}`);
-        btn.innerHTML = `<span>${coordsFromIndex(i)}</span>`;
+        btn.innerHTML = coordsFromIndex(i);
         btn.addEventListener("click", () => revealTile(i, btn));
         wrap.appendChild(btn);
       }
@@ -163,22 +148,18 @@
     function revealTile(i, btnEl=null) {
       if (!covered[i]) return;
       covered[i] = false;
-      const btn = btnEl || document.querySelector(\`.tile[data-index="\${i}"]\`);
-      if (btn) btn.remove(); // uncover by removing the tile completely
+      const btn = btnEl || document.querySelector(`.tile[data-index="${i}"]`);
+      if (btn) btn.remove();
       updateStatus();
-      // If all revealed, show answer
       if (covered.every(v => v === false)) {
-        setStatus(\`🎉 All tiles revealed — Answer: \${item.name}\`, "text-green-700");
+        setStatus(`🎉 All tiles revealed — Answer: ${item.name}`, "text-green-700");
       }
     }
 
     function revealOneRandom() {
-      const remaining = covered
-        .map((v, i) => v ? i : -1)
-        .filter(i => i !== -1);
+      const remaining = covered.map((v,i)=>v?i:-1).filter(i=>i!==-1);
       if (!remaining.length) return;
-      const pick = randPick(remaining);
-      revealTile(pick);
+      revealTile(randPick(remaining));
     }
 
     function revealAll() {
@@ -189,10 +170,7 @@
 
     function updateStatus() {
       const left = covered.filter(Boolean).length;
-      setStatus(\`Tiles left: \${left} / \${totalTiles}\`);
-      if (left === 0) {
-        setStatus(\`🎉 All tiles revealed — Answer: \${item.name}\`, "text-green-700");
-      }
+      setStatus(`Tiles left: ${left} / ${totalTiles}`);
     }
 
     function newPicture() {
@@ -201,8 +179,7 @@
       renderTiles();
     }
 
-    // ===== UI HOOKS =====
-    document.getElementById("theme").addEventListener("change", (e) => {
+    document.getElementById("theme").addEventListener("change", e => {
       theme = e.target.value;
       newPicture();
     });
