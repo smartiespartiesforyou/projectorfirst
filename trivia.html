@@ -1,146 +1,241 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>True or False Trivia</title>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Trivia Game — ProjectorFirst</title>
+  <meta name="description" content="Projector-friendly trivia game with multiple themes."/>
+  <meta name="theme-color" content="#1e3a8a"/>
+  <link rel="icon" href="/logo.svg" type="image/svg+xml"/>
   <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body { background: #ffffff; color: #000000; }
+    .btn {
+      font-size: 1.5rem;
+      font-weight: bold;
+      padding: 1rem 2rem;
+      border-radius: 1rem;
+      transition: background 0.2s;
+    }
+    .btn-primary { background: #1e3a8a; color: white; }
+    .btn-primary:hover { background: #1d4ed8; }
+    .btn-answer { background: #16a34a; color: white; }
+    .btn-answer:hover { background: #15803d; }
+    .question-box {
+      font-size: 2.5rem;
+      font-weight: bold;
+      margin: 2rem 0;
+      min-height: 6rem;
+      color: #1e3a8a;
+    }
+    .answer-box {
+      font-size: 2rem;
+      font-weight: bold;
+      color: #dc2626;
+      min-height: 4rem;
+    }
+  </style>
 </head>
-<body class="bg-white text-gray-900 flex items-center justify-center min-h-screen">
-  <div class="max-w-2xl w-full p-6 text-center">
-    <h1 class="text-4xl font-bold mb-6 text-blue-700">True or False Trivia</h1>
+<body class="flex flex-col items-center justify-start min-h-screen py-10">
+  <main class="w-full max-w-4xl text-center">
+    <h1 class="text-5xl font-extrabold text-blue-900 mb-6">❓ Trivia Game</h1>
 
-    <!-- THEME PICKER -->
+    <!-- Back to Apps -->
     <div class="mb-6">
-      <label for="theme" class="block text-left text-lg font-semibold text-blue-700 mb-2">
-        Theme
-      </label>
+      <a href="apps.html" class="btn btn-primary">⬅ Back to Apps</a>
+    </div>
+
+    <!-- Theme Picker -->
+    <div class="mb-6 text-left">
+      <label for="theme" class="block text-lg font-semibold text-blue-900 mb-2">Choose Theme</label>
       <select id="theme"
-              class="w-full text-xl p-3 border-2 border-blue-600 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-400">
-        <option value="mixed">Mixed</option>
-        <option value="countries">Countries</option>
-        <option value="animals">Animals</option>
-        <option value="science">Science</option>
+              class="w-full text-xl p-3 border-2 border-blue-900 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-400">
       </select>
     </div>
 
     <!-- Question -->
-    <div id="question" class="text-5xl font-bold mb-10 leading-snug">Loading question...</div>
+    <div id="questionBox" class="question-box">Press "Next Question" to begin</div>
+    <div id="answerBox" class="answer-box"></div>
 
-    <!-- Answer Buttons directly under question -->
-    <div class="grid gap-6 mb-8">
-      <button id="trueBtn"
-              class="bg-green-600 hover:bg-green-800 text-white text-2xl py-5 px-8 rounded-2xl">
-        TRUE
-      </button>
-      <button id="falseBtn"
-              class="bg-red-600 hover:bg-red-800 text-white text-2xl py-5 px-8 rounded-2xl">
-        FALSE
-      </button>
+    <!-- Controls -->
+    <div class="flex flex-wrap justify-center gap-4 mt-6">
+      <button onclick="nextQuestion()" class="btn btn-primary">Next Question</button>
+      <button onclick="showAnswer()" class="btn btn-answer">Show Answer</button>
     </div>
-
-    <!-- Feedback -->
-    <div id="feedback" class="mb-6 text-2xl font-semibold"></div>
-
-    <!-- Next Question Button -->
-    <button id="nextBtn"
-            class="hidden bg-blue-600 hover:bg-blue-800 text-white text-xl py-3 px-6 rounded-2xl">
-      Next Question
-    </button>
-  </div>
+  </main>
 
   <script>
-    // ====== QUESTION BANK (organized by theme) ======
-    const bank = {
-      mixed: [
-        { question: "The Eiffel Tower is in Paris.", correct: true },
-        { question: "Sharks are mammals.", correct: false },
-        { question: "The Pacific Ocean is larger than the Atlantic.", correct: true },
-        { question: "The human body has 206 bones.", correct: true },
-        { question: "Bananas grow on trees.", correct: false }
+    // ========================
+    // QUESTION BANK
+    // ========================
+    const QUESTIONS = {
+      general: [
+        {q:"What is the capital of France?",a:"Paris"},
+        {q:"How many continents are there?",a:"7"},
+        {q:"What is the largest mammal?",a:"Blue Whale"},
+        {q:"What is 9 x 9?",a:"81"},
+        {q:"What is the tallest mountain in the world?",a:"Mount Everest"},
+        {q:"How many colors are in a rainbow?",a:"7"},
+        {q:"What is the capital of the USA?",a:"Washington, D.C."},
+        {q:"How many legs does a spider have?",a:"8"},
+        {q:"What is the fastest land animal?",a:"Cheetah"},
+        {q:"What is H2O commonly known as?",a:"Water"},
+        {q:"What is the opposite of hot?",a:"Cold"},
+        {q:"How many hours are in a day?",a:"24"},
+        {q:"What is 100 divided by 10?",a:"10"},
+        {q:"What’s the capital of Italy?",a:"Rome"},
+        {q:"Which animal is known as the King of the Jungle?",a:"Lion"},
+        {q:"What shape has 3 sides?",a:"Triangle"},
+        {q:"What do bees make?",a:"Honey"},
+        {q:"What is the capital of Japan?",a:"Tokyo"},
+        {q:"How many planets are in our solar system?",a:"8"},
+        {q:"What fruit keeps the doctor away?",a:"Apple"}
       ],
-      countries: [
-        { question: "Canada's capital is Ottawa.", correct: true },
-        { question: "Sydney is the capital of Australia.", correct: false },
-        { question: "Japan's currency is the Yen.", correct: true },
-        { question: "Brazil is in North America.", correct: false },
-        { question: "Cairo is the capital of Egypt.", correct: true }
+      holidays: [
+        {q:"What day is Christmas celebrated?",a:"December 25"},
+        {q:"What holiday has fireworks in the USA?",a:"Independence Day"},
+        {q:"What flower is associated with Easter?",a:"Lily"},
+        {q:"When is Halloween?",a:"October 31"},
+        {q:"When is New Year’s Day?",a:"January 1"},
+        {q:"What holiday honors military veterans?",a:"Veterans Day"},
+        {q:"What day is Valentine’s Day?",a:"February 14"},
+        {q:"What food is traditional on Thanksgiving?",a:"Turkey"},
+        {q:"What is the Irish holiday celebrated on March 17?",a:"St. Patrick’s Day"},
+        {q:"When is Labor Day in the USA?",a:"First Monday in September"},
+        {q:"What do children collect on Halloween?",a:"Candy"},
+        {q:"What colors are associated with Christmas?",a:"Red and Green"},
+        {q:"What holiday uses eggs and bunnies?",a:"Easter"},
+        {q:"What holiday do we honor workers?",a:"Labor Day"},
+        {q:"What day is Memorial Day?",a:"Last Monday in May"},
+        {q:"What day is Flag Day?",a:"June 14"},
+        {q:"What month is Black History Month?",a:"February"},
+        {q:"What is lit on Hanukkah?",a:"Menorah"},
+        {q:"What’s the holiday with costumes and trick-or-treating?",a:"Halloween"},
+        {q:"What country started Oktoberfest?",a:"Germany"}
       ],
-      animals: [
-        { question: "Bats are mammals.", correct: true },
-        { question: "All snakes are venomous.", correct: false },
-        { question: "An octopus has three hearts.", correct: true },
-        { question: "Penguins live at the North Pole.", correct: false },
-        { question: "Giraffes have the same number of neck bones as humans.", correct: true }
+      movies: [
+        {q:"Who played Jack in Titanic?",a:"Leonardo DiCaprio"},
+        {q:"What is the name of the wizard school in Harry Potter?",a:"Hogwarts"},
+        {q:"What superhero is also known as Bruce Wayne?",a:"Batman"},
+        {q:"What is the first name of Mr. Potter in 'It's a Wonderful Life'?",a:"Mr. Potter"},
+        {q:"What movie features a cowboy named Woody?",a:"Toy Story"},
+        {q:"Who directed Jaws?",a:"Steven Spielberg"},
+        {q:"What is the name of Simba’s father in The Lion King?",a:"Mufasa"},
+        {q:"What movie has the character Elsa?",a:"Frozen"},
+        {q:"What is the name of the talking snowman in Frozen?",a:"Olaf"},
+        {q:"What movie is about a clownfish named Nemo?",a:"Finding Nemo"},
+        {q:"What color are Dorothy’s shoes in The Wizard of Oz?",a:"Ruby Red"},
+        {q:"What movie has a ring that must be destroyed?",a:"The Lord of the Rings"},
+        {q:"What film has a character named Forrest who loves running?",a:"Forrest Gump"},
+        {q:"Who starred in Mission Impossible?",a:"Tom Cruise"},
+        {q:"What’s the name of the green ogre in a famous movie?",a:"Shrek"},
+        {q:"What movie has R2-D2 and C-3PO?",a:"Star Wars"},
+        {q:"Who is the villain in 101 Dalmatians?",a:"Cruella de Vil"},
+        {q:"What movie features a boy who never grows up?",a:"Peter Pan"},
+        {q:"What Pixar film is about emotions inside a girl’s head?",a:"Inside Out"},
+        {q:"Who voiced Woody in Toy Story?",a:"Tom Hanks"}
       ],
       science: [
-        { question: "Water boils at 100°C at sea level.", correct: true },
-        { question: "Humans have more than five senses.", correct: true },
-        { question: "Pluto is still classified as a planet.", correct: false },
-        { question: "Lightning is hotter than the surface of the sun.", correct: true },
-        { question: "Sound travels faster than light.", correct: false }
+        {q:"What planet is known as the Red Planet?",a:"Mars"},
+        {q:"What gas do plants breathe in?",a:"Carbon Dioxide"},
+        {q:"What force keeps us on the ground?",a:"Gravity"},
+        {q:"What is the center of an atom called?",a:"Nucleus"},
+        {q:"What’s the hottest planet in the solar system?",a:"Venus"},
+        {q:"What organ pumps blood?",a:"Heart"},
+        {q:"What do bees collect from flowers?",a:"Nectar"},
+        {q:"What is the boiling point of water (°C)?",a:"100"},
+        {q:"What part of the body controls thinking?",a:"Brain"},
+        {q:"What planet do we live on?",a:"Earth"},
+        {q:"What gas do humans breathe in?",a:"Oxygen"},
+        {q:"What is the biggest planet in the solar system?",a:"Jupiter"},
+        {q:"What’s the hardest natural substance?",a:"Diamond"},
+        {q:"What’s the process of plants making food?",a:"Photosynthesis"},
+        {q:"How many bones are in the human body?",a:"206"},
+        {q:"What’s the fastest bird?",a:"Peregrine Falcon"},
+        {q:"What type of blood cells fight infection?",a:"White Blood Cells"},
+        {q:"What galaxy is Earth in?",a:"Milky Way"},
+        {q:"What is frozen water called?",a:"Ice"},
+        {q:"What’s the chemical symbol for Gold?",a:"Au"}
+      ],
+      sports: [
+        {q:"How many players on a baseball team?",a:"9"},
+        {q:"Which sport uses a racket and shuttlecock?",a:"Badminton"},
+        {q:"What sport uses a hoop and ball?",a:"Basketball"},
+        {q:"In what sport do you kick a ball into a goal?",a:"Soccer"},
+        {q:"What sport is played at Wimbledon?",a:"Tennis"},
+        {q:"What is a strike in bowling?",a:"Knocking down all pins in one roll"},
+        {q:"What color flag means stop in auto racing?",a:"Red"},
+        {q:"What sport has a quarterback?",a:"Football"},
+        {q:"What sport has bases and home runs?",a:"Baseball"},
+        {q:"In golf, what is 1 under par called?",a:"Birdie"},
+        {q:"What sport uses a puck?",a:"Hockey"},
+        {q:"What Olympic sport uses a balance beam?",a:"Gymnastics"},
+        {q:"What sport has a net and spiking?",a:"Volleyball"},
+        {q:"In what sport is the Stanley Cup awarded?",a:"Hockey"},
+        {q:"What do you hit in tennis?",a:"Ball"},
+        {q:"In bowling, how many pins are there?",a:"10"},
+        {q:"In soccer, what is the maximum number of players on the field per team?",a:"11"},
+        {q:"What sport has a goalie?",a:"Hockey and Soccer"},
+        {q:"What sport uses pom-poms?",a:"Cheerleading"},
+        {q:"What sport has the Super Bowl?",a:"Football"}
       ]
     };
 
-    // ====== STATE ======
-    let currentTheme = "mixed";
-    let questions = [...bank[currentTheme]];
-    let currentIndex = 0;
+    // ========================
+    // GAME LOGIC
+    // ========================
+    let currentTheme = "general";
+    let questionPool = [];
+    let currentQuestion = null;
 
-    // Shuffle for variety
+    function initThemePicker() {
+      const sel = document.getElementById("theme");
+      sel.innerHTML = "";
+      Object.keys(QUESTIONS).forEach(key => {
+        const opt = document.createElement("option");
+        opt.value = key;
+        opt.textContent = key.charAt(0).toUpperCase() + key.slice(1);
+        if (key === currentTheme) opt.selected = true;
+        sel.appendChild(opt);
+      });
+      sel.addEventListener("change", (e) => {
+        currentTheme = e.target.value;
+        resetGame();
+      });
+      resetGame();
+    }
+
+    function resetGame() {
+      questionPool = [...QUESTIONS[currentTheme]];
+      shuffle(questionPool);
+      document.getElementById("questionBox").textContent = "Press 'Next Question' to begin";
+      document.getElementById("answerBox").textContent = "";
+    }
+
     function shuffle(arr) {
       for (let i = arr.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [arr[i], arr[j]] = [arr[j], arr[i]];
       }
-      return arr;
-    }
-
-    function loadTheme(theme) {
-      currentTheme = theme in bank ? theme : "mixed";
-      questions = shuffle([...bank[currentTheme]]);
-      currentIndex = 0;
-      loadQuestion();
-    }
-
-    function loadQuestion() {
-      const q = questions[currentIndex];
-      document.getElementById("question").textContent = q ? q.question : "No questions found.";
-      document.getElementById("feedback").textContent = "";
-      document.getElementById("nextBtn").classList.add("hidden");
-    }
-
-    function checkAnswer(answerIsTrue) {
-      const q = questions[currentIndex];
-      const feedback = document.getElementById("feedback");
-      if (!q) return;
-
-      if (answerIsTrue === q.correct) {
-        feedback.textContent = "✅ Correct!";
-        feedback.className = "mb-6 text-green-600 text-2xl font-semibold";
-      } else {
-        feedback.textContent = "❌ Wrong!";
-        feedback.className = "mb-6 text-red-600 text-2xl font-semibold";
-      }
-      document.getElementById("nextBtn").classList.remove("hidden");
     }
 
     function nextQuestion() {
-      currentIndex = (currentIndex + 1) % questions.length;
-      loadQuestion();
+      if (questionPool.length === 0) {
+        resetGame();
+      }
+      currentQuestion = questionPool.pop();
+      document.getElementById("questionBox").textContent = currentQuestion.q;
+      document.getElementById("answerBox").textContent = "";
     }
 
-    // ====== HOOK UP UI ======
-    document.getElementById("trueBtn").onclick = () => checkAnswer(true);
-    document.getElementById("falseBtn").onclick = () => checkAnswer(false);
-    document.getElementById("nextBtn").onclick = nextQuestion;
+    function showAnswer() {
+      if (currentQuestion) {
+        document.getElementById("answerBox").textContent = currentQuestion.a;
+      }
+    }
 
-    document.getElementById("theme").addEventListener("change", (e) => {
-      loadTheme(e.target.value);
-    });
-
-    // Initial load
-    loadTheme(currentTheme);
+    // Init
+    initThemePicker();
   </script>
 </body>
 </html>
