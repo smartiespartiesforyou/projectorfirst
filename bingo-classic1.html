@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Classic Bingo Caller — ProjectorFirst</title>
+  <meta name="description" content="Classic Bingo Caller — simple, big-screen friendly bingo caller."/>
+  <meta name="theme-color" content="#1e3a8a"/>
+  <link rel="icon" href="/logo.svg" type="image/svg+xml"/>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body { background: #ffffff; color: #000000; }
+
+    .caller-box {
+      width: min(90vw, 70vh, 640px);
+      height: min(90vw, 70vh, 640px);
+      border: 6px solid #1e3a8a;
+      border-radius: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: clamp(8rem, 28vmin, 20rem); /* Bigger */
+      line-height: 1;
+      white-space: nowrap;
+      font-weight: bold;
+      background: #000;
+      color: #fff;
+      margin: 0 auto;
+    }
+
+    .recent-calls span {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 90px;   /* Bigger balls */
+      height: 90px;  /* Bigger balls */
+      margin: 0.25rem;
+      border-radius: 50%;
+      color: #fff;
+      font-size: 2rem; /* Bigger text inside balls */
+      font-weight: bold;
+    }
+
+    /* Letter-based colors */
+    .ball-B { background: #1e3a8a; } /* Blue */
+    .ball-I { background: #dc2626; } /* Red */
+    .ball-N { background: #16a34a; } /* Green */
+    .ball-G { background: #f97316; } /* Orange */
+    .ball-O { background: #9333ea; } /* Purple */
+
+    .btn {
+      font-size: 1.75rem;
+      font-weight: bold;
+      padding: 1.25rem 2.5rem;
+      border-radius: 1rem;
+      transition: background 0.2s;
+    }
+
+    .btn-next { background: #1e3a8a; color: white; }
+    .btn-next:hover { background: #1d4ed8; }
+    .btn-undo { background: #facc15; color: black; }
+    .btn-reset { background: #dc2626; color: white; }
+    .btn-fullscreen { background: #6d28d9; color: white; }
+  </style>
+</head>
+<body class="flex flex-col items-center justify-start min-h-screen py-10">
+  <main class="w-full max-w-4xl text-center">
+    <h1 class="text-5xl font-extrabold text-blue-900 mb-6">🎉 Classic Bingo Caller</h1>
+
+    <!-- THEME PICKER -->
+    <div class="mb-6 text-left">
+      <label for="theme" class="block text-lg font-semibold text-blue-900 mb-2">Theme</label>
+      <select id="theme"
+              class="w-full text-xl p-3 border-2 border-blue-900 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-400">
+      </select>
+    </div>
+
+    <!-- Caller Box -->
+    <div id="callerBox" class="caller-box mb-8">—</div>
+
+    <!-- Controls -->
+    <div class="flex flex-wrap justify-center gap-4 mb-6">
+      <button onclick="callNext()" class="btn btn-next">Call Next (Space)</button>
+      <button onclick="undoCall()" class="btn btn-undo">Undo (Backspace)</button>
+      <button onclick="resetCaller()" class="btn btn-reset">Reset (R)</button>
+      <button onclick="toggleFullscreen()" class="btn btn-fullscreen">Fullscreen (F)</button>
+    </div>
+
+    <!-- Sound Button -->
+    <button onclick="toggleSound()" id="soundBtn" class="btn border-2 border-blue-900 text-blue-900 bg-white">🔊 Sound</button>
+
+    <!-- Recent Calls -->
+    <h2 class="text-2xl font-bold text-blue-900 mt-10 mb-4">Previously Called</h2>
+    <div id="recentCalls" class="recent-calls"></div>
+  </main>
+
+  <script>
+    const THEMES = {
+      classic75: {
+        label: "Classic 1–75 (B I N G O)",
+        letters: ["B","I","N","G","O"],
+        ranges: [ [1,15], [16,30], [31,45], [46,60], [61,75] ],
+        speakPrefix: (L, n) => `${L} ${n}`,
+        ballClassFromLetter: L => `ball-${L}`
+      },
+    };
+
+    let currentThemeKey = "classic75";
+    let letters = [];
+    let ranges = [];
+    let allNumbers = [];
+    let history = [];
+    let soundOn = true;
+
+    function initThemePicker() {
+      const sel = document.getElementById("theme");
+      sel.innerHTML = "";
+      Object.entries(THEMES).forEach(([key, cfg]) => {
+        const opt = document.createElement("option");
+        opt.value = key;
+        opt.textContent = cfg.label;
+        if (key === currentThemeKey) opt.selected = true;
+        sel.appendChild(opt);
+      });
+      sel.addEventListener("change", (e) => {
+        currentThemeKey = e.target.value;
+        applyTheme();
+      });
+    }
+
+    function applyTheme() {
+      const cfg = THEMES[currentThemeKey];
+      letters = cfg.letters;
+      ranges = cfg.ranges;
+      initGame();
+    }
+
+    function initGame() {
+      allNumbers = [];
+      history = [];
+      for (let i = 0; i < letters.length; i++) {
+        const [min, max] = ranges[i];
+        for (let n = min; n <= max; n++) {
+          allNumbers.push({letter: letters[i], number: n});
+        }
+      }
+      shuffle(allNumbers);
+      document.getElementById("callerBox").textContent = "—";
+      document.getElementById("recentCalls").innerHTML = "";
+    }
+
+    function shuffle(arr) {
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+    }
+
+    function callNext() {
+      if (allNumbers.length === 0) return;
+      const call = allNumbers.pop();
+      history.push(call);
+      document.getElementById("callerBox").textContent = call.letter + " " + call.number;
+      updateRecent();
+      if (soundOn) {
+        const cfg = THEMES[currentThemeKey];
+        const phrase = cfg.speakPrefix(call.letter, call.number);
+        const utter = new SpeechSynthesisUtterance(phrase);
+        speechSynthesis.speak(utter);
+      }
+    }
+
+    function undoCall() {
+      if (history.length === 0) return;
+      const last = history.pop();
+      allNumbers.push(last);
+      document.getElementById("callerBox").textContent = "—";
+      updateRecent();
+    }
+
+    function resetCaller() { initGame(); }
+
+    function updateRecent() {
+      const recentDiv = document.getElementById("recentCalls");
+      const cfg = THEMES[currentThemeKey];
+      recentDiv.innerHTML = history
+        .slice(-10)
+        .reverse()
+        .map(c => `<span class="${cfg.ballClassFromLetter(c.letter)}">${c.letter} ${c.number}</span>`)
+        .join("");
+    }
+
+    function toggleSound() {
+      soundOn = !soundOn;
+      document.getElementById("soundBtn").textContent = soundOn ? "🔊 Sound" : "🔇 Muted";
+    }
+
+    function toggleFullscreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen();
+      } else {
+        if (document.exitFullscreen) document.exitFullscreen();
+      }
+    }
+
+    document.addEventListener("keydown", e => {
+      if (e.code === "Space") { e.preventDefault(); callNext(); }
+      if (e.code === "Backspace") { e.preventDefault(); undoCall(); }
+      if (e.code === "KeyR") { resetCaller(); }
+      if (e.code === "KeyF") { toggleFullscreen(); }
+    });
+
+    initThemePicker();
+    applyTheme();
+  </script>
+</body>
+</html>
