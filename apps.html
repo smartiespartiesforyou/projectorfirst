@@ -1,27 +1,206 @@
-<!-- Name That Tune -->
-<article class="card">
-  <div>
-    <div class="flex items-center gap-3 mb-3">
-      <span class="text-4xl">🎵</span>
-      <h2 class="text-2xl font-extrabold text-blue-800">Name That Tune</h2>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Pop the Balloon — Word Guess</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-white text-gray-900 min-h-screen">
+  <div class="max-w-5xl mx-auto p-6">
+    <h1 class="text-5xl font-extrabold text-blue-900 text-center mb-6">Pop the Balloon</h1>
+    <!-- Back to Apps -->
+    <div class="flex justify-center mb-8">
+      <a href="apps.html"
+         class="inline-flex items-center gap-2 px-6 py-3 bg-blue-900 text-white rounded-xl font-extrabold text-xl shadow hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300">
+        ← Back to Apps
+      </a>
     </div>
-    <p class="text-lg text-gray-800 mb-4">
-      Play short clips and guess the song title or artist. Big text and simple controls.
-    </p>
-  </div>
-  <a href="name-that-tune.html" class="btn" aria-label="Open Name That Tune">Open Name That Tune</a>
-</article>
 
-<!-- Remember This -->
-<article class="card">
-  <div>
-    <div class="flex items-center gap-3 mb-3">
-      <span class="text-4xl">🧠</span>
-      <h2 class="text-2xl font-extrabold text-blue-800">Remember This</h2>
+    <!-- Controls Row -->
+    <div class="grid md:grid-cols-3 gap-4 items-end mb-6">
+      <!-- Theme -->
+      <div>
+        <label for="theme" class="block text-lg font-semibold text-blue-700 mb-2">Theme</label>
+        <select id="theme"
+                class="w-full text-xl p-3 border-2 border-blue-600 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-400">
+          <option value="animals">Animals</option>
+          <option value="countries">Countries</option>
+          <option value="foods">Foods</option>
+        </select>
+      </div>
+
+      <!-- New Word -->
+      <div>
+        <label class="block text-lg font-semibold text-blue-700 mb-2">New Round</label>
+        <button id="newBtn"
+                class="w-full bg-blue-600 hover:bg-blue-800 text-white text-xl py-3 px-6 rounded-2xl">
+          New Word
+        </button>
+      </div>
+
+      <!-- Help text -->
+      <div class="md:text-right text-gray-700 text-lg">
+        Guess letters. Wrong guesses pop balloons! 🎈
+      </div>
     </div>
-    <p class="text-lg text-gray-800 mb-4">
-      Flash images or words, then test memory recall. Simple, bold, and group-friendly.
-    </p>
+
+    <!-- Balloons -->
+    <div id="balloons"
+         class="flex items-center justify-center gap-4 mb-10"
+         aria-label="Remaining balloons"></div>
+
+    <!-- Word display -->
+    <div id="word"
+         class="flex flex-wrap items-center justify-center gap-4 mb-10"
+         aria-label="Hidden word"></div>
+
+    <!-- Feedback / Status -->
+    <div id="status"
+         class="text-center text-3xl font-bold text-blue-700 mb-10"
+         aria-live="polite"></div>
+
+    <!-- Used letters -->
+    <div id="usedLetters"
+         class="flex flex-wrap justify-center gap-4 text-5xl font-extrabold text-blue-900">
+    </div>
   </div>
-  <a href="remember-this.html" class="btn" aria-label="Open Remember This">Open Remember This</a>
-</article>
+
+  <script>
+    // WORD BANKS
+    const BANK = {
+      animals: ["ELEPHANT","KANGAROO","ALLIGATOR","PORCUPINE","CHAMELEON","ARMADILLO","RHINOCEROS","HIPPOPOTAMUS","FLAMINGO","WOLVERINE"],
+      countries: ["ARGENTINA","VENEZUELA","AUSTRALIA","NETHERLANDS","PHILIPPINES","SWITZERLAND","ZIMBABWE","KAZAKHSTAN","SINGAPORE","GUATEMALA"],
+      foods: ["SPAGHETTI","PINEAPPLE","CHOCOLATE","CROISSANT","BLUEBERRY","WATERMELON","LASAGNA","CANNELLONI","MARSHMALLOW","ARTICHOKE"],
+    };
+
+    const MAX_MISSES = 6;
+    let theme = "animals";
+    let word = "";
+    let revealed = [];
+    let used = new Set();
+    let misses = 0;
+    let finished = false;
+
+    function pickWord() {
+      const list = BANK[theme];
+      return list[Math.floor(Math.random() * list.length)].toUpperCase();
+    }
+
+    function resetRound() {
+      word = pickWord();
+      revealed = Array.from(word, ch => (ch === " " || ch === "-" ? true : false));
+      used.clear();
+      misses = 0;
+      finished = false;
+      renderAll();
+      setStatus("Guess a letter to begin!");
+    }
+
+    function setStatus(msg, color = "text-blue-700") {
+      const el = document.getElementById("status");
+      el.className = `text-center text-3xl font-bold ${color} mb-10`;
+      el.textContent = msg;
+    }
+
+    function renderBalloons() {
+      const wrap = document.getElementById("balloons");
+      wrap.innerHTML = "";
+      const remaining = MAX_MISSES - misses;
+      for (let i = 0; i < remaining; i++) {
+        wrap.innerHTML += `<span class="text-6xl">🎈</span>`;
+      }
+      for (let i = 0; i < misses; i++) {
+        wrap.innerHTML += `<span class="text-6xl">💥</span>`;
+      }
+    }
+
+    function renderWord() {
+      const wrap = document.getElementById("word");
+      wrap.innerHTML = "";
+      Array.from(word).forEach((ch, i) => {
+        const box = document.createElement("div");
+        if (ch === " ") {
+          box.className = "w-10";
+          box.textContent = " ";
+        } else if (ch === "-") {
+          box.className = "text-5xl font-bold text-gray-700";
+          box.textContent = "-";
+        } else {
+          const shown = revealed[i];
+          box.className = "flex items-center justify-center h-20 w-16 sm:w-20 rounded-2xl border-4 bg-white " +
+                          (shown ? "border-green-600" : "border-blue-600");
+          box.innerHTML = `<span class="leading-none ${shown ? "text-5xl font-extrabold" : "text-4xl"}">
+            ${shown ? ch : "_"}
+          </span>`;
+        }
+        wrap.appendChild(box);
+      });
+    }
+
+    function renderUsedLetters() {
+      const wrap = document.getElementById("usedLetters");
+      wrap.innerHTML = "";
+      [...used].forEach(letter => {
+        wrap.innerHTML += `<span>${letter}</span>`;
+      });
+    }
+
+    function handleGuess(letter) {
+      if (finished || used.has(letter)) return;
+      used.add(letter);
+
+      let correct = false;
+      for (let i = 0; i < word.length; i++) {
+        if (word[i] === letter) {
+          revealed[i] = true;
+          correct = true;
+        }
+      }
+
+      if (correct) {
+        setStatus(`✅ Nice! The letter ${letter} is in the word.`, "text-green-700");
+      } else {
+        misses++;
+        setStatus(`💥 Not there. Balloon popped! (${MAX_MISSES - misses} left)`, "text-red-700");
+      }
+
+      if (revealed.every((v, i) => v || word[i] === " " || word[i] === "-")) {
+        finished = true;
+        setStatus("🎉 You saved the balloons! Word solved!", "text-green-700");
+      } else if (misses >= MAX_MISSES) {
+        finished = true;
+        setStatus(`💥 All balloons popped! The word was ${word}.`, "text-red-700");
+      }
+
+      renderBalloons();
+      renderWord();
+      renderUsedLetters();
+    }
+
+    function renderAll() {
+      renderBalloons();
+      renderWord();
+      renderUsedLetters();
+    }
+
+    // Hook up
+    document.getElementById("theme").addEventListener("change", e => {
+      theme = e.target.value;
+      resetRound();
+    });
+    document.getElementById("newBtn").addEventListener("click", resetRound);
+
+    // Start
+    resetRound();
+
+    // Key listener for group play
+    document.addEventListener("keydown", e => {
+      const letter = e.key.toUpperCase();
+      if (letter >= "A" && letter <= "Z") {
+        handleGuess(letter);
+      }
+    });
+  </script>
+</body>
+</html>
