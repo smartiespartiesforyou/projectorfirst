@@ -3,61 +3,211 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Family Feud</title>
+  <title>Family Feud - ProjectorFirst</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
-    function revealAnswer(id, btn) {
-      const el = document.getElementById(id);
-      el.classList.remove('hidden');
-      if (btn) {
-        btn.setAttribute('aria-expanded', 'true');
-        btn.disabled = true;
-        btn.classList.add('opacity-60','cursor-not-allowed');
+    /* --------- QUESTIONS (with point values) --------- */
+    const questions = [
+      {
+        q: "Name something people do when they wake up.",
+        a: [
+          { text: "Check Phone", pts: 30 },
+          { text: "Brush Teeth", pts: 25 },
+          { text: "Drink Coffee", pts: 20 },
+          { text: "Use Bathroom", pts: 15 },
+          { text: "Make the Bed", pts: 10 }
+        ]
+      },
+      {
+        q: "Name a fruit you might put in a smoothie.",
+        a: [
+          { text: "Banana", pts: 35 },
+          { text: "Strawberry", pts: 30 },
+          { text: "Blueberry", pts: 20 },
+          { text: "Mango", pts: 10 },
+          { text: "Pineapple", pts: 5 }
+        ]
+      },
+      {
+        q: "Name something you find at the beach.",
+        a: [
+          { text: "Sand", pts: 30 },
+          { text: "Waves", pts: 25 },
+          { text: "Seashells", pts: 20 },
+          { text: "Sun Umbrella", pts: 15 },
+          { text: "Towels", pts: 10 }
+        ]
       }
+    ];
+
+    /* --------- STATE --------- */
+    let currentQ = 0;
+    let currentTeam = "A"; // 'A' or 'B'
+    let scoreA = 0;
+    let scoreB = 0;
+
+    /* --------- HELPERS --------- */
+    function shuffle(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+      return array;
     }
+
+    function setTeam(team) {
+      currentTeam = team;
+      document.getElementById("teamA_btn").classList.toggle("bg-blue-900", team === "A");
+      document.getElementById("teamA_btn").classList.toggle("text-white", team === "A");
+      document.getElementById("teamA_btn").classList.toggle("bg-white", team !== "A");
+      document.getElementById("teamA_btn").classList.toggle("text-blue-900", team !== "A");
+      document.getElementById("teamB_btn").classList.toggle("bg-blue-900", team === "B");
+      document.getElementById("teamB_btn").classList.toggle("text-white", team === "B");
+      document.getElementById("teamB_btn").classList.toggle("bg-white", team !== "B");
+      document.getElementById("teamB_btn").classList.toggle("text-blue-900", team !== "B");
+      document.getElementById("turnLabel").textContent = team === "A" ? "Team A's Turn" : "Team B's Turn";
+    }
+
+    function updateScores() {
+      document.getElementById("scoreA").textContent = scoreA;
+      document.getElementById("scoreB").textContent = scoreB;
+    }
+
+    function awardPoints(pts) {
+      if (currentTeam === "A") scoreA += pts;
+      else scoreB += pts;
+      updateScores();
+    }
+
+    function revealAnswer(idx, btn) {
+      const span = document.getElementById(`ans-${idx}`);
+      const pts = Number(span.getAttribute("data-pts"));
+
+      // Show answer text + points
+      span.classList.remove("hidden");
+      btn.disabled = true;
+      btn.classList.add("opacity-60", "cursor-not-allowed");
+
+      // Auto add points to the selected team
+      awardPoints(pts);
+
+      // Update the button label to show what was revealed (optional clarity)
+      const answerTxt = span.getAttribute("data-text");
+      btn.textContent = `${answerTxt} (+${pts})`;
+    }
+
+    function loadQuestion() {
+      const q = questions[currentQ];
+      document.getElementById("question").textContent = q.q;
+
+      const answersBox = document.getElementById("answers");
+      answersBox.innerHTML = "";
+
+      const randomized = shuffle(q.a.map((a) => ({ ...a })));
+
+      randomized.forEach((ans, i) => {
+        const row = document.createElement("div");
+        row.className = "rounded-2xl p-4 flex justify-between items-center border-4 border-blue-900 bg-white";
+
+        const btn = document.createElement("button");
+        btn.className = "bg-blue-900 hover:bg-blue-800 text-white px-7 py-4 rounded-2xl font-extrabold text-2xl focus:outline-none focus:ring-4 focus:ring-blue-300";
+        btn.textContent = `Reveal ${i + 1}`;
+        btn.onclick = () => revealAnswer(i, btn);
+
+        const span = document.createElement("span");
+        span.id = `ans-${i}`;
+        span.className = "hidden text-3xl font-black text-blue-900";
+        span.textContent = `${ans.text} — ${ans.pts} pts`;
+        span.setAttribute("data-text", ans.text);
+        span.setAttribute("data-pts", ans.pts);
+
+        row.appendChild(btn);
+        row.appendChild(span);
+        answersBox.appendChild(row);
+      });
+    }
+
+    function nextQuestion() {
+      currentQ = (currentQ + 1) % questions.length;
+      loadQuestion();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function resetScores() {
+      scoreA = 0; scoreB = 0; updateScores();
+    }
+
+    window.onload = () => {
+      setTeam("A");
+      updateScores();
+      loadQuestion();
+    };
   </script>
 </head>
-<body class="bg-white text-slate-900 min-h-screen flex flex-col items-center p-6">
-  <h1 class="text-5xl font-extrabold mb-8 text-blue-900">Family Feud</h1>
+<body class="bg-white text-slate-900 min-h-screen flex flex-col">
 
-  <div class="w-full max-w-2xl space-y-5">
-    <!-- Question -->
-    <div class="rounded-2xl p-6 text-2xl font-bold text-center border-4 border-blue-900 text-blue-900 bg-white">
-      Name something people do when they wake up.
+  <!-- Consistent Header with Back to Apps -->
+  <header class="w-full bg-black text-white">
+    <div class="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
+      <a href="apps.html"
+         class="inline-flex items-center gap-2 px-4 py-2 bg-white text-black rounded-2xl font-extrabold text-xl shadow focus:outline-none focus:ring-4 focus:ring-yellow-400"
+         aria-label="Back to Apps">
+        ← Back to Apps
+      </a>
+      <h1 class="text-3xl md:text-4xl font-extrabold">Family Feud</h1>
+      <span aria-hidden="true" class="opacity-0">spacer</span>
     </div>
+  </header>
 
-    <!-- Answers -->
-    <div class="space-y-4">
-      <div class="rounded-xl p-4 flex justify-between items-center border border-blue-200 bg-white">
-        <button
-          onclick="revealAnswer('ans1', this)"
-          class="bg-blue-900 hover:bg-blue-800 text-white px-6 py-3 rounded-2xl font-bold text-xl focus:outline-none focus:ring-4 focus:ring-blue-300"
-          aria-controls="ans1" aria-expanded="false">
-          Reveal 1
-        </button>
-        <span id="ans1" class="hidden text-2xl font-semibold text-blue-900">Brush Teeth</span>
-      </div>
+  <!-- TURN + SCORES -->
+  <main class="flex-1 w-full max-w-5xl mx-auto px-4 py-6">
+    <section class="w-full max-w-4xl mx-auto mb-6">
+      <div class="flex flex-col gap-4">
+        <!-- Turn selection -->
+        <div class="flex items-center justify-center gap-4">
+          <button id="teamA_btn"
+            class="px-6 py-4 rounded-2xl border-4 border-blue-900 bg-blue-900 text-white text-2xl font-black focus:outline-none focus:ring-4 focus:ring-blue-300"
+            onclick="setTeam('A')">Team A</button>
+          <button id="teamB_btn"
+            class="px-6 py-4 rounded-2xl border-4 border-blue-900 bg-white text-blue-900 text-2xl font-black focus:outline-none focus:ring-4 focus:ring-blue-300"
+            onclick="setTeam('B')">Team B</button>
+        </div>
+        <div class="text-center text-2xl font-extrabold text-blue-900" id="turnLabel">Team A's Turn</div>
 
-      <div class="rounded-xl p-4 flex justify-between items-center border border-blue-200 bg-white">
-        <button
-          onclick="revealAnswer('ans2', this)"
-          class="bg-blue-900 hover:bg-blue-800 text-white px-6 py-3 rounded-2xl font-bold text-xl focus:outline-none focus:ring-4 focus:ring-blue-300"
-          aria-controls="ans2" aria-expanded="false">
-          Reveal 2
-        </button>
-        <span id="ans2" class="hidden text-2xl font-semibold text-blue-900">Check Phone</span>
-      </div>
+        <!-- Scores -->
+        <div class="grid grid-cols-2 gap-4">
+          <div class="border-4 border-blue-900 rounded-2xl p-4 bg-white text-center">
+            <div class="text-2xl font-extrabold text-blue-900 mb-1">Team A</div>
+            <div id="scoreA" class="text-6xl font-black text-blue-900">0</div>
+          </div>
+          <div class="border-4 border-blue-900 rounded-2xl p-4 bg-white text-center">
+            <div class="text-2xl font-extrabold text-blue-900 mb-1">Team B</div>
+            <div id="scoreB" class="text-6xl font-black text-blue-900">0</div>
+          </div>
+        </div>
 
-      <div class="rounded-xl p-4 flex justify-between items-center border border-blue-200 bg-white">
-        <button
-          onclick="revealAnswer('ans3', this)"
-          class="bg-blue-900 hover:bg-blue-800 text-white px-6 py-3 rounded-2xl font-bold text-xl focus:outline-none focus:ring-4 focus:ring-blue-300"
-          aria-controls="ans3" aria-expanded="false">
-          Reveal 3
-        </button>
-        <span id="ans3" class="hidden text-2xl font-semibold text-blue-900">Drink Coffee</span>
+        <!-- Controls -->
+        <div class="flex gap-4 justify-center mt-2">
+          <button onclick="nextQuestion()"
+            class="bg-blue-900 hover:bg-blue-800 text-white px-8 py-4 rounded-2xl font-black text-2xl focus:outline-none focus:ring-4 focus:ring-blue-300">
+            Next Question
+          </button>
+          <button onclick="resetScores()"
+            class="bg-white border-4 border-blue-900 text-blue-900 px-8 py-4 rounded-2xl font-black text-2xl hover:bg-blue-50 focus:outline-none focus:ring-4 focus:ring-blue-300">
+            Reset Scores
+          </button>
+        </div>
       </div>
-    </div>
-  </div>
+    </section>
+
+    <!-- QUESTION + ANSWERS -->
+    <section class="w-full max-w-3xl mx-auto space-y-5">
+      <div id="question"
+           class="rounded-2xl p-6 text-3xl font-black text-center border-4 border-blue-900 text-blue-900 bg-white">
+        Loading question...
+      </div>
+      <div id="answers" class="space-y-4"></div>
+    </section>
+  </main>
 </body>
 </html>
