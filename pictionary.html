@@ -47,11 +47,11 @@
 
     <!-- Board -->
     <div class="relative mx-auto aspect-square w-full max-w-3xl rounded-2xl border-4 border-blue-600 overflow-hidden bg-gray-100">
-      <!-- Hidden picture -->
-      <div id="picture" class="absolute inset-0 flex items-center justify-center select-none text-[60vmin] leading-none"></div>
+      <!-- Hidden picture (behind tiles) -->
+      <div id="picture" class="absolute inset-0 flex items-center justify-center select-none text-[60vmin] leading-none z-0"></div>
 
       <!-- Tile grid overlay -->
-      <div id="tiles" class="absolute inset-0 grid grid-cols-4 grid-rows-4 gap-0"></div>
+      <div id="tiles" class="absolute inset-0 grid grid-cols-4 grid-rows-4 gap-0 z-10"></div>
     </div>
 
     <!-- Status -->
@@ -59,59 +59,41 @@
   </div>
 
   <script>
+    // --- Picture bank ---
     const BANK = {
       animals: [
-        {emoji:"🦒", name:"GIRAFFE"},
-        {emoji:"🦓", name:"ZEBRA"},
-        {emoji:"🐘", name:"ELEPHANT"},
-        {emoji:"🦊", name:"FOX"},
-        {emoji:"🦉", name:"OWL"},
-        {emoji:"🐼", name:"PANDA"},
-        {emoji:"🦍", name:"GORILLA"},
-        {emoji:"🦘", name:"KANGAROO"},
-        {emoji:"🦏", name:"RHINOCEROS"},
+        {emoji:"🦒", name:"GIRAFFE"},{emoji:"🦓", name:"ZEBRA"},{emoji:"🐘", name:"ELEPHANT"},
+        {emoji:"🦊", name:"FOX"},{emoji:"🦉", name:"OWL"},{emoji:"🐼", name:"PANDA"},
+        {emoji:"🦍", name:"GORILLA"},{emoji:"🦘", name:"KANGAROO"},{emoji:"🦏", name:"RHINOCEROS"},
         {emoji:"🦔", name:"HEDGEHOG"}
       ],
       foods: [
-        {emoji:"🍍", name:"PINEAPPLE"},
-        {emoji:"🥐", name:"CROISSANT"},
-        {emoji:"🍉", name:"WATERMELON"},
-        {emoji:"🍇", name:"GRAPES"},
-        {emoji:"🧀", name:"CHEESE"},
-        {emoji:"🍓", name:"STRAWBERRY"},
-        {emoji:"🍔", name:"HAMBURGER"},
-        {emoji:"🍣", name:"SUSHI"},
-        {emoji:"🥨", name:"PRETZEL"},
+        {emoji:"🍍", name:"PINEAPPLE"},{emoji:"🥐", name:"CROISSANT"},{emoji:"🍉", name:"WATERMELON"},
+        {emoji:"🍇", name:"GRAPES"},{emoji:"🧀", name:"CHEESE"},{emoji:"🍓", name:"STRAWBERRY"},
+        {emoji:"🍔", name:"HAMBURGER"},{emoji:"🍣", name:"SUSHI"},{emoji:"🥨", name:"PRETZEL"},
         {emoji:"🍆", name:"EGGPLANT"}
       ],
       objects: [
-        {emoji:"⛺", name:"TENT"},
-        {emoji:"🚲", name:"BICYCLE"},
-        {emoji:"🕰️", name:"CLOCK"},
-        {emoji:"🎒", name:"BACKPACK"},
-        {emoji:"🧯", name:"FIRE EXTINGUISHER"},
-        {emoji:"🧲", name:"MAGNET"},
-        {emoji:"🧳", name:"SUITCASE"},
-        {emoji:"🔭", name:"TELESCOPE"},
-        {emoji:"🧵", name:"THREAD"},
+        {emoji:"⛺", name:"TENT"},{emoji:"🚲", name:"BICYCLE"},{emoji:"🕰️", name:"CLOCK"},
+        {emoji:"🎒", name:"BACKPACK"},{emoji:"🧯", name:"FIRE EXTINGUISHER"},{emoji:"🧲", name:"MAGNET"},
+        {emoji:"🧳", name:"SUITCASE"},{emoji:"🔭", name:"TELESCOPE"},{emoji:"🧵", name:"THREAD"},
         {emoji:"🧱", name:"BRICK"}
       ]
     };
 
+    // --- State ---
     let theme = "animals";
     let item = null;
-    let covered = [];
-    const totalTiles = 16;
+    const GRID_SIZE = 4;                 // 4x4
+    const TOTAL = GRID_SIZE * GRID_SIZE; // 16
 
-    function randPick(arr) {
-      return arr[Math.floor(Math.random() * arr.length)];
-    }
-
-    function setStatus(msg, color="text-blue-700") {
+    // --- Helpers ---
+    const pick = arr => arr[Math.floor(Math.random() * arr.length)];
+    const setStatus = (msg, color="text-blue-700") => {
       const el = document.getElementById("status");
       el.className = `text-center mt-6 text-2xl font-semibold ${color}`;
       el.textContent = msg;
-    }
+    };
 
     function renderPicture() {
       document.getElementById("picture").textContent = item.emoji;
@@ -120,55 +102,64 @@
     function renderTiles() {
       const wrap = document.getElementById("tiles");
       wrap.innerHTML = "";
-      covered = Array(totalTiles).fill(true);
 
-      for (let i = 0; i < totalTiles; i++) {
+      // Create numbered tiles 1..16, each filling its grid cell
+      for (let i = 0; i < TOTAL; i++) {
         const btn = document.createElement("button");
-        btn.className = "tile bg-blue-700 hover:bg-blue-800 text-white border border-blue-900 flex items-center justify-center text-6xl font-extrabold";
-        btn.textContent = i + 1; // numbers 1–16
-        btn.dataset.index = i;
-        btn.addEventListener("click", () => revealTile(btn));
+        btn.className = [
+          "tile",
+          "w-full h-full",                       // fill the grid cell (prevents layout weirdness)
+          "bg-blue-700 hover:bg-blue-800 text-white",
+          "border border-blue-900",
+          "flex items-center justify-center",
+          "select-none",
+          "font-extrabold",
+          "text-6xl md:text-7xl lg:text-8xl"     // BIG numbers
+        ].join(" ");
+        btn.textContent = i + 1;
         wrap.appendChild(btn);
       }
-      updateStatus();
+
+      setStatus(`Tiles left: ${TOTAL} / ${TOTAL}`);
     }
 
-    function revealTile(btn) {
-      const i = parseInt(btn.dataset.index);
-      if (!covered[i]) return;
-      covered[i] = false;
-      btn.remove(); // removes THIS square
-      updateStatus();
-      if (covered.every(v => v === false)) {
-        setStatus(`🎉 All tiles revealed — Answer: ${item.name}`, "text-green-700");
-      }
+    function tilesLeft() {
+      return document.querySelectorAll("#tiles .tile").length;
     }
+
+    // Remove the specific tile clicked (no index math)
+    document.getElementById("tiles").addEventListener("click", (e) => {
+      const tile = e.target.closest(".tile");
+      if (!tile) return;
+      tile.remove();
+      const left = tilesLeft();
+      if (left === 0) {
+        setStatus(`🎉 All tiles revealed — Answer: ${item.name}`, "text-green-700");
+      } else {
+        setStatus(`Tiles left: ${left} / ${TOTAL}`);
+      }
+    });
 
     function revealOneRandom() {
-      const remaining = covered.map((v,i)=>v?i:-1).filter(i=>i!==-1);
-      if (!remaining.length) return;
-      const pick = randPick(remaining);
-      const btn = document.querySelector(`.tile[data-index="${pick}"]`);
-      if (btn) revealTile(btn);
+      const list = Array.from(document.querySelectorAll("#tiles .tile"));
+      if (!list.length) return;
+      pick(list).remove();
+      const left = tilesLeft();
+      setStatus(left ? `Tiles left: ${left} / ${TOTAL}` : `🎉 All tiles revealed — Answer: ${item.name}`, left ? "text-blue-700" : "text-green-700");
     }
 
     function revealAll() {
-      document.querySelectorAll(".tile").forEach(btn => btn.remove());
-      covered = Array(totalTiles).fill(false);
+      document.querySelectorAll("#tiles .tile").forEach(t => t.remove());
       setStatus(`🎉 All tiles revealed — Answer: ${item.name}`, "text-green-700");
     }
 
-    function updateStatus() {
-      const left = covered.filter(Boolean).length;
-      setStatus(`Tiles left: ${left} / ${totalTiles}`);
-    }
-
     function newPicture() {
-      item = randPick(BANK[theme]);
+      item = pick(BANK[theme]);
       renderPicture();
       renderTiles();
     }
 
+    // UI hooks
     document.getElementById("theme").addEventListener("change", e => {
       theme = e.target.value;
       newPicture();
