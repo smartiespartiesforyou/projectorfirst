@@ -10,9 +10,9 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     .letter {
-      width: 100px; height: 100px;
+      width: 140px; height: 140px;
       background: #1e3a8a; color: white;
-      font-size: 3rem; font-weight: bold;
+      font-size: 4rem; font-weight: bold;
       display: flex; align-items: center; justify-content: center;
       border-radius: 0.75rem;
       box-shadow: 0 4px 10px rgba(0,0,0,0.25);
@@ -25,7 +25,7 @@
       justify-items: center;
     }
     @media (min-width: 1280px) {
-      .letter { width: 140px; height: 140px; font-size: 4rem; }
+      .letter { width: 180px; height: 180px; font-size: 5rem; }
     }
     .btn {
       font-size: 1.5rem;
@@ -43,7 +43,7 @@
   </style>
 </head>
 <body class="flex flex-col items-center justify-start min-h-screen py-10 bg-white text-black">
-  <main class="w-full max-w-4xl text-center">
+  <main class="w-full max-w-6xl text-center">
     <h1 class="text-5xl font-extrabold text-blue-900 mb-6">🔤 Boggle Style Game</h1>
 
     <!-- Controls -->
@@ -59,10 +59,24 @@
 
     <!-- Timer -->
     <div id="timerBox" class="text-4xl font-extrabold text-blue-900 mt-4"></div>
+
+    <!-- Word Entry -->
+    <div class="mt-8">
+      <input id="wordInput" type="text" placeholder="Type a word…" 
+             class="border-2 border-blue-900 rounded-xl px-4 py-3 text-2xl w-72 text-center"/>
+      <button onclick="addWord()" class="btn btn-shake ml-3">Add Word</button>
+    </div>
+
+    <!-- Word List -->
+    <div class="mt-8">
+      <h2 class="text-3xl font-bold text-blue-900 mb-4">Words Found</h2>
+      <ul id="wordList" class="text-2xl font-semibold text-gray-800 space-y-2"></ul>
+    </div>
   </main>
 
   <script>
-    const GRID_SIZE = 4;
+    const GRID_ROWS = 3;
+    const GRID_COLS = 4;
     const ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     let timerInterval = null;
     let timeLeft = 0;
@@ -74,7 +88,8 @@
     function buildGrid(blank = true) {
       const grid = document.getElementById("letterGrid");
       grid.innerHTML = "";
-      for (let i = 0; i < GRID_SIZE * GRID_SIZE; i++) {
+      grid.style.gridTemplateColumns = `repeat(${GRID_COLS}, 1fr)`;
+      for (let i = 0; i < GRID_ROWS * GRID_COLS; i++) {
         const div = document.createElement("div");
         div.className = "letter";
         div.textContent = blank ? "—" : randomLetter();
@@ -89,6 +104,7 @@
     function resetGrid() {
       buildGrid(true);
       stopTimer();
+      document.getElementById("wordList").innerHTML = "";
     }
 
     function toggleFullScreen() {
@@ -99,10 +115,10 @@
       }
     }
 
-    // Timer functions
+    // Timer
     function startTimer() {
-      stopTimer(); // clear any existing
-      timeLeft = 180; // 3 minutes
+      stopTimer();
+      timeLeft = 180;
       updateTimerDisplay();
       timerInterval = setInterval(() => {
         timeLeft--;
@@ -125,6 +141,22 @@
       document.getElementById("timerBox").textContent =
         mins + ":" + (secs < 10 ? "0" : "") + secs;
     }
+
+    // Words
+    function addWord() {
+      const input = document.getElementById("wordInput");
+      const word = input.value.trim().toUpperCase();
+      if (word) {
+        const li = document.createElement("li");
+        li.textContent = word;
+        document.getElementById("wordList").appendChild(li);
+        input.value = "";
+      }
+    }
+
+    document.getElementById("wordInput").addEventListener("keydown", e => {
+      if (e.key === "Enter") addWord();
+    });
 
     // Keyboard shortcuts
     document.addEventListener("keydown", e => {
