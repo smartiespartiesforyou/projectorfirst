@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Dice Roller — ProjectorFirst</title>
-  <meta name="description" content="Big, simple dice roller for activities and games."/>
+  <meta name="description" content="Big, simple dice roller for activities and games." />
   <meta name="theme-color" content="#1e3a8a"/>
-  <link rel="icon" href="/logo.svg" type="image/svg+xml"/>
+  <link rel="icon" href="/logo.svg" type="image/svg+xml" />
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     .die {
@@ -42,11 +42,18 @@
     .btn-fullscreen { background: #6d28d9; color: white; }
     .btn-dice { border: 2px solid #1e3a8a; color: #1e3a8a; background: white; }
     .btn-dice.active { background: #1e3a8a; color: white; }
+    .btn-next { background: #1e3a8a; color: white; }
+    .btn-next:hover { background: #1d4ed8; }
   </style>
 </head>
 <body class="flex flex-col items-center justify-start min-h-screen py-10 bg-white text-black">
-  <main class="w-full max-w-4xl text-center">
-    <h1 class="text-5xl font-extrabold text-blue-900 mb-6">🎲 Dice Roller</h1>
+  <main class="max-w-6xl mx-auto p-6 text-center">
+    <h2 class="text-4xl font-extrabold mb-4 text-green-300">Dice Roller</h2>
+
+    <!-- Back to Apps -->
+    <div class="mb-6">
+      <a href="apps.html" class="btn btn-next">⬅ Back to Apps</a>
+    </div>
 
     <!-- Controls -->
     <div class="flex flex-wrap items-center justify-center gap-3 mb-6">
