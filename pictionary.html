@@ -5,6 +5,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>Pictionary — Piece by Piece Reveal</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* Keep the tile space but hide it when revealed */
+    .tile.revealed {
+      background: transparent !important;
+      border-color: transparent !important;
+      color: transparent !important;
+      pointer-events: none;
+    }
+  </style>
 </head>
 <body class="bg-white text-gray-900 min-h-screen">
   <div class="max-w-5xl mx-auto p-6">
@@ -45,13 +54,24 @@
       </div>
     </div>
 
+    <!-- Reveal by number -->
+    <div class="mt-3 mb-6 flex justify-center gap-3">
+      <input id="tileNumberInput" type="number" min="1" max="16"
+             class="w-32 text-center text-2xl border-2 border-blue-600 rounded-2xl px-3 py-2"
+             placeholder="# (1–16)"/>
+      <button id="revealSpecific"
+              class="bg-blue-600 hover:bg-blue-800 text-white text-xl py-2 px-5 rounded-2xl">
+        Reveal This #
+      </button>
+    </div>
+
     <!-- Board -->
     <div class="relative mx-auto aspect-square w-full max-w-3xl rounded-2xl border-4 border-blue-600 overflow-hidden bg-gray-100">
-      <!-- Hidden picture (behind tiles) -->
-      <div id="picture" class="absolute inset-0 flex items-center justify-center select-none text-[60vmin] leading-none z-0"></div>
+      <!-- Hidden picture -->
+      <div id="picture" class="absolute inset-0 z-0 flex items-center justify-center select-none text-[60vmin] leading-none"></div>
 
-      <!-- Tile grid overlay -->
-      <div id="tiles" class="absolute inset-0 grid grid-cols-4 grid-rows-4 gap-0 z-10"></div>
+      <!-- Tile grid -->
+      <div id="tiles" class="absolute inset-0 z-10 grid grid-cols-4 grid-rows-4 gap-0"></div>
     </div>
 
     <!-- Status -->
@@ -59,7 +79,6 @@
   </div>
 
   <script>
-    // --- Picture bank ---
     const BANK = {
       animals: [
         {emoji:"🦒", name:"GIRAFFE"},{emoji:"🦓", name:"ZEBRA"},{emoji:"🐘", name:"ELEPHANT"},
@@ -81,19 +100,18 @@
       ]
     };
 
-    // --- State ---
     let theme = "animals";
     let item = null;
-    const GRID_SIZE = 4;                 // 4x4
-    const TOTAL = GRID_SIZE * GRID_SIZE; // 16
+    const GRID_SIZE = 4;                 
+    const TOTAL = GRID_SIZE * GRID_SIZE; 
 
-    // --- Helpers ---
     const pick = arr => arr[Math.floor(Math.random() * arr.length)];
-    const setStatus = (msg, color="text-blue-700") => {
+
+    function setStatus(msg, color="text-blue-700") {
       const el = document.getElementById("status");
       el.className = `text-center mt-6 text-2xl font-semibold ${color}`;
       el.textContent = msg;
-    };
+    }
 
     function renderPicture() {
       document.getElementById("picture").textContent = item.emoji;
@@ -102,54 +120,44 @@
     function renderTiles() {
       const wrap = document.getElementById("tiles");
       wrap.innerHTML = "";
-
-      // Create numbered tiles 1..16, each filling its grid cell
       for (let i = 0; i < TOTAL; i++) {
         const btn = document.createElement("button");
-        btn.className = [
-          "tile",
-          "w-full h-full",                       // fill the grid cell (prevents layout weirdness)
-          "bg-blue-700 hover:bg-blue-800 text-white",
-          "border border-blue-900",
-          "flex items-center justify-center",
-          "select-none",
-          "font-extrabold",
-          "text-6xl md:text-7xl lg:text-8xl"     // BIG numbers
-        ].join(" ");
-        btn.textContent = i + 1;
+        btn.className =
+          "tile w-full h-full bg-blue-700 hover:bg-blue-800 text-white border border-blue-900 " +
+          "flex items-center justify-center select-none font-extrabold text-7xl md:text-8xl";
+        btn.textContent = i + 1;       
+        btn.dataset.index = i;         
         wrap.appendChild(btn);
       }
-
       setStatus(`Tiles left: ${TOTAL} / ${TOTAL}`);
     }
 
-    function tilesLeft() {
-      return document.querySelectorAll("#tiles .tile").length;
-    }
-
-    // Remove the specific tile clicked (no index math)
+    // Reveal on click
     document.getElementById("tiles").addEventListener("click", (e) => {
       const tile = e.target.closest(".tile");
       if (!tile) return;
-      tile.remove();
-      const left = tilesLeft();
+      if (!tile.classList.contains("revealed")) tile.classList.add("revealed");
+      updateStatus();
+    });
+
+    function updateStatus() {
+      const left = document.querySelectorAll("#tiles .tile:not(.revealed)").length;
       if (left === 0) {
         setStatus(`🎉 All tiles revealed — Answer: ${item.name}`, "text-green-700");
       } else {
         setStatus(`Tiles left: ${left} / ${TOTAL}`);
       }
-    });
+    }
 
     function revealOneRandom() {
-      const list = Array.from(document.querySelectorAll("#tiles .tile"));
-      if (!list.length) return;
-      pick(list).remove();
-      const left = tilesLeft();
-      setStatus(left ? `Tiles left: ${left} / ${TOTAL}` : `🎉 All tiles revealed — Answer: ${item.name}`, left ? "text-blue-700" : "text-green-700");
+      const tiles = Array.from(document.querySelectorAll("#tiles .tile:not(.revealed)"));
+      if (!tiles.length) return;
+      pick(tiles).classList.add("revealed");
+      updateStatus();
     }
 
     function revealAll() {
-      document.querySelectorAll("#tiles .tile").forEach(t => t.remove());
+      document.querySelectorAll("#tiles .tile").forEach(t => t.classList.add("revealed"));
       setStatus(`🎉 All tiles revealed — Answer: ${item.name}`, "text-green-700");
     }
 
@@ -159,14 +167,39 @@
       renderTiles();
     }
 
+    // Reveal specific by input
+    function revealSpecificTile() {
+      const inputEl = document.getElementById("tileNumberInput");
+      const numberToReveal = parseInt(inputEl.value, 10);
+
+      if (isNaN(numberToReveal) || numberToReveal < 1 || numberToReveal > TOTAL) {
+        setStatus(`Please enter a number between 1 and ${TOTAL}.`, "text-red-600");
+        inputEl.focus();
+        return;
+      }
+
+      const allTiles = Array.from(document.querySelectorAll("#tiles .tile"));
+      const tile = allTiles.find(t => parseInt(t.textContent, 10) === numberToReveal);
+
+      if (!tile) {
+        setStatus(`Tile ${numberToReveal} is already revealed!`, "text-orange-600");
+        return;
+      }
+
+      tile.classList.add("revealed");
+      inputEl.value = "";
+      updateStatus();
+    }
+
     // UI hooks
-    document.getElementById("theme").addEventListener("change", e => {
-      theme = e.target.value;
-      newPicture();
-    });
+    document.getElementById("theme").addEventListener("change", e => { theme = e.target.value; newPicture(); });
     document.getElementById("newBtn").addEventListener("click", newPicture);
     document.getElementById("revealOne").addEventListener("click", revealOneRandom);
     document.getElementById("revealAll").addEventListener("click", revealAll);
+    document.getElementById("revealSpecific").addEventListener("click", revealSpecificTile);
+    document.getElementById("tileNumberInput").addEventListener("keydown", (e) => {
+      if (e.key === "Enter") revealSpecificTile();
+    });
 
     // Init
     newPicture();
