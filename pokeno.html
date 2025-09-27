@@ -1,178 +1,113 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>Pokeno • ProjectorFirst</title>
-  <meta name="color-scheme" content="light"/>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Pokeno Caller</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <style>
-    /* Big card look */
-    .card {
-      border: 10px solid #111827; /* gray-900 */
-      border-radius: 1.25rem;     /* rounded-2xl */
-      background: #f9fafb;        /* gray-50 */
-      box-shadow: 0 10px 30px rgba(0,0,0,.15);
-    }
-    .mini-card {
-      border: 6px solid #111827;
-      border-radius: 1rem;
-      background: #ffffff;
-    }
-    @media (prefers-reduced-motion: reduce){
-      .roll { animation: none !important; }
-    }
-  </style>
 </head>
-<body class="bg-white text-black">
-  <!-- Header -->
-  <header class="border-b border-gray-200 bg-white">
-    <div class="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
-      <a href="/apps.html" class="text-lg md:text-xl font-medium text-blue-700 hover:underline">
+<body class="bg-white text-gray-900 min-h-screen">
+
+  <div class="max-w-4xl mx-auto p-6 text-center">
+    <!-- Title -->
+    <h1 class="text-5xl font-extrabold mb-4 text-blue-900">Pokeno Caller</h1>
+    <!-- Back to Apps -->
+    <div class="flex justify-center mb-6">
+      <a href="apps.html"
+         class="inline-flex items-center gap-2 px-6 py-3 bg-blue-900 text-white rounded-xl font-extrabold text-xl shadow hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300">
         ← Back to Apps
       </a>
-      <div class="text-xl md:text-2xl font-bold">ProjectorFirst</div>
     </div>
-  </header>
 
-  <!-- Main -->
-  <main class="max-w-6xl mx-auto px-4 py-8 md:py-12" id="main">
-    <h1 class="text-4xl md:text-5xl font-extrabold mb-6">Pokeno</h1>
-    <p class="text-xl md:text-2xl text-gray-800 mb-8">
-      Press <span class="font-semibold">Draw Card</span>. The big card shows for the room. Recent cards appear below.
-    </p>
+    <!-- Current Card -->
+    <div id="cardDisplay"
+         class="text-[8rem] md:text-[10rem] font-black my-10">
+      🂠
+    </div>
 
     <!-- Controls -->
-    <div class="flex flex-wrap items-center gap-4 mb-8">
-      <button id="drawBtn"
-        class="px-8 py-5 text-3xl md:text-4xl font-bold rounded-2xl bg-blue-700 text-white hover:bg-blue-800 shadow focus:outline-none focus:ring-4 focus:ring-blue-300">
-        Draw Card
+    <div class="flex justify-center gap-4">
+      <button id="nextBtn"
+              class="bg-blue-600 hover:bg-blue-800 text-white text-2xl py-3 px-6 rounded-2xl shadow focus:outline-none focus:ring-4 focus:ring-blue-300">
+        Next Card
       </button>
       <button id="resetBtn"
-        class="px-6 py-4 text-2xl md:text-3xl font-bold rounded-2xl bg-gray-200 text-gray-900 hover:bg-gray-300 shadow focus:outline-none focus:ring-4 focus:ring-blue-300">
-        Reset Deck
+              class="bg-white border-4 border-blue-900 text-blue-900 text-2xl py-3 px-6 rounded-2xl shadow hover:bg-gray-50 focus:outline-none focus:ring-4 focus:ring-blue-300">
+        Reset Game
       </button>
-      <label class="flex items-center gap-3 text-lg md:text-2xl">
-        <input id="soundToggle" type="checkbox" class="w-6 h-6" checked>
-        Sound on
-      </label>
-      <span class="text-xl md:text-2xl text-gray-700">Deck left: <span id="deckLeft">52</span></span>
     </div>
 
-    <!-- Big drawn card -->
-    <section aria-label="Drawn card" class="flex items-center justify-center my-6">
-      <div id="bigCard" class="card w-[16rem] h-[22rem] md:w-[22rem] md:h-[30rem] flex items-center justify-center">
-        <div id="bigCardFace" class="leading-none text-[7rem] md:text-[10rem] select-none" aria-live="polite">—</div>
-      </div>
-    </section>
-
-    <!-- History strip -->
-    <section aria-label="Recent cards" class="mt-10">
-      <h2 class="text-2xl md:text-3xl font-extrabold text-blue-900 mb-4">Recent Cards</h2>
-      <div id="history" class="flex gap-3 md:gap-4 overflow-x-auto pb-2">
-        <!-- mini-cards injected here -->
-      </div>
-    </section>
-  </main>
-
-  <!-- Footer -->
-  <footer class="bg-white border-t border-gray-200 py-6 mt-12" role="contentinfo">
-    <div class="max-w-6xl mx-auto px-4 text-center text-lg">
-      © <span id="year"></span> ProjectorFirst • Big, Simple Apps for Nursing Homes & Senior Care
+    <!-- History -->
+    <div id="history"
+         class="mt-10 text-2xl text-gray-700 flex flex-wrap justify-center gap-3 max-w-3xl mx-auto">
     </div>
-  </footer>
-
-  <!-- Sounds -->
-  <audio id="drawSound" src="https://assets.mixkit.co/sfx/preview/mixkit-unlock-game-notification-253.wav"></audio>
-  <audio id="shuffleSound" src="https://assets.mixkit.co/sfx/preview/mixkit-achievement-bell-600.wav"></audio>
+  </div>
 
   <script>
-    document.getElementById('year').textContent = new Date().getFullYear();
+    const suits = ["♠","♥","♦","♣"];
+    const ranks = ["A","2","3","4","5","6","7","8","9","10","J","Q","K"];
+    let deck = [];
+    let history = [];
 
-    // ===== Deck utilities =====
-    const ranks = ["A","K","Q","J","10","9","8","7","6","5","4","3","2"];
-    const suits = [
-      {s:"♠", color:"#111827", name:"Spades"},
-      {s:"♥", color:"#b91c1c", name:"Hearts"},
-      {s:"♦", color:"#b91c1c", name:"Diamonds"},
-      {s:"♣", color:"#111827", name:"Clubs"}
-    ];
-    function makeDeck(){
-      const deck = [];
-      for (const r of ranks){
-        for (const su of suits){
-          deck.push({r, s: su.s, color: su.color, name: `${r} of ${su.name}`});
+    function buildDeck() {
+      deck = [];
+      for (const s of suits) {
+        for (const r of ranks) {
+          deck.push({ rank: r, suit: s });
         }
       }
-      return deck;
+      shuffle(deck);
+      history = [];
+      updateHistory();
+      document.getElementById("cardDisplay").textContent = "🂠";
+      document.getElementById("cardDisplay").className =
+        "text-[8rem] md:text-[10rem] font-black my-10";
     }
 
-    // ===== State & Elements =====
-    let drawDeck = [];
-    const bigCardFace = document.getElementById("bigCardFace");
-    const historyEl = document.getElementById("history");
-    const deckLeftEl = document.getElementById("deckLeft");
-    const drawBtn = document.getElementById("drawBtn");
-    const resetBtn = document.getElementById("resetBtn");
-
-    const soundToggle = document.getElementById("soundToggle");
-    const drawSound = document.getElementById("drawSound");
-    const shuffleSound = document.getElementById("shuffleSound");
-
-    function playSafe(a){ if(!soundToggle.checked) return; try{ a.currentTime=0; a.play(); }catch(e){} }
-
-    function resetDeck(){
-      drawDeck = makeDeck();
-      deckLeftEl.textContent = String(drawDeck.length);
-      bigCardFace.textContent = "—";
-      historyEl.innerHTML = "";
-      playSafe(shuffleSound);
-      drawBtn.disabled = false;
-      drawBtn.classList.remove("opacity-60","cursor-not-allowed");
+    function shuffle(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
     }
 
-    function drawCard(){
-      if (!drawDeck.length) {
-        drawBtn.disabled = true;
-        drawBtn.classList.add("opacity-60","cursor-not-allowed");
+    function nextCard() {
+      if (deck.length === 0) {
+        document.getElementById("cardDisplay").textContent = "🏆";
         return;
       }
-      // Pick random index
-      const i = Math.floor(Math.random()*drawDeck.length);
-      const [card] = drawDeck.splice(i,1);
-      deckLeftEl.textContent = String(drawDeck.length);
+      const card = deck.pop();
+      history.push(card);
 
-      // Big face update
-      bigCardFace.textContent = card.r + card.s;
-      bigCardFace.style.color = card.color;
-      bigCardFace.setAttribute("aria-label", card.name);
+      // Decide color
+      const isRed = card.suit === "♥" || card.suit === "♦";
+      const colorClass = isRed ? "text-red-600" : "text-blue-900";
 
-      // History mini-card (newest on the left)
-      const mini = document.createElement("div");
-      mini.className = "mini-card w-20 h-28 md:w-24 md:h-32 flex items-center justify-center";
-      mini.innerHTML = `<span class="text-3xl md:text-4xl" style="color:${card.color}">${card.r}${card.s}</span>`;
-      historyEl.prepend(mini);
+      document.getElementById("cardDisplay").innerHTML =
+        `<span class="${colorClass}">${card.rank}${card.suit}</span>`;
+      document.getElementById("cardDisplay").className =
+        `text-[8rem] md:text-[10rem] font-black my-10 ${colorClass}`;
 
-      // Limit history to ~30 cards for readability
-      const max = 30;
-      while (historyEl.children.length > max) historyEl.removeChild(historyEl.lastChild);
-
-      playSafe(drawSound);
-
-      // If deck ended, disable Draw
-      if (!drawDeck.length) {
-        drawBtn.disabled = true;
-        drawBtn.classList.add("opacity-60","cursor-not-allowed");
-      }
+      updateHistory();
     }
 
-    // Wire up
-    drawBtn.addEventListener("click", drawCard);
-    drawBtn.addEventListener("keyup", e => { if(e.key==="Enter"||e.key===" ") drawCard(); });
-    resetBtn.addEventListener("click", resetDeck);
+    function updateHistory() {
+      const histEl = document.getElementById("history");
+      histEl.innerHTML = "";
+      history.forEach(c => {
+        const isRed = c.suit === "♥" || c.suit === "♦";
+        const colorClass = isRed ? "text-red-600" : "text-blue-900";
+        const span = document.createElement("span");
+        span.innerHTML = `<span class="${colorClass} font-bold">${c.rank}${c.suit}</span>`;
+        span.className = "px-3 py-2 border border-blue-300 rounded-lg bg-white";
+        histEl.appendChild(span);
+      });
+    }
 
-    // Start fresh
-    resetDeck();
+    document.getElementById("nextBtn").addEventListener("click", nextCard);
+    document.getElementById("resetBtn").addEventListener("click", buildDeck);
+
+    buildDeck();
   </script>
 </body>
 </html>
