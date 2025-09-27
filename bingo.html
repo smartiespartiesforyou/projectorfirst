@@ -9,24 +9,12 @@
   <link rel="icon" href="/logo.svg" type="image/svg+xml"/>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    :root{
-      --bg:#ffffff;
-      --fg:#000000;
-      --accent:#1e3a8a;   /* borders/buttons */
-      --ball:#1e3a8a;     /* recent ball color */
-      --caller-bg:#000000;
-      --caller-fg:#ffffff;
-      --watermark:'';
-      --wm-color: rgba(255,255,255,0.06);
-    }
-
-    body { background: var(--bg); color: var(--fg); }
+    body { background: #ffffff; color: #000000; }
 
     .caller-box {
-      position: relative;
       width: min(90vw, 70vh, 640px);
       height: min(90vw, 70vh, 640px);
-      border: 6px solid var(--accent);
+      border: 6px solid #1e3a8a;
       border-radius: 1rem;
       display: flex;
       align-items: center;
@@ -35,20 +23,9 @@
       line-height: 1;
       white-space: nowrap;
       font-weight: bold;
-      background: var(--caller-bg);
-      color: var(--caller-fg);
+      background: #000;
+      color: #fff;
       margin: 0 auto;
-      overflow: hidden;
-    }
-    /* soft watermark emoji for theme vibe (big but faint) */
-    .caller-box::after{
-      content: var(--watermark);
-      position:absolute; inset:0;
-      display:flex; align-items:center; justify-content:center;
-      font-size: clamp(10rem, 40vmin, 28rem);
-      color: var(--wm-color);
-      pointer-events:none;
-      user-select:none;
     }
 
     .recent-calls span {
@@ -62,11 +39,9 @@
       color: #fff;
       font-size: 2rem;
       font-weight: bold;
-      background: var(--ball); /* holiday style color */
-      border: 3px solid rgba(255,255,255,0.25);
     }
 
-    /* Legacy letter colors (kept for compatibility; overridden by .recent-calls span rule above) */
+    /* Letter-based colors (unchanged for ALL themes) */
     .ball-B { background: #1e3a8a; } /* Blue */
     .ball-I { background: #dc2626; } /* Red */
     .ball-N { background: #16a34a; } /* Green */
@@ -80,69 +55,56 @@
       border-radius: 1rem;
       transition: background 0.2s;
     }
-    .btn-next { background: var(--accent); color: white; }
-    .btn-next:hover { filter: brightness(1.1); }
+
+    .btn-next { background: #1e3a8a; color: white; }
+    .btn-next:hover { background: #1d4ed8; }
     .btn-undo { background: #facc15; color: black; }
     .btn-reset { background: #dc2626; color: white; }
     .btn-fullscreen { background: #6d28d9; color: white; }
-
-    /* Panel card */
-    .panel { border: 2px solid var(--accent); border-radius: 1rem; padding: 1rem; }
-    .label { color: var(--accent); }
   </style>
 </head>
 <body class="flex flex-col items-center justify-start min-h-screen py-10">
-  <main class="w-full max-w-4xl text-center space-y-6">
-    <h1 class="text-5xl font-extrabold mb-2" style="color:var(--accent)">🎉 Classic Bingo Caller</h1>
+  <main class="w-full max-w-4xl text-center">
+    <h1 class="text-5xl font-extrabold text-blue-900 mb-6">🎉 Classic Bingo Caller</h1>
 
-    <!-- PICKERS -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left">
-      <div class="panel">
-        <label for="gameTheme" class="block text-lg font-semibold label mb-2">Game</label>
-        <select id="gameTheme"
-                class="w-full text-xl p-3 border-2 rounded-2xl focus:outline-none focus:ring-2"
-                style="border-color:var(--accent)">
-        </select>
-      </div>
-
-      <div class="panel">
-        <label for="styleTheme" class="block text-lg font-semibold label mb-2">Style (Holiday)</label>
-        <select id="styleTheme"
-                class="w-full text-xl p-3 border-2 rounded-2xl focus:outline-none focus:ring-2"
-                style="border-color:var(--accent)">
-        </select>
-      </div>
+    <!-- ONE THEME DROPDOWN -->
+    <div class="mb-6 text-left">
+      <label for="theme" class="block text-lg font-semibold text-blue-900 mb-2">Theme</label>
+      <select id="theme"
+              class="w-full text-xl p-3 border-2 border-blue-900 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-400">
+      </select>
     </div>
 
     <!-- Caller Box -->
-    <div id="callerBox" class="caller-box">—</div>
+    <div id="callerBox" class="caller-box mb-8">—</div>
 
     <!-- Controls -->
-    <div class="flex flex-wrap justify-center gap-4">
+    <div class="flex flex-wrap justify-center gap-4 mb-6">
       <button onclick="callNext()" class="btn btn-next">Call Next (Space)</button>
       <button onclick="undoCall()" class="btn btn-undo">Undo (Backspace)</button>
       <button onclick="resetCaller()" class="btn btn-reset">Reset (R)</button>
       <button onclick="toggleFullscreen()" class="btn btn-fullscreen">Fullscreen (F)</button>
-      <button onclick="toggleSound()" id="soundBtn" class="btn border-2 bg-white"
-              style="border-color:var(--accent); color:var(--accent)">🔊 Sound</button>
     </div>
 
+    <!-- Sound Button -->
+    <button onclick="toggleSound()" id="soundBtn" class="btn border-2 border-blue-900 text-blue-900 bg-white">🔊 Sound</button>
+
     <!-- Recent Calls -->
-    <div>
-      <h2 class="text-2xl font-bold mt-6 mb-2" style="color:var(--accent)">Previously Called</h2>
-      <div id="recentCalls" class="recent-calls"></div>
-    </div>
+    <h2 class="text-2xl font-bold text-blue-900 mt-10 mb-4">Previously Called</h2>
+    <div id="recentCalls" class="recent-calls"></div>
   </main>
 
   <script>
-    // =========================
-    // GAME MODES (number pools)
-    // =========================
+    // =========================================
+    // THEMES — single dropdown, fixed colors
+    // (Holiday themes = labels only; same color scheme)
+    // =========================================
     const THEMES = {
+      // Core modes
       classic75: {
         label: "Classic 1–75 (B I N G O)",
         letters: ["B","I","N","G","O"],
-        ranges: [ [1,15], [16,30], [31,45], [46,60], [61,75] ],
+        ranges: [[1,15],[16,30],[31,45],[46,60],[61,75]],
         speakPrefix: (L, n) => `${L} ${n}`,
         speakRate: 1.0,
         ballClassFromLetter: L => `ball-${L}`
@@ -150,7 +112,7 @@
       uk90: {
         label: "UK 1–90",
         letters: ["B","I","N","G","O"],
-        ranges: [ [1,18], [19,36], [37,54], [55,72], [73,90] ],
+        ranges: [[1,18],[19,36],[37,54],[55,72],[73,90]],
         speakPrefix: (L, n) => `${L} ${n}`,
         speakRate: 1.0,
         ballClassFromLetter: L => `ball-${L}`
@@ -158,7 +120,7 @@
       kids50: {
         label: "Kids 1–50",
         letters: ["B","I","N","G","O"],
-        ranges: [ [1,10], [11,20], [21,30], [31,40], [41,50] ],
+        ranges: [[1,10],[11,20],[21,30],[31,40],[41,50]],
         speakPrefix: (L, n) => `${L} ${n}`,
         speakRate: 0.95,
         ballClassFromLetter: L => `ball-${L}`
@@ -166,7 +128,7 @@
       mini30: {
         label: "Mini 1–30",
         letters: ["B","I","N","G","O"],
-        ranges: [ [1,6], [7,12], [13,18], [19,24], [25,30] ],
+        ranges: [[1,6],[7,12],[13,18],[19,24],[25,30]],
         speakPrefix: (L, n) => `${L} ${n}`,
         speakRate: 0.95,
         ballClassFromLetter: L => `ball-${L}`
@@ -174,136 +136,62 @@
       rapid75: {
         label: "Rapid 1–75 (faster speech)",
         letters: ["B","I","N","G","O"],
-        ranges: [ [1,15], [16,30], [31,45], [46,60], [61,75] ],
+        ranges: [[1,15],[16,30],[31,45],[46,60],[61,75]],
         speakPrefix: (L, n) => `${L} ${n}`,
         speakRate: 1.4,
         ballClassFromLetter: L => `ball-${L}`
-      }
+      },
+
+      // Holiday labels (same 1–75 pool, same colors)
+      halloween75:   makeHoliday("Halloween 1–75"),
+      thanksgiving75:makeHoliday("Thanksgiving 1–75"),
+      christmas75:   makeHoliday("Christmas 1–75"),
+      easter75:      makeHoliday("Easter 1–75"),
+      memorial75:    makeHoliday("Memorial Day 1–75"),
+      flagday75:     makeHoliday("Flag Day 1–75"),
+      independence75:makeHoliday("Independence Day 1–75"),
+      laborday75:    makeHoliday("Labor Day 1–75"),
+      newyear75:     makeHoliday("New Year’s 1–75"),
+      valentines75:  makeHoliday("Valentine’s 1–75"),
+      stpatricks75:  makeHoliday("St. Patrick’s 1–75")
     };
 
-    // =========================
-    // HOLIDAY STYLES (visual only)
-    // =========================
-    const STYLES = {
-      classic: {
-        label: "Classic",
-        colors: { bg:"#ffffff", fg:"#000000", accent:"#1e3a8a", ball:"#1e3a8a", callerBg:"#000000", callerFg:"#ffffff" },
-        watermark: ""
-      },
-      halloween: {
-        label: "Halloween",
-        colors: { bg:"#0b0b0b", fg:"#ffffff", accent:"#f97316", ball:"#f97316", callerBg:"#111111", callerFg:"#ffffff" },
-        watermark: "'🎃'"
-      },
-      thanksgiving: {
-        label: "Thanksgiving",
-        colors: { bg:"#fff8ee", fg:"#3b2f2f", accent:"#b45309", ball:"#d97706", callerBg:"#3b2f2f", callerFg:"#fff8ee" },
-        watermark: "'🦃'"
-      },
-      christmas: {
-        label: "Christmas",
-        colors: { bg:"#f0fff4", fg:"#064e3b", accent:"#065f46", ball:"#dc2626", callerBg:"#064e3b", callerFg:"#ffffff" },
-        watermark: "'🎄'"
-      },
-      easter: {
-        label: "Easter",
-        colors: { bg:"#fff7fb", fg:"#4a044e", accent:"#a21caf", ball:"#a78bfa", callerBg:"#4a044e", callerFg:"#ffffff" },
-        watermark: "'🐣'"
-      },
-      memorial: {
-        label: "Memorial Day",
-        colors: { bg:"#ffffff", fg:"#111827", accent:"#1f2937", ball:"#1f2937", callerBg:"#1e3a8a", callerFg:"#ffffff" },
-        watermark: "'⭐'"
-      },
-      flagday: {
-        label: "Flag Day",
-        colors: { bg:"#ffffff", fg:"#111827", accent:"#dc2626", ball:"#1e3a8a", callerBg:"#111827", callerFg:"#ffffff" },
-        watermark: "'🇺🇸'"
-      },
-      independence: {
-        label: "Independence Day",
-        colors: { bg:"#ffffff", fg:"#111827", accent:"#1e3a8a", ball:"#dc2626", callerBg:"#1e3a8a", callerFg:"#ffffff" },
-        watermark: "'🎆'"
-      },
-      laborday: {
-        label: "Labor Day",
-        colors: { bg:"#f8fafc", fg:"#0f172a", accent:"#334155", ball:"#334155", callerBg:"#0f172a", callerFg:"#ffffff" },
-        watermark: "'🛠️'"
-      },
-      newyear: {
-        label: "New Year’s",
-        colors: { bg:"#0b0b0b", fg:"#ffffff", accent:"#eab308", ball:"#eab308", callerBg:"#111111", callerFg:"#ffffff" },
-        watermark: "'🎉'"
-      },
-      valentines: {
-        label: "Valentine’s",
-        colors: { bg:"#fff1f2", fg:"#881337", accent:"#be123c", ball:"#e11d48", callerBg:"#881337", callerFg:"#ffffff" },
-        watermark: "'💘'"
-      },
-      stpatricks: {
-        label: "St. Patrick’s",
-        colors: { bg:"#f0fdf4", fg:"#064e3b", accent:"#065f46", ball:"#16a34a", callerBg:"#064e3b", callerFg:"#ffffff" },
-        watermark: "'☘️'"
-      }
-    };
+    // Helper to keep colors identical; only the label changes
+    function makeHoliday(label){
+      return {
+        label,
+        letters: ["B","I","N","G","O"],
+        ranges: [[1,15],[16,30],[31,45],[46,60],[61,75]],
+        speakPrefix: (L, n) => `${L} ${n}`,
+        speakRate: 1.0,
+        ballClassFromLetter: L => `ball-${L}`
+      };
+    }
 
     let currentThemeKey = "classic75";
-    let currentStyleKey = "classic";
-
     let letters = [];
     let ranges = [];
     let allNumbers = [];
     let history = [];
     let soundOn = true;
 
-    function initPickers() {
-      const gameSel = document.getElementById("gameTheme");
-      const styleSel = document.getElementById("styleTheme");
-
-      // Game dropdown
-      gameSel.innerHTML = "";
+    function initThemePicker() {
+      const sel = document.getElementById("theme");
+      sel.innerHTML = "";
       Object.entries(THEMES).forEach(([key, cfg]) => {
         const opt = document.createElement("option");
-        opt.value = key; opt.textContent = cfg.label;
+        opt.value = key;
+        opt.textContent = cfg.label;
         if (key === currentThemeKey) opt.selected = true;
-        gameSel.appendChild(opt);
+        sel.appendChild(opt);
       });
-      gameSel.addEventListener("change", e => {
+      sel.addEventListener("change", (e) => {
         currentThemeKey = e.target.value;
-        applyGame();
-      });
-
-      // Style dropdown
-      styleSel.innerHTML = "";
-      Object.entries(STYLES).forEach(([key, cfg]) => {
-        const opt = document.createElement("option");
-        opt.value = key; opt.textContent = cfg.label;
-        if (key === currentStyleKey) opt.selected = true;
-        styleSel.appendChild(opt);
-      });
-      styleSel.addEventListener("change", e => {
-        currentStyleKey = e.target.value;
-        applyStyle();
+        applyTheme();
       });
     }
 
-    function applyStyle(){
-      const s = STYLES[currentStyleKey];
-      const r = document.documentElement.style;
-      r.setProperty('--bg', s.colors.bg);
-      r.setProperty('--fg', s.colors.fg);
-      r.setProperty('--accent', s.colors.accent);
-      r.setProperty('--ball', s.colors.ball);
-      r.setProperty('--caller-bg', s.colors.callerBg);
-      r.setProperty('--caller-fg', s.colors.callerFg);
-      // Watermark + subtle contrast tweak
-      r.setProperty('--watermark', s.watermark || "''");
-      // Dim watermark on lighter themes, brighten on dark
-      const wmLight = s.colors.bg.startsWith('#0') || s.colors.bg.startsWith('#1') ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.05)';
-      r.setProperty('--wm-color', wmLight);
-    }
-
-    function applyGame() {
+    function applyTheme() {
       const cfg = THEMES[currentThemeKey];
       letters = cfg.letters;
       ranges = cfg.ranges;
@@ -358,10 +246,11 @@
 
     function updateRecent() {
       const recentDiv = document.getElementById("recentCalls");
+      const cfg = THEMES[currentThemeKey];
       recentDiv.innerHTML = history
         .slice(-10)
         .reverse()
-        .map(c => `<span class="ball ${THEMES[currentThemeKey].ballClassFromLetter(c.letter)}">${c.letter} ${c.number}</span>`)
+        .map(c => `<span class="${cfg.ballClassFromLetter(c.letter)}">${c.letter} ${c.number}</span>`)
         .join("");
     }
 
@@ -386,9 +275,8 @@
     });
 
     // Init
-    initPickers();
-    applyStyle();
-    applyGame();
+    initThemePicker();
+    applyTheme();
   </script>
 </body>
 </html>
