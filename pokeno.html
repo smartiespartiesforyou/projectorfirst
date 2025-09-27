@@ -20,9 +20,10 @@
     </div>
 
     <!-- Current Card -->
-    <div id="cardDisplay"
-         class="text-[8rem] md:text-[10rem] font-black my-10">
-      🂠
+    <div id="cardDisplay" class="flex justify-center my-10">
+      <div class="w-60 h-80 flex items-center justify-center text-9xl font-black text-gray-400 border-8 border-gray-300 rounded-2xl bg-white shadow-lg">
+        🂠
+      </div>
     </div>
 
     <!-- Controls -->
@@ -39,7 +40,7 @@
 
     <!-- History -->
     <div id="history"
-         class="mt-10 text-2xl text-gray-700 flex flex-wrap justify-center gap-3 max-w-3xl mx-auto">
+         class="mt-10 text-2xl text-gray-700 flex flex-wrap justify-center gap-3 max-w-4xl mx-auto">
     </div>
   </div>
 
@@ -59,9 +60,8 @@
       shuffle(deck);
       history = [];
       updateHistory();
-      document.getElementById("cardDisplay").textContent = "🂠";
-      document.getElementById("cardDisplay").className =
-        "text-[8rem] md:text-[10rem] font-black my-10";
+      document.getElementById("cardDisplay").innerHTML =
+        `<div class="w-60 h-80 flex items-center justify-center text-9xl font-black text-gray-400 border-8 border-gray-300 rounded-2xl bg-white shadow-lg">🂠</div>`;
     }
 
     function shuffle(array) {
@@ -73,20 +73,21 @@
 
     function nextCard() {
       if (deck.length === 0) {
-        document.getElementById("cardDisplay").textContent = "🏆";
+        document.getElementById("cardDisplay").innerHTML =
+          `<div class="w-60 h-80 flex items-center justify-center text-7xl font-black border-8 border-yellow-400 rounded-2xl bg-yellow-100 shadow-lg">🏆</div>`;
         return;
       }
       const card = deck.pop();
       history.push(card);
 
-      // Decide color
       const isRed = card.suit === "♥" || card.suit === "♦";
       const colorClass = isRed ? "text-red-600" : "text-blue-900";
 
       document.getElementById("cardDisplay").innerHTML =
-        `<span class="${colorClass}">${card.rank}${card.suit}</span>`;
-      document.getElementById("cardDisplay").className =
-        `text-[8rem] md:text-[10rem] font-black my-10 ${colorClass}`;
+        `<div class="w-60 h-80 flex flex-col items-center justify-center border-8 rounded-2xl bg-white shadow-lg">
+          <div class="text-[6rem] font-black ${colorClass} leading-none">${card.rank}</div>
+          <div class="text-[5rem] ${colorClass}">${card.suit}</div>
+        </div>`;
 
       updateHistory();
     }
@@ -98,7 +99,8 @@
         const isRed = c.suit === "♥" || c.suit === "♦";
         const colorClass = isRed ? "text-red-600" : "text-blue-900";
         const span = document.createElement("span");
-        span.innerHTML = `<span class="${colorClass} font-bold">${c.rank}${c.suit}</span>`;
+        span.innerHTML =
+          `<span class="${colorClass} font-bold">${c.rank}${c.suit}</span>`;
         span.className = "px-3 py-2 border border-blue-300 rounded-lg bg-white";
         histEl.appendChild(span);
       });
