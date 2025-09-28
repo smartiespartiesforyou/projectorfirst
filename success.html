@@ -3,43 +3,18 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>Subscribe — ProjectorFirst</title>
+  <title>Subscription Successful — ProjectorFirst</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="flex flex-col items-center justify-center min-h-screen bg-white text-black">
   <main class="text-center max-w-lg">
-    <h1 class="text-4xl font-bold mb-6 text-blue-900">Subscribe to ProjectorFirst</h1>
-    <p class="text-xl mb-8">Unlimited access for <strong>$9.99/month</strong></p>
-
-    <!-- Stripe Checkout Button -->
-    <button id="checkoutBtn"
+    <h1 class="text-4xl font-bold mb-6 text-green-700">🎉 Thank you for subscribing!</h1>
+    <p class="text-xl mb-8">Your subscription to <strong>ProjectorFirst</strong> is now active.</p>
+    
+    <a href="index.html"
       class="px-6 py-4 text-2xl font-bold text-white bg-blue-800 rounded-2xl shadow-lg hover:bg-blue-600">
-      Subscribe Now
-    </button>
-
-    <!-- Back to Home Button -->
-    <div class="mt-6">
-      <a href="index.html"
-        class="px-6 py-4 text-2xl font-bold text-white bg-gray-600 rounded-2xl shadow-lg hover:bg-gray-500">
-        ⬅ Back to Home
-      </a>
-    </div>
+      ⬅ Back to Home
+    </a>
   </main>
-
-  <script src="https://js.stripe.com/v3/"></script>
-  <script>
-    // Your Stripe publishable key
-    const stripe = Stripe("pk_live_51SCQat4AL3nu6q3XfRZBph32p8GF6KacZuDTKWyPLUl8JACq8wQEnScN5l0qQj3b4ShubGTxjs4qh02jc03m6jNO00wWeYV47Z");
-
-    document.getElementById("checkoutBtn").addEventListener("click", () => {
-      stripe.redirectToCheckout({
-        // Your Price ID for $9.99/month subscription
-        lineItems: [{price: "price_1SCQz4AL3nu6q3XUdyE9jN6", quantity: 1}],
-        mode: "subscription",
-        successUrl: window.location.origin + "/success.html",
-        cancelUrl: window.location.origin + "/cancel.html",
-      });
-    });
-  </script>
 </body>
 </html>
