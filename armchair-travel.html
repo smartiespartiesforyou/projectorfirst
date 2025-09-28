@@ -3,198 +3,129 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Armchair Travel</title>
+  <title>Armchair Travel — ProjectorFirst</title>
+  <meta name="description" content="Armchair Travel — guided picture tours for big screens. Work in progress." />
+  <meta name="theme-color" content="#1e3a8a" />
+  <link rel="icon" href="logo.svg" type="image/svg+xml"/>
   <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    /* small helper so skip link appears only when focused */
+    .sr-only{position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden}
+    .sr-only:focus{position:static;width:auto;height:auto;margin:0;padding:.5rem 1rem;background:#1e3a8a;color:#fff;border-radius:.5rem}
+  </style>
 </head>
-<body class="bg-white text-gray-900 min-h-screen">
-  <div class="max-w-6xl mx-auto p-6 text-center">
-    <!-- Title -->
-    <h1 class="text-5xl font-extrabold mb-4 text-blue-900">Armchair Travel</h1>
-    <!-- Back to Apps (centered) -->
-    <div class="flex justify-center mb-6">
-      <a href="apps.html"
-         class="inline-flex items-center gap-2 px-6 py-3 bg-blue-900 text-white rounded-xl font-extrabold text-xl shadow hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300">
-        ← Back to Apps
+<body class="bg-white text-black min-h-screen">
+  <a href="#main" class="sr-only">Skip to main content</a>
+
+  <!-- Header -->
+  <header class="bg-white border-b border-black/10 py-4">
+    <div class="max-w-6xl mx-auto px-4 flex items-center justify-between">
+      <a href="index.html" class="flex items-center gap-3 focus:outline-none focus:ring-4 focus:ring-blue-400 rounded-xl">
+        <img src="logo.svg" alt="ProjectorFirst logo" class="w-12 h-12"/>
+        <span class="text-2xl font-extrabold text-blue-900">ProjectorFirst</span>
       </a>
-    </div>
 
-    <!-- Theme selector -->
-    <div class="flex flex-wrap justify-center gap-3 mb-6">
-      <label for="theme" class="text-xl font-bold text-blue-900 self-center">Choose a Trip:</label>
-      <select id="theme"
-              class="border-2 border-blue-600 rounded-xl px-3 py-2 text-lg font-semibold text-blue-900">
-        <option value="italy">🇮🇹 Italy</option>
-        <option value="africa">🦁 Africa</option>
-        <option value="world">🌍 Around the World</option>
-        <option value="parks">🏞️ National Parks</option>
-        <option value="oceans">🌊 Oceans</option>
-        <option value="route66">🛣️ Route 66</option>
-        <option value="louisiana">🎷 Louisiana</option>
-      </select>
-      <button id="startBtn"
-              class="bg-blue-600 hover:bg-blue-800 text-white px-6 py-2 rounded-xl font-bold text-lg">
-        Start
-      </button>
+      <nav class="space-x-2" aria-label="Primary">
+        <a href="index.html" class="px-4 py-2 rounded-xl bg-blue-900 text-white text-lg font-bold focus:outline-none">Home</a>
+        <a href="apps.html" class="px-4 py-2 rounded-xl bg-blue-900/90 text-white text-lg font-bold focus:outline-none">Apps</a>
+        <a href="checkout.html" class="px-4 py-2 rounded-xl bg-green-700 text-white text-lg font-bold focus:outline-none">Subscribe</a>
+      </nav>
     </div>
+  </header>
 
-    <!-- Slide -->
-    <div id="slide" class="hidden">
-      <!-- Big image area -->
-      <div class="w-full h-[60vh] max-h-[720px] border-4 border-blue-900 rounded-2xl bg-gray-100 flex items-center justify-center overflow-hidden mb-6">
-        <img id="slideImg"
-             alt=""
-             class="max-w-full max-h-full object-contain"
-             referrerpolicy="no-referrer" />
-        <div id="imgFallback" class="hidden text-3xl md:text-4xl font-bold text-gray-600 px-6">
-          Image unavailable — let’s keep traveling to the next slide!
-        </div>
+  <main id="main" class="max-w-6xl mx-auto px-6 py-12">
+    <!-- Work-in-progress banner (no notify) -->
+    <div role="status" aria-live="polite"
+         class="mb-8 p-6 rounded-2xl bg-yellow-50 border-2 border-yellow-300 text-center">
+      <h1 class="text-3xl font-extrabold text-yellow-900 mb-2">🛠 Work in progress</h1>
+      <p class="text-xl text-yellow-900 mb-4">
+        Armchair Travel is still being built and is not yet available. We're curating images and tuning large-screen controls — please check back soon.
+      </p>
+
+      <div class="flex flex-col sm:flex-row gap-4 justify-center">
+        <a href="apps.html"
+           class="inline-block px-6 py-3 text-2xl font-bold text-white bg-blue-800 rounded-2xl shadow hover:bg-blue-700 focus:outline-none" >
+          ⬅ Back to Apps
+        </a>
+
+        <a href="index.html"
+           class="inline-block px-6 py-3 text-2xl font-semibold text-gray-700 bg-gray-200 rounded-2xl hover:bg-gray-300 focus:outline-none">
+          ⬅ Back to Home
+        </a>
       </div>
 
-      <!-- Caption -->
-      <div id="caption" class="text-3xl md:text-4xl font-extrabold text-blue-900 mb-6"></div>
+      <p class="text-sm text-yellow-800 mt-4">No sign-ups — just check back here for updates.</p>
+    </div>
 
-      <!-- Navigation -->
-      <div class="flex justify-center gap-6">
-        <button id="prevBtn"
-                class="bg-white border-4 border-blue-900 text-blue-900 px-6 py-3 rounded-xl font-bold text-xl shadow hover:bg-gray-50">
-          ← Back
-        </button>
-        <button id="nextBtn"
-                class="bg-blue-900 text-white px-6 py-3 rounded-xl font-bold text-xl shadow hover:bg-blue-800">
-          Next →
+    <!-- Page content placeholder (keeps layout so it's obvious what will come) -->
+    <section class="bg-white border-2 border-blue-900 rounded-2xl p-8 shadow-sm text-center">
+      <h2 class="text-4xl font-extrabold text-blue-900 mb-6">Armchair Travel</h2>
+
+      <!-- Back to Apps (centered) -->
+      <div class="flex justify-center mb-6">
+        <a href="apps.html"
+           class="inline-flex items-center gap-2 px-6 py-3 bg-blue-900 text-white rounded-xl font-extrabold text-xl shadow hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300">
+          ← Back to Apps
+        </a>
+      </div>
+
+      <!-- Theme selector (visual only while WIP) -->
+      <div class="flex flex-wrap justify-center gap-3 mb-6">
+        <label for="theme" class="text-xl font-bold text-blue-900 self-center">Choose a Trip:</label>
+        <select id="theme"
+                class="border-2 border-blue-600 rounded-xl px-3 py-2 text-lg font-semibold text-blue-900"
+                disabled aria-disabled="true" title="Coming soon">
+          <option>🇮🇹 Italy</option>
+          <option>🦁 Africa</option>
+          <option>🌍 Around the World</option>
+          <option>🏞️ National Parks</option>
+          <option>🌊 Oceans</option>
+          <option>🛣️ Route 66</option>
+          <option>🎷 Louisiana</option>
+        </select>
+
+        <!-- Disabled Start button while work in progress -->
+        <button id="startBtn"
+                class="bg-gray-300 text-gray-600 px-6 py-2 rounded-xl font-bold text-lg cursor-not-allowed"
+                disabled aria-disabled="true" title="Coming soon">
+          Start (coming soon)
         </button>
       </div>
+
+      <!-- Informational placeholder area -->
+      <div class="text-lg text-gray-800 mb-6 max-w-3xl mx-auto">
+        <p class="mb-4">
+          Armchair Travel will show large, beautiful images and friendly captions you can read from across the room.
+        </p>
+        <p class="mb-4">
+          Right now the experience is under construction. We’re working on reliable images, large controls, and a smooth slideshow for big screens.
+        </p>
+        <p class="text-sm text-gray-600">Tip: Check back later — we'll replace this page with the full interactive experience when it's ready.</p>
+      </div>
+
+      <!-- Non-functional navigation placeholders (visual) -->
+      <div class="flex justify-center gap-6 mt-4">
+        <button class="bg-gray-200 text-gray-700 px-6 py-3 rounded-xl font-semibold text-xl cursor-not-allowed" disabled>← Back</button>
+        <button class="bg-gray-200 text-gray-700 px-6 py-3 rounded-xl font-semibold text-xl cursor-not-allowed" disabled>Next →</button>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-white border-t border-black/10 py-6 mt-12">
+    <div class="max-w-6xl mx-auto px-4 text-center text-lg">
+      © <span id="year"></span> ProjectorFirst • Big, Simple Apps for Senior Care
     </div>
-  </div>
+  </footer>
 
   <script>
-    // Slides with primary + fallback image sources (hotlink-safe)
-    const slides = {
-      italy: [
-        { img: "https://upload.wikimedia.org/wikipedia/commons/a/a4/Venice_grand_canal.jpg", alt: "Venice canals",
-          fallback: "https://images.unsplash.com/photo-1473953801984-2890c8fdb9f8?q=80&w=1600&auto=format&fit=crop",
-          caption: "Venice is famous for its canals. The city has no cars, only boats." },
-        { img: "https://upload.wikimedia.org/wikipedia/commons/d/d5/Colosseum_in_Rome%2C_Italy_-_April_2007.jpg", alt: "Colosseum in Rome",
-          fallback: "https://images.unsplash.com/photo-1549887534-1541e9323c83?q=80&w=1600&auto=format&fit=crop",
-          caption: "Rome’s Colosseum could hold 50,000 spectators for gladiator games." },
-        { img: "https://upload.wikimedia.org/wikipedia/commons/0/08/Florence_Duomo_and_City_View.jpg", alt: "Florence Duomo",
-          fallback: "https://images.unsplash.com/photo-1505765050516-f72dcac9c60e?q=80&w=1600&auto=format&fit=crop",
-          caption: "Florence is the birthplace of the Renaissance, full of art and history." }
-      ],
-      africa: [
-        { img: "https://upload.wikimedia.org/wikipedia/commons/9/98/Serengeti_Landscape.jpg", alt: "Serengeti grasslands",
-          fallback: "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=1600&auto=format&fit=crop",
-          caption: "The Serengeti is home to lions, elephants, zebras, and the Great Migration." },
-        { img: "https://upload.wikimedia.org/wikipedia/commons/3/3f/Victoria_Falls_-_panoramio.jpg", alt: "Victoria Falls",
-          fallback: "https://images.unsplash.com/photo-1534274988757-a28bf1a57c17?q=80&w=1600&auto=format&fit=crop",
-          caption: "Victoria Falls is one of the largest waterfalls in the world." },
-        { img: "https://upload.wikimedia.org/wikipedia/commons/e/e5/Table_Mountain_Cape_Town_South_Africa.jpg", alt: "Table Mountain, Cape Town",
-          fallback: "https://images.unsplash.com/photo-1501594907352-04cda38ebc29?q=80&w=1600&auto=format&fit=crop",
-          caption: "Cape Town’s Table Mountain offers incredible views of South Africa." }
-      ],
-      world: [
-        { img: "https://upload.wikimedia.org/wikipedia/commons/e/e6/Eiffel_Tower_and_Seine%2C_Paris_2_April_2014.jpg", alt: "Eiffel Tower in Paris",
-          fallback: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=1600&auto=format&fit=crop",
-          caption: "Paris is called the City of Light and is home to the Eiffel Tower." },
-        { img: "https://upload.wikimedia.org/wikipedia/commons/1/10/Great_Wall_of_China_July_2006.JPG", alt: "Great Wall of China",
-          fallback: "https://images.unsplash.com/photo-1501785888041-af3ef285b470?q=80&w=1600&auto=format&fit=crop",
-          caption: "The Great Wall of China stretches over 13,000 miles." },
-        { img: "https://upload.wikimedia.org/wikipedia/commons/a/a1/Statue_of_Liberty_7.jpg", alt: "Statue of Liberty",
-          fallback: "https://images.unsplash.com/photo-1552083375-1447ce886485?q=80&w=1600&auto=format&fit=crop",
-          caption: "The Statue of Liberty was a gift from France to the United States." }
-      ],
-      // NEW THEMES
-      parks: [
-        { img: "https://upload.wikimedia.org/wikipedia/commons/a/a0/Grand_Canyon_view_from_Pima_Point_2010.jpg", alt: "Grand Canyon",
-          fallback: "https://images.unsplash.com/photo-1501785888041-af3ef285b470?q=80&w=1600&auto=format&fit=crop",
-          caption: "Grand Canyon National Park reveals layers of Earth carved by the Colorado River." },
-        { img: "https://upload.wikimedia.org/wikipedia/commons/6/66/Grand_Prismatic_Spring_and_Midway_Geyser_Basin_from_above.jpg", alt: "Yellowstone Grand Prismatic Spring",
-          fallback: "https://images.unsplash.com/photo-1549880338-65ddcdfd017b?q=80&w=1600&auto=format&fit=crop",
-          caption: "Yellowstone’s Grand Prismatic Spring glows with brilliant natural colors." },
-        { img: "https://upload.wikimedia.org/wikipedia/commons/5/50/YosemitePark2_amk.jpg", alt: "Yosemite Valley",
-          fallback: "https://images.unsplash.com/photo-1500496733677-44b1a7c1ac2a?q=80&w=1600&auto=format&fit=crop",
-          caption: "Yosemite’s granite cliffs and waterfalls are some of America’s most iconic views." }
-      ],
-      oceans: [
-        { img: "https://upload.wikimedia.org/wikipedia/commons/5/5a/Pacific_Ocean_-_panoramio_%281%29.jpg", alt: "Pacific Ocean waves",
-          fallback: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=1600&auto=format&fit=crop",
-          caption: "The Pacific Ocean is the largest on Earth, covering more than a third of the planet." },
-        { img: "https://upload.wikimedia.org/wikipedia/commons/0/0a/Coral_Reef_in_the_Red_Sea.jpg", alt: "Colorful coral reef",
-          fallback: "https://images.unsplash.com/photo-1505761671935-60b3a7427bad?q=80&w=1600&auto=format&fit=crop",
-          caption: "Coral reefs are vibrant underwater cities full of fish and sea life." },
-        { img: "https://upload.wikimedia.org/wikipedia/commons/3/3a/Portland_Head_Light.jpg", alt: "Lighthouse on the coast",
-          fallback: "https://images.unsplash.com/photo-1470214304380-aadaedcfff80?q=80&w=1600&auto=format&fit=crop",
-          caption: "Lighthouses guide ships safely along rocky coastlines." }
-      ],
-      route66: [
-        { img: "https://upload.wikimedia.org/wikipedia/commons/7/77/Route_66_sign_in_Arizona.jpg", alt: "Route 66 sign, Arizona",
-          fallback: "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=1600&auto=format&fit=crop",
-          caption: "Route 66 is the ‘Mother Road,’ stretching from Chicago to Santa Monica." },
-        { img: "https://upload.wikimedia.org/wikipedia/commons/0/08/Cadillac_Ranch%2C_Amarillo%2C_Texas.jpg", alt: "Cadillac Ranch, Texas",
-          fallback: "https://images.unsplash.com/photo-1558981403-c5f9899a28bc?q=80&w=1600&auto=format&fit=crop",
-          caption: "Cadillac Ranch’s half-buried cars are a quirky Route 66 landmark." },
-        { img: "https://upload.wikimedia.org/wikipedia/commons/0/0b/Santa_Monica_Pier_2013.jpg", alt: "Santa Monica Pier",
-          fallback: "https://images.unsplash.com/photo-1494526585095-c41746248156?q=80&w=1600&auto=format&fit=crop",
-          caption: "The historic end of Route 66 is the sunny Santa Monica Pier." }
-      ],
-      louisiana: [
-        { img: "https://upload.wikimedia.org/wikipedia/commons/2/2a/New_Orleans_French_Quarter.jpg", alt: "French Quarter balconies",
-          fallback: "https://images.unsplash.com/photo-1490735891913-40897cdaabbc?q=80&w=1600&auto=format&fit=crop",
-          caption: "New Orleans’ French Quarter is known for iron balconies and jazz in the streets." },
-        { img: "https://upload.wikimedia.org/wikipedia/commons/d/d3/Atchafalaya_Basin.jpg", alt: "Louisiana bayou",
-          fallback: "https://images.unsplash.com/photo-1533499513792-8f5fa3b6f5a2?q=80&w=1600&auto=format&fit=crop",
-          caption: "Quiet bayous wind through cypress trees and Spanish moss." },
-        { img: "https://upload.wikimedia.org/wikipedia/commons/5/5e/Oak_Alley_Plantation.jpg", alt: "Oak Alley live oaks",
-          fallback: "https://images.unsplash.com/photo-1568640347023-4b0b8b9ac2a4?q=80&w=1600&auto=format&fit=crop",
-          caption: "Avenue of live oaks creates a grand canopy at Oak Alley." }
-      ]
-    };
+    // set footer year
+    document.getElementById('year').textContent = new Date().getFullYear();
 
-    let currentTheme = "italy";
-    let index = 0;
-
-    const imgEl = document.getElementById("slideImg");
-    const fallbackEl = document.getElementById("imgFallback");
-
-    document.getElementById("theme").addEventListener("change", e => {
-      currentTheme = e.target.value;
-    });
-
-    document.getElementById("startBtn").addEventListener("click", () => {
-      index = 0;
-      document.getElementById("slide").classList.remove("hidden");
-      showSlide();
-    });
-
-    document.getElementById("nextBtn").addEventListener("click", () => {
-      index = (index + 1) % slides[currentTheme].length;
-      showSlide();
-    });
-
-    document.getElementById("prevBtn").addEventListener("click", () => {
-      index = (index - 1 + slides[currentTheme].length) % slides[currentTheme].length;
-      showSlide();
-    });
-
-    function showSlide() {
-      const s = slides[currentTheme][index];
-      fallbackEl.classList.add("hidden");
-      imgEl.classList.remove("hidden");
-      imgEl.alt = s.alt || "";
-      imgEl.src = s.img;
-
-      // Fallback if main image fails
-      imgEl.onerror = () => {
-        if (imgEl.src !== s.fallback) {
-          imgEl.src = s.fallback;
-        } else {
-          imgEl.classList.add("hidden");
-          fallbackEl.classList.remove("hidden");
-        }
-      };
-
-      document.getElementById("caption").textContent = s.caption;
-    }
+    // Optional: if you later want to enable the UI, remove the disabled attribute
+    // and implement the slideshow code. For now, UI elements are intentionally disabled
+    // so visitors clearly see this page is coming soon.
   </script>
 </body>
 </html>
