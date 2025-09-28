@@ -3,9 +3,8 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <!-- Replace APP_NAME below -->
-  <title>APP_NAME — ProjectorFirst</title>
-  <meta name="description" content="APP_NAME — big-screen friendly activity. Work in progress." />
+  <title>Remember This — ProjectorFirst</title>
+  <meta name="description" content="Remember This — big-screen friendly activity. Work in progress." />
   <meta name="theme-color" content="#1e3a8a" />
   <link rel="icon" href="logo.svg" type="image/svg+xml"/>
   <script src="https://cdn.tailwindcss.com"></script>
@@ -34,7 +33,7 @@
   </header>
 
   <main id="main" class="max-w-6xl mx-auto px-6 py-12">
-    <!-- Work-in-progress banner (no notify) -->
+    <!-- Work-in-progress banner -->
     <div role="status" aria-live="polite"
          class="mb-8 p-6 rounded-2xl bg-yellow-50 border-2 border-yellow-300 text-center">
       <h1 class="text-3xl font-extrabold text-yellow-900 mb-2">🛠 Work in progress</h1>
@@ -57,22 +56,36 @@
       <p class="text-sm text-yellow-800 mt-4">No sign-ups — just check back here for updates.</p>
     </div>
 
-    <!-- Page content placeholder -->
+    <!-- Page content -->
     <section class="bg-white border-2 border-blue-900 rounded-2xl p-8 shadow-sm text-center">
-      <!-- Edit the emoji, APP_NAME, and short description below -->
       <div class="mb-6">
         <div class="flex items-center justify-center gap-4">
-          <span class="text-5xl">🎯</span> <!-- <- replace emoji -->
-          <h2 class="text-3xl font-extrabold text-blue-800">APP_NAME</h2> <!-- <- replace APP_NAME -->
+          <span class="text-5xl">🎯</span>
+          <h2 class="text-3xl font-extrabold text-blue-800">Remember This</h2>
         </div>
       </div>
 
-      <p class="text-2xl text-gray-800 mb-6">
-        <!-- <- replace this short description -->
-        A short description of APP_NAME goes here — what players will do and why it's helpful on a big screen.
-      </p>
+      <section class="max-w-4xl mx-auto p-8 text-center">
+        <h1 class="text-4xl font-extrabold text-blue-900 mb-4">Remember This</h1>
+        <p class="text-2xl text-gray-800 mb-6">
+          Flash large images or words, then test memory recall. Designed for group play with big text, high contrast, and simple one-button controls.
+        </p>
 
-      <p class="text-lg text-gray-700 mb-6">
+        <div class="text-lg text-gray-700 mb-6">
+          <p><strong>How to play:</strong></p>
+          <ul class="list-none space-y-2 mt-3">
+            <li>• Watch the image or word that appears on the screen.</li>
+            <li>• Press <strong>Start</strong> to begin a round.</li>
+            <li>• After the flash, answer from memory — quick and friendly for groups.</li>
+          </ul>
+        </div>
+
+        <button id="startBtn" class="px-8 py-4 text-2xl font-bold bg-blue-900 text-white rounded-2xl shadow-lg">
+          ▶ Start
+        </button>
+      </section>
+
+      <p class="text-lg text-gray-700 mb-6 mt-6">
         For now, this page is a placeholder while we finish the app. Please return to the Apps page or check back later.
       </p>
 
