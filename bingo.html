@@ -67,6 +67,15 @@
 <body class="flex flex-col items-center justify-start min-h-screen py-10">
   <main class="w-full max-w-4xl text-center">
     <h1 class="text-5xl font-extrabold text-blue-900 mb-6">🎉 Classic Bingo Caller</h1>
+<script>
+  // Check if the user has an active membership
+  const isMember = localStorage.getItem("pf_member");
+
+  if (!isMember) {
+    // If no membership, send them to the checkout page
+    window.location.href = "checkout.html";
+  }
+</script>
 <!-- Back to Apps -->
 <div class="mb-6">
   <a href="apps.html" class="btn btn-next">⬅ Back to Apps</a>
