@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Classic Bingo Caller — ProjectorFirst</title>
+  <meta name="description" content="Classic Bingo Caller — simple, big-screen friendly bingo caller."/>
+  <meta name="theme-color" content="#1e3a8a"/>
+  <link rel="icon" href="/logo.svg" type="image/svg+xml"/>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body { background: #ffffff; color: #000000; }
+
+    .caller-box {
+      position: relative;
+      width: min(90vw, 70vh, 640px);
+      height: min(90vw, 70vh, 640px);
+      border: 6px solid #1e3a8a;
+      border-radius: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: clamp(8rem, 28vmin, 20rem);
+      line-height: 1;
+      white-space: nowrap;
+      font-weight: bold;
+      background: #000;
+      color: #fff;
+      margin: 0 auto;
+      overflow: hidden;
+    }
+
+    .recent-calls span {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 90px;
+      height: 90px;
+      margin: 0.25rem;
+      border-radius: 50%;
+      color: #fff;
+      font-size: 2rem;
+      font-weight: bold;
+    }
+
+    /* Fixed colors for all themes */
+    .ball-B { background: #1e3a8a; } /* Blue */
+    .ball-I { background: #dc2626; } /* Red */
+    .ball-N { background: #16a34a; } /* Green */
+    .ball-G { background: #f97316; } /* Orange */
+    .ball-O { background: #9333ea; } /* Purple */
+
+    .btn {
+      font-size: 1.75rem;
+      font-weight: bold;
+      padding: 1.25rem 2.5rem;
+      border-radius: 1rem;
+      transition: background 0.2s;
+    }
+    .btn-next { background: #1e3a8a; color: white; }
+    .btn-next:hover { background: #1d4ed8; }
+    .btn-undo { background: #facc15; color: black; }
+    .btn-reset { background: #dc2626; color: white; }
+    .btn-fullscreen { background: #6d28d9; color: white; }
+  </style>
+</head>
+<body class="flex flex-col items-center justify-start min-h-screen py-10">
+  <main class="w-full max-w-4xl text-center">
+    <h1 class="text-5xl font-extrabold text-blue-900 mb-6">🎉 Classic Bingo Caller</h1>
+<script>
+  // Check if the user has an active membership
+  const isMember = localStorage.getItem("pf_member");
+
+  if (!isMember) {
+    // If no membership, send them to the checkout page
+    window.location.href = "checkout.html";
+  }
+</script>
+<!-- Back to Apps -->
+<div class="mb-6">
+  <a href="apps.html" class="btn btn-next">⬅ Back to Apps</a>
+</div>
+
+<!-- Back to Home -->
+<div class="mb-6">
+  </div>
+    <!-- ONE DROPDOWN -->
+    <div class="mb-6 text-left">
+      <label for="theme" class="block text-lg font-semibold text-blue-900 mb-2">Theme</label>
+      <select id="theme"
+              class="w-full text-xl p-3 border-2 border-blue-900 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-400">
+      </select>
+    </div>
+
+    <!-- Caller Box -->
+    <div id="callerBox" class="caller-box mb-8">
+      <span id="callerText">—</span>
+      <span id="themeSymbol" style="position:absolute; bottom:10px; right:10px; font-size:2.5rem;"></span>
+    </div>
+
+    <!-- Controls -->
+    <div class="flex flex-wrap justify-center gap-4 mb-6">
+      <button onclick="callNext()" class="btn btn-next">Call Next (Space)</button>
+      <button onclick="undoCall()" class="btn btn-undo">Undo (Backspace)</button>
+      <button onclick="resetCaller()" class="btn btn-reset">Reset (R)</button>
+      <button onclick="toggleFullscreen()" class="btn btn-fullscreen">Fullscreen (F)</button>
+    </div>
+
+    <!-- Sound Button -->
+    <button onclick="toggleSound()" id="soundBtn" class="btn border-2 border-blue-900 text-blue-900 bg-white">🔊 Sound</button>
+
+    <!-- Recent Calls -->
+    <h2 class="text-2xl font-bold text-blue-900 mt-10 mb-4">Previously Called</h2>
+    <div id="recentCalls" class="recent-calls"></div>
+  </main>
+
+  <script>
+    // Helper to create consistent themes
+    function makeTheme(label, ranges = [[1,15],[16,30],[31,45],[46,60],[61,75]], rate = 1.0, symbol = "") {
+      return {
+        label,
+        letters: ["B","I","N","G","O"],
+        ranges,
+        speakPrefix: (L, n) => `${L} ${n}`,
+        speakRate: rate,
+        ballClassFromLetter: L => `ball-${L}`,
+        symbol
+      };
+    }
+
+    // THEMES — single dropdown, fixed colors; holidays add a small symbol
+    const THEMES = {
+      classic75: makeTheme("Classic 1–75 (B I N G O)"),
+      uk90:      makeTheme("UK 1–90", [[1,18],[19,36],[37,54],[55,72],[73,90]]),
+      kids50:    makeTheme("Kids 1–50", [[1,10],[11,20],[21,30],[31,40],[41,50]]),
+      mini30:    makeTheme("Mini 1–30", [[1,6],[7,12],[13,18],[19,24],[25,30]]),
+      rapid75:   makeTheme("Rapid 1–75 (faster speech)", [[1,15],[16,30],[31,45],[46,60],[61,75]], 1.4),
+
+      halloween75:    makeTheme("Halloween 1–75", undefined, 1.0, "🎃"),
+      thanksgiving75: makeTheme("Thanksgiving 1–75", undefined, 1.0, "🦃"),
+      christmas75:    makeTheme("Christmas 1–75", undefined, 1.0, "🎄"),
+      easter75:       makeTheme("Easter 1–75", undefined, 1.0, "🐣"),
+      memorial75:     makeTheme("Memorial Day 1–75", undefined, 1.0, "⭐"),
+      flagday75:      makeTheme("Flag Day 1–75", undefined, 1.0, "🇺🇸"),
+      independence75: makeTheme("Independence Day 1–75", undefined, 1.0, "🎆"),
+      laborday75:     makeTheme("Labor Day 1–75", undefined, 1.0, "🛠️"),
+      newyear75:      makeTheme("New Year’s 1–75", undefined, 1.0, "🎉"),
+      valentines75:   makeTheme("Valentine’s 1–75", undefined, 1.0, "💘"),
+      stpatricks75:   makeTheme("St. Patrick’s 1–75", undefined, 1.0, "☘️")
+    };
+
+    let currentThemeKey = "classic75";
+    let letters = [];
+    let ranges = [];
+    let allNumbers = [];
+    let history = [];
+    let soundOn = true;
+
+    function initThemePicker() {
+      const sel = document.getElementById("theme");
+      sel.innerHTML = "";
+      Object.entries(THEMES).forEach(([key, cfg]) => {
+        const opt = document.createElement("option");
+        opt.value = key;
+        opt.textContent = cfg.label;
+        if (key === currentThemeKey) opt.selected = true;
+        sel.appendChild(opt);
+      });
+      sel.addEventListener("change", (e) => {
+        currentThemeKey = e.target.value;
+        applyTheme();
+      });
+    }
+
+    function applyTheme() {
+      const cfg = THEMES[currentThemeKey];
+      letters = cfg.letters;
+      ranges = cfg.ranges;
+      initGame();
+      document.getElementById("themeSymbol").textContent = cfg.symbol || "";
+    }
+
+    function initGame() {
+      allNumbers = [];
+      history = [];
+      for (let i = 0; i < letters.length; i++) {
+        const [min, max] = ranges[i];
+        for (let n = min; n <= max; n++) {
+          allNumbers.push({letter: letters[i], number: n});
+        }
+      }
+      shuffle(allNumbers);
+      document.getElementById("callerText").textContent = "—";
+      document.getElementById("recentCalls").innerHTML = "";
+    }
+
+    function shuffle(arr) {
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+    }
+
+    function callNext() {
+      if (allNumbers.length === 0) return;
+      const call = allNumbers.pop();
+      history.push(call);
+      document.getElementById("callerText").textContent = call.letter + " " + call.number;
+      updateRecent();
+      if (soundOn) {
+        const cfg = THEMES[currentThemeKey];
+        const phrase = cfg.speakPrefix(call.letter, call.number);
+        const utter = new SpeechSynthesisUtterance(phrase);
+        utter.rate = cfg.speakRate || 1.0;
+        speechSynthesis.speak(utter);
+      }
+    }
+
+    function undoCall() {
+      if (history.length === 0) return;
+      const last = history.pop();
+      allNumbers.push(last);
+      document.getElementById("callerText").textContent = "—";
+      updateRecent();
+    }
+
+    function resetCaller() { initGame(); }
+
+    function updateRecent() {
+      const cfg = THEMES[currentThemeKey];
+      const recentDiv = document.getElementById("recentCalls");
+      recentDiv.innerHTML = history
+        .slice(-10)
+        .reverse()
+        .map(c => `<span class="${cfg.ballClassFromLetter(c.letter)}">${c.letter} ${c.number}</span>`)
+        .join("");
+    }
+
+    function toggleSound() {
+      soundOn = !soundOn;
+      document.getElementById("soundBtn").textContent = soundOn ? "🔊 Sound" : "🔇 Muted";
+    }
+
+    function toggleFullscreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen();
+      } else {
+        if (document.exitFullscreen) document.exitFullscreen();
+      }
+    }
+
+    document.addEventListener("keydown", e => {
+      if (e.code === "Space") { e.preventDefault(); callNext(); }
+      if (e.code === "Backspace") { e.preventDefault(); undoCall(); }
+      if (e.code === "KeyR") { resetCaller(); }
+      if (e.code === "KeyF") { toggleFullscreen(); }
+    });
+
+    // Init
+    initThemePicker();
+    applyTheme();
+  </script>
+</body>
+</html>
