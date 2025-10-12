@@ -37,16 +37,15 @@
     }
   </style>
 </head>
+
 <body class="flex flex-col items-center justify-start min-h-screen py-10">
   <main class="w-full max-w-4xl text-center">
     <h1 class="text-5xl font-extrabold text-blue-900 mb-6">❓ Trivia Game</h1>
 
-    <!-- Back to Apps -->
     <div class="mb-6">
       <a href="apps.html" class="btn btn-primary">⬅ Back to Apps</a>
     </div>
 
-    <!-- Theme Picker -->
     <div class="mb-6 text-left">
       <label for="theme" class="block text-lg font-semibold text-blue-900 mb-2">Choose Theme</label>
       <select id="theme"
@@ -54,11 +53,9 @@
       </select>
     </div>
 
-    <!-- Question -->
     <div id="questionBox" class="question-box">Press "Next Question" to begin</div>
     <div id="answerBox" class="answer-box"></div>
 
-    <!-- Controls -->
     <div class="flex flex-wrap justify-center gap-4 mt-6">
       <button onclick="nextQuestion()" class="btn btn-primary">Next Question</button>
       <button onclick="checkAnswer(true)" class="btn btn-true">True</button>
@@ -67,9 +64,6 @@
   </main>
 
   <script>
-    // ========================
-    // TRUE/FALSE QUESTION BANK
-    // ========================
     const QUESTIONS = {
       general: [
         {q:"The capital of France is Paris.",a:true},
@@ -93,6 +87,7 @@
         {q:"Water boils at 100°C at sea level.",a:true},
         {q:"The moon is bigger than Earth.",a:false}
       ],
+
       holidays: [
         {q:"Christmas is celebrated on December 25.",a:true},
         {q:"Halloween is in July.",a:false},
@@ -115,6 +110,7 @@
         {q:"Christmas colors are pink and yellow.",a:false},
         {q:"New Year’s Eve is December 31.",a:true}
       ],
+
       movies: [
         {q:"Leonardo DiCaprio starred in Titanic.",a:true},
         {q:"The wizarding school in Harry Potter is called Hogwarts.",a:true},
@@ -137,47 +133,49 @@
         {q:"Tom Hanks voiced Woody in Toy Story.",a:true},
         {q:"Frozen is set in the desert.",a:false}
       ],
-residentRights: [
-  {q:"Residents have the right to make their own choices about their daily routine, such as when to wake up and when to go to bed.",a:true},
-  {q:"Staff can read a resident’s mail if they suspect it contains bad news that might upset them.",a:false},
-  {q:"Residents have the right to refuse any medication or treatment.",a:true},
-  {q:"A resident’s medical records can be shared with anyone who asks, as long as they work at the facility.",a:false},
-  {q:"Residents have the right to privacy during bathing, dressing, and personal care.",a:true},
-  {q:"If a resident doesn’t like their roommate, they must stay in the same room until discharge.",a:false},
-  {q:"Residents have the right to voice complaints or concerns without fear of punishment.",a:true},
-  {q:"Residents can participate in planning their own care and treatment.",a:true},
-  {q:"The facility can make a resident attend activities even if they don’t want to.",a:false},
-  {q:"Residents have the right to receive visitors of their choosing, at any reasonable hour.",a:true},
-  {q:"Residents can be transferred or discharged without notice if the facility needs the bed for another patient.",a:false},
-  {q:"Married residents have the right to share a room with their spouse if both agree and space allows.",a:true},
-  {q:"Staff members can decide how a resident spends their personal money.",a:false},
-  {q:"Residents have the right to practice their religion or choose not to practice any religion at all.",a:true},
-  {q:"Residents must get permission from the facility to vote.",a:false},
-  {q:"Residents have the right to be free from verbal, sexual, physical, and mental abuse.",a:true},
-  {q:"The facility must post a copy of the Resident Rights in a place everyone can see.",a:true},
-  {q:"Residents can be restrained (tied down) to prevent falls even if they don’t consent.",a:false},
-  {q:"Residents have the right to manage their own finances if they are able.",a:true},
-  {q:"Only the Administrator can file a complaint on behalf of a resident.",a:false},
-  {q:"If a resident is asleep during meal time, staff can skip offering food since they’re resting.",a:false},
-  {q:"Residents have the right to know the name and position of anyone providing their care.",a:true},
-  {q:"A resident can be punished for refusing to take part in an activity.",a:false},
-  {q:"Residents have the right to keep and use their own personal belongings as space allows.",a:true},
-  {q:"Staff are allowed to discuss a resident’s health loudly in the hallway.",a:false},
-  {q:"Residents have the right to social interaction with anyone they choose, including romantic relationships.",a:true},
-  {q:"Residents can be asked to leave the facility if their family complains too often.",a:false},
-  {q:"Residents have the right to receive information in a language or way they understand.",a:true},
-  {q:"Residents can be forced to share personal information in front of other residents.",a:false},
-  {q:"Residents have the right to participate in community and religious activities both inside and outside the facility.",a:true},
-  {q:"If a resident’s clothing gets lost in laundry, that’s just part of living in a nursing home.",a:false},
-  {q:"Residents have the right to access their medical records within 24 hours of a request.",a:true},
-  {q:"Staff can decide when a resident can see their own doctor.",a:false},
-  {q:"Residents have the right to be informed about their total health condition and any changes in their care.",a:true},
-  {q:"Residents can request a change in their plan of care at any time.",a:true},
-  {q:"If a resident can’t speak, they lose their right to make choices.",a:false},
-  {q:"Residents have the right to personal privacy, including phone calls and visits.",a:true},
-  {q:"The facility can hold a resident’s personal funds to ensure payment.",a:false},
-  {q:"Residents have the right to make advance directives such as living wills or power of attorney.",a:true}
-]
+
+      residentRights: [
+        {q:"Residents have the right to make their own choices about their daily routine, such as when to wake up and when to go to bed.",a:true},
+        {q:"Staff can read a resident’s mail if they suspect it contains bad news that might upset them.",a:false},
+        {q:"Residents have the right to refuse any medication or treatment.",a:true},
+        {q:"A resident’s medical records can be shared with anyone who asks, as long as they work at the facility.",a:false},
+        {q:"Residents have the right to privacy during bathing, dressing, and personal care.",a:true},
+        {q:"If a resident doesn’t like their roommate, they must stay in the same room until discharge.",a:false},
+        {q:"Residents have the right to voice complaints or concerns without fear of punishment.",a:true},
+        {q:"Residents can participate in planning their own care and treatment.",a:true},
+        {q:"The facility can make a resident attend activities even if they don’t want to.",a:false},
+        {q:"Residents have the right to receive visitors of their choosing, at any reasonable hour.",a:true},
+        {q:"Residents can be transferred or discharged without notice if the facility needs the bed for another patient.",a:false},
+        {q:"Married residents have the right to share a room with their spouse if both agree and space allows.",a:true},
+        {q:"Staff members can decide how a resident spends their personal money.",a:false},
+        {q:"Residents have the right to practice their religion or choose not to practice any religion at all.",a:true},
+        {q:"Residents must get permission from the facility to vote.",a:false},
+        {q:"Residents have the right to be free from verbal, sexual, physical, and mental abuse.",a:true},
+        {q:"The facility must post a copy of the Resident Rights in a place everyone can see.",a:true},
+        {q:"Residents can be restrained (tied down) to prevent falls even if they don’t consent.",a:false},
+        {q:"Residents have the right to manage their own finances if they are able.",a:true},
+        {q:"Only the Administrator can file a complaint on behalf of a resident.",a:false},
+        {q:"If a resident is asleep during meal time, staff can skip offering food since they’re resting.",a:false},
+        {q:"Residents have the right to know the name and position of anyone providing their care.",a:true},
+        {q:"A resident can be punished for refusing to take part in an activity.",a:false},
+        {q:"Residents have the right to keep and use their own personal belongings as space allows.",a:true},
+        {q:"Staff are allowed to discuss a resident’s health loudly in the hallway.",a:false},
+        {q:"Residents have the right to social interaction with anyone they choose, including romantic relationships.",a:true},
+        {q:"Residents can be asked to leave the facility if their family complains too often.",a:false},
+        {q:"Residents have the right to receive information in a language or way they understand.",a:true},
+        {q:"Residents can be forced to share personal information in front of other residents.",a:false},
+        {q:"Residents have the right to participate in community and religious activities both inside and outside the facility.",a:true},
+        {q:"If a resident’s clothing gets lost in laundry, that’s just part of living in a nursing home.",a:false},
+        {q:"Residents have the right to access their medical records within 24 hours of a request.",a:true},
+        {q:"Staff can decide when a resident can see their own doctor.",a:false},
+        {q:"Residents have the right to be informed about their total health condition and any changes in their care.",a:true},
+        {q:"Residents can request a change in their plan of care at any time.",a:true},
+        {q:"If a resident can’t speak, they lose their right to make choices.",a:false},
+        {q:"Residents have the right to personal privacy, including phone calls and visits.",a:true},
+        {q:"The facility can hold a resident’s personal funds to ensure payment.",a:false},
+        {q:"Residents have the right to make advance directives such as living wills or power of attorney.",a:true}
+      ],
+
       science: [
         {q:"Mars is called the Red Planet.",a:true},
         {q:"Plants take in oxygen and release carbon dioxide.",a:false},
@@ -200,6 +198,7 @@ residentRights: [
         {q:"The sun is a star.",a:true},
         {q:"Sharks are mammals.",a:false}
       ],
+
       sports: [
         {q:"A baseball team has 9 players.",a:true},
         {q:"Soccer is played with a puck.",a:false},
@@ -224,9 +223,6 @@ residentRights: [
       ]
     };
 
-    // ========================
-    // GAME LOGIC
-    // ========================
     let currentTheme = "general";
     let questionPool = [];
     let currentQuestion = null;
@@ -264,9 +260,7 @@ residentRights: [
     }
 
     function nextQuestion() {
-      if (questionPool.length === 0) {
-        resetGame();
-      }
+      if (questionPool.length === 0) resetGame();
       currentQuestion = questionPool.pop();
       document.getElementById("questionBox").textContent = currentQuestion.q;
       document.getElementById("answerBox").textContent = "";
@@ -274,16 +268,16 @@ residentRights: [
 
     function checkAnswer(choice) {
       if (!currentQuestion) return;
+      const answerBox = document.getElementById("answerBox");
       if (choice === currentQuestion.a) {
-        document.getElementById("answerBox").textContent = "✅ Correct!";
-        document.getElementById("answerBox").style.color = "green";
+        answerBox.textContent = "✅ Correct!";
+        answerBox.style.color = "green";
       } else {
-        document.getElementById("answerBox").textContent = "❌ Wrong!";
-        document.getElementById("answerBox").style.color = "red";
+        answerBox.textContent = "❌ Wrong!";
+        answerBox.style.color = "red";
       }
     }
 
-    // Init
     initThemePicker();
   </script>
 </body>
