@@ -11,19 +11,10 @@
   <style>
     body { background: #ffffff; color: #000000; }
 
-    .layout-area {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 1rem;
-      margin-bottom: 2rem;
-      flex-wrap: wrap;
-    }
-
     .caller-box {
       position: relative;
-      width: min(90vw, 70vh, 640px);
-      height: min(90vw, 70vh, 640px);
+      width: min(85vw, 70vh, 640px);
+      height: min(85vw, 70vh, 640px);
       border: 6px solid #1e3a8a;
       border-radius: 1rem;
       display: flex;
@@ -38,38 +29,27 @@
       overflow: hidden;
     }
 
-    /* Left column (recent calls) */
-    .recent-calls {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: flex-start;
-      max-height: 80vh;
-      overflow-y: auto;
-      margin-right: 0.5rem;
-    }
-
+    /* 🔵 Bigger bingo balls */
     .recent-calls span {
-      display: flex;
+      display: inline-flex;
       align-items: center;
       justify-content: center;
-      width: 90px;
-      aspect-ratio: 1 / 1; /* keeps it perfectly round */
-      margin: 0.25rem 0;
+      width: 110px;
+      height: 110px;
+      margin: 0.35rem;
       border-radius: 50%;
       color: #fff;
-      font-size: 2rem;
+      font-size: 2.25rem;
       font-weight: bold;
+      box-shadow: 0 0 6px rgba(0, 0, 0, 0.25);
     }
 
-    /* Right column (controls) */
-    .controls-area {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: flex-start;
-      gap: 1rem;
-    }
+    /* Fixed colors for all themes */
+    .ball-B { background: #1e3a8a; } /* Blue */
+    .ball-I { background: #dc2626; } /* Red */
+    .ball-N { background: #16a34a; } /* Green */
+    .ball-G { background: #f97316; } /* Orange */
+    .ball-O { background: #9333ea; } /* Purple */
 
     .btn {
       font-size: 1.75rem;
@@ -78,61 +58,74 @@
       border-radius: 1rem;
       transition: background 0.2s;
       width: 100%;
-      max-width: 280px;
+      text-align: center;
     }
-
     .btn-next { background: #1e3a8a; color: white; }
     .btn-next:hover { background: #1d4ed8; }
     .btn-undo { background: #facc15; color: black; }
     .btn-reset { background: #dc2626; color: white; }
     .btn-fullscreen { background: #6d28d9; color: white; }
-    .btn-sound { border: 2px solid #1e3a8a; color: #1e3a8a; background: white; }
-    .btn-sound:hover { background: #e0e7ff; }
 
-    /* Fixed colors for all themes */
-    .ball-B { background: #1e3a8a; } /* Blue */
-    .ball-I { background: #dc2626; } /* Red */
-    .ball-N { background: #16a34a; } /* Green */
-    .ball-G { background: #f97316; } /* Orange */
-    .ball-O { background: #9333ea; } /* Purple */
+    .recent-calls {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: start;
+      max-height: 640px;
+      overflow-y: auto;
+      margin: 0;
+      padding: 0;
+    }
+
+    @media (max-width: 768px) {
+      .recent-calls {
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+    }
   </style>
 </head>
-<body class="flex flex-col items-center justify-start min-h-screen py-10">
+<body class="flex flex-col items-center justify-start min-h-screen py-2">
   <main class="w-full max-w-6xl text-center">
-    <h1 class="text-5xl font-extrabold text-blue-900 mb-6">🎉 Classic Bingo Caller</h1>
-
-    <!-- Back to Apps -->
-    <div class="mb-6">
-      <a href="apps.html" class="btn btn-next">⬅ Back to Apps</a>
+    <!-- Header and Back Button -->
+    <div class="flex items-center justify-between mb-4 px-6">
+      <a href="apps.html" class="btn btn-next w-auto px-6 py-2 text-lg">⬅ Back to Apps</a>
+      <h1 class="text-5xl font-extrabold text-blue-900 mx-auto">🎉 Classic Bingo Caller</h1>
+      <div class="w-40"></div> <!-- spacer -->
     </div>
 
-    <!-- ONE DROPDOWN -->
-    <div class="mb-6 text-left">
+    <!-- Theme Selector -->
+    <div class="mb-4 text-left px-6">
       <label for="theme" class="block text-lg font-semibold text-blue-900 mb-2">Theme</label>
       <select id="theme"
               class="w-full text-xl p-3 border-2 border-blue-900 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-400">
       </select>
     </div>
 
-    <!-- Main Layout: Left balls / Center caller / Right buttons -->
-    <div class="layout-area">
-      <!-- Left: called balls -->
+    <!-- Main Bingo Section -->
+    <div class="flex flex-col md:flex-row items-start justify-center gap-6 mb-4">
+
+      <!-- Left: Called Balls -->
       <div id="recentCalls" class="recent-calls"></div>
 
-      <!-- Center: caller -->
-      <div id="callerBox" class="caller-box">
-        <span id="callerText">—</span>
-        <span id="themeSymbol" style="position:absolute; bottom:10px; right:10px; font-size:2.5rem;"></span>
+      <!-- Center: Caller Box -->
+      <div class="flex justify-center w-full md:w-auto">
+        <div id="callerBox" class="caller-box">
+          <span id="callerText">—</span>
+          <span id="themeSymbol" style="position:absolute; bottom:10px; right:10px; font-size:2.5rem;"></span>
+        </div>
       </div>
 
-      <!-- Right: buttons -->
-      <div class="controls-area">
+      <!-- Right: Controls -->
+      <div class="flex flex-col gap-3 w-56">
         <button onclick="callNext()" class="btn btn-next">Call Next (Space)</button>
         <button onclick="undoCall()" class="btn btn-undo">Undo (Backspace)</button>
         <button onclick="resetCaller()" class="btn btn-reset">Reset (R)</button>
         <button onclick="toggleFullscreen()" class="btn btn-fullscreen">Fullscreen (F)</button>
-        <button onclick="toggleSound()" id="soundBtn" class="btn btn-sound">🔊 Sound</button>
+        <button onclick="toggleSound()" id="soundBtn" class="btn border-2 border-blue-900 text-blue-900 bg-white">🔊 Sound</button>
       </div>
+
     </div>
   </main>
 
@@ -155,7 +148,6 @@
       kids50:    makeTheme("Kids 1–50", [[1,10],[11,20],[21,30],[31,40],[41,50]]),
       mini30:    makeTheme("Mini 1–30", [[1,6],[7,12],[13,18],[19,24],[25,30]]),
       rapid75:   makeTheme("Rapid 1–75 (faster speech)", [[1,15],[16,30],[31,45],[46,60],[61,75]], 1.4),
-
       halloween75:    makeTheme("Halloween 1–75", undefined, 1.0, "🎃"),
       thanksgiving75: makeTheme("Thanksgiving 1–75", undefined, 1.0, "🦃"),
       christmas75:    makeTheme("Christmas 1–75", undefined, 1.0, "🎄"),
@@ -230,6 +222,7 @@
       if (soundOn) {
         const cfg = THEMES[currentThemeKey];
         const phrase = cfg.speakPrefix(call.letter, call.number);
+        speechSynthesis.cancel();
         const utter = new SpeechSynthesisUtterance(phrase);
         utter.rate = cfg.speakRate || 1.0;
         speechSynthesis.speak(utter);
