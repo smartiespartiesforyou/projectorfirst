@@ -15,7 +15,7 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      gap: 2rem;
+      gap: 1rem; /* tighter gap */
       margin-bottom: 2rem;
       flex-wrap: wrap;
     }
@@ -46,6 +46,7 @@
       justify-content: flex-start;
       max-height: 80vh;
       overflow-y: auto;
+      margin-right: 0.5rem; /* close to box */
     }
 
     .recent-calls span {
@@ -87,6 +88,13 @@
     .btn-fullscreen { background: #6d28d9; color: white; }
     .btn-sound { border: 2px solid #1e3a8a; color: #1e3a8a; background: white; }
     .btn-sound:hover { background: #e0e7ff; }
+
+    /* Fixed colors for all themes */
+    .ball-B { background: #1e3a8a; } /* Blue */
+    .ball-I { background: #dc2626; } /* Red */
+    .ball-N { background: #16a34a; } /* Green */
+    .ball-G { background: #f97316; } /* Orange */
+    .ball-O { background: #9333ea; } /* Purple */
   </style>
 </head>
 <body class="flex flex-col items-center justify-start min-h-screen py-10">
