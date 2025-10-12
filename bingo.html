@@ -11,6 +11,15 @@
   <style>
     body { background: #ffffff; color: #000000; }
 
+    .caller-area {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 2rem;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+    }
+
     .caller-box {
       position: relative;
       width: min(90vw, 70vh, 640px);
@@ -26,20 +35,17 @@
       font-weight: bold;
       background: #000;
       color: #fff;
-      margin: 0 auto;
       overflow: hidden;
     }
 
-    /* Updated vertical layout for called balls */
+    /* The vertical stack next to the caller */
     .recent-calls {
-      position: fixed;
-      left: 1rem;
-      top: 50%;
-      transform: translateY(-50%);
       display: flex;
       flex-direction: column;
       align-items: center;
-      z-index: 50;
+      justify-content: flex-start;
+      max-height: 80vh;
+      overflow-y: auto;
     }
 
     .recent-calls span {
@@ -77,7 +83,7 @@
   </style>
 </head>
 <body class="flex flex-col items-center justify-start min-h-screen py-10">
-  <main class="w-full max-w-4xl text-center">
+  <main class="w-full max-w-6xl text-center">
     <h1 class="text-5xl font-extrabold text-blue-900 mb-6">🎉 Classic Bingo Caller</h1>
 
     <!-- Back to Apps -->
@@ -93,10 +99,13 @@
       </select>
     </div>
 
-    <!-- Caller Box -->
-    <div id="callerBox" class="caller-box mb-8">
-      <span id="callerText">—</span>
-      <span id="themeSymbol" style="position:absolute; bottom:10px; right:10px; font-size:2.5rem;"></span>
+    <!-- Caller + Recent Calls side-by-side -->
+    <div class="caller-area">
+      <div id="recentCalls" class="recent-calls"></div>
+      <div id="callerBox" class="caller-box">
+        <span id="callerText">—</span>
+        <span id="themeSymbol" style="position:absolute; bottom:10px; right:10px; font-size:2.5rem;"></span>
+      </div>
     </div>
 
     <!-- Controls -->
@@ -110,9 +119,6 @@
     <!-- Sound Button -->
     <button onclick="toggleSound()" id="soundBtn" class="btn border-2 border-blue-900 text-blue-900 bg-white">🔊 Sound</button>
   </main>
-
-  <!-- Previously Called -->
-  <div id="recentCalls" class="recent-calls"></div>
 
   <script>
     function makeTheme(label, ranges = [[1,15],[16,30],[31,45],[46,60],[61,75]], rate = 1.0, symbol = "") {
