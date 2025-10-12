@@ -23,15 +23,21 @@
     .login-btn {
       display: inline-block;
       background-color: #1e3a8a;
-      color: white;
+      color: white !important; /* Force white text */
       padding: 12px 30px;
       border-radius: 8px;
       font-size: 18px;
-      text-decoration: none;
+      text-decoration: none !important;
       cursor: pointer;
     }
     .login-btn:hover {
       background-color: #3349b4;
+    }
+
+    /* Force white text even on injected widget link */
+    .login-btn a {
+      color: white !important;
+      text-decoration: none !important;
     }
   </style>
 </head>
@@ -43,14 +49,4 @@
 
   <script>
     if (window.netlifyIdentity) {
-      window.netlifyIdentity.on("init", user => {
-        if (!user) {
-          window.netlifyIdentity.on("login", () => {
-            document.location.href = "/index.html"; // redirect after login
-          });
-        }
-      });
-    }
-  </script>
-</body>
-</html>
+      window.netlifyIdentity.on("init", us
