@@ -11,7 +11,7 @@
   <style>
     body { background: #ffffff; color: #000000; }
 
-    .caller-area {
+    .layout-area {
       display: flex;
       justify-content: center;
       align-items: center;
@@ -38,7 +38,7 @@
       overflow: hidden;
     }
 
-    /* The vertical stack next to the caller */
+    /* Left column (recent calls) */
     .recent-calls {
       display: flex;
       flex-direction: column;
@@ -61,12 +61,14 @@
       font-weight: bold;
     }
 
-    /* Fixed colors for all themes */
-    .ball-B { background: #1e3a8a; } /* Blue */
-    .ball-I { background: #dc2626; } /* Red */
-    .ball-N { background: #16a34a; } /* Green */
-    .ball-G { background: #f97316; } /* Orange */
-    .ball-O { background: #9333ea; } /* Purple */
+    /* Right column (controls) */
+    .controls-area {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 1rem;
+    }
 
     .btn {
       font-size: 1.75rem;
@@ -74,12 +76,17 @@
       padding: 1.25rem 2.5rem;
       border-radius: 1rem;
       transition: background 0.2s;
+      width: 100%;
+      max-width: 280px;
     }
+
     .btn-next { background: #1e3a8a; color: white; }
     .btn-next:hover { background: #1d4ed8; }
     .btn-undo { background: #facc15; color: black; }
     .btn-reset { background: #dc2626; color: white; }
     .btn-fullscreen { background: #6d28d9; color: white; }
+    .btn-sound { border: 2px solid #1e3a8a; color: #1e3a8a; background: white; }
+    .btn-sound:hover { background: #e0e7ff; }
   </style>
 </head>
 <body class="flex flex-col items-center justify-start min-h-screen py-10">
@@ -99,25 +106,26 @@
       </select>
     </div>
 
-    <!-- Caller + Recent Calls side-by-side -->
-    <div class="caller-area">
+    <!-- Main Layout: Left balls / Center caller / Right buttons -->
+    <div class="layout-area">
+      <!-- Left: called balls -->
       <div id="recentCalls" class="recent-calls"></div>
+
+      <!-- Center: caller -->
       <div id="callerBox" class="caller-box">
         <span id="callerText">—</span>
         <span id="themeSymbol" style="position:absolute; bottom:10px; right:10px; font-size:2.5rem;"></span>
       </div>
-    </div>
 
-    <!-- Controls -->
-    <div class="flex flex-wrap justify-center gap-4 mb-6">
-      <button onclick="callNext()" class="btn btn-next">Call Next (Space)</button>
-      <button onclick="undoCall()" class="btn btn-undo">Undo (Backspace)</button>
-      <button onclick="resetCaller()" class="btn btn-reset">Reset (R)</button>
-      <button onclick="toggleFullscreen()" class="btn btn-fullscreen">Fullscreen (F)</button>
+      <!-- Right: buttons -->
+      <div class="controls-area">
+        <button onclick="callNext()" class="btn btn-next">Call Next (Space)</button>
+        <button onclick="undoCall()" class="btn btn-undo">Undo (Backspace)</button>
+        <button onclick="resetCaller()" class="btn btn-reset">Reset (R)</button>
+        <button onclick="toggleFullscreen()" class="btn btn-fullscreen">Fullscreen (F)</button>
+        <button onclick="toggleSound()" id="soundBtn" class="btn btn-sound">🔊 Sound</button>
+      </div>
     </div>
-
-    <!-- Sound Button -->
-    <button onclick="toggleSound()" id="soundBtn" class="btn border-2 border-blue-900 text-blue-900 bg-white">🔊 Sound</button>
   </main>
 
   <script>
