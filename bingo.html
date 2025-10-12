@@ -1,3 +1,17 @@
+<script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+<script>
+  // wait until the widget is ready
+  document.addEventListener("DOMContentLoaded", function() {
+    if (window.netlifyIdentity) {
+      window.netlifyIdentity.on("init", user => {
+        // if there's no logged-in user, send them to the login page
+        if (!user) {
+          window.location.href = "/login.html";
+        }
+      });
+    }
+  });
+</script>
 <!DOCTYPE html>
 <html lang="en">
 <head>
