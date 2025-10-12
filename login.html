@@ -6,17 +6,39 @@
   <title>Login | ProjectorFirst</title>
   <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
   <style>
-    body { font-family: sans-serif; text-align: center; background: #f9f9f9; }
-    h1 { color: #1e3a8a; }
-    button { font-size: 18px; padding: 10px 20px; margin-top: 20px; }
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background: #f8fafc;
+      color: #1e3a8a;
+      padding-top: 100px;
+    }
+    h1 {
+      font-size: 2em;
+      margin-bottom: 0.5em;
+    }
+    p {
+      margin-bottom: 2em;
+    }
+    button {
+      font-size: 18px;
+      padding: 10px 25px;
+      border: none;
+      border-radius: 8px;
+      background-color: #1e3a8a;
+      color: white;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #3349b4;
+    }
   </style>
 </head>
 <body>
   <h1>Welcome to ProjectorFirst</h1>
   <p>Log in or sign up to access all games.</p>
 
-  <div data-netlify-identity-menu></div>
-  <div data-netlify-identity-button>Login / Signup</div>
+  <button data-netlify-identity-button>Login / Signup</button>
 
   <script>
     if (window.netlifyIdentity) {
