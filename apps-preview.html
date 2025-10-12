@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Preview the Apps — ProjectorFirst</title>
+  <meta name="description" content="Preview the easy, projector-friendly games from ProjectorFirst."/>
+  <meta name="theme-color" content="#1e3a8a"/>
+  <link rel="icon" href="logo.svg" type="image/svg+xml"/>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body { background: #ffffff; color: #000000; }
+    .card {
+      border: 2px solid #1e3a8a;
+      border-radius: 1.25rem;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      transition: transform .2s;
+    }
+    .card:hover { transform: translateY(-3px); }
+  </style>
+</head>
+
+<body class="bg-white text-black">
+  <!-- Header -->
+  <header class="bg-white border-b border-black/10 py-4 shadow-sm">
+    <div class="max-w-6xl mx-auto px-4 flex items-center justify-between">
+      <a href="index.html" class="flex items-center gap-3">
+        <img src="logo.svg" alt="ProjectorFirst logo" class="w-12 h-12"/>
+        <span class="text-3xl font-extrabold text-blue-900">ProjectorFirst</span>
+      </a>
+      <nav class="space-x-2">
+        <a href="index.html" class="px-5 py-3 rounded-xl bg-blue-900/90 text-white text-xl font-bold hover:bg-blue-800 transition">Home</a>
+        <a href="apps-preview.html" aria-current="page" class="px-5 py-3 rounded-xl bg-blue-900 text-white text-xl font-bold">See the Apps</a>
+        <a href="contact.html" class="px-5 py-3 rounded-xl bg-blue-900/90 text-white text-xl font-bold hover:bg-blue-800 transition">Contact</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main -->
+  <main class="max-w-6xl mx-auto px-4 py-14 text-center">
+    <h1 class="text-5xl sm:text-6xl font-extrabold mb-8 text-blue-900">Preview the ProjectorFirst Apps</h1>
+    <p class="text-2xl mb-12 max-w-3xl mx-auto">
+      Try our simple, big-screen apps made for nursing homes and activity directors. 
+      Each app is designed for visibility, ease, and fun.
+    </p>
+
+    <!-- Preview Grid -->
+    <div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+      <!-- Bingo -->
+      <div class="card p-6 flex flex-col items-center text-center">
+        <img src="bingo-preview.jpg" alt="Bingo Caller preview" class="rounded-xl w-full h-48 object-cover mb-4">
+        <h2 class="text-3xl font-bold text-blue-900 mb-2">🎉 Bingo Caller</h2>
+        <p>Call numbers automatically, display big letters, and let residents follow along easily.</p>
+      </div>
+
+      <!-- Trivia -->
+      <div class="card p-6 flex flex-col items-center text-center">
+        <img src="trivia-preview.jpg" alt="Trivia Game preview" class="rounded-xl w-full h-48 object-cover mb-4">
+        <h2 class="text-3xl font-bold text-blue-900 mb-2">🧠 Trivia Game</h2>
+        <p>Fun true/false and multiple choice trivia — perfect for groups and memory engagement.</p>
+      </div>
+
+      <!-- Dice Roller -->
+      <div class="card p-6 flex flex-col items-center text-center">
+        <img src="dice-preview.jpg" alt="Dice Roller preview" class="rounded-xl w-full h-48 object-cover mb-4">
+        <h2 class="text-3xl font-bold text-blue-900 mb-2">🎲 Dice Roller</h2>
+        <p>Roll giant dice on screen — great for quick games, activities, and movement breaks.</p>
+      </div>
+    </div>
+
+    <!-- Subscribe Button -->
+    <div class="mt-16">
+      <a href="checkout.html"
+         class="inline-block px-10 py-5 rounded-xl bg-green-700 text-white font-bold text-3xl hover:bg-green-600 transition">
+        💳 Unlock All Apps — $9.99/month
+      </a>
+      <p class="text-lg mt-3 text-gray-600">Instant access after sign-up. Cancel anytime.</p>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-white border-t border-black/10 py-6 mt-12">
+    <div class="max-w-6xl mx-auto px-4 text-center text-lg">
+      © <span id="year"></span> ProjectorFirst • Big, Simple Apps for Nursing Homes & Senior Care
+    </div>
+  </footer>
+
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>
