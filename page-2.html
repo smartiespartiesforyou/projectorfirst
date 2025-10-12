@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Preview the Apps — ProjectorFirst</title>
+  <meta name="description" content="Preview big, simple projector-friendly apps for nursing homes and activity directors."/>
+  <meta name="theme-color" content="#1e3a8a"/>
+  <link rel="icon" href="logo.svg" type="image/svg+xml"/>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body { background: #ffffff; color: #000; }
+    .app-card {
+      border: 2px solid #1e3a8a;
+      border-radius: 1rem;
+      overflow: hidden;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      transition: transform 0.2s ease;
+    }
+    .app-card:hover { transform: scale(1.03); }
+    .app-img {
+      width: 100%;
+      height: 240px;
+      object-fit: cover;
+    }
+    .btn {
+      display: inline-block;
+      background: #1e3a8a;
+      color: #fff;
+      padding: 0.75rem 1.5rem;
+      border-radius: 0.75rem;
+      font-weight: bold;
+      text-decoration: none;
+      transition: background 0.2s ease;
+    }
+    .btn:hover { background: #1d4ed8; }
+  </style>
+</head>
+
+<body class="flex flex-col items-center justify-start min-h-screen py-10">
+  <main class="w-full max-w-6xl text-center px-4">
+    <h1 class="text-5xl font-extrabold text-blue-900 mb-6">🎬 Preview the ProjectorFirst Apps</h1>
+    <p class="text-xl text-gray-700 mb-10">
+      Try our simple, big-screen apps made for nursing homes and activity directors.<br/>
+      Each app is designed for visibility, ease, and fun.
+    </p>
+
+    <!-- App Cards -->
+    <div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+      <!-- Bingo -->
+      <div class="app-card">
+        <img src="images/bingo-preview.png" alt="Bingo Caller preview" class="app-img"/>
+        <div class="p-4">
+          <h2 class="text-2xl font-bold text-blue-900 mb-2">Classic Bingo Caller</h2>
+          <p class="text-gray-700 mb-4">Call Bingo numbers on the big screen — easy to see, easy to hear.</p>
+          <a href="bingo.html" class="btn">🎲 Try Bingo</a>
+        </div>
+      </div>
+
+      <!-- Pictionary -->
+      <div class="app-card">
+        <img src="images/pictionary-preview.png" alt="Pictionary preview" class="app-img"/>
+        <div class="p-4">
+          <h2 class="text-2xl font-bold text-blue-900 mb-2">Pictionary Reveal</h2>
+          <p class="text-gray-700 mb-4">Reveal a hidden picture piece by piece — perfect for guessing games.</p>
+          <a href="pictionary.html" class="btn">🧩 Try Pictionary</a>
+        </div>
+      </div>
+
+      <!-- Pokeno -->
+      <div class="app-card">
+        <img src="images/pokeno-preview.png" alt="Pokeno Caller preview" class="app-img"/>
+        <div class="p-4">
+          <h2 class="text-2xl font-bold text-blue-900 mb-2">Pokeno Caller</h2>
+          <p class="text-gray-700 mb-4">Call cards automatically for Pokeno groups — clear, simple display.</p>
+          <a href="pokeno.html" class="btn">♥ Try Pokeno</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-12">
+      <a href="checkout.html" class="btn bg-green-700 hover:bg-green-600">💳 Subscribe for Full Access</a>
+    </div>
+  </main>
+</body>
+</html>
