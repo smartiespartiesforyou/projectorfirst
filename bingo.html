@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>Classic Bingo Caller — ProjectorFirst</title>
 
-  <!-- ✅ Memberstack script goes right here -->
+  <!-- ✅ Memberstack -->
   <script src="https://api.memberstack.io/static/memberstack.js?custom"
           data-memberstack-id="pk_650cfbc9692b47a2c045"></script>
 
@@ -15,10 +15,6 @@
   <script src="https://cdn.tailwindcss.com"></script>
 
   <style>
-    body { background: #ffffff; color: #000000; }
-    /* keep the rest of your style rules here */
-  </style>
-</head>
     body { background: #ffffff; color: #000000; }
 
     .caller-box {
@@ -94,23 +90,7 @@
     }
   </style>
 </head>
-
 <body class="flex flex-col items-center justify-start min-h-screen py-2">
-
-  <!-- 🔒 Login Protection Script -->
-  <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
-  <script>
-    document.addEventListener("DOMContentLoaded", function() {
-      if (window.netlifyIdentity) {
-        window.netlifyIdentity.on("init", user => {
-          if (!user) {
-            window.location.href = "/login.html";
-          }
-        });
-      }
-    });
-  </script>
-
   <main class="w-full max-w-6xl text-center">
     <div class="flex items-center justify-between mb-4 px-6">
       <a href="apps.html" class="btn btn-next w-auto px-6 py-2 text-lg">⬅ Back to Apps</a>
@@ -126,7 +106,6 @@
     </div>
 
     <div class="flex flex-col md:flex-row items-start justify-center gap-6 mb-4">
-
       <div id="recentCalls" class="recent-calls"></div>
 
       <div class="flex justify-center w-full md:w-auto">
@@ -195,7 +174,7 @@
         if (key === currentThemeKey) opt.selected = true;
         sel.appendChild(opt);
       });
-      sel.addEventListener("change", e => {
+      sel.addEventListener("change", (e) => {
         currentThemeKey = e.target.value;
         applyTheme();
       });
