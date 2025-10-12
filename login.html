@@ -20,16 +20,17 @@
     p {
       margin-bottom: 2em;
     }
-    button {
-      font-size: 18px;
-      padding: 10px 25px;
-      border: none;
-      border-radius: 8px;
+    .login-btn {
+      display: inline-block;
       background-color: #1e3a8a;
       color: white;
+      padding: 12px 30px;
+      border-radius: 8px;
+      font-size: 18px;
+      text-decoration: none;
       cursor: pointer;
     }
-    button:hover {
+    .login-btn:hover {
       background-color: #3349b4;
     }
   </style>
@@ -38,7 +39,7 @@
   <h1>Welcome to ProjectorFirst</h1>
   <p>Log in or sign up to access all games.</p>
 
-  <button data-netlify-identity-button>Login / Signup</button>
+  <div class="login-btn" data-netlify-identity-button></div>
 
   <script>
     if (window.netlifyIdentity) {
