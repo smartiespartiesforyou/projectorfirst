@@ -14,24 +14,40 @@
 
   <style>
     body { background:#fff; font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial; }
+
     @media print {
       @page { size: 11in 17in landscape; margin: 0.5in; }
       #toolbar, #graphics-panel, #contextMenu { display: none !important; }
       body { margin: 0; }
     }
 
-    /* Printable canvas wrapper */
-    #print-area { position: relative; background:#fff; box-shadow: 0 0 0 1px #cbd5e1; overflow: hidden; }
-
-    /* Background theme image (under everything) */
-    #bgTheme {
-      position:absolute; inset:0; width:100%; height:100%;
-      object-fit:cover; opacity:0; pointer-events:none; z-index:0;
+    /* Printable area */
+    #print-area {
+      position: relative;
+      background:#fff;
+      box-shadow: 0 0 0 1px #cbd5e1;
+      overflow: hidden;
     }
 
-    .weekday { background:#1e3a8a; color:#fff; font-weight:700; text-align:center; padding:0.5rem; }
+    /* Background */
+    #bgTheme {
+      position:absolute; inset:0;
+      width:100%; height:100%;
+      object-fit:cover;
+      opacity:0;
+      pointer-events:none;
+      z-index:0;
+    }
 
-    .day-grid { position:relative; z-index:1; } /* on top of bg */
+    .weekday {
+      background:#1e3a8a;
+      color:#fff;
+      font-weight:700;
+      text-align:center;
+      padding:0.5rem;
+    }
+
+    .day-grid { position:relative; z-index:1; }
 
     .day-box {
       position: relative;
@@ -44,56 +60,53 @@
     }
 
     .inactive { opacity:0.25; }
-.inactive .day-content:empty::before { content: ""; }
+    .inactive .day-content:empty::before { content: ""; }
 
-.day-num {
-  position: absolute;
-  top: 0.35rem;
-  right: 0.45rem;
-  font-size: 1.25rem;   /* was 0.75rem */
-  font-weight: 700;     /* makes it bold */
-  color: #374151;       /* darker for contrast */
-}
+    .day-num {
+      position: absolute;
+      top: 0.35rem;
+      right: 0.45rem;
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #374151;
+    }
 
-.day-content {
-  margin-top: 1rem;
-  padding: 0.25rem;
-  line-height: 1.25rem;
-  font-size: 0.95rem;
-  outline: none;
-  min-height: 7rem;
-  white-space: pre-wrap;
-}
+    .day-content {
+      margin-top: 1rem;
+      padding: 0.25rem;
+      line-height: 1.25rem;
+      font-size: 0.95rem;
+      outline: none;
+      min-height: 7rem;
+      white-space: pre-wrap;
+    }
 
-.day-content:empty::before {
-  content: "Type here…";
-  color: #9ca3af;
-  white-space: pre-wrap;
-}
+    .day-content:empty::before {
+      content: "Type here…";
+      color: #9ca3af;
+      white-space: pre-wrap;
+    }
 
-.draggable-img { width:40px; height:40px; cursor:grab; user-select:none; }
-.dropped-img { position:absolute; width:50px; height:50px; cursor:move; }
-
-  
     .draggable-img { width:40px; height:40px; cursor:grab; user-select:none; }
     .dropped-img { position:absolute; width:50px; height:50px; cursor:move; }
 
-    /* Context menu */
     #contextMenu{
       position:fixed; display:none; z-index:1000;
       background:#f9fafb; border:1px solid #d1d5db; border-radius:0.5rem;
-      box-shadow:0 2px 8px rgba(0,0,0,0.2); padding:0.25rem; min-width:160px;
+      box-shadow:0 2px 8px rgba(0,0,0,0.2);
+      padding:0.25rem; min-width:160px;
     }
     #contextMenu button{
-      display:block; width:100%; text-align:left; padding:0.35rem 0.5rem;
+      display:block; width:100%; text-align:left;
+      padding:0.35rem 0.5rem;
       font-size:0.875rem; border-radius:0.25rem;
     }
     #contextMenu button:hover{ background:#e5e7eb; }
     .menu-sep{ height:1px; background:#e5e7eb; margin:0.25rem 0; }
   </style>
 </head>
-<body class="p-4 md:p-6">
 
+<body class="p-4 md:p-6">
   <!-- Toolbar -->
   <div id="toolbar" class="max-w-screen-2xl mx-auto mb-4 flex flex-wrap gap-2 items-center">
     <div class="flex flex-wrap items-center gap-2">
@@ -128,8 +141,7 @@
 
   <!-- Layout -->
   <div class="flex gap-4 max-w-screen-2xl mx-auto">
-
-    <!-- Graphics sidebar (grouped) -->
+    <!-- Sidebar -->
     <aside id="graphics-panel" class="w-1/5 bg-gray-50 p-3 rounded-lg border border-gray-300">
       <h2 class="text-lg font-bold mb-3 text-center">Graphics</h2>
 
@@ -163,11 +175,10 @@
       <p class="mt-3 text-xs text-center text-gray-600">Drag icons into a day. Right-click for options.</p>
     </aside>
 
-    <!-- Calendar + background -->
+    <!-- Calendar -->
     <div id="print-area" class="flex-1 p-4 border border-slate-300 rounded-xl">
       <img id="bgTheme" alt="Background Theme"/>
 
-      <!-- Header -->
       <div class="mb-3 flex flex-col items-center relative z-10">
         <div class="text-2xl md:text-3xl font-bold text-center">
           <span id="facility" class="editable-header" contenteditable="true">Facility Name</span>
@@ -177,7 +188,6 @@
         </div>
       </div>
 
-      <!-- Weekdays -->
       <div class="grid grid-cols-7 border border-gray-300 relative z-10">
         <div class="weekday">Sunday</div>
         <div class="weekday">Monday</div>
@@ -188,342 +198,74 @@
         <div class="weekday">Saturday</div>
       </div>
 
-      <!-- 6x7 grid so months align properly; we preserve content across month changes -->
       <div id="calendar" class="day-grid grid grid-cols-7 gap-1 border border-gray-300 relative z-10"></div>
     </div>
   </div>
 
-  <!-- Context Menu -->
   <div id="contextMenu"></div>
 
   <script>
-    // ======= UTIL: dates =======
-    const months = [
-      "January","February","March","April","May","June",
-      "July","August","September","October","November","December"
-    ];
-    function daysIn(month, year){ return new Date(year, month+1, 0).getDate(); }
-    function firstWeekday(month, year){ return new Date(year, month, 1).getDay(); } // 0=Sun
+    // ===== UTIL =====
+    const months = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+    function daysIn(m,y){ return new Date(y,m+1,0).getDate(); }
+    function firstWeekday(m,y){ return new Date(y,m,1).getDay(); }
 
-    // ======= Build Month/Year selectors =======
-    const monthSel = document.getElementById('monthSel');
-    const yearSel  = document.getElementById('yearSel');
-    const now = new Date();
-    months.forEach((m,i)=>{
-      const o=document.createElement('option'); o.value=i; o.textContent=m; monthSel.appendChild(o);
-    });
-    for(let y=now.getFullYear()-3; y<=now.getFullYear()+3; y++){
-      const o=document.createElement('option'); o.value=y; o.textContent=y; yearSel.appendChild(o);
-    }
-    monthSel.value = now.getMonth();
-    yearSel.value  = now.getFullYear();
+    const monthSel=document.getElementById('monthSel');
+    const yearSel=document.getElementById('yearSel');
+    const now=new Date();
+    months.forEach((m,i)=>{ const o=document.createElement('option'); o.value=i; o.textContent=m; monthSel.appendChild(o); });
+    for(let y=now.getFullYear()-3;y<=now.getFullYear()+3;y++){ const o=document.createElement('option'); o.value=y; o.textContent=y; yearSel.appendChild(o); }
+    monthSel.value=now.getMonth(); yearSel.value=now.getFullYear();
 
-    // ======= Build 42 boxes once (preserve content) =======
-    const calendar = document.getElementById("calendar");
-    const boxes = [];
-    for (let i = 0; i < 42; i++) {
-      const box = document.createElement("div");
-      box.className = "day-box";
-      box.innerHTML = `<div class="day-num"></div><div class="day-content" contenteditable="true"></div>`;
-      box.addEventListener("dragover", e => e.preventDefault());
-      box.addEventListener("drop", handleDrop);
-      box.addEventListener("contextmenu", openContextMenu);
+    const calendar=document.getElementById("calendar");
+    const boxes=[];
+    for(let i=0;i<42;i++){
+      const box=document.createElement("div");
+      box.className="day-box";
+      box.innerHTML=`<div class="day-num"></div><div class="day-content" contenteditable="true"></div>`;
       calendar.appendChild(box);
       boxes.push(box);
     }
 
-    // ======= Number boxes for selected month/year (preserve content) =======
     function renumberGrid(){
-      const m = parseInt(monthSel.value,10);
-      const y = parseInt(yearSel.value,10);
-      document.getElementById('monthYear').textContent = `${months[m]} ${y} Activity Calendar`;
-
-      const start = firstWeekday(m,y);
-      const total = daysIn(m,y);
-
+      const m=parseInt(monthSel.value,10);
+      const y=parseInt(yearSel.value,10);
+      document.getElementById('monthYear').textContent=`${months[m]} ${y} Activity Calendar`;
+      const start=firstWeekday(m,y);
+      const total=daysIn(m,y);
       let d=1;
       for(let i=0;i<42;i++){
-        const n = boxes[i].querySelector('.day-num');
-        const active = i>=start && i<start+total;
-        boxes[i].classList.toggle('inactive', !active);
-        n.textContent = active ? d++ : '';
+        const n=boxes[i].querySelector('.day-num');
+        const active=i>=start&&i<start+total;
+        boxes[i].classList.toggle('inactive',!active);
+        n.textContent=active?d++:'';
       }
     }
 
-    // ======= Drag Icons from sidebar =======
-    let draggedImageSrc = "";
-    document.querySelectorAll(".draggable-img").forEach(img=>{
-      img.addEventListener("dragstart", e => draggedImageSrc = e.target.src);
-    });
-    function handleDrop(e){
-      e.preventDefault();
-      if(!draggedImageSrc) return;
-      const newImg = document.createElement("img");
-      newImg.src = draggedImageSrc;
-      newImg.className = "dropped-img";
-      const rect = e.currentTarget.getBoundingClientRect();
-      newImg.style.left = (e.clientX - rect.left - 25) + "px";
-      newImg.style.top  = (e.clientY - rect.top  - 25) + "px";
-      makeDraggable(newImg);
-      newImg.addEventListener("contextmenu", openContextMenu);
-      e.currentTarget.appendChild(newImg);
-    }
-    function makeDraggable(img){
-      let dragging=false, offX=0, offY=0;
-      img.addEventListener("mousedown", e=>{ dragging=true; offX=e.offsetX; offY=e.offsetY; e.stopPropagation(); });
-      document.addEventListener("mousemove", e=>{
-        if(!dragging) return;
-        const p = img.parentElement.getBoundingClientRect();
-        img.style.left = (e.clientX - p.left - offX) + "px";
-        img.style.top  = (e.clientY - p.top  - offY) + "px";
-      });
-      document.addEventListener("mouseup", ()=> dragging=false);
-    }
+    // ===== EXPORT TO PDF (final fixed version) =====
+    document.getElementById("exportBtn").addEventListener("click", async ()=>{
+      const { jsPDF }=window.jspdf;
+      const node=document.getElementById("print-area");
 
-    // ======= Context Menu (persistent) =======
-    const contextMenu = document.getElementById("contextMenu");
-    let ctxTarget = null;
+      const canvas=await html2canvas(node,{scale:2,useCORS:true,backgroundColor:"#ffffff"});
+      const imgData=canvas.toDataURL("image/png");
+      const pdf=new jsPDF({orientation:"landscape",unit:"in",format:[17,11]});
 
-    function openContextMenu(e){
-      e.preventDefault();
-      e.stopPropagation();
-      ctxTarget = e.target;
+      const pdfW=17, pdfH=11;
+      const imgW=canvas.width/96, imgH=canvas.height/96;
+      const imgRatio=imgW/imgH, pageRatio=pdfW/pdfH;
 
-      // Clear and rebuild menu
-      contextMenu.innerHTML = "";
+      let w,h,x,y;
+      if(imgRatio>pageRatio){ w=pdfW; h=pdfW/imgRatio; x=0; y=(pdfH-h)/2; }
+      else{ h=pdfH; w=pdfH*imgRatio; x=(pdfW-w)/2; y=0; }
 
-      if (ctxTarget.classList.contains("day-content")) {
-        addMenuBtn("Bold", ()=> execInContent("bold"));
-        addMenuBtn("Italic", ()=> execInContent("italic"));
-        addMenuBtn("Red", ()=> execInContent("foreColor", "red"));
-        addMenuBtn("Blue", ()=> execInContent("foreColor", "blue"));
-        addMenuBtn("Green", ()=> execInContent("foreColor", "green"));
-        addMenuBtn("Purple", ()=> execInContent("foreColor", "purple"));
-        addMenuBtn("Highlight", ()=> execInContent("backColor","yellow"));
-        addSep();
-        addMenuBtn("Clear Text", ()=> { ctxTarget.textContent=""; });
-      } else if (ctxTarget.classList.contains("dropped-img")) {
-        addMenuBtn("Increase Size", ()=> resizeImg(ctxTarget, 1.2));
-        addMenuBtn("Decrease Size", ()=> resizeImg(ctxTarget, 0.8));
-        addSep();
-        addMenuBtn("Bring to Front", ()=> ctxTarget.style.zIndex = (parseInt(ctxTarget.style.zIndex||"1")+1).toString());
-        addSep();
-        addMenuBtn("Delete Image", ()=> ctxTarget.remove());
-      } else if (ctxTarget.classList.contains("day-box")) {
-        addMenuBtn("Light Gray bg", ()=> ctxTarget.style.backgroundColor="#f3f4f6");
-        addMenuBtn("Light Blue bg", ()=> ctxTarget.style.backgroundColor="#dbeafe");
-        addMenuBtn("Light Pink bg", ()=> ctxTarget.style.backgroundColor="#fde2e9");
-        addMenuBtn("Light Green bg", ()=> ctxTarget.style.backgroundColor="#dcfce7");
-        addSep();
-        addMenuBtn("Clear Background", ()=> ctxTarget.style.backgroundColor="");
-      } else {
-        // Clicked other area inside print-area
-        addMenuBtn("Close", ()=> {});
-      }
-
-      // position + show
-      contextMenu.style.left = e.clientX + "px";
-      contextMenu.style.top  = e.clientY + "px";
-      contextMenu.style.display = "block";
-    }
-
-    function addMenuBtn(label, action){
-      const b=document.createElement("button");
-      b.textContent=label;
-      b.onclick= (evt)=>{ evt.stopPropagation(); if(action) action(); hideMenu(); };
-      contextMenu.appendChild(b);
-    }
-    function addSep(){ const s=document.createElement('div'); s.className='menu-sep'; contextMenu.appendChild(s); }
-
-    function hideMenu(){ contextMenu.style.display="none"; }
-    document.addEventListener("click", ()=> hideMenu(), true);
-    document.addEventListener("scroll", ()=> hideMenu(), true);
-    document.addEventListener("keydown", (e)=>{ if(e.key==="Escape") hideMenu(); });
-
-    function execInContent(cmd, val){
-      // ensure selection is in the target contenteditable
-      if (ctxTarget && ctxTarget.classList.contains("day-content")) {
-        ctxTarget.focus();
-        document.execCommand(cmd, false, val || null);
-      }
-    }
-    function resizeImg(img, scale){
-      img.style.width  = (img.offsetWidth  * scale) + "px";
-      img.style.height = (img.offsetHeight * scale) + "px";
-    }
-
-    // ======= Background themes (25% opacity default) =======
-    const bg = document.getElementById('bgTheme');
-    const themeSel = document.getElementById('themeSel');
-    const hiContrast = document.getElementById('hiContrast');
-    const themeMap = {
-      none:    null,
-      spring:  "https://images.unsplash.com/photo-1529078155058-5d716f45d604?q=80&w=1600&auto=format&fit=crop",
-      summer:  "https://images.unsplash.com/photo-1501975558167-2d51ce0340d5?q=80&w=1600&auto=format&fit=crop",
-      fall:    "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?q=80&w=1600&auto=format&fit=crop",
-      winter:  "https://images.unsplash.com/photo-1601132359864-c974e79890af?q=80&w=1600&auto=format&fit=crop",
-      holiday: "https://images.unsplash.com/photo-1512389142860-9c449e58a543?q=80&w=1600&auto=format&fit=crop"
-    };
-    function applyTheme(){
-      const key = themeSel.value;
-      const url = themeMap[key];
-      if(!url){ bg.src=""; bg.style.opacity=0; return; }
-      bg.src = url;
-      bg.style.opacity = hiContrast.checked ? 0.10 : 0.25; // 25% default, ~10% high contrast
-    }
-    themeSel.addEventListener('change', applyTheme);
-    hiContrast.addEventListener('change', applyTheme);
-
-    // Upload custom background (session-only; resets on refresh)
-    const bgUpload = document.getElementById('bgUpload');
-    document.getElementById('bgUploadBtn').addEventListener('click', ()=> bgUpload.click());
-    bgUpload.addEventListener('change', ()=>{
-      const file = bgUpload.files?.[0]; if(!file) return;
-      const reader = new FileReader();
-      reader.onload = e => { bg.src = e.target.result; bg.style.opacity = hiContrast.checked ? 0.10 : 0.25; themeSel.value="none"; };
-      reader.readAsDataURL(file);
+      pdf.addImage(imgData,"PNG",x-0.05,y-0.05,w+0.1,h+0.1);
+      const title=document.getElementById("monthYear").innerText.replace(/\s+/g,"_");
+      pdf.save(`${title}.pdf`);
     });
 
-    // ======= Buttons =======
-    document.getElementById('startFresh').addEventListener('click', ()=>{
-      if(!confirm("Start fresh? This clears text, icons, backgrounds, and resets month title.")) return;
-      document.querySelectorAll('.day-content').forEach(el=> el.textContent="");
-      document.querySelectorAll('.dropped-img').forEach(el=> el.remove());
-      boxes.forEach(b=> b.style.backgroundColor="");
-      bg.src=""; bg.style.opacity=0; themeSel.value="none"; hiContrast.checked=false;
-      document.getElementById('facility').textContent = "Facility Name";
-      document.getElementById('monthYear').textContent = "Month YYYY Activity Calendar";
-    });
-
-    document.getElementById("clearBtn").addEventListener("click", () => {
-      if (!confirm("Clear all day entries and images (keep headers & theme)?")) return;
-      document.querySelectorAll(".day-content").forEach(el => el.textContent = "");
-      document.querySelectorAll(".dropped-img").forEach(el => el.remove());
-      boxes.forEach(b=> b.style.backgroundColor="");
-    });
-
-    document.getElementById("exportBtn").addEventListener("click", async () => {
-  const { jsPDF } = window.jspdf;
-  const node = document.getElementById("print-area");
-
-  // Render the calendar area sharply
-  const canvas = await html2canvas(node, {
-    scale: 2,                 // doubles pixel density
-    useCORS: true,
-    backgroundColor: "#ffffff"
-  });
-
-  const imgData = canvas.toDataURL("image/png");
-  const pdf = new jsPDF({
-    orientation: "landscape",
-    unit: "in",
-    format: [17, 11]          // true tabloid/ledger 11x17 inches
-  });
-
-  // Compute ratio so it fills full 11x17 page
-  const pdfWidth = 17;
-  const pdfHeight = 11;
-  const imgWidth = canvas.width / 96;   // px → in (96px per inch)
-  const imgHeight = canvas.height / 96;
-  const imgRatio = imgWidth / imgHeight;
-  const pageRatio = pdfWidth / pdfHeight;
-
-  let renderWidth, renderHeight, x, y;
-
-  // Scale proportionally, but extend to bleed if aspect differs
-  if (imgRatio > pageRatio) {
-    renderWidth = pdfWidth;
-    renderHeight = pdfWidth / imgRatio;
-    x = 0;
-    y = (pdfHeight - renderHeight) / 2;
-  } else {
-    renderHeight = pdfHeight;
-    renderWidth = pdfHeight * imgRatio;
-    x = (pdfWidth - renderWidth) / 2;
-    y = 0;
-  }
-
-  pdf.addImage(imgData, "PNG", x, y, renderWidth, renderHeight);
-  const title = document.getElementById("monthYear").innerText.replace(/\s+/g, "_");
-  pdf.save(`${title}.pdf`);
-});
-
-  const { jsPDF } = window.jspdf;
-  const node = document.getElementById("print-area");
-
-  // Capture at higher resolution
-  const canvas = await html2canvas(node, {
-    scale: 2,
-    useCORS: true,
-    backgroundColor: "#ffffff",
-    width: node.scrollWidth,
-    height: node.scrollHeight
-  });
-
-  const imgData = canvas.toDataURL("image/png");
-  const pdf = new jsPDF({
-    orientation: "landscape",
-    unit: "in",
-    format: [17, 11] // true 11x17 landscape
-  });
-
-  // Convert pixels to inches based on 96px = 1in
-  const pageWidth = 17;
-  const pageHeight = 11;
-  const ratio = Math.min(pageWidth * 96 / canvas.width, pageHeight * 96 / canvas.height);
-
-  const printWidth = canvas.width * ratio / 96;
-  const printHeight = canvas.height * ratio / 96;
-
-  const xOffset = (pageWidth - printWidth) / 2;
-const yOffset = (pageHeight - printHeight) / 2;
-// Force full bleed (slightly overfill the page so no borders show)
-pdf.addImage(imgData, "PNG", -0.1, -0.1, pageWidth + 0.2, pageHeight + 0.2);
-
-
-  const title = document.getElementById("monthYear").innerText.replace(/\s+/g, "_");
-  pdf.save(`${title}.pdf`);
-});
-
-    // ======= Month/Year change (preserve content) =======
-    function syncHeaderToSelection(){
-      const m = parseInt(monthSel.value,10), y = parseInt(yearSel.value,10);
-      document.getElementById('monthYear').textContent = `${months[m]} ${y} Activity Calendar`;
-    }
-    function resetForNewMonth(){
-  if(!confirm("Start a new calendar for this month? This will clear all text, images, and box colors but keep your background and headers.")) {
-    // Cancelled — revert selection
-    monthSel.value = prevMonth;
-    yearSel.value = prevYear;
-    return;
-  }
-
-  // Clear all editable content
-  document.querySelectorAll('.day-content').forEach(el => el.textContent = "");
-  document.querySelectorAll('.dropped-img').forEach(el => el.remove());
-  boxes.forEach(b => b.style.backgroundColor = "");
-
-  // Rebuild calendar layout for new month
-  renumberGrid();
-  syncHeaderToSelection();
-
-  // Save current selection for next comparison
-  prevMonth = parseInt(monthSel.value,10);
-  prevYear = parseInt(yearSel.value,10);
-}
-
-let prevMonth = parseInt(monthSel.value,10);
-let prevYear  = parseInt(yearSel.value,10);
-
-monthSel.addEventListener('change', resetForNewMonth);
-yearSel.addEventListener('change',  resetForNewMonth);
-
-  
-
-    // ======= Init =======
+    // ===== INIT =====
     renumberGrid();
-    syncHeaderToSelection();
-    applyTheme();
   </script>
 </body>
 </html>
