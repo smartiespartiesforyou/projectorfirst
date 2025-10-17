@@ -266,7 +266,38 @@
     });
 
     // ===== INIT =====
-    renumberGrid();
+function resetForNewMonth() {
+  // Ask before clearing everything
+  if (!confirm("Start a new calendar for this month? This will clear all text, images, and box colors but keep your background and headers.")) {
+    // Cancelled — revert to previous selection
+    monthSel.value = prevMonth;
+    yearSel.value = prevYear;
+    return;
+  }
+
+  // Clear all text and icons
+  document.querySelectorAll('.day-content').forEach(el => el.textContent = "");
+  document.querySelectorAll('.dropped-img').forEach(el => el.remove());
+  boxes.forEach(b => b.style.backgroundColor = "");
+
+  // Update header and re-number the days
+  renumberGrid();
+  document.getElementById('monthYear').textContent =
+    `${months[parseInt(monthSel.value,10)]} ${yearSel.value} Activity Calendar`;
+
+  // Save current month/year as reference
+  prevMonth = parseInt(monthSel.value,10);
+  prevYear  = parseInt(yearSel.value,10);
+}
+
+let prevMonth = parseInt(monthSel.value,10);
+let prevYear  = parseInt(yearSel.value,10);
+
+// Hook month and year dropdowns to trigger reset
+monthSel.addEventListener('change', resetForNewMonth);
+yearSel.addEventListener('change', resetForNewMonth);
+    
+renumberGrid();
   </script>
 </body>
 </html>
