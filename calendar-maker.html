@@ -46,28 +46,34 @@
     .inactive { opacity:0.25; }
 .inactive .day-content:empty::before { content: ""; }
 
-    .day-num {
-      position: absolute;
-      top: 0.25rem;
-      right: 0.35rem;
-      font-size: 0.75rem;
-      color: #6b7280;
-    }
+.day-num {
+  position: absolute;
+  top: 0.35rem;
+  right: 0.45rem;
+  font-size: 1.25rem;   /* was 0.75rem */
+  font-weight: 700;     /* makes it bold */
+  color: #374151;       /* darker for contrast */
+}
 
-    .day-content {
-      margin-top: 1rem;
-      padding: 0.25rem;
-      line-height: 1.25rem;
-      font-size: 0.95rem;
-      outline: none;
-      min-height: 7rem;
-      white-space: pre-wrap;
-    }
-  .day-content:empty::before {
+.day-content {
+  margin-top: 1rem;
+  padding: 0.25rem;
+  line-height: 1.25rem;
+  font-size: 0.95rem;
+  outline: none;
+  min-height: 7rem;
+  white-space: pre-wrap;
+}
+
+.day-content:empty::before {
   content: "Type here…";
   color: #9ca3af;
   white-space: pre-wrap;
 }
+
+.draggable-img { width:40px; height:40px; cursor:grab; user-select:none; }
+.dropped-img { position:absolute; width:50px; height:50px; cursor:move; }
+
   
     .draggable-img { width:40px; height:40px; cursor:grab; user-select:none; }
     .dropped-img { position:absolute; width:50px; height:50px; cursor:move; }
