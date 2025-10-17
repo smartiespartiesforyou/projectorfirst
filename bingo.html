@@ -43,10 +43,10 @@
       overflow: hidden;
     }
 
-    /* ✅ Recent calls area (balls) */
+    /* ✅ Bingo balls under the box */
     .recent-calls {
       display: flex;
-      flex-wrap: wrap;              /* allows wrapping into rows */
+      flex-wrap: wrap;
       justify-content: center;
       align-items: center;
       margin-top: 2rem;
@@ -65,7 +65,7 @@
       font-size: 3rem;
       font-weight: bold;
       box-shadow: 0 0 8px rgba(0, 0, 0, 0.4);
-      flex-shrink: 0;               /* prevents shrinking */
+      flex-shrink: 0;
     }
 
     .ball-B { background: #1e3a8a; }
@@ -74,27 +74,42 @@
     .ball-G { background: #f97316; }
     .ball-O { background: #9333ea; }
 
+    /* ✅ Button styling */
+    .button-row {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-top: 2rem;
+    }
+
     .btn {
       font-size: 1.75rem;
       font-weight: bold;
       padding: 1.25rem 2.5rem;
       border-radius: 1rem;
       transition: background 0.2s;
-      width: 100%;
+      min-width: 220px;
       text-align: center;
     }
 
     .btn-next { background: #1e3a8a; color: white; }
     .btn-next:hover { background: #1d4ed8; }
-    .btn-undo { background: #facc15; color: black; }
     .btn-reset { background: #dc2626; color: white; }
     .btn-fullscreen { background: #6d28d9; color: white; }
+    .btn-sound { background: white; color: #1e3a8a; border: 2px solid #1e3a8a; }
 
     @media (max-width: 768px) {
       .recent-calls span {
         width: 90px;
         height: 90px;
         font-size: 2rem;
+      }
+      .btn {
+        min-width: 150px;
+        font-size: 1.25rem;
+        padding: 1rem 1.5rem;
       }
     }
   </style>
@@ -125,15 +140,13 @@
 
       <!-- Called balls under the box -->
       <div id="recentCalls" class="recent-calls"></div>
-    </div>
 
-    <div class="flex flex-col md:flex-row items-start justify-center gap-3 mt-6">
-      <div class="flex flex-col gap-3 w-56">
+      <!-- ✅ Button row under the balls -->
+      <div class="button-row">
         <button onclick="callNext()" class="btn btn-next">Call Next (Space)</button>
-        <button onclick="undoCall()" class="btn btn-undo">Undo (Backspace)</button>
         <button onclick="resetCaller()" class="btn btn-reset">Reset (R)</button>
         <button onclick="toggleFullscreen()" class="btn btn-fullscreen">Fullscreen (F)</button>
-        <button onclick="toggleSound()" id="soundBtn" class="btn border-2 border-blue-900 text-blue-900 bg-white">🔊 Sound</button>
+        <button onclick="toggleSound()" id="soundBtn" class="btn btn-sound">🔊 Sound</button>
       </div>
     </div>
   </main>
@@ -238,21 +251,13 @@
       }
     }
 
-    function undoCall() {
-      if (history.length === 0) return;
-      const last = history.pop();
-      allNumbers.push(last);
-      document.getElementById("callerText").textContent = "—";
-      updateRecent();
-    }
-
     function resetCaller() { initGame(); }
 
     function updateRecent() {
       const cfg = THEMES[currentThemeKey];
       const recentDiv = document.getElementById("recentCalls");
       recentDiv.innerHTML = history
-        .slice(-50) /* keep up to 50 recent calls visible */
+        .slice(-50)
         .reverse()
         .map(c => `<span class="${cfg.ballClassFromLetter(c.letter)}">${c.letter} ${c.number}</span>`)
         .join("");
@@ -273,7 +278,6 @@
 
     document.addEventListener("keydown", e => {
       if (e.code === "Space") { e.preventDefault(); callNext(); }
-      if (e.code === "Backspace") { e.preventDefault(); undoCall(); }
       if (e.code === "KeyR") { resetCaller(); }
       if (e.code === "KeyF") { toggleFullscreen(); }
     });
