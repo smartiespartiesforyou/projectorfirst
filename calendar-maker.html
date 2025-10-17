@@ -5,51 +5,129 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Activity Calendar Maker — ProjectorFirst</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/interactjs/dist/interact.min.js"></script>
   <style>
-    body {
-      background: #fff;
-      font-family: sans-serif;
-    }
+    body { background: #fff; font-family: sans-serif; }
+
     @media print {
       @page {
         size: 11in 17in landscape;
         margin: 0.5in;
       }
+      #sidebar { display: none; } /* hides tools when printing */
+    }
+
+    .day-box {
+      min-height: 8rem;
+      background: #fff;
+      border: 1px solid #ccc;
+      border-radius: 0.25rem;
+      padding: 0.25rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .activity {
+      padding: 0.25rem 0.5rem;
+      border-radius: 0.5rem;
+      color: white;
+      font-size: 0.9rem;
+      font-weight: 600;
+      text-align: center;
+      cursor: grab;
+      margin-bottom: 0.25rem;
+    }
+
+    .drop-target {
+      background-color: #f0f9ff;
+    }
+
+    .dragging {
+      opacity: 0.7;
     }
   </style>
 </head>
 <body class="p-6">
-  <main class="max-w-screen-xl mx-auto">
-    <h1 class="text-4xl font-bold text-center mb-4">Activity Calendar</h1>
-    <div class="grid grid-cols-7 gap-1 border border-gray-400">
-      <!-- Weekday headers -->
-      <div class="bg-blue-800 text-white font-bold p-2 text-center">Sunday</div>
-      <div class="bg-blue-800 text-white font-bold p-2 text-center">Monday</div>
-      <div class="bg-blue-800 text-white font-bold p-2 text-center">Tuesday</div>
-      <div class="bg-blue-800 text-white font-bold p-2 text-center">Wednesday</div>
-      <div class="bg-blue-800 text-white font-bold p-2 text-center">Thursday</div>
-      <div class="bg-blue-800 text-white font-bold p-2 text-center">Friday</div>
-      <div class="bg-blue-800 text-white font-bold p-2 text-center">Saturday</div>
+  <main class="max-w-screen-xl mx-auto flex gap-4">
+    <!-- Sidebar with activities -->
+    <aside id="sidebar" class="w-1/5 bg-gray-100 p-3 rounded-lg border border-gray-300">
+      <h2 class="text-lg font-bold mb-2 text-center">Activities</h2>
+      <div class="activity bg-blue-600" draggable="true">Bingo</div>
+      <div class="activity bg-green-600" draggable="true">Morning Exercise</div>
+      <div class="activity bg-yellow-500" draggable="true">Crafts</div>
+      <div class="activity bg-purple-600" draggable="true">Movie</div>
+      <div class="activity bg-pink-500" draggable="true">Church</div>
+      <div class="activity bg-red-500" draggable="true">Birthday Party</div>
+      <div class="activity bg-teal-600" draggable="true">Music</div>
+      <div class="activity bg-orange-500" draggable="true">Games</div>
+      <p class="mt-4 text-xs text-center text-gray-600">Drag and drop into a day box</p>
+    </aside>
 
-      <!-- 31 empty day boxes -->
-      <template id="day-template">
-        <div class="h-48 border border-gray-300 p-1 flex flex-col">
-          <div class="text-right text-xs text-gray-500">1</div>
-          <div class="flex-1 bg-white rounded-md mt-1"></div>
-        </div>
-      </template>
-    </div>
+    <!-- Calendar -->
+    <section class="flex-1">
+      <h1 class="text-4xl font-bold text-center mb-4">Activity Calendar</h1>
+      <div class="grid grid-cols-7 gap-1 border border-gray-400">
+        <!-- Weekday headers -->
+        <div class="bg-blue-800 text-white font-bold p-2 text-center">Sunday</div>
+        <div class="bg-blue-800 text-white font-bold p-2 text-center">Monday</div>
+        <div class="bg-blue-800 text-white font-bold p-2 text-center">Tuesday</div>
+        <div class="bg-blue-800 text-white font-bold p-2 text-center">Wednesday</div>
+        <div class="bg-blue-800 text-white font-bold p-2 text-center">Thursday</div>
+        <div class="bg-blue-800 text-white font-bold p-2 text-center">Friday</div>
+        <div class="bg-blue-800 text-white font-bold p-2 text-center">Saturday</div>
+      </div>
+
+      <div id="calendar" class="grid grid-cols-7 gap-1 border border-gray-400"></div>
+    </section>
   </main>
 
   <script>
-    // Create 31 boxes
-    const grid = document.querySelector(".grid");
-    const template = document.getElementById("day-template").content;
+    // Build 31 day boxes
+    const calendar = document.getElementById("calendar");
     for (let i = 1; i <= 31; i++) {
-      const clone = document.importNode(template, true);
-      clone.querySelector("div.text-right").textContent = i;
-      grid.appendChild(clone);
+      const box = document.createElement("div");
+      box.className = "day-box";
+      box.innerHTML = `<div class="text-right text-xs text-gray-500">${i}</div>`;
+      calendar.appendChild(box);
     }
+
+    // Interact.js Drag + Drop logic
+    interact('.activity').draggable({
+      inertia: true,
+      autoScroll: true,
+      listeners: {
+        move (event) {
+          const target = event.target;
+          target.classList.add('dragging');
+          target.style.transform = `translate(${event.dx}px, ${event.dy}px)`;
+        },
+        end (event) {
+          event.target.style.transform = '';
+          event.target.classList.remove('dragging');
+        }
+      }
+    });
+
+    interact('.day-box').dropzone({
+      accept: '.activity',
+      overlap: 0.5,
+      ondragenter (event) {
+        event.target.classList.add('drop-target');
+      },
+      ondragleave (event) {
+        event.target.classList.remove('drop-target');
+      },
+      ondrop (event) {
+        const original = event.relatedTarget;
+        const clone = original.cloneNode(true);
+        clone.style.transform = '';
+        event.target.appendChild(clone);
+        event.target.classList.remove('drop-target');
+      },
+      ondropdeactivate (event) {
+        event.target.classList.remove('drop-target');
+      }
+    });
   </script>
 </body>
 </html>
