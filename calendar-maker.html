@@ -13,11 +13,25 @@
   <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
 
   <style>
-    body { background: #fff; font-family: sans-serif; }
+    body { background:#fff; font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial; }
     @media print {
       @page { size: 11in 17in landscape; margin: 0.5in; }
       #toolbar, #graphics-panel, #contextMenu { display: none !important; }
+      body { margin: 0; }
     }
+
+    /* Printable canvas wrapper */
+    #print-area { position: relative; background:#fff; box-shadow: 0 0 0 1px #cbd5e1; overflow: hidden; }
+
+    /* Background theme image (under everything) */
+    #bgTheme {
+      position:absolute; inset:0; width:100%; height:100%;
+      object-fit:cover; opacity:0; pointer-events:none; z-index:0;
+    }
+
+    .weekday { background:#1e3a8a; color:#fff; font-weight:700; text-align:center; padding:0.5rem; }
+
+    .day-grid { position:relative; z-index:1; } /* on top of bg */
 
     .day-box {
       position: relative;
@@ -26,7 +40,10 @@
       border-radius: 0.25rem;
       padding: 0.25rem;
       overflow: hidden;
+      background-clip: padding-box;
     }
+
+    .inactive { opacity:0.25; }
 
     .day-num {
       position: absolute;
@@ -45,87 +62,115 @@
       min-height: 7rem;
       white-space: pre-wrap;
     }
-
-    .draggable-img { width: 40px; height: 40px; cursor: grab; user-select: none; }
-    .dropped-img { position: absolute; width: 50px; height: 50px; cursor: move; }
-
-    #print-area { background: #fff; box-shadow: 0 0 0 1px #cbd5e1; }
-
-    .editable-header { outline: none; border-bottom: 2px dashed transparent; }
-    .editable-header:focus { border-bottom-color: #2563eb; }
-
-    .weekday { background: #1e3a8a; color: #fff; font-weight: 700; text-align: center; padding: 0.5rem; }
-
-    /* Context menu styling */
-    #contextMenu {
-      position: absolute;
-      display: none;
-      z-index: 1000;
-      background: #f9fafb;
-      border: 1px solid #d1d5db;
-      border-radius: 0.5rem;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
-      padding: 0.25rem;
+    .day-content:empty::before{
+      content:"Type activities here…\a10:00am Coffee Social\a10:30am Bingo";
+      white-space:pre-wrap; color:#9ca3af;
     }
-    #contextMenu button {
-      display: block;
-      width: 100%;
-      text-align: left;
-      padding: 0.25rem 0.5rem;
-      font-size: 0.875rem;
-      border-radius: 0.25rem;
+
+    .draggable-img { width:40px; height:40px; cursor:grab; user-select:none; }
+    .dropped-img { position:absolute; width:50px; height:50px; cursor:move; }
+
+    /* Context menu */
+    #contextMenu{
+      position:fixed; display:none; z-index:1000;
+      background:#f9fafb; border:1px solid #d1d5db; border-radius:0.5rem;
+      box-shadow:0 2px 8px rgba(0,0,0,0.2); padding:0.25rem; min-width:160px;
     }
-    #contextMenu button:hover {
-      background-color: #e5e7eb;
+    #contextMenu button{
+      display:block; width:100%; text-align:left; padding:0.35rem 0.5rem;
+      font-size:0.875rem; border-radius:0.25rem;
     }
+    #contextMenu button:hover{ background:#e5e7eb; }
+    .menu-sep{ height:1px; background:#e5e7eb; margin:0.25rem 0; }
   </style>
 </head>
 <body class="p-4 md:p-6">
 
   <!-- Toolbar -->
   <div id="toolbar" class="max-w-screen-2xl mx-auto mb-4 flex flex-wrap gap-2 items-center">
-    <button id="exportBtn" class="px-4 py-2 rounded-lg font-semibold bg-blue-600 text-white hover:bg-blue-700">
-      Export 11×17 PDF
-    </button>
-    <button id="clearBtn" class="px-4 py-2 rounded-lg font-semibold bg-gray-200 hover:bg-gray-300">
-      Clear Calendar
-    </button>
-    <span class="text-sm text-gray-600">Right-click text or images for options.</span>
+    <div class="flex flex-wrap items-center gap-2">
+      <label class="text-sm text-slate-700">Month</label>
+      <select id="monthSel" class="border rounded px-2 py-1"></select>
+      <label class="text-sm text-slate-700">Year</label>
+      <select id="yearSel" class="border rounded px-2 py-1"></select>
+      <button id="startFresh" class="ml-2 px-3 py-2 rounded font-semibold bg-gray-200 hover:bg-gray-300">Start Fresh</button>
+    </div>
+
+    <div class="flex flex-wrap items-center gap-2 ml-auto">
+      <label class="text-sm text-slate-700">Theme</label>
+      <select id="themeSel" class="border rounded px-2 py-1">
+        <option value="none">None</option>
+        <option value="spring">Spring</option>
+        <option value="summer">Summer</option>
+        <option value="fall">Fall</option>
+        <option value="winter">Winter</option>
+        <option value="holiday">Holiday</option>
+      </select>
+      <input type="file" id="bgUpload" accept="image/*" class="hidden">
+      <button id="bgUploadBtn" class="px-3 py-2 rounded bg-gray-200 hover:bg-gray-300">Upload Background</button>
+      <label class="flex items-center gap-1 text-sm text-slate-700">
+        <input type="checkbox" id="hiContrast">
+        High Contrast (fade bg)
+      </label>
+
+      <button id="exportBtn" class="px-4 py-2 rounded-lg font-semibold bg-blue-600 text-white hover:bg-blue-700">Export 11×17 PDF</button>
+      <button id="clearBtn" class="px-4 py-2 rounded-lg font-semibold bg-gray-200 hover:bg-gray-300">Clear Calendar</button>
+    </div>
   </div>
 
   <!-- Layout -->
   <div class="flex gap-4 max-w-screen-2xl mx-auto">
 
-    <!-- Graphics sidebar -->
-    <aside id="graphics-panel" class="w-1/6 bg-gray-100 p-3 rounded-lg border border-gray-300 flex flex-col items-center">
-      <h2 class="text-lg font-bold mb-2 text-center">Add Graphics</h2>
-      <div id="graphics" class="flex flex-wrap justify-center gap-2">
+    <!-- Graphics sidebar (grouped) -->
+    <aside id="graphics-panel" class="w-1/5 bg-gray-50 p-3 rounded-lg border border-gray-300">
+      <h2 class="text-lg font-bold mb-3 text-center">Graphics</h2>
+
+      <div class="mb-2 text-xs font-semibold text-slate-600">Games</div>
+      <div class="flex flex-wrap gap-2 mb-3">
         <img src="https://cdn-icons-png.flaticon.com/512/616/616490.png" class="draggable-img" draggable="true" title="Bingo">
+        <img src="https://cdn-icons-png.flaticon.com/512/3210/3210087.png" class="draggable-img" draggable="true" title="Cards">
+        <img src="https://cdn-icons-png.flaticon.com/512/2553/2553691.png" class="draggable-img" draggable="true" title="Board Games">
+      </div>
+
+      <div class="mb-2 text-xs font-semibold text-slate-600">Music & Faith</div>
+      <div class="flex flex-wrap gap-2 mb-3">
         <img src="https://cdn-icons-png.flaticon.com/512/3944/3944169.png" class="draggable-img" draggable="true" title="Music">
         <img src="https://cdn-icons-png.flaticon.com/512/3176/3176292.png" class="draggable-img" draggable="true" title="Church">
-        <img src="https://cdn-icons-png.flaticon.com/512/4359/4359863.png" class="draggable-img" draggable="true" title="Crafts">
-        <img src="https://cdn-icons-png.flaticon.com/512/3670/3670151.png" class="draggable-img" draggable="true" title="Movie">
-        <img src="https://cdn-icons-png.flaticon.com/512/1744/1744065.png" class="draggable-img" draggable="true" title="Party">
-        <img src="https://cdn-icons-png.flaticon.com/512/616/616408.png" class="draggable-img" draggable="true" title="Coffee">
-        <img src="https://cdn-icons-png.flaticon.com/512/3039/3039358.png" class="draggable-img" draggable="true" title="Exercise">
+        <img src="https://cdn-icons-png.flaticon.com/512/1827/1827370.png" class="draggable-img" draggable="true" title="Rosary">
       </div>
-      <p class="mt-2 text-xs text-center text-gray-600">Drag into calendar cells</p>
+
+      <div class="mb-2 text-xs font-semibold text-slate-600">Creative & Social</div>
+      <div class="flex flex-wrap gap-2 mb-3">
+        <img src="https://cdn-icons-png.flaticon.com/512/4359/4359863.png" class="draggable-img" draggable="true" title="Crafts">
+        <img src="https://cdn-icons-png.flaticon.com/512/616/616408.png" class="draggable-img" draggable="true" title="Coffee">
+        <img src="https://cdn-icons-png.flaticon.com/512/1744/1744065.png" class="draggable-img" draggable="true" title="Party">
+      </div>
+
+      <div class="mb-2 text-xs font-semibold text-slate-600">Fitness & Movies</div>
+      <div class="flex flex-wrap gap-2">
+        <img src="https://cdn-icons-png.flaticon.com/512/3039/3039358.png" class="draggable-img" draggable="true" title="Exercise">
+        <img src="https://cdn-icons-png.flaticon.com/512/3670/3670151.png" class="draggable-img" draggable="true" title="Movie">
+      </div>
+
+      <p class="mt-3 text-xs text-center text-gray-600">Drag icons into a day. Right-click for options.</p>
     </aside>
 
-    <!-- Calendar -->
+    <!-- Calendar + background -->
     <div id="print-area" class="flex-1 p-4 border border-slate-300 rounded-xl">
+      <img id="bgTheme" alt="Background Theme"/>
+
       <!-- Header -->
-      <div class="mb-3 flex flex-col items-center">
-        <div class="text-2xl font-bold text-center">
+      <div class="mb-3 flex flex-col items-center relative z-10">
+        <div class="text-2xl md:text-3xl font-bold text-center">
           <span id="facility" class="editable-header" contenteditable="true">Facility Name</span>
         </div>
-        <div class="text-xl font-semibold text-center text-slate-700">
-          <span id="monthYear" class="editable-header" contenteditable="true">Month 2025 Activity Calendar</span>
+        <div class="text-xl md:text-2xl font-semibold text-center text-slate-700">
+          <span id="monthYear" class="editable-header" contenteditable="true">Month YYYY Activity Calendar</span>
         </div>
       </div>
 
       <!-- Weekdays -->
-      <div class="grid grid-cols-7 border border-gray-300">
+      <div class="grid grid-cols-7 border border-gray-300 relative z-10">
         <div class="weekday">Sunday</div>
         <div class="weekday">Monday</div>
         <div class="weekday">Tuesday</div>
@@ -135,8 +180,8 @@
         <div class="weekday">Saturday</div>
       </div>
 
-      <!-- Days -->
-      <div id="calendar" class="grid grid-cols-7 gap-1 border border-gray-300"></div>
+      <!-- 6x7 grid so months align properly; we preserve content across month changes -->
+      <div id="calendar" class="day-grid grid grid-cols-7 gap-1 border border-gray-300 relative z-10"></div>
     </div>
   </div>
 
@@ -144,108 +189,211 @@
   <div id="contextMenu"></div>
 
   <script>
+    // ======= UTIL: dates =======
+    const months = [
+      "January","February","March","April","May","June",
+      "July","August","September","October","November","December"
+    ];
+    function daysIn(month, year){ return new Date(year, month+1, 0).getDate(); }
+    function firstWeekday(month, year){ return new Date(year, month, 1).getDay(); } // 0=Sun
+
+    // ======= Build Month/Year selectors =======
+    const monthSel = document.getElementById('monthSel');
+    const yearSel  = document.getElementById('yearSel');
+    const now = new Date();
+    months.forEach((m,i)=>{
+      const o=document.createElement('option'); o.value=i; o.textContent=m; monthSel.appendChild(o);
+    });
+    for(let y=now.getFullYear()-3; y<=now.getFullYear()+3; y++){
+      const o=document.createElement('option'); o.value=y; o.textContent=y; yearSel.appendChild(o);
+    }
+    monthSel.value = now.getMonth();
+    yearSel.value  = now.getFullYear();
+
+    // ======= Build 42 boxes once (preserve content) =======
     const calendar = document.getElementById("calendar");
-    for (let i = 1; i <= 31; i++) {
+    const boxes = [];
+    for (let i = 0; i < 42; i++) {
       const box = document.createElement("div");
       box.className = "day-box";
-      box.innerHTML = `<div class="day-num">${i}</div><div class="day-content" contenteditable="true"></div>`;
+      box.innerHTML = `<div class="day-num"></div><div class="day-content" contenteditable="true"></div>`;
       box.addEventListener("dragover", e => e.preventDefault());
       box.addEventListener("drop", handleDrop);
       box.addEventListener("contextmenu", openContextMenu);
       calendar.appendChild(box);
+      boxes.push(box);
     }
 
-    // --- Drag Icons ---
+    // ======= Number boxes for selected month/year (preserve content) =======
+    function renumberGrid(){
+      const m = parseInt(monthSel.value,10);
+      const y = parseInt(yearSel.value,10);
+      document.getElementById('monthYear').textContent = `${months[m]} ${y} Activity Calendar`;
+
+      const start = firstWeekday(m,y);
+      const total = daysIn(m,y);
+
+      let d=1;
+      for(let i=0;i<42;i++){
+        const n = boxes[i].querySelector('.day-num');
+        const active = i>=start && i<start+total;
+        boxes[i].classList.toggle('inactive', !active);
+        n.textContent = active ? d++ : '';
+      }
+    }
+
+    // ======= Drag Icons from sidebar =======
     let draggedImageSrc = "";
-    document.querySelectorAll(".draggable-img").forEach(img => {
+    document.querySelectorAll(".draggable-img").forEach(img=>{
       img.addEventListener("dragstart", e => draggedImageSrc = e.target.src);
     });
-
-    function handleDrop(e) {
+    function handleDrop(e){
       e.preventDefault();
-      if (!draggedImageSrc) return;
+      if(!draggedImageSrc) return;
       const newImg = document.createElement("img");
       newImg.src = draggedImageSrc;
       newImg.className = "dropped-img";
-      const rect = e.target.getBoundingClientRect();
+      const rect = e.currentTarget.getBoundingClientRect();
       newImg.style.left = (e.clientX - rect.left - 25) + "px";
-      newImg.style.top = (e.clientY - rect.top - 25) + "px";
+      newImg.style.top  = (e.clientY - rect.top  - 25) + "px";
       makeDraggable(newImg);
       newImg.addEventListener("contextmenu", openContextMenu);
-      e.target.appendChild(newImg);
+      e.currentTarget.appendChild(newImg);
     }
-
-    function makeDraggable(img) {
-      let offsetX, offsetY, dragging = false;
-      img.addEventListener("mousedown", e => { dragging = true; offsetX = e.offsetX; offsetY = e.offsetY; });
-      document.addEventListener("mousemove", e => {
-        if (!dragging) return;
-        const parent = img.parentElement.getBoundingClientRect();
-        img.style.left = (e.clientX - parent.left - offsetX) + "px";
-        img.style.top = (e.clientY - parent.top - offsetY) + "px";
+    function makeDraggable(img){
+      let dragging=false, offX=0, offY=0;
+      img.addEventListener("mousedown", e=>{ dragging=true; offX=e.offsetX; offY=e.offsetY; e.stopPropagation(); });
+      document.addEventListener("mousemove", e=>{
+        if(!dragging) return;
+        const p = img.parentElement.getBoundingClientRect();
+        img.style.left = (e.clientX - p.left - offX) + "px";
+        img.style.top  = (e.clientY - p.top  - offY) + "px";
       });
-      document.addEventListener("mouseup", () => dragging = false);
+      document.addEventListener("mouseup", ()=> dragging=false);
     }
 
-    // --- Context Menu ---
+    // ======= Context Menu (persistent) =======
     const contextMenu = document.getElementById("contextMenu");
-    let targetElement = null;
+    let ctxTarget = null;
 
-    function openContextMenu(e) {
+    function openContextMenu(e){
       e.preventDefault();
-      targetElement = e.target;
+      e.stopPropagation();
+      ctxTarget = e.target;
+
+      // Clear and rebuild menu
       contextMenu.innerHTML = "";
 
-      if (targetElement.classList.contains("day-content")) {
-        addButton("Bold", () => document.execCommand("bold"));
-        addButton("Italic", () => document.execCommand("italic"));
-        addButton("Red", () => document.execCommand("foreColor", false, "red"));
-        addButton("Blue", () => document.execCommand("foreColor", false, "blue"));
-        addButton("Green", () => document.execCommand("foreColor", false, "green"));
-        addButton("Purple", () => document.execCommand("foreColor", false, "purple"));
-        addButton("Highlight", () => document.execCommand("backColor", false, "yellow"));
-        addButton("Clear Text", () => targetElement.textContent = "");
-      } else if (targetElement.classList.contains("dropped-img")) {
-        addButton("Increase Size", () => resizeImg(targetElement, 1.2));
-        addButton("Decrease Size", () => resizeImg(targetElement, 0.8));
-        addButton("Delete Image", () => targetElement.remove());
-      } else if (targetElement.classList.contains("day-box")) {
-        addButton("Light Gray", () => targetElement.style.backgroundColor = "#f3f4f6");
-        addButton("Light Blue", () => targetElement.style.backgroundColor = "#dbeafe");
-        addButton("Light Pink", () => targetElement.style.backgroundColor = "#fde2e9");
-        addButton("Light Green", () => targetElement.style.backgroundColor = "#dcfce7");
-        addButton("Clear Background", () => targetElement.style.backgroundColor = "");
+      if (ctxTarget.classList.contains("day-content")) {
+        addMenuBtn("Bold", ()=> execInContent("bold"));
+        addMenuBtn("Italic", ()=> execInContent("italic"));
+        addMenuBtn("Red", ()=> execInContent("foreColor", "red"));
+        addMenuBtn("Blue", ()=> execInContent("foreColor", "blue"));
+        addMenuBtn("Green", ()=> execInContent("foreColor", "green"));
+        addMenuBtn("Purple", ()=> execInContent("foreColor", "purple"));
+        addMenuBtn("Highlight", ()=> execInContent("backColor","yellow"));
+        addSep();
+        addMenuBtn("Clear Text", ()=> { ctxTarget.textContent=""; });
+      } else if (ctxTarget.classList.contains("dropped-img")) {
+        addMenuBtn("Increase Size", ()=> resizeImg(ctxTarget, 1.2));
+        addMenuBtn("Decrease Size", ()=> resizeImg(ctxTarget, 0.8));
+        addSep();
+        addMenuBtn("Bring to Front", ()=> ctxTarget.style.zIndex = (parseInt(ctxTarget.style.zIndex||"1")+1).toString());
+        addSep();
+        addMenuBtn("Delete Image", ()=> ctxTarget.remove());
+      } else if (ctxTarget.classList.contains("day-box")) {
+        addMenuBtn("Light Gray bg", ()=> ctxTarget.style.backgroundColor="#f3f4f6");
+        addMenuBtn("Light Blue bg", ()=> ctxTarget.style.backgroundColor="#dbeafe");
+        addMenuBtn("Light Pink bg", ()=> ctxTarget.style.backgroundColor="#fde2e9");
+        addMenuBtn("Light Green bg", ()=> ctxTarget.style.backgroundColor="#dcfce7");
+        addSep();
+        addMenuBtn("Clear Background", ()=> ctxTarget.style.backgroundColor="");
+      } else {
+        // Clicked other area inside print-area
+        addMenuBtn("Close", ()=> {});
       }
 
-      contextMenu.style.left = e.pageX + "px";
-      contextMenu.style.top = e.pageY + "px";
+      // position + show
+      contextMenu.style.left = e.clientX + "px";
+      contextMenu.style.top  = e.clientY + "px";
       contextMenu.style.display = "block";
     }
 
-    function addButton(label, action) {
-      const btn = document.createElement("button");
-      btn.textContent = label;
-      btn.onclick = () => { action(); closeContextMenu(); };
-      contextMenu.appendChild(btn);
+    function addMenuBtn(label, action){
+      const b=document.createElement("button");
+      b.textContent=label;
+      b.onclick= (evt)=>{ evt.stopPropagation(); if(action) action(); hideMenu(); };
+      contextMenu.appendChild(b);
     }
+    function addSep(){ const s=document.createElement('div'); s.className='menu-sep'; contextMenu.appendChild(s); }
 
-    function closeContextMenu() { contextMenu.style.display = "none"; }
-    window.addEventListener("click", closeContextMenu);
-    window.addEventListener("scroll", closeContextMenu);
+    function hideMenu(){ contextMenu.style.display="none"; }
+    document.addEventListener("click", ()=> hideMenu(), true);
+    document.addEventListener("scroll", ()=> hideMenu(), true);
+    document.addEventListener("keydown", (e)=>{ if(e.key==="Escape") hideMenu(); });
 
-    function resizeImg(img, scale) {
-      img.style.width = (img.offsetWidth * scale) + "px";
+    function execInContent(cmd, val){
+      // ensure selection is in the target contenteditable
+      if (ctxTarget && ctxTarget.classList.contains("day-content")) {
+        ctxTarget.focus();
+        document.execCommand(cmd, false, val || null);
+      }
+    }
+    function resizeImg(img, scale){
+      img.style.width  = (img.offsetWidth  * scale) + "px";
       img.style.height = (img.offsetHeight * scale) + "px";
     }
 
-    // --- Clear Calendar ---
-    document.getElementById("clearBtn").addEventListener("click", () => {
-      if (!confirm("Clear all entries and images?")) return;
-      document.querySelectorAll(".day-content").forEach(el => el.textContent = "");
-      document.querySelectorAll(".dropped-img").forEach(el => el.remove());
+    // ======= Background themes (25% opacity default) =======
+    const bg = document.getElementById('bgTheme');
+    const themeSel = document.getElementById('themeSel');
+    const hiContrast = document.getElementById('hiContrast');
+    const themeMap = {
+      none:    null,
+      spring:  "https://images.unsplash.com/photo-1529078155058-5d716f45d604?q=80&w=1600&auto=format&fit=crop",
+      summer:  "https://images.unsplash.com/photo-1501975558167-2d51ce0340d5?q=80&w=1600&auto=format&fit=crop",
+      fall:    "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?q=80&w=1600&auto=format&fit=crop",
+      winter:  "https://images.unsplash.com/photo-1601132359864-c974e79890af?q=80&w=1600&auto=format&fit=crop",
+      holiday: "https://images.unsplash.com/photo-1512389142860-9c449e58a543?q=80&w=1600&auto=format&fit=crop"
+    };
+    function applyTheme(){
+      const key = themeSel.value;
+      const url = themeMap[key];
+      if(!url){ bg.src=""; bg.style.opacity=0; return; }
+      bg.src = url;
+      bg.style.opacity = hiContrast.checked ? 0.10 : 0.25; // 25% default, ~10% high contrast
+    }
+    themeSel.addEventListener('change', applyTheme);
+    hiContrast.addEventListener('change', applyTheme);
+
+    // Upload custom background (session-only; resets on refresh)
+    const bgUpload = document.getElementById('bgUpload');
+    document.getElementById('bgUploadBtn').addEventListener('click', ()=> bgUpload.click());
+    bgUpload.addEventListener('change', ()=>{
+      const file = bgUpload.files?.[0]; if(!file) return;
+      const reader = new FileReader();
+      reader.onload = e => { bg.src = e.target.result; bg.style.opacity = hiContrast.checked ? 0.10 : 0.25; themeSel.value="none"; };
+      reader.readAsDataURL(file);
     });
 
-    // --- Export PDF ---
+    // ======= Buttons =======
+    document.getElementById('startFresh').addEventListener('click', ()=>{
+      if(!confirm("Start fresh? This clears text, icons, backgrounds, and resets month title.")) return;
+      document.querySelectorAll('.day-content').forEach(el=> el.textContent="");
+      document.querySelectorAll('.dropped-img').forEach(el=> el.remove());
+      boxes.forEach(b=> b.style.backgroundColor="");
+      bg.src=""; bg.style.opacity=0; themeSel.value="none"; hiContrast.checked=false;
+      document.getElementById('facility').textContent = "Facility Name";
+      document.getElementById('monthYear').textContent = "Month YYYY Activity Calendar";
+    });
+
+    document.getElementById("clearBtn").addEventListener("click", () => {
+      if (!confirm("Clear all day entries and images (keep headers & theme)?")) return;
+      document.querySelectorAll(".day-content").forEach(el => el.textContent = "");
+      document.querySelectorAll(".dropped-img").forEach(el => el.remove());
+      boxes.forEach(b=> b.style.backgroundColor="");
+    });
+
     document.getElementById("exportBtn").addEventListener("click", async () => {
       const { jsPDF } = window.jspdf;
       const node = document.getElementById("print-area");
@@ -256,6 +404,19 @@
       const title = document.getElementById("monthYear").innerText.replace(/\s+/g, "_");
       pdf.save(`${title}.pdf`);
     });
+
+    // ======= Month/Year change (preserve content) =======
+    function syncHeaderToSelection(){
+      const m = parseInt(monthSel.value,10), y = parseInt(yearSel.value,10);
+      document.getElementById('monthYear').textContent = `${months[m]} ${y} Activity Calendar`;
+    }
+    monthSel.addEventListener('change', ()=>{ renumberGrid(); syncHeaderToSelection(); });
+    yearSel.addEventListener('change',  ()=>{ renumberGrid(); syncHeaderToSelection(); });
+
+    // ======= Init =======
+    renumberGrid();
+    syncHeaderToSelection();
+    applyTheme();
   </script>
 </body>
 </html>
