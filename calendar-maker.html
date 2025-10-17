@@ -403,15 +403,37 @@
     });
 
     document.getElementById("exportBtn").addEventListener("click", async () => {
-      const { jsPDF } = window.jspdf;
-      const node = document.getElementById("print-area");
-      const canvas = await html2canvas(node, { scale: 2, useCORS: true, backgroundColor: "#ffffff" });
-      const imgData = canvas.toDataURL("image/png");
-      const pdf = new jsPDF({ orientation: "landscape", unit: "in", format: [11, 17] });
-      pdf.addImage(imgData, "PNG", 0, 0, 17, 11);
-      const title = document.getElementById("monthYear").innerText.replace(/\s+/g, "_");
-      pdf.save(`${title}.pdf`);
-    });
+  const { jsPDF } = window.jspdf;
+  const node = document.getElementById("print-area");
+
+  // Capture at higher resolution
+  const canvas = await html2canvas(node, {
+    scale: 2,
+    useCORS: true,
+    backgroundColor: "#ffffff",
+    width: node.scrollWidth,
+    height: node.scrollHeight
+  });
+
+  const imgData = canvas.toDataURL("image/png");
+  const pdf = new jsPDF({
+    orientation: "landscape",
+    unit: "in",
+    format: [17, 11] // true 11x17 landscape
+  });
+
+  // Convert pixels to inches based on 96px = 1in
+  const pageWidth = 17;
+  const pageHeight = 11;
+  const ratio = Math.min(pageWidth * 96 / canvas.width, pageHeight * 96 / canvas.height);
+
+  const printWidth = canvas.width * ratio / 96;
+  const printHeight = canvas.height * ratio / 96;
+
+  pdf.addImage(imgData, "PNG", 0, 0, printWidth, printHeight);
+  const title = document.getElementById("monthYear").innerText.replace(/\s+/g, "_");
+  pdf.save(`${title}.pdf`);
+});
 
     // ======= Month/Year change (preserve content) =======
     function syncHeaderToSelection(){
