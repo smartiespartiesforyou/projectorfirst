@@ -44,6 +44,7 @@
     }
 
     .inactive { opacity:0.25; }
+.inactive .day-content:empty::before { content: ""; }
 
     .day-num {
       position: absolute;
@@ -62,11 +63,12 @@
       min-height: 7rem;
       white-space: pre-wrap;
     }
-    .day-content:empty::before{
-      content:"Type activities here…\a10:00am Coffee Social\a10:30am Bingo";
-      white-space:pre-wrap; color:#9ca3af;
-    }
-
+  .day-content:empty::before {
+  content: "Type here…";
+  color: #9ca3af;
+  white-space: pre-wrap;
+}
+  
     .draggable-img { width:40px; height:40px; cursor:grab; user-select:none; }
     .dropped-img { position:absolute; width:50px; height:50px; cursor:move; }
 
