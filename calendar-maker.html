@@ -3,22 +3,20 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Activity Calendar Maker — ProjectorFirst</title>
+  <title>Activity Calendar Maker — Designer Mode</title>
 
   <!-- Tailwind -->
   <script src="https://cdn.tailwindcss.com"></script>
 
-  <!-- PDF & Canvas tools -->
+  <!-- PDF & Canvas -->
   <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
 
   <style>
     body { background: #fff; font-family: sans-serif; }
-
     @media print {
       @page { size: 11in 17in landscape; margin: 0.5in; }
-      #toolbar, #graphics-panel { display: none !important; }
-      body { margin: 0; }
+      #toolbar, #graphics-panel, #contextMenu { display: none !important; }
     }
 
     .day-box {
@@ -48,40 +46,37 @@
       white-space: pre-wrap;
     }
 
-    .draggable-img {
-      width: 40px;
-      height: 40px;
-      cursor: grab;
-      user-select: none;
-    }
+    .draggable-img { width: 40px; height: 40px; cursor: grab; user-select: none; }
+    .dropped-img { position: absolute; width: 50px; height: 50px; cursor: move; }
 
-    .dropped-img {
+    #print-area { background: #fff; box-shadow: 0 0 0 1px #cbd5e1; }
+
+    .editable-header { outline: none; border-bottom: 2px dashed transparent; }
+    .editable-header:focus { border-bottom-color: #2563eb; }
+
+    .weekday { background: #1e3a8a; color: #fff; font-weight: 700; text-align: center; padding: 0.5rem; }
+
+    /* Context menu styling */
+    #contextMenu {
       position: absolute;
-      width: 50px;
-      height: 50px;
-      cursor: move;
+      display: none;
+      z-index: 1000;
+      background: #f9fafb;
+      border: 1px solid #d1d5db;
+      border-radius: 0.5rem;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+      padding: 0.25rem;
     }
-
-    #print-area {
-      background: #fff;
-      box-shadow: 0 0 0 1px #cbd5e1;
+    #contextMenu button {
+      display: block;
+      width: 100%;
+      text-align: left;
+      padding: 0.25rem 0.5rem;
+      font-size: 0.875rem;
+      border-radius: 0.25rem;
     }
-
-    .editable-header {
-      outline: none;
-      border-bottom: 2px dashed transparent;
-    }
-
-    .editable-header:focus {
-      border-bottom-color: #2563eb;
-    }
-
-    .weekday {
-      background: #1e3a8a;
-      color: #fff;
-      font-weight: 700;
-      text-align: center;
-      padding: 0.5rem;
+    #contextMenu button:hover {
+      background-color: #e5e7eb;
     }
   </style>
 </head>
@@ -95,19 +90,16 @@
     <button id="clearBtn" class="px-4 py-2 rounded-lg font-semibold bg-gray-200 hover:bg-gray-300">
       Clear Calendar
     </button>
-    <span class="text-sm text-gray-600">
-      Type directly in boxes or drag icons from the sidebar.
-    </span>
+    <span class="text-sm text-gray-600">Right-click text or images for options.</span>
   </div>
 
-  <!-- Main container -->
+  <!-- Layout -->
   <div class="flex gap-4 max-w-screen-2xl mx-auto">
 
     <!-- Graphics sidebar -->
     <aside id="graphics-panel" class="w-1/6 bg-gray-100 p-3 rounded-lg border border-gray-300 flex flex-col items-center">
       <h2 class="text-lg font-bold mb-2 text-center">Add Graphics</h2>
       <div id="graphics" class="flex flex-wrap justify-center gap-2">
-        <!-- Example icons (replace or add your own PNGs/SVGs in /images) -->
         <img src="https://cdn-icons-png.flaticon.com/512/616/616490.png" class="draggable-img" draggable="true" title="Bingo">
         <img src="https://cdn-icons-png.flaticon.com/512/3944/3944169.png" class="draggable-img" draggable="true" title="Music">
         <img src="https://cdn-icons-png.flaticon.com/512/3176/3176292.png" class="draggable-img" draggable="true" title="Church">
@@ -120,7 +112,7 @@
       <p class="mt-2 text-xs text-center text-gray-600">Drag into calendar cells</p>
     </aside>
 
-    <!-- Printable area -->
+    <!-- Calendar -->
     <div id="print-area" class="flex-1 p-4 border border-slate-300 rounded-xl">
       <!-- Header -->
       <div class="mb-3 flex flex-col items-center">
@@ -132,7 +124,7 @@
         </div>
       </div>
 
-      <!-- Weekday headers -->
+      <!-- Weekdays -->
       <div class="grid grid-cols-7 border border-gray-300">
         <div class="weekday">Sunday</div>
         <div class="weekday">Monday</div>
@@ -143,13 +135,15 @@
         <div class="weekday">Saturday</div>
       </div>
 
-      <!-- Calendar -->
+      <!-- Days -->
       <div id="calendar" class="grid grid-cols-7 gap-1 border border-gray-300"></div>
     </div>
   </div>
 
+  <!-- Context Menu -->
+  <div id="contextMenu"></div>
+
   <script>
-    // === Build 31 boxes ===
     const calendar = document.getElementById("calendar");
     for (let i = 1; i <= 31; i++) {
       const box = document.createElement("div");
@@ -157,15 +151,14 @@
       box.innerHTML = `<div class="day-num">${i}</div><div class="day-content" contenteditable="true"></div>`;
       box.addEventListener("dragover", e => e.preventDefault());
       box.addEventListener("drop", handleDrop);
+      box.addEventListener("contextmenu", openContextMenu);
       calendar.appendChild(box);
     }
 
-    // === Drag image logic ===
+    // --- Drag Icons ---
     let draggedImageSrc = "";
     document.querySelectorAll(".draggable-img").forEach(img => {
-      img.addEventListener("dragstart", e => {
-        draggedImageSrc = e.target.src;
-      });
+      img.addEventListener("dragstart", e => draggedImageSrc = e.target.src);
     });
 
     function handleDrop(e) {
@@ -178,16 +171,13 @@
       newImg.style.left = (e.clientX - rect.left - 25) + "px";
       newImg.style.top = (e.clientY - rect.top - 25) + "px";
       makeDraggable(newImg);
+      newImg.addEventListener("contextmenu", openContextMenu);
       e.target.appendChild(newImg);
     }
 
     function makeDraggable(img) {
       let offsetX, offsetY, dragging = false;
-      img.addEventListener("mousedown", e => {
-        dragging = true;
-        offsetX = e.offsetX;
-        offsetY = e.offsetY;
-      });
+      img.addEventListener("mousedown", e => { dragging = true; offsetX = e.offsetX; offsetY = e.offsetY; });
       document.addEventListener("mousemove", e => {
         if (!dragging) return;
         const parent = img.parentElement.getBoundingClientRect();
@@ -197,14 +187,65 @@
       document.addEventListener("mouseup", () => dragging = false);
     }
 
-    // === Clear calendar ===
+    // --- Context Menu ---
+    const contextMenu = document.getElementById("contextMenu");
+    let targetElement = null;
+
+    function openContextMenu(e) {
+      e.preventDefault();
+      targetElement = e.target;
+      contextMenu.innerHTML = "";
+
+      if (targetElement.classList.contains("day-content")) {
+        addButton("Bold", () => document.execCommand("bold"));
+        addButton("Italic", () => document.execCommand("italic"));
+        addButton("Red", () => document.execCommand("foreColor", false, "red"));
+        addButton("Blue", () => document.execCommand("foreColor", false, "blue"));
+        addButton("Green", () => document.execCommand("foreColor", false, "green"));
+        addButton("Purple", () => document.execCommand("foreColor", false, "purple"));
+        addButton("Highlight", () => document.execCommand("backColor", false, "yellow"));
+        addButton("Clear Text", () => targetElement.textContent = "");
+      } else if (targetElement.classList.contains("dropped-img")) {
+        addButton("Increase Size", () => resizeImg(targetElement, 1.2));
+        addButton("Decrease Size", () => resizeImg(targetElement, 0.8));
+        addButton("Delete Image", () => targetElement.remove());
+      } else if (targetElement.classList.contains("day-box")) {
+        addButton("Light Gray", () => targetElement.style.backgroundColor = "#f3f4f6");
+        addButton("Light Blue", () => targetElement.style.backgroundColor = "#dbeafe");
+        addButton("Light Pink", () => targetElement.style.backgroundColor = "#fde2e9");
+        addButton("Light Green", () => targetElement.style.backgroundColor = "#dcfce7");
+        addButton("Clear Background", () => targetElement.style.backgroundColor = "");
+      }
+
+      contextMenu.style.left = e.pageX + "px";
+      contextMenu.style.top = e.pageY + "px";
+      contextMenu.style.display = "block";
+    }
+
+    function addButton(label, action) {
+      const btn = document.createElement("button");
+      btn.textContent = label;
+      btn.onclick = () => { action(); closeContextMenu(); };
+      contextMenu.appendChild(btn);
+    }
+
+    function closeContextMenu() { contextMenu.style.display = "none"; }
+    window.addEventListener("click", closeContextMenu);
+    window.addEventListener("scroll", closeContextMenu);
+
+    function resizeImg(img, scale) {
+      img.style.width = (img.offsetWidth * scale) + "px";
+      img.style.height = (img.offsetHeight * scale) + "px";
+    }
+
+    // --- Clear Calendar ---
     document.getElementById("clearBtn").addEventListener("click", () => {
       if (!confirm("Clear all entries and images?")) return;
       document.querySelectorAll(".day-content").forEach(el => el.textContent = "");
       document.querySelectorAll(".dropped-img").forEach(el => el.remove());
     });
 
-    // === Export PDF ===
+    // --- Export PDF ---
     document.getElementById("exportBtn").addEventListener("click", async () => {
       const { jsPDF } = window.jspdf;
       const node = document.getElementById("print-area");
