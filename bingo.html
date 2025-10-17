@@ -3,288 +3,319 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>Classic Bingo Caller — ProjectorFirst</title>
+  <title>Classic Bingo Caller — Projector Mode</title>
 
-  <script data-memberstack-id="pk_650cfbc9692b47a2c045"
-          src="https://api.memberstack.io/static/memberstack.js"
-          async></script>
-
-  <meta name="description" content="Classic Bingo Caller — simple, big-screen friendly bingo caller."/>
-  <meta name="theme-color" content="#1e3a8a"/>
-  <link rel="icon" href="/logo.svg" type="image/svg+xml"/>
+  <!-- Tailwind (utility only; keeps code short) -->
   <script src="https://cdn.tailwindcss.com"></script>
 
+  <meta name="theme-color" content="#0b1020"/>
+
   <style>
-    body {
-      background: #ffffff;
-      color: #000000;
+    :root{
+      --bg:#0b1020;        /* deep navy */
+      --panel:#0f172a;     /* slate-900 */
+      --accent:#1e40af;    /* blue-800 */
+      --btn:#1e3a8a;       /* blue-900 */
+      --btn-hover:#1d4ed8; /* blue-700 */
+    }
+
+    html, body {
+      height: 100%;
+      background: radial-gradient(1200px 800px at 50% -10%, #172554 0%, var(--bg) 55%, #080b18 100%);
+      color: #e5e7eb;
       margin: 0;
-      padding: 0;
     }
 
-    main {
-      margin-top: 0;
-    }
-
-    .caller-box {
-      position: relative;
-      width: min(85vw, 1000px);
-      height: min(40vw, 300px);
-      border: 6px solid #1e3a8a;
-      border-radius: 1rem;
-      display: flex;
+    /* Main stage layout */
+    .stage {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 1.25rem;
+      display: grid;
+      grid-template-columns: 1fr min(70vmin, 820px) 1fr; /* side buttons / square / side buttons */
+      grid-template-rows: auto auto 1fr;
+      gap: 1.25rem;
       align-items: center;
-      justify-content: center;
-      font-size: clamp(10rem, 30vmin, 24rem);
-      font-weight: 900;
+      justify-items: center;
+      min-height: 100dvh;
+    }
+
+    /* Center square caller */
+    .caller-square {
+      width: min(70vmin, 820px);
+      aspect-ratio: 1 / 1;            /* keeps it perfectly square */
       background: #000;
+      border: 10px solid #111827;     /* near-black border */
+      border-radius: 1.5rem;
+      display: grid;
+      place-items: center;
+      position: relative;
+      box-shadow: 0 30px 80px rgba(0,0,0,0.6), inset 0 0 40px rgba(255,255,255,0.05);
+    }
+    .call-text {
+      font-weight: 900;
+      letter-spacing: -0.02em;
       color: #fff;
-      overflow: hidden;
+      text-shadow: 0 0 22px rgba(255,255,255,0.35);
+      font-size: clamp(6rem, 18vmin, 20rem); /* huge, responsive */
+      line-height: 1;
+      user-select: none;
     }
 
-    .recent-calls {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      align-items: center;
-      margin-top: 2rem;
+    /* Button stacks on left/right */
+    .control-col {
+      display: grid;
       gap: 1rem;
-      max-width: 90vw;
+      align-content: center;
+      justify-items: stretch;
+      width: 100%;
+      max-width: 380px;
     }
-
-    .recent-calls span {
+    .btn {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      width: 130px;
-      height: 130px;
-      border-radius: 50%;
-      color: #fff;
-      font-size: 3rem;
-      font-weight: bold;
-      box-shadow: 0 0 8px rgba(0, 0, 0, 0.4);
-      flex-shrink: 0;
+      padding: 1.25rem 1.75rem;
+      font-size: clamp(1.25rem, 2.6vmin, 2rem);
+      font-weight: 800;
+      border-radius: 1rem;
+      border: 0;
+      cursor: pointer;
+      user-select: none;
+      transition: transform .06s ease, box-shadow .12s ease, background .12s ease, color .12s ease;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+    }
+    .btn:active { transform: translateY(1px) scale(0.995); }
+
+    .btn-next       { background: #0ea5e9; color:#001018; }
+    .btn-next:hover { background: #38bdf8; }
+
+    .btn-fs         { background: #7c3aed; color:#f8fafc; }
+    .btn-fs:hover   { background: #8b5cf6; }
+
+    .btn-reset       { background: #ef4444; color:#fff; }
+    .btn-reset:hover { background: #f87171; }
+
+    .btn-sound {
+      background: #0b1224;
+      color: #c7d2fe;
+      border: 2px solid #6366f1;
+    }
+    .btn-sound:hover {
+      background: #111a34;
     }
 
-    .ball-B { background: #1e3a8a; }
-    .ball-I { background: #dc2626; }
-    .ball-N { background: #16a34a; }
-    .ball-G { background: #f97316; }
-    .ball-O { background: #9333ea; }
+    /* Recent balls row (under the square) */
+    .recent-strip {
+      grid-column: 1 / 4; /* span full width under the square */
+      width: min(1400px, 92vw);
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: clamp(0.5rem, 1.1vmin, 1rem);
+      padding: 0.75rem 0.5rem 1.25rem;
+    }
+    .ball {
+      width: clamp(70px, 7vmin, 110px);
+      height: clamp(70px, 7vmin, 110px);
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      color:#fff;
+      font-weight: 900;
+      font-size: clamp(1.25rem, 3.3vmin, 2.2rem);
+      letter-spacing: -0.02em;
+      box-shadow:
+        inset 0 -10px 18px rgba(0,0,0,0.35),
+        0 8px 18px rgba(0,0,0,0.35);
+      text-shadow: 0 2px 8px rgba(0,0,0,0.35);
+      user-select: none;
+      transform: translateZ(0);
+      animation: pop 140ms ease-out;
+    }
+    @keyframes pop {
+      from { transform: scale(0.72); opacity: 0; }
+      to   { transform: scale(1);    opacity: 1; }
+    }
 
-    .button-row {
+    /* B I N G O color identities */
+    .ball-B { background: #1e3a8a; } /* blue 900 */
+    .ball-I { background: #dc2626; } /* red 600  */
+    .ball-N { background: #16a34a; } /* green 600*/
+    .ball-G { background: #f97316; } /* orange 500*/
+    .ball-O { background: #7c3aed; } /* violet 600*/
+
+    /* Small header bar */
+    .topbar {
+      grid-column: 1 / 4;
+      width: 100%;
       display: flex;
       justify-content: center;
       align-items: center;
-      flex-wrap: wrap;
       gap: 1rem;
-      margin-top: 2rem;
+      padding-top: .25rem;
+    }
+    .app-title {
+      font-size: clamp(1.4rem, 2.6vmin, 2.2rem);
+      font-weight: 900;
+      letter-spacing: .02em;
+      color: #e2e8f0;
+      text-shadow: 0 2px 8px rgba(0,0,0,0.35);
+      user-select: none;
     }
 
-    .btn {
-      font-size: 1.75rem;
-      font-weight: bold;
-      padding: 1.25rem 2.5rem;
-      border-radius: 1rem;
-      transition: background 0.2s, box-shadow 0.2s;
-      min-width: 220px;
-      text-align: center;
-    }
-
-    .btn:hover {
-      box-shadow: 0 0 12px rgba(0, 0, 0, 0.3);
-    }
-
-    .btn-next { background: #1e3a8a; color: white; }
-    .btn-next:hover { background: #1d4ed8; }
-    .btn-reset { background: #dc2626; color: white; }
-    .btn-fullscreen { background: #6d28d9; color: white; }
-    .btn-sound { background: white; color: #1e3a8a; border: 2px solid #1e3a8a; }
-    .btn-home { background: #1e3a8a; color: white; font-size: 1.25rem; padding: 0.75rem 2rem; border-radius: 9999px; }
-
-    @media (max-width: 768px) {
-      .recent-calls span {
-        width: 90px;
-        height: 90px;
-        font-size: 2rem;
+    /* Mobile/short screens: stack controls below */
+    @media (max-width: 980px) {
+      .stage {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto auto auto auto;
       }
-      .btn {
-        min-width: 150px;
-        font-size: 1.25rem;
-        padding: 1rem 1.5rem;
-      }
+      .caller-square { width: min(90vw, 720px); }
+      .control-col { max-width: 720px; width: min(90vw, 720px); grid-auto-flow: column; grid-auto-columns: 1fr; }
+      .recent-strip { grid-column: 1; width: min(95vw, 1000px); }
     }
   </style>
 </head>
-
-<body data-ms-content="bingo-game"
-      class="flex flex-col items-center justify-start min-h-screen pt-0 mt-0">
-  <main class="w-full max-w-6xl text-center">
-    
-    <!-- ✅ Simple Back to Home button -->
-    <div class="mt-4 mb-2">
-      <a href="apps.html" class="btn-home">⬅ Back to Home</a>
+<body>
+  <main class="stage">
+    <!-- Title -->
+    <div class="topbar">
+      <div class="app-title">🎉 Classic Bingo Caller</div>
     </div>
 
-    <h1 class="text-5xl font-extrabold text-blue-900 mt-2 mb-4">🎉 Classic Bingo Caller</h1>
-
-    <div class="mb-4 text-left px-6">
-      <label for="theme" class="block text-lg font-semibold text-blue-900 mb-2">Theme</label>
-      <select id="theme"
-              class="w-full text-xl p-3 border-2 border-blue-900 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-400">
-      </select>
+    <!-- Left controls -->
+    <div class="control-col" aria-label="Left controls">
+      <button id="btnNext" class="btn btn-next" title="Space">▶ Call Next</button>
+      <button id="btnFS" class="btn btn-fs" title="F">⛶ Fullscreen</button>
     </div>
 
-    <div class="flex flex-col items-center justify-center gap-6 mb-4">
-      <div id="callerBox" class="caller-box">
-        <span id="callerText">—</span>
-        <span id="themeSymbol" style="position:absolute; bottom:10px; right:10px; font-size:3rem;"></span>
-      </div>
+    <!-- Center square -->
+    <section class="caller-square" aria-live="polite" aria-atomic="true">
+      <div id="callerText" class="call-text">—</div>
+    </section>
 
-      <div id="recentCalls" class="recent-calls"></div>
-
-      <div class="button-row">
-        <button onclick="callNext()" class="btn btn-next">Call Next (Space)</button>
-        <button onclick="resetCaller()" class="btn btn-reset">Reset (R)</button>
-        <button onclick="toggleFullscreen()" class="btn btn-fullscreen">Fullscreen (F)</button>
-        <button onclick="toggleSound()" id="soundBtn" class="btn btn-sound">🔊 Sound</button>
-      </div>
+    <!-- Right controls -->
+    <div class="control-col" aria-label="Right controls">
+      <button id="btnReset" class="btn btn-reset" title="R">↺ Reset Game</button>
+      <button id="btnSound" class="btn btn-sound" title="S">🔊 Sound</button>
     </div>
+
+    <!-- Recent balls row -->
+    <div id="recentCalls" class="recent-strip" aria-label="Recent calls"></div>
   </main>
 
   <script>
-    function makeTheme(label, ranges = [[1,15],[16,30],[31,45],[46,60],[61,75]], rate = 1.0, symbol = "") {
-      return {
-        label,
-        letters: ["B","I","N","G","O"],
-        ranges,
-        speakPrefix: (L, n) => `${L} ${n}`,
-        speakRate: rate,
-        ballClassFromLetter: L => `ball-${L}`,
-        symbol
-      };
-    }
+    /**********************
+     * Bingo game logic
+     **********************/
 
-    const THEMES = {
-      classic75: makeTheme("Classic 1–75 (B I N G O)"),
-      uk90: makeTheme("UK 1–90", [[1,18],[19,36],[37,54],[55,72],[73,90]]),
-      kids50: makeTheme("Kids 1–50", [[1,10],[11,20],[21,30],[31,40],[41,50]]),
-      mini30: makeTheme("Mini 1–30", [[1,6],[7,12],[13,18],[19,24],[25,30]]),
-      rapid75: makeTheme("Rapid 1–75 (faster speech)", [[1,15],[16,30],[31,45],[46,60],[61,75]], 1.4),
-      halloween75: makeTheme("Halloween 1–75", undefined, 1.0, "🎃"),
-      thanksgiving75: makeTheme("Thanksgiving 1–75", undefined, 1.0, "🦃"),
-      christmas75: makeTheme("Christmas 1–75", undefined, 1.0, "🎄"),
-      easter75: makeTheme("Easter 1–75", undefined, 1.0, "🐣"),
-      memorial75: makeTheme("Memorial Day 1–75", undefined, 1.0, "⭐"),
-      flagday75: makeTheme("Flag Day 1–75", undefined, 1.0, "🇺🇸"),
-      independence75: makeTheme("Independence Day 1–75", undefined, 1.0, "🎆"),
-      laborday75: makeTheme("Labor Day 1–75", undefined, 1.0, "🛠️"),
-      newyear75: makeTheme("New Year’s 1–75", undefined, 1.0, "🎉"),
-      valentines75: makeTheme("Valentine’s 1–75", undefined, 1.0, "💘"),
-      stpatricks75: makeTheme("St. Patrick’s 1–75", undefined, 1.0, "☘️")
-    };
+    // Theme/color identity stays classic B-I-N-G-O (1-75)
+    const LETTERS = ["B","I","N","G","O"];
+    const RANGES = [[1,15],[16,30],[31,45],[46,60],[61,75]];
 
-    let currentThemeKey = "classic75";
-    let letters = [];
-    let ranges = [];
-    let allNumbers = [];
-    let history = [];
+    let deck = [];     // remaining calls (shuffled)
+    let history = [];  // all calls made
     let soundOn = true;
 
-    function initThemePicker() {
-      const sel = document.getElementById("theme");
-      sel.innerHTML = "";
-      Object.entries(THEMES).forEach(([key, cfg]) => {
-        const opt = document.createElement("option");
-        opt.value = key;
-        opt.textContent = cfg.label;
-        if (key === currentThemeKey) opt.selected = true;
-        sel.appendChild(opt);
-      });
-      sel.addEventListener("change", (e) => {
-        currentThemeKey = e.target.value;
-        applyTheme();
-      });
-    }
+    const callerText   = document.getElementById("callerText");
+    const recentStrip  = document.getElementById("recentCalls");
+    const btnNext      = document.getElementById("btnNext");
+    const btnReset     = document.getElementById("btnReset");
+    const btnFS        = document.getElementById("btnFS");
+    const btnSound     = document.getElementById("btnSound");
 
-    function applyTheme() {
-      const cfg = THEMES[currentThemeKey];
-      letters = cfg.letters;
-      ranges = cfg.ranges;
-      initGame();
-      document.getElementById("themeSymbol").textContent = cfg.symbol || "";
-    }
-
-    function initGame() {
-      allNumbers = [];
+    function initDeck() {
+      deck = [];
       history = [];
-      for (let i = 0; i < letters.length; i++) {
-        const [min, max] = ranges[i];
+      for (let i = 0; i < LETTERS.length; i++) {
+        const [min, max] = RANGES[i];
         for (let n = min; n <= max; n++) {
-          allNumbers.push({letter: letters[i], number: n});
+          deck.push({ letter: LETTERS[i], number: n });
         }
       }
-      shuffle(allNumbers);
-      document.getElementById("callerText").textContent = "—";
-      document.getElementById("recentCalls").innerHTML = "";
+      shuffle(deck);
+      callerText.textContent = "—";
+      recentStrip.innerHTML = "";
     }
 
-    function shuffle(arr) {
-      for (let i = arr.length - 1; i > 0; i--) {
+    function shuffle(a) {
+      for (let i = a.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
-        [arr[i], arr[j]] = [arr[j], arr[i]];
+        [a[i], a[j]] = [a[j], a[i]];
       }
     }
 
     function callNext() {
-      if (allNumbers.length === 0) return;
-      const call = allNumbers.pop();
+      if (deck.length === 0) return;
+      const call = deck.pop();
       history.push(call);
-      document.getElementById("callerText").textContent = call.letter + " " + call.number;
-      updateRecent();
-      if (soundOn) {
-        const cfg = THEMES[currentThemeKey];
-        const phrase = cfg.speakPrefix(call.letter, call.number);
-        speechSynthesis.cancel();
-        const utter = new SpeechSynthesisUtterance(phrase);
-        utter.rate = cfg.speakRate || 1.0;
-        speechSynthesis.speak(utter);
-      }
+      renderCall(call);
+      renderRecent();
+      speak(call);
     }
 
-    function resetCaller() { initGame(); }
+    function renderCall(call) {
+      callerText.textContent = call.letter + " " + call.number;
+    }
 
-    function updateRecent() {
-      const cfg = THEMES[currentThemeKey];
-      const recentDiv = document.getElementById("recentCalls");
-      recentDiv.innerHTML = history
-        .slice(-50)
-        .reverse()
-        .map(c => `<span class="${cfg.ballClassFromLetter(c.letter)}">${c.letter} ${c.number}</span>`)
+    function renderRecent() {
+      // show last ~60, newest at the end (left-to-right reading)
+      const slice = history.slice(-60);
+      recentStrip.innerHTML = slice
+        .map(c => `<div class="ball ball-${c.letter}" aria-label="${c.letter} ${c.number}">${c.letter} ${c.number}</div>`)
         .join("");
+    }
+
+    function speak(call) {
+      if (!soundOn) return;
+      try {
+        window.speechSynthesis.cancel();
+        const utt = new SpeechSynthesisUtterance(`${call.letter} ${call.number}`);
+        utt.rate = 1.0;
+        // prefer a clear voice if available
+        const voices = speechSynthesis.getVoices();
+        const v = voices.find(v => /english/i.test(v.lang) && /female/i.test(v.name)) || voices[0];
+        if (v) utt.voice = v;
+        window.speechSynthesis.speak(utt);
+      } catch(_) { /* speech unsupported; ignore */ }
+    }
+
+    function resetGame() {
+      initDeck();
     }
 
     function toggleSound() {
       soundOn = !soundOn;
-      document.getElementById("soundBtn").textContent = soundOn ? "🔊 Sound" : "🔇 Muted";
+      btnSound.textContent = soundOn ? "🔊 Sound" : "🔇 Muted";
+      if (!soundOn) window.speechSynthesis.cancel();
     }
 
     function toggleFullscreen() {
       if (!document.fullscreenElement) {
-        document.documentElement.requestFullscreen();
+        document.documentElement.requestFullscreen().catch(()=>{});
       } else {
-        if (document.exitFullscreen) document.exitFullscreen();
+        document.exitFullscreen?.();
       }
     }
 
-    document.addEventListener("keydown", e => {
-      if (e.code === "Space") { e.preventDefault(); callNext(); }
-      if (e.code === "KeyR") { resetCaller(); }
-      if (e.code === "KeyF") { toggleFullscreen(); }
+    /**********************
+     * Events & Shortcuts
+     **********************/
+    btnNext.addEventListener("click", callNext);
+    btnReset.addEventListener("click", resetGame);
+    btnFS.addEventListener("click", toggleFullscreen);
+    btnSound.addEventListener("click", toggleSound);
+
+    document.addEventListener("keydown", (e) => {
+      const code = e.code;
+      if (code === "Space") { e.preventDefault(); callNext(); }
+      else if (code === "KeyR") { resetGame(); }
+      else if (code === "KeyF") { toggleFullscreen(); }
+      else if (code === "KeyS") { toggleSound(); }
     });
 
-    initThemePicker();
-    applyTheme();
+    // Initialize
+    initDeck();
   </script>
 </body>
 </html>
