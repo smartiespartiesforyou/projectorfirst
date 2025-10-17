@@ -430,7 +430,10 @@
   const printWidth = canvas.width * ratio / 96;
   const printHeight = canvas.height * ratio / 96;
 
-  pdf.addImage(imgData, "PNG", 0, 0, printWidth, printHeight);
+  const xOffset = (pageWidth - printWidth) / 2;
+const yOffset = (pageHeight - printHeight) / 2;
+pdf.addImage(imgData, "PNG", xOffset, yOffset, printWidth, printHeight);
+
   const title = document.getElementById("monthYear").innerText.replace(/\s+/g, "_");
   pdf.save(`${title}.pdf`);
 });
