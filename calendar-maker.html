@@ -410,8 +410,35 @@
       const m = parseInt(monthSel.value,10), y = parseInt(yearSel.value,10);
       document.getElementById('monthYear').textContent = `${months[m]} ${y} Activity Calendar`;
     }
-    monthSel.addEventListener('change', ()=>{ renumberGrid(); syncHeaderToSelection(); });
-    yearSel.addEventListener('change',  ()=>{ renumberGrid(); syncHeaderToSelection(); });
+    function resetForNewMonth(){
+  if(!confirm("Start a new calendar for this month? This will clear all text, images, and box colors but keep your background and headers.")) {
+    // Cancelled — revert selection
+    monthSel.value = prevMonth;
+    yearSel.value = prevYear;
+    return;
+  }
+
+  // Clear all editable content
+  document.querySelectorAll('.day-content').forEach(el => el.textContent = "");
+  document.querySelectorAll('.dropped-img').forEach(el => el.remove());
+  boxes.forEach(b => b.style.backgroundColor = "");
+
+  // Rebuild calendar layout for new month
+  renumberGrid();
+  syncHeaderToSelection();
+
+  // Save current selection for next comparison
+  prevMonth = parseInt(monthSel.value,10);
+  prevYear = parseInt(yearSel.value,10);
+}
+
+let prevMonth = parseInt(monthSel.value,10);
+let prevYear  = parseInt(yearSel.value,10);
+
+monthSel.addEventListener('change', resetForNewMonth);
+yearSel.addEventListener('change',  resetForNewMonth);
+
+  
 
     // ======= Init =======
     renumberGrid();
