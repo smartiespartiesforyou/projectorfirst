@@ -2,279 +2,219 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Activity Calendar Maker — ProjectorFirst</title>
 
-  <!-- Tailwind for clean layout -->
+  <!-- Tailwind -->
   <script src="https://cdn.tailwindcss.com"></script>
 
-  <!-- Export libs -->
+  <!-- PDF & Canvas tools -->
   <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
 
   <style>
-    :root {
-      --sheet-padding: 0.5in; /* matches print margin */
-    }
-    body { background:#fff; }
-    .day-box { 
-      min-height: 8.5rem; 
-      background:#fff; 
-      border:1px solid #d1d5db; 
-      border-radius: .25rem; 
-      padding:.25rem; 
-      display:flex; 
-      flex-direction:column;
-    }
-    .day-num {
-      font-size:.75rem; 
-      color:#6b7280; 
-      text-align:right;
-    }
-    .notes {
-      margin-top:.25rem;
-      flex:1;
-      border-radius:.25rem;
-      padding:.25rem;
-      outline:none;
-      white-space:pre-wrap;
-      line-height:1.15;
-      font-size:0.95rem;
-    }
-    .notes:empty:before {
-      content:"Type times + activities…";
-      color:#9ca3af;
-    }
+    body { background: #fff; font-family: sans-serif; }
 
-    /* PRINT: force 11x17 landscape, hide controls, keep fat readable text */
     @media print {
-      @page {
-        size: 11in 17in landscape;
-        margin: 0.5in;
-      }
-      #toolbar { display:none !important; }
-      body { background:#fff !important; }
-      #calendarSheet {
-        box-shadow:none !important;
-      }
+      @page { size: 11in 17in landscape; margin: 0.5in; }
+      #toolbar, #graphics-panel { display: none !important; }
+      body { margin: 0; }
     }
 
-    /* Desktop sheet framing (nice on screen, irrelevant on print/PDF) */
-    #calendarSheet {
-      background:#fff;
-      padding: var(--sheet-padding);
-      box-shadow: 0 10px 30px rgba(0,0,0,.08);
+    .day-box {
+      position: relative;
+      min-height: 9rem;
+      border: 1px solid #d1d5db;
+      border-radius: 0.25rem;
+      padding: 0.25rem;
+      overflow: hidden;
+    }
+
+    .day-num {
+      position: absolute;
+      top: 0.25rem;
+      right: 0.35rem;
+      font-size: 0.75rem;
+      color: #6b7280;
+    }
+
+    .day-content {
+      margin-top: 1rem;
+      padding: 0.25rem;
+      line-height: 1.25rem;
+      font-size: 0.95rem;
+      outline: none;
+      min-height: 7rem;
+      white-space: pre-wrap;
+    }
+
+    .draggable-img {
+      width: 40px;
+      height: 40px;
+      cursor: grab;
+      user-select: none;
+    }
+
+    .dropped-img {
+      position: absolute;
+      width: 50px;
+      height: 50px;
+      cursor: move;
+    }
+
+    #print-area {
+      background: #fff;
+      box-shadow: 0 0 0 1px #cbd5e1;
+    }
+
+    .editable-header {
+      outline: none;
+      border-bottom: 2px dashed transparent;
+    }
+
+    .editable-header:focus {
+      border-bottom-color: #2563eb;
+    }
+
+    .weekday {
+      background: #1e3a8a;
+      color: #fff;
+      font-weight: 700;
+      text-align: center;
+      padding: 0.5rem;
     }
   </style>
 </head>
-<body class="p-4">
-  <!-- ===== Toolbar (hidden in print/PDF) ===== -->
-  <section id="toolbar" class="max-w-screen-2xl mx-auto mb-4">
-    <div class="flex flex-wrap items-end gap-3 bg-gray-50 border border-gray-200 p-3 rounded-xl">
-      <div>
-        <label class="block text-xs font-semibold text-gray-600">Facility Name</label>
-        <input id="facility" class="border rounded-md px-3 py-2 text-sm" placeholder="Facility name (optional)"/>
+<body class="p-4 md:p-6">
+
+  <!-- Toolbar -->
+  <div id="toolbar" class="max-w-screen-2xl mx-auto mb-4 flex flex-wrap gap-2 items-center">
+    <button id="exportBtn" class="px-4 py-2 rounded-lg font-semibold bg-blue-600 text-white hover:bg-blue-700">
+      Export 11×17 PDF
+    </button>
+    <button id="clearBtn" class="px-4 py-2 rounded-lg font-semibold bg-gray-200 hover:bg-gray-300">
+      Clear Calendar
+    </button>
+    <span class="text-sm text-gray-600">
+      Type directly in boxes or drag icons from the sidebar.
+    </span>
+  </div>
+
+  <!-- Main container -->
+  <div class="flex gap-4 max-w-screen-2xl mx-auto">
+
+    <!-- Graphics sidebar -->
+    <aside id="graphics-panel" class="w-1/6 bg-gray-100 p-3 rounded-lg border border-gray-300 flex flex-col items-center">
+      <h2 class="text-lg font-bold mb-2 text-center">Add Graphics</h2>
+      <div id="graphics" class="flex flex-wrap justify-center gap-2">
+        <!-- Example icons (replace or add your own PNGs/SVGs in /images) -->
+        <img src="https://cdn-icons-png.flaticon.com/512/616/616490.png" class="draggable-img" draggable="true" title="Bingo">
+        <img src="https://cdn-icons-png.flaticon.com/512/3944/3944169.png" class="draggable-img" draggable="true" title="Music">
+        <img src="https://cdn-icons-png.flaticon.com/512/3176/3176292.png" class="draggable-img" draggable="true" title="Church">
+        <img src="https://cdn-icons-png.flaticon.com/512/4359/4359863.png" class="draggable-img" draggable="true" title="Crafts">
+        <img src="https://cdn-icons-png.flaticon.com/512/3670/3670151.png" class="draggable-img" draggable="true" title="Movie">
+        <img src="https://cdn-icons-png.flaticon.com/512/1744/1744065.png" class="draggable-img" draggable="true" title="Party">
+        <img src="https://cdn-icons-png.flaticon.com/512/616/616408.png" class="draggable-img" draggable="true" title="Coffee">
+        <img src="https://cdn-icons-png.flaticon.com/512/3039/3039358.png" class="draggable-img" draggable="true" title="Exercise">
       </div>
-      <div>
-        <label class="block text-xs font-semibold text-gray-600">Month</label>
-        <select id="month" class="border rounded-md px-3 py-2 text-sm">
-          <option value="0">January</option><option value="1">February</option><option value="2">March</option>
-          <option value="3">April</option><option value="4">May</option><option value="5">June</option>
-          <option value="6">July</option><option value="7">August</option><option value="8">September</option>
-          <option value="9">October</option><option value="10">November</option><option value="11">December</option>
-        </select>
+      <p class="mt-2 text-xs text-center text-gray-600">Drag into calendar cells</p>
+    </aside>
+
+    <!-- Printable area -->
+    <div id="print-area" class="flex-1 p-4 border border-slate-300 rounded-xl">
+      <!-- Header -->
+      <div class="mb-3 flex flex-col items-center">
+        <div class="text-2xl font-bold text-center">
+          <span id="facility" class="editable-header" contenteditable="true">Facility Name</span>
+        </div>
+        <div class="text-xl font-semibold text-center text-slate-700">
+          <span id="monthYear" class="editable-header" contenteditable="true">Month 2025 Activity Calendar</span>
+        </div>
       </div>
-      <div>
-        <label class="block text-xs font-semibold text-gray-600">Year</label>
-        <input id="year" type="number" class="border rounded-md px-3 py-2 text-sm w-28" value="2025"/>
+
+      <!-- Weekday headers -->
+      <div class="grid grid-cols-7 border border-gray-300">
+        <div class="weekday">Sunday</div>
+        <div class="weekday">Monday</div>
+        <div class="weekday">Tuesday</div>
+        <div class="weekday">Wednesday</div>
+        <div class="weekday">Thursday</div>
+        <div class="weekday">Friday</div>
+        <div class="weekday">Saturday</div>
       </div>
-      <button id="generateBtn" class="px-4 py-2 rounded-lg bg-blue-700 text-white font-semibold hover:bg-blue-800">
-        Generate Month
-      </button>
-      <button id="clearBtn" class="px-4 py-2 rounded-lg bg-gray-700 text-white font-semibold hover:bg-gray-800">
-        Clear Calendar
-      </button>
-      <button id="exportBtn" class="px-4 py-2 rounded-lg bg-emerald-700 text-white font-semibold hover:bg-emerald-800">
-        Save as PDF (11×17)
-      </button>
+
+      <!-- Calendar -->
+      <div id="calendar" class="grid grid-cols-7 gap-1 border border-gray-300"></div>
     </div>
-  </section>
-
-  <!-- ===== Sheet (this is what becomes the PDF) ===== -->
-  <main id="calendarSheet" class="max-w-screen-2xl mx-auto">
-    <!-- Header -->
-    <header class="mb-3">
-      <h1 id="titleLine" class="text-3xl font-extrabold text-center">Activity Calendar</h1>
-      <p id="subtitleLine" class="text-center text-base text-gray-600 mt-1"></p>
-    </header>
-
-    <!-- Weekday headers -->
-    <div class="grid grid-cols-7 gap-1 mb-1">
-      <div class="bg-blue-900 text-white font-bold p-2 text-center">Sunday</div>
-      <div class="bg-blue-900 text-white font-bold p-2 text-center">Monday</div>
-      <div class="bg-blue-900 text-white font-bold p-2 text-center">Tuesday</div>
-      <div class="bg-blue-900 text-white font-bold p-2 text-center">Wednesday</div>
-      <div class="bg-blue-900 text-white font-bold p-2 text-center">Thursday</div>
-      <div class="bg-blue-900 text-white font-bold p-2 text-center">Friday</div>
-      <div class="bg-blue-900 text-white font-bold p-2 text-center">Saturday</div>
-    </div>
-
-    <!-- Calendar grid (filled by JS) -->
-    <section id="calendarGrid" class="grid grid-cols-7 gap-1 border border-gray-300"></section>
-
-    <!-- Footer line: revision date for compliance -->
-    <footer class="mt-2 text-xs text-gray-500 text-right">
-      <span id="revisionNote"></span>
-    </footer>
-  </main>
+  </div>
 
   <script>
-    // ===== Utilities
-    const monthNames = [
-      "January","February","March","April","May","June",
-      "July","August","September","October","November","December"
-    ];
-
-    function daysInMonth(monthIndex, year) {
-      return new Date(year, monthIndex + 1, 0).getDate();
+    // === Build 31 boxes ===
+    const calendar = document.getElementById("calendar");
+    for (let i = 1; i <= 31; i++) {
+      const box = document.createElement("div");
+      box.className = "day-box";
+      box.innerHTML = `<div class="day-num">${i}</div><div class="day-content" contenteditable="true"></div>`;
+      box.addEventListener("dragover", e => e.preventDefault());
+      box.addEventListener("drop", handleDrop);
+      calendar.appendChild(box);
     }
 
-    function firstWeekday(monthIndex, year) {
-      // 0=Sun..6=Sat
-      return new Date(year, monthIndex, 1).getDay();
-    }
-
-    // ===== DOM
-    const facilityEl = document.getElementById("facility");
-    const monthEl = document.getElementById("month");
-    const yearEl = document.getElementById("year");
-    const titleLine = document.getElementById("titleLine");
-    const subtitleLine = document.getElementById("subtitleLine");
-    const calendarGrid = document.getElementById("calendarGrid");
-    const revisionNote = document.getElementById("revisionNote");
-
-    const generateBtn = document.getElementById("generateBtn");
-    const clearBtn = document.getElementById("clearBtn");
-    const exportBtn = document.getElementById("exportBtn");
-
-    // ===== Build calendar cells
-    function buildCalendar(monthIndex, year) {
-      calendarGrid.innerHTML = "";
-      const startPad = firstWeekday(monthIndex, year);
-      const totalDays = daysInMonth(monthIndex, year);
-      const totalCells = Math.ceil((startPad + totalDays) / 7) * 7; // 5 or 6 weeks clean grid
-
-      for (let i = 0; i < totalCells; i++) {
-        const cell = document.createElement("div");
-        cell.className = "day-box";
-
-        const numWrap = document.createElement("div");
-        numWrap.className = "day-num";
-
-        const notes = document.createElement("div");
-        notes.className = "notes";
-        notes.contentEditable = "true";
-        notes.setAttribute("aria-label", "Day activities");
-
-        // Fill date or leave blank
-        const dayNum = i - startPad + 1;
-        if (dayNum > 0 && dayNum <= totalDays) {
-          numWrap.textContent = dayNum;
-        } else {
-          numWrap.textContent = ""; // out-of-month
-          notes.classList.add("opacity-50");
-        }
-
-        cell.appendChild(numWrap);
-        cell.appendChild(notes);
-        calendarGrid.appendChild(cell);
-      }
-
-      // Header text
-      const fac = (facilityEl.value || "").trim();
-      titleLine.textContent = fac ? `${fac} — Activity Calendar` : "Activity Calendar";
-      subtitleLine.textContent = `${monthNames[monthIndex]} ${year}`;
-      revisionNote.textContent = `Generated ${new Date().toLocaleString()} — Rev`;
-    }
-
-    // ===== Clear only the typed notes (keep dates and header)
-    function clearCalendarNotes() {
-      document.querySelectorAll(".notes").forEach(n => n.innerHTML = "");
-    }
-
-    // ===== Export as 11×17 PDF
-    async function exportPDF() {
-      // Capture only the sheet content
-      const sheet = document.getElementById("calendarSheet");
-
-      // Boost scale for crisp text in PDF
-      const canvas = await html2canvas(sheet, {
-        scale: 2,    // increase if you want sharper PDF, at cost of size/time
-        useCORS: true,
-        backgroundColor: "#ffffff"
+    // === Drag image logic ===
+    let draggedImageSrc = "";
+    document.querySelectorAll(".draggable-img").forEach(img => {
+      img.addEventListener("dragstart", e => {
+        draggedImageSrc = e.target.src;
       });
-
-      const imgData = canvas.toDataURL("image/png");
-
-      // jsPDF in inches; 17×11 landscape (tabloid)
-      const { jsPDF } = window.jspdf;
-      const pdf = new jsPDF({ orientation: "landscape", unit: "in", format: [17, 11] });
-
-      // Fit image to page with margins equal to print @page (0.5in)
-      const pageW = 17, pageH = 11;
-      const margin = 0.5;
-      const usableW = pageW - margin * 2;
-      const usableH = pageH - margin * 2;
-
-      // Compute image aspect fit
-      const imgW = canvas.width;
-      const imgH = canvas.height;
-      const imgAspect = imgW / imgH;
-      const pageAspect = usableW / usableH;
-
-      let drawW, drawH;
-      if (imgAspect > pageAspect) {
-        drawW = usableW;
-        drawH = usableW / imgAspect;
-      } else {
-        drawH = usableH;
-        drawW = usableH * imgAspect;
-      }
-
-      const offsetX = (pageW - drawW) / 2;
-      const offsetY = (pageH - drawH) / 2;
-
-      pdf.addImage(imgData, "PNG", offsetX, offsetY, drawW, drawH, "", "FAST");
-
-      const fac = (facilityEl.value || "").trim();
-      const fileMonth = monthNames[parseInt(monthEl.value, 10)];
-      const fileYear = parseInt(yearEl.value, 10);
-      const fname = `${fac ? fac + " - " : ""}${fileMonth} ${fileYear} Activity Calendar.pdf`.replace(/\s+/g, " ").trim();
-
-      pdf.save(fname);
-    }
-
-    // ===== Wire up controls
-    generateBtn.addEventListener("click", () => {
-      const m = parseInt(monthEl.value, 10);
-      const y = parseInt(yearEl.value, 10);
-      if (Number.isNaN(m) || Number.isNaN(y) || y < 1900) {
-        alert("Enter a valid month and year.");
-        return;
-      }
-      buildCalendar(m, y);
     });
 
-    clearBtn.addEventListener("click", clearCalendarNotes);
-    exportBtn.addEventListener("click", exportPDF);
+    function handleDrop(e) {
+      e.preventDefault();
+      if (!draggedImageSrc) return;
+      const newImg = document.createElement("img");
+      newImg.src = draggedImageSrc;
+      newImg.className = "dropped-img";
+      const rect = e.target.getBoundingClientRect();
+      newImg.style.left = (e.clientX - rect.left - 25) + "px";
+      newImg.style.top = (e.clientY - rect.top - 25) + "px";
+      makeDraggable(newImg);
+      e.target.appendChild(newImg);
+    }
 
-    // ===== Defaults: load current month
-    (function init() {
-      const now = new Date();
-      monthEl.value = now.getMonth().toString();
-      yearEl.value = now.getFullYear().toString();
-      buildCalendar(now.getMonth(), now.getFullYear());
-    })();
+    function makeDraggable(img) {
+      let offsetX, offsetY, dragging = false;
+      img.addEventListener("mousedown", e => {
+        dragging = true;
+        offsetX = e.offsetX;
+        offsetY = e.offsetY;
+      });
+      document.addEventListener("mousemove", e => {
+        if (!dragging) return;
+        const parent = img.parentElement.getBoundingClientRect();
+        img.style.left = (e.clientX - parent.left - offsetX) + "px";
+        img.style.top = (e.clientY - parent.top - offsetY) + "px";
+      });
+      document.addEventListener("mouseup", () => dragging = false);
+    }
+
+    // === Clear calendar ===
+    document.getElementById("clearBtn").addEventListener("click", () => {
+      if (!confirm("Clear all entries and images?")) return;
+      document.querySelectorAll(".day-content").forEach(el => el.textContent = "");
+      document.querySelectorAll(".dropped-img").forEach(el => el.remove());
+    });
+
+    // === Export PDF ===
+    document.getElementById("exportBtn").addEventListener("click", async () => {
+      const { jsPDF } = window.jspdf;
+      const node = document.getElementById("print-area");
+      const canvas = await html2canvas(node, { scale: 2, useCORS: true, backgroundColor: "#ffffff" });
+      const imgData = canvas.toDataURL("image/png");
+      const pdf = new jsPDF({ orientation: "landscape", unit: "in", format: [11, 17] });
+      pdf.addImage(imgData, "PNG", 0, 0, 17, 11);
+      const title = document.getElementById("monthYear").innerText.replace(/\s+/g, "_");
+      pdf.save(`${title}.pdf`);
+    });
   </script>
 </body>
 </html>
