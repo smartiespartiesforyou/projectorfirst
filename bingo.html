@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>Classic Bingo Caller — ProjectorFirst</title>
 
-  <!-- ✅ Memberstack -->
   <script data-memberstack-id="pk_650cfbc9692b47a2c045"
           src="https://api.memberstack.io/static/memberstack.js"
           async></script>
@@ -24,7 +23,7 @@
     }
 
     main {
-      margin-top: -40px;
+      margin-top: 0;
     }
 
     .caller-box {
@@ -43,7 +42,6 @@
       overflow: hidden;
     }
 
-    /* ✅ Bingo balls under the box */
     .recent-calls {
       display: flex;
       flex-wrap: wrap;
@@ -74,7 +72,6 @@
     .ball-G { background: #f97316; }
     .ball-O { background: #9333ea; }
 
-    /* ✅ Button styling */
     .button-row {
       display: flex;
       justify-content: center;
@@ -89,9 +86,13 @@
       font-weight: bold;
       padding: 1.25rem 2.5rem;
       border-radius: 1rem;
-      transition: background 0.2s;
+      transition: background 0.2s, box-shadow 0.2s;
       min-width: 220px;
       text-align: center;
+    }
+
+    .btn:hover {
+      box-shadow: 0 0 12px rgba(0, 0, 0, 0.3);
     }
 
     .btn-next { background: #1e3a8a; color: white; }
@@ -99,6 +100,7 @@
     .btn-reset { background: #dc2626; color: white; }
     .btn-fullscreen { background: #6d28d9; color: white; }
     .btn-sound { background: white; color: #1e3a8a; border: 2px solid #1e3a8a; }
+    .btn-home { background: #1e3a8a; color: white; font-size: 1.25rem; padding: 0.75rem 2rem; border-radius: 9999px; }
 
     @media (max-width: 768px) {
       .recent-calls span {
@@ -118,11 +120,13 @@
 <body data-ms-content="bingo-game"
       class="flex flex-col items-center justify-start min-h-screen pt-0 mt-0">
   <main class="w-full max-w-6xl text-center">
-    <div class="flex items-center justify-between mb-4 px-6">
-      <a href="apps.html" class="btn btn-next w-auto px-6 py-2 text-lg">⬅ Back to Apps</a>
-      <h1 class="text-5xl font-extrabold text-blue-900 mx-auto">🎉 Classic Bingo Caller</h1>
-      <div class="w-40"></div>
+    
+    <!-- ✅ Simple Back to Home button -->
+    <div class="mt-4 mb-2">
+      <a href="apps.html" class="btn-home">⬅ Back to Home</a>
     </div>
+
+    <h1 class="text-5xl font-extrabold text-blue-900 mt-2 mb-4">🎉 Classic Bingo Caller</h1>
 
     <div class="mb-4 text-left px-6">
       <label for="theme" class="block text-lg font-semibold text-blue-900 mb-2">Theme</label>
@@ -131,17 +135,14 @@
       </select>
     </div>
 
-    <!-- Caller area -->
     <div class="flex flex-col items-center justify-center gap-6 mb-4">
       <div id="callerBox" class="caller-box">
         <span id="callerText">—</span>
         <span id="themeSymbol" style="position:absolute; bottom:10px; right:10px; font-size:3rem;"></span>
       </div>
 
-      <!-- Called balls under the box -->
       <div id="recentCalls" class="recent-calls"></div>
 
-      <!-- ✅ Button row under the balls -->
       <div class="button-row">
         <button onclick="callNext()" class="btn btn-next">Call Next (Space)</button>
         <button onclick="resetCaller()" class="btn btn-reset">Reset (R)</button>
