@@ -432,7 +432,9 @@
 
   const xOffset = (pageWidth - printWidth) / 2;
 const yOffset = (pageHeight - printHeight) / 2;
-pdf.addImage(imgData, "PNG", xOffset, yOffset, printWidth, printHeight);
+// Force full bleed (slightly overfill the page so no borders show)
+pdf.addImage(imgData, "PNG", -0.1, -0.1, pageWidth + 0.2, pageHeight + 0.2);
+
 
   const title = document.getElementById("monthYear").innerText.replace(/\s+/g, "_");
   pdf.save(`${title}.pdf`);
