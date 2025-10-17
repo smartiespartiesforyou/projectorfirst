@@ -5,9 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>Classic Bingo Caller — ProjectorFirst</title>
 
-  <!-- ✅ Memberstack (correct, clean version) -->
-  <script data-memberstack-id="pk_650cfbc9692b47a2c045" 
-          src="https://api.memberstack.io/static/memberstack.js" 
+  <!-- ✅ Memberstack -->
+  <script data-memberstack-id="pk_650cfbc9692b47a2c045"
+          src="https://api.memberstack.io/static/memberstack.js"
           async></script>
 
   <meta name="description" content="Classic Bingo Caller — simple, big-screen friendly bingo caller."/>
@@ -15,39 +15,57 @@
   <link rel="icon" href="/logo.svg" type="image/svg+xml"/>
   <script src="https://cdn.tailwindcss.com"></script>
 
- <style>
-    body { background: #ffffff; color: #000000; }
+  <style>
+    body {
+      background: #ffffff;
+      color: #000000;
+      margin: 0;
+      padding: 0;
+    }
+
+    main {
+      margin-top: -40px;
+    }
 
     .caller-box {
       position: relative;
-      width: min(85vw, 70vh, 640px);
-      height: min(85vw, 70vh, 640px);
+      width: min(85vw, 1000px);
+      height: min(40vw, 300px);
       border: 6px solid #1e3a8a;
       border-radius: 1rem;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: clamp(8rem, 28vmin, 20rem);
-      line-height: 1;
-      white-space: nowrap;
-      font-weight: bold;
+      font-size: clamp(10rem, 30vmin, 24rem);
+      font-weight: 900;
       background: #000;
       color: #fff;
       overflow: hidden;
+    }
+
+    /* ✅ Recent calls area (balls) */
+    .recent-calls {
+      display: flex;
+      flex-wrap: wrap;              /* allows wrapping into rows */
+      justify-content: center;
+      align-items: center;
+      margin-top: 2rem;
+      gap: 1rem;
+      max-width: 90vw;
     }
 
     .recent-calls span {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      width: 110px;
-      height: 110px;
-      margin: 0.35rem;
+      width: 130px;
+      height: 130px;
       border-radius: 50%;
       color: #fff;
-      font-size: 2.25rem;
+      font-size: 3rem;
       font-weight: bold;
-      box-shadow: 0 0 6px rgba(0, 0, 0, 0.25);
+      box-shadow: 0 0 8px rgba(0, 0, 0, 0.4);
+      flex-shrink: 0;               /* prevents shrinking */
     }
 
     .ball-B { background: #1e3a8a; }
@@ -65,33 +83,25 @@
       width: 100%;
       text-align: center;
     }
+
     .btn-next { background: #1e3a8a; color: white; }
     .btn-next:hover { background: #1d4ed8; }
     .btn-undo { background: #facc15; color: black; }
     .btn-reset { background: #dc2626; color: white; }
     .btn-fullscreen { background: #6d28d9; color: white; }
 
-    .recent-calls {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: start;
-      max-height: 640px;
-      overflow-y: auto;
-      margin: 0;
-      padding: 0;
-    }
-
     @media (max-width: 768px) {
-      .recent-calls {
-        flex-direction: row;
-        flex-wrap: wrap;
-        justify-content: center;
+      .recent-calls span {
+        width: 90px;
+        height: 90px;
+        font-size: 2rem;
       }
     }
   </style>
 </head>
-<body data-ms-content="bingo-game" class="flex flex-col items-center justify-start min-h-screen py-2">
+
+<body data-ms-content="bingo-game"
+      class="flex flex-col items-center justify-start min-h-screen pt-0 mt-0">
   <main class="w-full max-w-6xl text-center">
     <div class="flex items-center justify-between mb-4 px-6">
       <a href="apps.html" class="btn btn-next w-auto px-6 py-2 text-lg">⬅ Back to Apps</a>
@@ -106,16 +116,18 @@
       </select>
     </div>
 
-    <div class="flex flex-col md:flex-row items-start justify-center gap-6 mb-4">
-      <div id="recentCalls" class="recent-calls"></div>
-
-      <div class="flex justify-center w-full md:w-auto">
-        <div id="callerBox" class="caller-box">
-          <span id="callerText">—</span>
-          <span id="themeSymbol" style="position:absolute; bottom:10px; right:10px; font-size:2.5rem;"></span>
-        </div>
+    <!-- Caller area -->
+    <div class="flex flex-col items-center justify-center gap-6 mb-4">
+      <div id="callerBox" class="caller-box">
+        <span id="callerText">—</span>
+        <span id="themeSymbol" style="position:absolute; bottom:10px; right:10px; font-size:3rem;"></span>
       </div>
 
+      <!-- Called balls under the box -->
+      <div id="recentCalls" class="recent-calls"></div>
+    </div>
+
+    <div class="flex flex-col md:flex-row items-start justify-center gap-3 mt-6">
       <div class="flex flex-col gap-3 w-56">
         <button onclick="callNext()" class="btn btn-next">Call Next (Space)</button>
         <button onclick="undoCall()" class="btn btn-undo">Undo (Backspace)</button>
@@ -240,7 +252,7 @@
       const cfg = THEMES[currentThemeKey];
       const recentDiv = document.getElementById("recentCalls");
       recentDiv.innerHTML = history
-        .slice(-10)
+        .slice(-50) /* keep up to 50 recent calls visible */
         .reverse()
         .map(c => `<span class="${cfg.ballClassFromLetter(c.letter)}">${c.letter} ${c.number}</span>`)
         .join("");
