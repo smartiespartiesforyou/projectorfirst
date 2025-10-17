@@ -11,12 +11,17 @@
   <div class="max-w-6xl mx-auto p-6">
     <!-- Title -->
     <h1 class="text-5xl font-extrabold mb-4 text-blue-900 text-center">Memory Match</h1>
-    <!-- Centered Back to Apps -->
-    <div class="flex justify-center mb-6">
+    
+    <!-- Navigation and Fullscreen -->
+    <div class="flex justify-center gap-4 mb-6 flex-wrap">
       <a href="apps.html"
          class="inline-flex items-center gap-2 px-6 py-3 bg-blue-900 text-white rounded-xl font-extrabold text-xl shadow hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300">
         ← Back to Apps
       </a>
+      <button id="fullscreenBtn"
+         class="px-6 py-3 bg-blue-700 text-white rounded-xl font-extrabold text-xl shadow hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300">
+        ⛶ Full Screen
+      </button>
     </div>
 
     <!-- Controls -->
@@ -54,10 +59,23 @@
   </div>
 
   <script>
+    // ===== FULLSCREEN TOGGLE =====
+    const fullscreenBtn = document.getElementById("fullscreenBtn");
+    fullscreenBtn.addEventListener("click", () => {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen();
+        fullscreenBtn.textContent = "Exit Full Screen";
+      } else {
+        if (document.exitFullscreen) {
+          document.exitFullscreen();
+          fullscreenBtn.textContent = "⛶ Full Screen";
+        }
+      }
+    });
+
     // ===== SETTINGS =====
     const totalPairs = 8; // 16 cards
 
-    // THEMES
     const themes = {
       animals: ["🐶","🐱","🦁","🐸","🐢","🐰","🐼","🐧","🦊","🐻","🐨","🐷"],
       food: ["🍔","🍕","🍟","🌭","🍩","🍪","🍦","🍎","🍌","🥑","🍇","🍓"],
@@ -70,7 +88,6 @@
       stpatricks: ["☘️","🍀","🍺","🌈","💰","🪙","🎩","🐑"]
     };
 
-    // ===== STATE =====
     let currentTheme = "animals";
     let firstCard = null;
     let secondCard = null;
@@ -107,12 +124,10 @@
         ].join(" ");
         btn.dataset.index = idx;
 
-        // Back = giant card number
         const back = document.createElement("div");
         back.className = "back absolute inset-0 flex items-center justify-center";
         back.innerHTML = `<span class="leading-none text-[6rem] sm:text-[7rem] md:text-[8rem] lg:text-[9rem] font-extrabold text-blue-700">${card.id}</span>`;
 
-        // Front = theme content
         const front = document.createElement("div");
         front.className = "front absolute inset-0 hidden items-center justify-center";
         const content = `<span class="leading-none text-[5.5rem] sm:text-[7rem] md:text-[8.5rem] lg:text-[10rem]">${card.value}</span>`;
