@@ -406,6 +406,51 @@
   const { jsPDF } = window.jspdf;
   const node = document.getElementById("print-area");
 
+  // Render the calendar area sharply
+  const canvas = await html2canvas(node, {
+    scale: 2,                 // doubles pixel density
+    useCORS: true,
+    backgroundColor: "#ffffff"
+  });
+
+  const imgData = canvas.toDataURL("image/png");
+  const pdf = new jsPDF({
+    orientation: "landscape",
+    unit: "in",
+    format: [17, 11]          // true tabloid/ledger 11x17 inches
+  });
+
+  // Compute ratio so it fills full 11x17 page
+  const pdfWidth = 17;
+  const pdfHeight = 11;
+  const imgWidth = canvas.width / 96;   // px → in (96px per inch)
+  const imgHeight = canvas.height / 96;
+  const imgRatio = imgWidth / imgHeight;
+  const pageRatio = pdfWidth / pdfHeight;
+
+  let renderWidth, renderHeight, x, y;
+
+  // Scale proportionally, but extend to bleed if aspect differs
+  if (imgRatio > pageRatio) {
+    renderWidth = pdfWidth;
+    renderHeight = pdfWidth / imgRatio;
+    x = 0;
+    y = (pdfHeight - renderHeight) / 2;
+  } else {
+    renderHeight = pdfHeight;
+    renderWidth = pdfHeight * imgRatio;
+    x = (pdfWidth - renderWidth) / 2;
+    y = 0;
+  }
+
+  pdf.addImage(imgData, "PNG", x, y, renderWidth, renderHeight);
+  const title = document.getElementById("monthYear").innerText.replace(/\s+/g, "_");
+  pdf.save(`${title}.pdf`);
+});
+
+  const { jsPDF } = window.jspdf;
+  const node = document.getElementById("print-area");
+
   // Capture at higher resolution
   const canvas = await html2canvas(node, {
     scale: 2,
