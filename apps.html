@@ -5,6 +5,24 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Apps — ProjectorFirst</title>
   <meta name="theme-color" content="#1e3a8a"/>
+  
+  <!-- ✅ MEMBERSTACK PROTECTION -->
+  <script data-memberstack-id="app_cmgnwpg8y00x10suih4pua785"
+          src="https://api.memberstack.com/static/memberstack.js"
+          async></script>
+
+  <script>
+    // 🔒 Optional hard redirect: sends users to signup if not logged in
+    document.addEventListener("DOMContentLoaded", async () => {
+      const memberstack = window.MemberStack;
+      if (!memberstack) return; // just in case script hasn't loaded yet
+      const member = await memberstack.onReady;
+      if (!member.loggedIn) {
+        window.location.href = "https://yourprojectorfirst.memberstack.com/signup";
+      }
+    });
+  </script>
+
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     body { background:#fff; color:#111; }
@@ -22,6 +40,7 @@
     .btn:hover{ background:#1d4ed8; }
   </style>
 </head>
+
 <body class="min-h-screen">
   <header class="max-w-5xl mx-auto px-4 py-6">
     <h1 class="text-4xl md:text-5xl font-extrabold text-blue-800 mb-2">Apps</h1>
