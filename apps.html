@@ -11,17 +11,36 @@
           src="https://api.memberstack.com/static/memberstack.js"
           async></script>
 
-  <script>
-    // 🔒 Optional hard redirect: sends users to signup if not logged in
-    document.addEventListener("DOMContentLoaded", async () => {
-      const memberstack = window.MemberStack;
-      if (!memberstack) return; // just in case script hasn't loaded yet
-      const member = await memberstack.onReady;
-      if (!member.loggedIn) {
-        window.location.href = "https://yourprojectorfirst.memberstack.com/signup";
-      }
-    });
-  </script>
+ <script>
+(async function () {
+  const memberstack = window.$memberstackDom;
+  if (!memberstack) return;
+
+  try {
+    const { data: member } = await memberstack.getCurrentMember();
+
+    // 🚪 No account = redirect to signup
+    if (!member) {
+      window.location.replace("https://yourprojectorfirst.memberstack.com/signup");
+      return;
+    }
+
+    // 💳 Check if they have an active paid plan
+    const hasActivePlan = Array.isArray(member.planConnections) &&
+      member.planConnections.some(plan => plan.status === "ACTIVE");
+
+    if (!hasActivePlan) {
+      window.location.replace("https://yourprojectorfirst.memberstack.com/paywall");
+      return;
+    }
+
+    console.log("✅ Access granted to:", member.auth.email);
+  } catch (error) {
+    console.error("Auth check failed:", error);
+    window.location.replace("https://yourprojectorfirst.memberstack.com/signup");
+  }
+})();
+</script>
 
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
