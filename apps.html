@@ -13,19 +13,32 @@
 
  <script>
 (async function () {
-  const memberstack = window.$memberstackDom;
-  if (!memberstack) return;
+```)  
+with this improved version below:  
+
+```html
+<script>
+document.addEventListener("DOMContentLoaded", async () => {
+  // Wait for Memberstack to load completely
+  const waitForMemberstack = () =>
+    new Promise((resolve) => {
+      const check = () => {
+        if (window.$memberstackDom) resolve(window.$memberstackDom);
+        else setTimeout(check, 100);
+      };
+      check();
+    });
+
+  const memberstack = await waitForMemberstack();
 
   try {
     const { data: member } = await memberstack.getCurrentMember();
 
-    // 🚪 No account = redirect to signup
     if (!member) {
       window.location.replace("https://yourprojectorfirst.memberstack.com/signup");
       return;
     }
 
-    // 💳 Check if they have an active paid plan
     const hasActivePlan = Array.isArray(member.planConnections) &&
       member.planConnections.some(plan => plan.status === "ACTIVE");
 
@@ -39,9 +52,8 @@
     console.error("Auth check failed:", error);
     window.location.replace("https://yourprojectorfirst.memberstack.com/signup");
   }
-})();
+});
 </script>
-
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     body { background:#fff; color:#111; }
