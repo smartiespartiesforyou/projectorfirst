@@ -42,15 +42,15 @@ document.addEventListener("DOMContentLoaded", async () => {
     const hasActivePlan = Array.isArray(member.planConnections) &&
       member.planConnections.some(plan => plan.status === "ACTIVE");
 
-    if (!hasActivePlan) {
-      window.location.replace("https://yourprojectorfirst.memberstack.com/paywall");
-      return;
-    }
+  if (!hasActivePlan) {
+  window.location.replace("https://auth.projectorfirst.com/paywall");
+  return;
+}
 
     console.log("✅ Access granted to:", member.auth.email);
   } catch (error) {
     console.error("Auth check failed:", error);
-    window.location.replace("https://yourprojectorfirst.memberstack.com/signup");
+    window.location.replace("https://auth.projectorfirst.com/signup");
   }
 });
 </script>
