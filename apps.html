@@ -5,70 +5,65 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Apps — ProjectorFirst</title>
   <meta name="theme-color" content="#1e3a8a"/>
-  
+
   <!-- ✅ MEMBERSTACK PROTECTION -->
   <script data-memberstack-id="app_cmgnwpg8y00x10suih4pua785"
           src="https://api.memberstack.com/static/memberstack.js"
           async></script>
 
- <script>
-(async function () {
-```)  
-with this improved version below:  
+  <script>
+  document.addEventListener("DOMContentLoaded", async () => {
+    // Wait for Memberstack to load completely
+    const waitForMemberstack = () =>
+      new Promise((resolve) => {
+        const check = () => {
+          if (window.$memberstackDom) resolve(window.$memberstackDom);
+          else setTimeout(check, 100);
+        };
+        check();
+      });
 
-```html
-<script>
-document.addEventListener("DOMContentLoaded", async () => {
-  // Wait for Memberstack to load completely
-  const waitForMemberstack = () =>
-    new Promise((resolve) => {
-      const check = () => {
-        if (window.$memberstackDom) resolve(window.$memberstackDom);
-        else setTimeout(check, 100);
-      };
-      check();
-    });
+    const memberstack = await waitForMemberstack();
 
-  const memberstack = await waitForMemberstack();
+    try {
+      const { data: member } = await memberstack.getCurrentMember();
 
-  try {
-    const { data: member } = await memberstack.getCurrentMember();
+      if (!member) {
+        window.location.replace("https://auth.projectorfirst.com/signup");
+        return;
+      }
 
-    if (!member) {
-      window.location.replace("https://yourprojectorfirst.memberstack.com/signup");
-      return;
+      const hasActivePlan = Array.isArray(member.planConnections) &&
+        member.planConnections.some(plan => plan.status === "ACTIVE");
+
+      if (!hasActivePlan) {
+        window.location.replace("https://auth.projectorfirst.com/paywall");
+        return;
+      }
+
+      console.log("✅ Access granted to:", member.auth.email);
+    } catch (error) {
+      console.error("Auth check failed:", error);
+      window.location.replace("https://auth.projectorfirst.com/signup");
     }
+  });
+  </script>
 
-    const hasActivePlan = Array.isArray(member.planConnections) &&
-      member.planConnections.some(plan => plan.status === "ACTIVE");
-
-  if (!hasActivePlan) {
-  window.location.replace("https://auth.projectorfirst.com/paywall");
-  return;
-}
-
-    console.log("✅ Access granted to:", member.auth.email);
-  } catch (error) {
-    console.error("Auth check failed:", error);
-    window.location.replace("https://auth.projectorfirst.com/signup");
-  }
-});
-</script>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     body { background:#fff; color:#111; }
-    .card{
+    .card {
       border:3px solid #1e3a8a; border-radius:1.25rem; padding:1.25rem;
       background:#fff; box-shadow:0 6px 0 #1e3a8a22;
       transition:transform .08s ease, box-shadow .08s ease;
-      display:flex; flex-direction:column; justify-content:space-between; min-height: 250px;
+      display:flex; flex-direction:column; justify-content:space-between; min-height:250px;
     }
-    .card:hover{ transform:translateY(-2px); box-shadow:0 10px 0 #1e3a8a22; }
-    .btn{
+    .card:hover { transform:translateY(-2px); box-shadow:0 10px 0 #1e3a8a22; }
+    .btn {
       display:inline-block; background:#1e3a8a; color:#fff; padding:.9rem 1.4rem;
       border-radius:1rem; font-weight:800; font-size:1.2rem; text-align:center;
     }
-    .btn:hover{ background:#1d4ed8; }
+    .btn:hover { background:#1d4ed8; }
   </style>
 </head>
 
@@ -131,7 +126,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         <a href="balloon.html" class="btn" aria-label="Open Pop the Balloon">Open Balloon Game</a>
       </article>
 
-      <!-- Pictionary Reveal -->
+      <!-- Pictionary -->
       <article class="card">
         <div>
           <div class="flex items-center gap-3 mb-3"><span class="text-4xl">🖼️</span>
