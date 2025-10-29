@@ -28,14 +28,17 @@
     try {
       const { data: member } = await memberstack.getCurrentMember();
 
+      // If not logged in, redirect to signup
       if (!member) {
         window.location.replace("https://auth.projectorfirst.com/signup");
         return;
       }
 
+      // Check if the member has an active paid plan
       const hasActivePlan = Array.isArray(member.planConnections) &&
         member.planConnections.some(plan => plan.status === "ACTIVE");
 
+      // If not subscribed, send to paywall
       if (!hasActivePlan) {
         window.location.replace("https://auth.projectorfirst.com/paywall");
         return;
@@ -56,7 +59,7 @@
       border:3px solid #1e3a8a; border-radius:1.25rem; padding:1.25rem;
       background:#fff; box-shadow:0 6px 0 #1e3a8a22;
       transition:transform .08s ease, box-shadow .08s ease;
-      display:flex; flex-direction:column; justify-content:space-between; min-height:250px;
+      display:flex; flex-direction:column; justify-content:space-between; min-height: 250px;
     }
     .card:hover { transform:translateY(-2px); box-shadow:0 10px 0 #1e3a8a22; }
     .btn {
@@ -126,7 +129,7 @@
         <a href="balloon.html" class="btn" aria-label="Open Pop the Balloon">Open Balloon Game</a>
       </article>
 
-      <!-- Pictionary -->
+      <!-- Pictionary Reveal -->
       <article class="card">
         <div>
           <div class="flex items-center gap-3 mb-3"><span class="text-4xl">🖼️</span>
