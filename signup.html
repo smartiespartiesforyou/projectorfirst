@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login | ProjectorFirst</title>
+  <script type="module">
+    import memberstackDOM from "https://cdn.skypack.dev/@memberstack/dom";
+    const memberstack = memberstackDOM.init({
+      domain: "https://memberstack-client.projectorfirst.com",
+      publicKey: "pk_650cfbc9692b47a2c045",
+    });
+  </script>
+</head>
+<body>
+  <main style="display:flex;justify-content:center;align-items:center;height:100vh;flex-direction:column;font-family:sans-serif;">
+    <h1>Welcome to ProjectorFirst</h1>
+    <p>Please log in or sign up below.</p>
+    <div data-memberstack-signup></div>
+  </main>
+</body>
+</html>
