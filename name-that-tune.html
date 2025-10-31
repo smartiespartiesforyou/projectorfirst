@@ -1,6 +1,31 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Pop the Balloon — Word Guess</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- ✅ Memberstack Loader -->
+  <script data-memberstack-app="app_cmgnwpg8y00x10suih4pua785"
+          src="https://static.memberstack.com/scripts/v2/memberstack.js"
+          type="text/javascript"></script>
+
+  <!-- ✅ Protect this page -->
+  <script>
+    document.addEventListener("DOMContentLoaded", async () => {
+      try {
+        const member = await window.$memberstackDom.getCurrentMember();
+        if (!member.data) {
+          window.location.href = "/subscribe.html";
+        }
+      } catch {
+        window.location.href = "/subscribe.html";
+      }
+    });
+  </script>
+</head>
+
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Name That Tune — ProjectorFirst</title>
