@@ -7,8 +7,8 @@
   <meta name="description" content="Private tester access to ProjectorFirst games.">
   <script src="https://cdn.tailwindcss.com"></script>
 
-  <!-- ✅ Memberstack Script -->
-  <script 
+  <!-- ✅ Memberstack must load BEFORE any buttons -->
+  <script
     data-memberstack-app="app_cmgnwpg8y00x10suih4pua785"
     src="https://static.memberstack.com/scripts/v2/memberstack.js"
     type="text/javascript">
@@ -17,31 +17,43 @@
   <style>
     body {
       font-family: 'Inter', sans-serif;
+      background: #f9fafb;
     }
   </style>
 </head>
-<body class="bg-gray-50 flex flex-col justify-center items-center h-screen text-center px-4">
 
-  <!-- Main Content -->
-  <h1 class="text-4xl sm:text-5xl font-extrabold text-blue-800 mb-6">
-    ProjectorFirst Tester Access
-  </h1>
+<body class="flex flex-col justify-center items-center h-screen text-center px-6">
+  <main>
+    <h1 class="text-4xl sm:text-5xl font-extrabold text-blue-800 mb-6">
+      ProjectorFirst Tester Access
+    </h1>
 
-  <p class="text-gray-700 text-lg sm:text-xl mb-10 max-w-xl">
-    Click below to unlock free tester access to all ProjectorFirst games.
-  </p>
+    <p class="text-gray-700 text-lg sm:text-xl mb-10 max-w-xl">
+      Click below to unlock free tester access to all ProjectorFirst games.
+    </p>
 
-  <!-- ✅ Unlock Button -->
-  <button 
-    data-ms-plan:add="pln_tester-access-pz107f5" 
-    data-ms-redirect="/apps.html"
-    class="px-10 py-4 text-xl font-bold text-white bg-green-600 rounded-2xl shadow hover:bg-green-700 transition">
-    🎮 Unlock Free Tester Access
-  </button>
+    <!-- ✅ WORKING MEMBERSTACK BUTTON -->
+    <button
+      data-ms-plan:add="pln_tester-access-pz107f5"
+      data-ms-redirect="/apps.html"
+      class="px-10 py-4 text-xl font-bold text-white bg-green-600 rounded-2xl shadow hover:bg-green-700 transition">
+      🎮 Unlock Free Tester Access
+    </button>
 
-  <p class="text-gray-500 text-sm mt-8">
-    Private testers only — please don’t share publicly.
-  </p>
+    <p class="text-gray-500 text-sm mt-8">
+      Private testers only — please don’t share publicly.
+    </p>
+  </main>
 
+  <!-- ✅ Optional helper: ensure Memberstack loads fully -->
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      if (typeof MemberStack === "undefined") {
+        console.error("❌ Memberstack not loaded. Check your app ID or script position.");
+      } else {
+        console.log("✅ Memberstack loaded successfully.");
+      }
+    });
+  </script>
 </body>
 </html>
