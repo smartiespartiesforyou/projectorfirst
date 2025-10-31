@@ -17,13 +17,13 @@
       publicKey: "pk_650cfbc9692b47a2c045",
     });
 
-    // Optional: Protect this page
+    // Protect this page
     document.addEventListener("DOMContentLoaded", async () => {
       try {
         const { data: member } = await memberstack.getCurrentMember();
 
         if (!member) {
-          window.location.replace("https://auth.projectorfirst.com/signup");
+          window.location.replace("https://memberstack-client.projectorfirst.com/signup");
           return;
         }
 
@@ -32,14 +32,14 @@
           member.planConnections.some((plan) => plan.status === "ACTIVE");
 
         if (!hasActivePlan) {
-          window.location.replace("https://auth.projectorfirst.com/paywall");
+          window.location.replace("https://memberstack-client.projectorfirst.com/paywall");
           return;
         }
 
         console.log("✅ Access granted:", member.auth.email);
       } catch (error) {
         console.error("Auth check failed:", error);
-        window.location.replace("https://auth.projectorfirst.com/signup");
+        window.location.replace("https://memberstack-client.projectorfirst.com/signup");
       }
     });
   </script>
