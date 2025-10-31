@@ -9,49 +9,39 @@
   <link rel="icon" href="/logo.svg" type="image/svg+xml" />
   <script src="https://cdn.tailwindcss.com"></script>
 
-  <!-- ✅ Memberstack Access Lock -->
-  <script data-memberstack-id="app_cmgnwpg8y00x10suih4pua785"
-          src="https://api.memberstack.com/static/memberstack.js"
-          async></script>
+  <!-- ✅ Memberstack Vanilla Install -->
+  <script type="module">
+    import memberstackDOM from "https://cdn.skypack.dev/@memberstack/dom";
+    const memberstack = memberstackDOM.init({
+      domain: "https://memberstack-client.projectorfirst.com",
+      publicKey: "pk_650cfbc9692b47a2c045",
+    });
 
-  <script>
-  document.addEventListener("DOMContentLoaded", async () => {
-    // Wait for Memberstack to load
-    const waitForMemberstack = () =>
-      new Promise((resolve) => {
-        const check = () => {
-          if (window.$memberstackDom) resolve(window.$memberstackDom);
-          else setTimeout(check, 100);
-        };
-        check();
-      });
+    // Optional: Protect this page
+    document.addEventListener("DOMContentLoaded", async () => {
+      try {
+        const { data: member } = await memberstack.getCurrentMember();
 
-    const memberstack = await waitForMemberstack();
+        if (!member) {
+          window.location.replace("https://auth.projectorfirst.com/signup");
+          return;
+        }
 
-    try {
-      const { data: member } = await memberstack.getCurrentMember();
+        const hasActivePlan =
+          Array.isArray(member.planConnections) &&
+          member.planConnections.some((plan) => plan.status === "ACTIVE");
 
-      // Redirect if not logged in
-      if (!member) {
+        if (!hasActivePlan) {
+          window.location.replace("https://auth.projectorfirst.com/paywall");
+          return;
+        }
+
+        console.log("✅ Access granted:", member.auth.email);
+      } catch (error) {
+        console.error("Auth check failed:", error);
         window.location.replace("https://auth.projectorfirst.com/signup");
-        return;
       }
-
-      // Redirect if logged in but no active plan
-      const hasActivePlan = Array.isArray(member.planConnections) &&
-        member.planConnections.some(plan => plan.status === "ACTIVE");
-
-      if (!hasActivePlan) {
-        window.location.replace("https://auth.projectorfirst.com/paywall");
-        return;
-      }
-
-      console.log("✅ Access granted:", member.auth.email);
-    } catch (error) {
-      console.error("Auth check failed:", error);
-      window.location.replace("https://auth.projectorfirst.com/signup");
-    }
-  });
+    });
   </script>
 
   <style>
