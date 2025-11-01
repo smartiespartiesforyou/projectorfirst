@@ -1,475 +1,404 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>🐎 Lucky Horses — ProjectorFirst</title>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Lucky Horses — 3D Dice Edition</title>
 <meta name="theme-color" content="#1e3a8a"/>
 <link rel="icon" href="/logo.svg" type="image/svg+xml"/>
 <script src="https://cdn.tailwindcss.com"></script>
-
 <style>
   :root{
-    --pf-blue: #1e3a8a;
-    --pf-red:  #dc2626;
-    --pf-green:#16a34a;
-    --pf-gold: #f59e0b;
-    --track-dirt: #D9C3A3;
-    --turf: #eef2ff; /* very light indigo for contrast */
+    --pf-blue:#1e3a8a; --pf-red:#dc2626; --pf-green:#16a34a; --pf-gold:#f59e0b;
+    --panel-bg:#f8fafc; --panel-border:#cbd5e1;
   }
-  html,body{height:100%}
-  body{
-    margin:0; background:#fff; color:#111;
-    font-family: ui-sans-serif, system-ui, -apple-system, sans-serif;
-    display:flex; flex-direction:column; align-items:center;
-  }
+  html,body{height:100%; background:#fff; color:#111; font-family:ui-sans-serif,system-ui,-apple-system,sans-serif}
 
-  .topbar{width:100%; max-width:2000px; padding:12px 16px; display:flex; gap:12px; align-items:center; justify-content:space-between}
-  .btn{font-size:1.6rem; font-weight:900; padding:0.9rem 1.6rem; border-radius:1rem; cursor:pointer; transition:transform .08s}
-  .btn:hover{transform:scale(1.04)}
-  .btn-blue{background:var(--pf-blue); color:#fff}
-  .btn-red{ background:#dc2626; color:#fff}
-
-  h1{font-size:3rem; font-weight:900; color:var(--pf-blue); margin:6px 0 0}
-  .sub{font-size:1.1rem; color:#374151}
-
-  /* Arena */
-  .arena-wrap{
-    width:min(98vw, 1900px);
-    aspect-ratio: 16 / 9;
-    background: var(--turf);
-    border:6px solid var(--pf-blue);
-    border-radius:24px;
-    box-shadow: 0 12px 0 #1e3a8a22;
-    position:relative;
-    overflow:hidden;
-    margin:10px auto;
+  /* Layout: board left, player panel right */
+  .wrap{display:grid; grid-template-columns:minmax(0,1fr) 380px; gap:16px; padding:14px; max-width:2000px; margin:0 auto}
+  .board{
+    position:relative; width:100%; aspect-ratio:16/9; border:6px solid var(--pf-blue);
+    border-radius:24px; overflow:hidden; box-shadow:0 12px 0 rgba(30,58,138,.12);
+    background:#eaf2ff url("LuckyHorses_Track.jpg") center/cover no-repeat;
   }
 
-  /* SVG fills the arena */
-  svg{ width:100%; height:100%; display:block; }
+  /* Top banner for outcomes */
+  .banner{
+    position:absolute; left:50%; top:14px; transform:translateX(-50%);
+    background:var(--pf-blue); color:#fff; padding:12px 22px; border-radius:16px;
+    font-weight:900; font-size:clamp(20px,2.2vw,38px); text-shadow:0 2px 0 #0001;
+    box-shadow:0 8px 16px rgba(0,0,0,.12);
+  }
 
-  /* Horse tokens (emoji inside foreignObject for big crisp sizing) */
+  /* Horses (big, right-facing) */
   .horse{
-    position:absolute; 
-    font-size: clamp(36px, 4.2vw, 72px);
-    line-height:1;
-    filter: drop-shadow(0 2px 0 rgba(0,0,0,.15));
-    transform: translate(-50%, -50%) scaleX(-1); /* flip to face RIGHT */
-    transition: left .22s ease, top .22s ease;
-    pointer-events:none;
+    position:absolute; transform:translate(-50%,-50%) scaleX(-1);
+    font-size:clamp(38px,4.2vw,70px); line-height:1; filter:drop-shadow(0 2px 0 rgba(0,0,0,.2));
+    transition:left .18s linear, top .18s linear;
   }
-  .gallop{ animation: gallop .2s ease-in-out infinite alternate }
-  @keyframes gallop { from{ transform: translate(-50%,-50%) scaleX(-1) translateY(0) } to{ transform: translate(-50%,-50%) scaleX(-1) translateY(-6px) } }
+  .gallop{ animation:gallop .2s ease-in-out infinite alternate }
+  @keyframes gallop{from{transform:translate(-50%,-50%) scaleX(-1) translateY(0)}to{transform:translate(-50%,-50%) scaleX(-1) translateY(-6px)}}
 
-  /* Current lane highlight ring */
-  .lane-glow{
-    filter: drop-shadow(0 0 14px rgba(255,255,255,.9));
-  }
-
-  /* Center overlay for dice + status */
-  .hud{
-    position:absolute; inset:0; display:flex; align-items:center; justify-content:center; pointer-events:none;
-  }
-  .center-stack{
-    display:flex; flex-direction:column; align-items:center; gap:16px; pointer-events:auto;
-  }
-  #status{font-size: clamp(24px, 2.6vw, 40px); color:var(--pf-blue); font-weight:900; text-shadow:0 2px 0 #fff}
-  #winner{font-size: clamp(28px, 3vw, 46px); color:#16a34a; font-weight:900; text-shadow:0 2px 0 #fff}
-
-  /* 3D Dice */
-  .dice-area{ perspective: 1200px; }
-  .cube{
-    position:relative; width: clamp(90px, 10vw, 150px); height: clamp(90px, 10vw, 150px);
-    transform-style: preserve-3d;
-    transform: rotateX(-15deg) rotateY(25deg);
-    transition: transform 1s ease;
-  }
+  /* Dice bottom-left (3D cube) */
+  .dice-zone{ position:absolute; left:18px; bottom:18px; width:min(22vw,260px); height:min(22vw,260px); display:flex; align-items:flex-end; pointer-events:none}
+  .dice-area{ perspective:1200px; margin-left:6px; margin-bottom:6px; pointer-events:auto}
+  .cube{ position:relative; width:min(20vw,220px); height:min(20vw,220px); transform-style:preserve-3d; transform:rotateX(-15deg) rotateY(25deg); transition:transform 1s ease}
   .face{
-    position:absolute; width:100%; height:100%;
-    background:#fff; border:6px solid var(--pf-blue);
-    border-radius:18px; display:flex; align-items:center; justify-content:center;
-    font-size: clamp(20px, 2vw, 30px); font-weight:900; color:var(--pf-blue);
-    box-shadow: 0 12px 0 #1e3a8a22;
+    position:absolute; width:100%; height:100%; background:#fff; border:6px solid var(--pf-blue); border-radius:22px;
+    box-shadow:0 12px 0 rgba(30,58,138,.12); display:flex; align-items:center; justify-content:center;
+    font-size:clamp(26px,3vw,40px); font-weight:900; color:var(--pf-blue);
   }
-  /* Position faces of the cube (right-handed) */
-  .face--front{ transform: translateZ(var(--z)); }
-  .face--back{  transform: rotateY(180deg) translateZ(var(--z)); }
-  .face--right{ transform: rotateY(90deg)  translateZ(var(--z)); }
-  .face--left{  transform: rotateY(-90deg) translateZ(var(--z)); }
-  .face--top{   transform: rotateX(90deg)  translateZ(var(--z)); }
-  .face--bottom{transform: rotateX(-90deg) translateZ(var(--z)); }
-  .cube{ --z: calc(clamp(90px,10vw,150px)/2); }
-
-  /* Roll animation */
-  .rolling{ animation: rollspin 0.9s cubic-bezier(.2,.8,.2,1) 1 }
-  @keyframes rollspin {
-    0%   { transform: rotateX(0deg)   rotateY(0deg); }
-    40%  { transform: rotateX(360deg) rotateY(360deg); }
-    100% { transform: rotateX(720deg) rotateY(720deg); }
+  .cube{ --z: calc(min(20vw,220px)/2) }
+  .face--front{ transform:translateZ(var(--z)) }
+  .face--back{ transform:rotateY(180deg) translateZ(var(--z)) }
+  .face--right{ transform:rotateY(90deg) translateZ(var(--z)) }
+  .face--left{ transform:rotateY(-90deg) translateZ(var(--z)) }
+  .face--top{ transform:rotateX(90deg) translateZ(var(--z)) }
+  .face--bottom{ transform:rotateX(-90deg) translateZ(var(--z)) }
+  .rolling{ animation:rollspin .9s cubic-bezier(.2,.8,.2,1) 1 }
+  @keyframes rollspin{
+    0%{transform:rotateX(0) rotateY(0)}
+    40%{transform:rotateX(360deg) rotateY(360deg)}
+    100%{transform:rotateX(720deg) rotateY(720deg)}
   }
 
-  /* Bottom controls */
-  .controls{
-    width:100%; max-width:2000px; display:flex; gap:14px; justify-content:center; align-items:center; padding:10px 16px;
+  /* Right player panel */
+  .panel{
+    background:var(--panel-bg); border:3px solid var(--panel-border); border-radius:16px; padding:14px 14px 18px;
+    display:flex; flex-direction:column; gap:12px; height:calc(100% - 0px)
   }
+  .title{font-size:1.8rem; font-weight:900; color:var(--pf-blue)}
+  .row{
+    display:flex; align-items:center; justify-content:space-between; gap:10px; padding:12px 14px; border:2px solid var(--panel-border);
+    border-radius:14px; background:#fff; box-shadow:0 6px 0 rgba(15,23,42,.05)
+  }
+  .pill{border-radius:999px; color:#fff; padding:6px 12px; font-weight:900}
+  .p-red{background:var(--pf-red)} .p-blue{background:var(--pf-blue)} .p-green{background:var(--pf-green)} .p-gold{background:var(--pf-gold)}
+  .turn{ outline:4px solid #22d3ee; box-shadow:0 0 0 6px #22d3ee22 inset, 0 0 0 0 rgba(0,0,0,0); animation:glow 1.2s ease-in-out infinite alternate }
+  @keyframes glow{from{outline-color:#22d3ee}to{outline-color:#38bdf8}}
+  .score{font-weight:900; color:#0f172a}
+  .btn{display:inline-block; text-align:center; font-weight:900; border-radius:12px; padding:14px 18px; font-size:1.2rem}
+  .btn-blue{background:var(--pf-blue); color:#fff} .btn-red{background:#dc2626;color:#fff}
 
-  /* Legend chips */
-  .legend{ display:flex; gap:12px; flex-wrap:wrap; justify-content:center; color:#374151 }
+  .controls{ display:flex; gap:10px; flex-wrap:wrap; margin-top:8px }
+  .small{ font-size:0.95rem; color:#475569 }
+
+  /* Footer legend */
+  .legend{ display:flex; gap:10px; flex-wrap:wrap; justify-content:center; margin-top:8px; color:#334155 }
   .chip{ border:2px solid #cbd5e1; border-radius:999px; padding:6px 12px; font-weight:800 }
 </style>
 </head>
 <body>
 
-<div class="topbar">
-  <a href="apps.html" class="btn btn-blue text-xl">⬅ Back to Apps</a>
-  <div>
-    <h1>Lucky Horses</h1>
-    <div class="sub">Click the 3D die. Outcomes: +1, +2, +3, −1, Lose Turn, Roll Again.</div>
-  </div>
-  <div style="width:180px"></div>
-</div>
+<div class="wrap">
+  <!-- BOARD -->
+  <section class="board" id="board">
+    <div class="banner" id="banner">Your turn: <b style="color:#dc2626">Ruby</b> — click the die</div>
 
-<div class="arena-wrap" id="arena">
-  <!-- SVG Track -->
-  <svg id="svg" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
-    <!-- Turf background -->
-    <rect x="0" y="0" width="1600" height="900" fill="#eaf2ff"/>
+    <!-- Horses (absolute over background) -->
+    <div id="h1" class="horse" style="color:var(--pf-red)">🐎</div>
+    <div id="h2" class="horse" style="color:var(--pf-green)">🐎</div>
+    <div id="h3" class="horse" style="color:var(--pf-gold)">🐎</div>
+    <div id="h4" class="horse" style="color:var(--pf-blue)">🐎</div>
 
-    <!-- Dirt oval + 4 lanes (concentric ellipses) -->
-    <!-- Base oval (dirt) -->
-    <ellipse cx="800" cy="450" rx="700" ry="300" fill="url(#dirtgrad)" stroke="var(--pf-blue)" stroke-width="10" />
-
-    <!-- Lanes (white markers) -->
-    <ellipse id="lane1" cx="800" cy="450" rx="660" ry="260" fill="none" stroke="#ffffff" stroke-width="8" />
-    <ellipse id="lane2" cx="800" cy="450" rx="620" ry="220" fill="none" stroke="#ffffff" stroke-width="8" />
-    <ellipse id="lane3" cx="800" cy="450" rx="580" ry="180" fill="none" stroke="#ffffff" stroke-width="8" />
-    <ellipse id="lane4" cx="800" cy="450" rx="540" ry="140" fill="none" stroke="#ffffff" stroke-width="8" />
-
-    <!-- Start/Finish banner -->
-    <g transform="translate(1120,250)">
-      <rect x="-140" y="-34" width="280" height="68" rx="16" fill="var(--pf-blue)" />
-      <text x="0" y="12" text-anchor="middle" fill="#fff" font-size="44" font-weight="900">START • FINISH</text>
-    </g>
-
-    <!-- Gradients -->
-    <defs>
-      <linearGradient id="dirtgrad" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%"  stop-color="#E3C9A4"/>
-        <stop offset="100%" stop-color="#CFAE84"/>
-      </linearGradient>
-    </defs>
-  </svg>
-
-  <!-- Horses (absolutely positioned) -->
-  <div id="h1" class="horse" style="color:var(--pf-red)">🐎</div>
-  <div id="h2" class="horse" style="color:var(--pf-blue)">🐴</div>
-  <div id="h3" class="horse" style="color:var(--pf-green)">🐎</div>
-  <div id="h4" class="horse" style="color:var(--pf-gold)">🐴</div>
-
-  <!-- HUD: Dice + Status -->
-  <div class="hud">
-    <div class="center-stack">
+    <!-- Dice bottom-left -->
+    <div class="dice-zone">
       <div class="dice-area">
         <div id="cube" class="cube" role="button" aria-label="Roll the die" tabindex="0">
-          <div class="face face--front">+2 🐎</div>
-          <div class="face face--back">Lose ⏳</div>
-          <div class="face face--right">+3 💨</div>
-          <div class="face face--left">−1 💊</div>
-          <div class="face face--top">Roll 🔁</div>
-          <div class="face face--bottom">+1 🐾</div>
+          <!-- emoji-only faces -->
+          <div class="face face--front">🐎</div>   <!-- +2 -->
+          <div class="face face--back">💤</div>    <!-- lose turn -->
+          <div class="face face--right">💨</div>   <!-- +3 -->
+          <div class="face face--left">💊</div>    <!-- -1 -->
+          <div class="face face--top">🍀</div>     <!-- roll again -->
+          <div class="face face--bottom">🐾</div>  <!-- +1 -->
         </div>
       </div>
-      <div id="status">Your turn: <b style="color:var(--pf-red)">Red</b> — click the die</div>
-      <div id="winner"></div>
     </div>
-  </div>
-</div>
+  </section>
 
-<div class="controls">
-  <button id="rollBtn" class="btn btn-blue">🎲 Roll</button>
-  <button id="resetBtn" class="btn btn-red">🔁 Reset</button>
-  <button id="fsBtn" class="btn btn-blue">⛶ Fullscreen</button>
-</div>
+  <!-- PLAYER PANEL -->
+  <aside class="panel" id="panel">
+    <div class="title">Players</div>
 
-<div class="legend">
-  <span class="chip">+1 🐾 Trot</span>
-  <span class="chip">+2 🐎 Canter</span>
-  <span class="chip">+3 💨 Gallop</span>
-  <span class="chip">−1 💊 Sick</span>
-  <span class="chip">⏳ Lose Turn</span>
-  <span class="chip">🔁 Roll Again</span>
+    <div id="row1" class="row turn">
+      <div><span class="pill p-red">Ruby</span></div>
+      <div class="score">Lap: <span id="lap1">0</span></div>
+    </div>
+    <div id="row2" class="row">
+      <div><span class="pill p-green">Clover</span></div>
+      <div class="score">Lap: <span id="lap2">0</span></div>
+    </div>
+    <div id="row3" class="row">
+      <div><span class="pill p-gold">Sunny</span></div>
+      <div class="score">Lap: <span id="lap3">0</span></div>
+    </div>
+    <div id="row4" class="row">
+      <div><span class="pill p-blue">Bluebell</span></div>
+      <div class="score">Lap: <span id="lap4">0</span></div>
+    </div>
+
+    <div class="controls">
+      <button id="rollBtn" class="btn btn-blue">🎲 Roll</button>
+      <button id="resetBtn" class="btn btn-red">🔁 Reset</button>
+      <button id="fsBtn" class="btn btn-blue">⛶ Fullscreen</button>
+    </div>
+    <div class="small">Space = Roll • R = Reset • F = Fullscreen</div>
+
+    <div class="legend">
+      <span class="chip">🐾 +1</span>
+      <span class="chip">🐎 +2</span>
+      <span class="chip">💨 +3</span>
+      <span class="chip">💊 −1</span>
+      <span class="chip">💤 Lose turn</span>
+      <span class="chip">🍀 Roll again</span>
+    </div>
+  </aside>
 </div>
 
 <script>
-  // ==== CONFIG ====
-  const COLORS = ["var(--pf-red)","var(--pf-blue)","var(--pf-green)","var(--pf-gold)"];
-  const NAMES  = ["Red","Blue","Green","Gold"];
-  const HORSE_IDS = ["h1","h2","h3","h4"];
-  const LANE_IDS  = ["lane1","lane2","lane3","lane4"]; // for radii
-  const STEPS_PER_LAP = 96; // smoothness (more = smoother & longer lap)
-  const MOVE_SPEED_MS = 180; // per step anim duration
+  // ===== CONFIG =====
+  const NAMES = ["Ruby","Clover","Sunny","Bluebell"];
+  const COLORS = ["var(--pf-red)","var(--pf-green)","var(--pf-gold)","var(--pf-blue)"];
 
-  // Faces: orientation + effect
-  // We'll map a target rotation for each result so the cube "lands" on the right face.
-  // Note: which rotation shows which face depends on CSS placement above; these work with our cube.
+  // ellipse aligned to your background image (tuned for 16:9):
+  // center roughly in the board, radii chosen to sit on your dirt track band.
+  const TRACK = { cx: 0.5, cy: 0.50, rx: 0.41, ry: 0.28 }; // relative (of board w/h)
+  const START_OFFSET = -Math.PI/10; // start near top-right straight; tweak if needed
+
+  const STEPS_PER_LAP = 120;           // smoothness
+  const SPACE = 10;                    // how many steps equal “one space” of movement
+  const MOVE_SPEED_MS = 140;           // per small step
+  const LAPS_TO_WIN = 1;               // set to 2 for longer games
+
+  // Dice faces: emoji-only visual + effect
   const FACES = [
-    { label:"+1 🐾",  effect:{type:"move", steps:+1},  rot:[-20,  20] }, // bottom face up
-    { label:"+2 🐎",  effect:{type:"move", steps:+2},  rot:[  0,   0] }, // front face up
-    { label:"+3 💨",  effect:{type:"move", steps:+3},  rot:[  0,  90] }, // right face up
-    { label:"−1 💊",  effect:{type:"move", steps:-1},  rot:[  0, -90] }, // left face up
-    { label:"⏳ Lose Turn", effect:{type:"skip"},       rot:[180,   0] }, // back face up
-    { label:"🔁 Roll Again", effect:{type:"again"},     rot:[ 90,   0] }, // top face up
+    { emoji:"🐾", effect:{type:"move", steps:+1}, rot:[-20,  20] }, // bottom up
+    { emoji:"🐎", effect:{type:"move", steps:+2}, rot:[  0,   0] }, // front up
+    { emoji:"💨", effect:{type:"move", steps:+3}, rot:[  0,  90] }, // right up
+    { emoji:"💊", effect:{type:"move", steps:-1}, rot:[  0, -90] }, // left up
+    { emoji:"💤", effect:{type:"skip"},           rot:[180,   0] }, // back up
+    { emoji:"🍀", effect:{type:"again"},          rot:[ 90,   0] }, // top up
   ];
 
-  // ==== STATE ====
-  let current = 0;                // 0..3
-  let pos = [0,0,0,0];            // param steps along lane 0..STEPS_PER_LAP-1
+  // ===== STATE =====
+  let current = 0;                              // 0..3
+  let pos = [0,0,0,0];                          // step positions 0..(STEPS_PER_LAP-1)
+  let laps = [0,0,0,0];                         // completed laps
   let skipNext = [false,false,false,false];
   let finished = false;
+  let rolling = false;
 
-  // DOM refs
-  const arena  = document.getElementById("arena");
-  const cube   = document.getElementById("cube");
-  const status = document.getElementById("status");
-  const winner = document.getElementById("winner");
-  const rollBtn= document.getElementById("rollBtn");
-  const resetBtn=document.getElementById("resetBtn");
-  const fsBtn  = document.getElementById("fsBtn");
+  // DOM
+  const board = document.getElementById("board");
+  const banner = document.getElementById("banner");
+  const horses = [1,2,3,4].map(i => document.getElementById("h"+i));
+  const cube = document.getElementById("cube");
+  const rollBtn = document.getElementById("rollBtn");
+  const resetBtn = document.getElementById("resetBtn");
+  const fsBtn = document.getElementById("fsBtn");
+  const lapEls = [1,2,3,4].map(i => document.getElementById("lap"+i));
+  const rows = [1,2,3,4].map(i => document.getElementById("row"+i));
 
-  const svg    = document.getElementById("svg");
-  const lanes  = LANE_IDS.map(id => document.getElementById(id));
-  const horses = HORSE_IDS.map(id => document.getElementById(id));
-
-  // Precompute radii from SVG
-  const laneData = lanes.map(el => ({
-    rx: parseFloat(el.getAttribute("rx")),
-    ry: parseFloat(el.getAttribute("ry"))
-  }));
-
-  // Convert step index to (x,y) on ellipse for lane i (clockwise from banner)
-  function stepToXY(laneIndex, step){
-    // angle 0 at 0 degrees on rightmost point; we want START near banner (~15deg up)
-    const rx = laneData[laneIndex].rx;
-    const ry = laneData[laneIndex].ry;
-    const cx = 800, cy = 450;
-    const startOffset = -Math.PI/9; // slight lift so start aligns with START banner visually
-    const theta = startOffset + (2*Math.PI) * (step / STEPS_PER_LAP);
-    const x = cx + rx * Math.cos(theta);
-    const y = cy + ry * Math.sin(theta);
-    return {x,y};
-  }
-
-  // Place all horses (initial)
-  function placeAll(){
-    for(let i=0;i<4;i++){
-      const {x,y} = stepToXY(i, pos[i]);
-      placeHorse(i, x, y, false);
+  // ===== HELPERS =====
+  const sleep = (ms)=>new Promise(r=>setTimeout(r,ms));
+  function cryptoInt(min,max){
+    if (window.crypto?.getRandomValues){
+      const range=max-min+1;
+      const u=new Uint32Array(1); crypto.getRandomValues(u);
+      return min + (u[0] % range);
     }
-    setTurnText();
-    highlightLane(current);
+    return Math.floor(Math.random()*(max-min+1))+min;
   }
 
-  function placeHorse(i, x, y, bouncing=true){
+  function setBanner(text){
+    if (finished) return;
+    banner.textContent = text;
+  }
+  function setTurnBanner(){
+    setBanner(`Your turn: ${NAMES[current]}`);
+  }
+  function highlightTurn(){
+    rows.forEach((r,i)=> r.classList.toggle("turn", i===current));
+  }
+
+  function boardDims(){
+    const rect = board.getBoundingClientRect();
+    return {w:rect.width, h:rect.height};
+  }
+
+  // convert step index to coordinates along an ellipse lane
+  function stepToXY(step){
+    const {w,h} = boardDims();
+    const cx = TRACK.cx * w, cy = TRACK.cy * h;
+    const rx = TRACK.rx * w, ry = TRACK.ry * h;
+    const theta = START_OFFSET + (2*Math.PI) * (step / STEPS_PER_LAP);
+    return { x: cx + rx*Math.cos(theta), y: cy + ry*Math.sin(theta) };
+  }
+
+  function placeHorse(i){
+    const {x,y} = stepToXY(pos[i]);
     const el = horses[i];
     el.style.left = x + "px";
     el.style.top  = y + "px";
     el.style.color = COLORS[i];
-    if(bouncing) el.classList.add("gallop");
   }
 
-  function stopGallop(i){
+  function placeAll(){ for(let i=0;i<4;i++) placeHorse(i); }
+
+  async function moveSteps(i, stepCount){
+    const dir = Math.sign(stepCount);
+    const total = Math.abs(stepCount);
+    horses[i].classList.add("gallop");
+    for(let s=0;s<total;s++){
+      pos[i] = (pos[i] + dir + STEPS_PER_LAP) % STEPS_PER_LAP;
+      placeHorse(i);
+      await sleep(MOVE_SPEED_MS);
+    }
     horses[i].classList.remove("gallop");
   }
 
-  function highlightLane(i){
-    lanes.forEach(l => l.classList.remove("lane-glow"));
-    lanes[i].classList.add("lane-glow");
-  }
-
-  function setTurnText(txt){
-    if (finished) return;
-    if (txt){ status.textContent = txt; return; }
-    status.innerHTML = `Your turn: <b style="color:${COLORS[current]}">${NAMES[current]}</b> — click the die`;
-  }
-
-  // Smoothly move N steps (+/-)
-  async function moveSteps(i, steps){
-    const dir = Math.sign(steps);
-    const count = Math.abs(steps);
-    for (let s=0; s<count; s++){
-      pos[i] = (pos[i] + dir + STEPS_PER_LAP) % STEPS_PER_LAP;
-      const {x,y} = stepToXY(i, pos[i]);
-      placeHorse(i, x, y, true);
-      await sleep(MOVE_SPEED_MS);
-    }
-    stopGallop(i);
-  }
-
-  function sleep(ms){ return new Promise(r=>setTimeout(r,ms)); }
-
-  // Check finish: one full lap completes when crossing near start region.
-  // We'll call "win" when the horse passes the final quarter back to near offset 0 *after* moving forward total >= STEPS_PER_LAP.
-  // Simpler: track "laps" by accumulating forward steps only.
-  let laps = [0,0,0,0];
-  function addLapIfNeeded(i, delta){
-    if (delta>0) laps[i]+=delta;
-    // A lap roughly equals STEPS_PER_LAP forward steps
-    if (laps[i] >= STEPS_PER_LAP){
-      laps[i] = 0; // reset counter to avoid multi-trigger
+  function addLapProgress(i, forwardSteps){
+    // forwardSteps here equals SPACE * spacesMoved when effect is positive
+    if (forwardSteps<=0) return false;
+    const prev = Math.floor((pos[i]-forwardSteps+STEPS_PER_LAP)/STEPS_PER_LAP);
+    const now  = Math.floor(pos[i]/STEPS_PER_LAP);
+    // simpler approach: accumulate forward steps
+    laps[i] += forwardSteps;
+    if (laps[i] >= STEPS_PER_LAP * LAPS_TO_WIN){
       return true;
     }
     return false;
   }
 
-  // 3D dice roll
-  let rolling = false;
-  async function roll(){
-    if (finished || rolling) return;
-
-    // skip?
-    if (skipNext[current]){
-      skipNext[current] = false;
-      setTurnText(`⏳ ${NAMES[current]} loses this turn`);
-      await sleep(900);
-      current = (current+1) % 4;
-      highlightLane(current);
-      setTurnText();
-      return;
-    }
-
-    rolling = true;
-
-    // spin animation
-    cube.classList.remove("rolling");
-    void cube.offsetWidth; // reflow
-    cube.classList.add("rolling");
-
-    // choose face randomly
-    const idx = cryptoRandomInt(0, FACES.length-1);
-    const face = FACES[idx];
-
-    // wait for spin, then snap to final orientation
-    await sleep(900);
-    cube.classList.remove("rolling");
-    const [rx, ry] = face.rot;
-    cube.style.transform = `rotateX(${rx}deg) rotateY(${ry}deg)`;
-
-    // apply effect
-    await sleep(200);
-    await applyEffect(face.effect);
-
-    rolling = false;
-  }
-
-  async function applyEffect(effect){
-    const me = current;
-    if (effect.type === "move"){
-      const steps = effect.steps;
-      if (steps>0) setTurnText(`${NAMES[me]} moves +${steps}`);
-      if (steps<0) setTurnText(`${NAMES[me]} goes ${steps} (back)`);
-      // Move and check lap
-      await moveSteps(me, steps);
-      const won = addLapIfNeeded(me, Math.max(steps,0));
-      if (won){
-        announceWinner(me);
-        return;
-      }
-      current = (current+1)%4;
-      highlightLane(current);
-      setTurnText();
-      return;
-    }
-
-    if (effect.type === "skip"){
-      setTurnText(`⏳ ${NAMES[me]} will lose next turn`);
-      skipNext[me] = true;
-      await sleep(700);
-      current = (current+1)%4;
-      highlightLane(current);
-      setTurnText();
-      return;
-    }
-
-    if (effect.type === "again"){
-      setTurnText(`🔁 ${NAMES[me]} rolls again`);
-      await sleep(500);
-      // same player rolls again
-      setTurnText();
-      return;
+  function updateLapUI(){
+    for(let i=0;i<4;i++){
+      lapEls[i].textContent = Math.floor(laps[i]/STEPS_PER_LAP);
     }
   }
 
   function announceWinner(i){
     finished = true;
-    status.textContent = "";
-    winner.textContent = `🏆 Winner: ${NAMES[i]}!`;
+    banner.textContent = `🏆 Winner: ${NAMES[i]}!`;
     confetti();
   }
 
-  function resetGame(){
-    finished = false;
-    current = 0;
-    pos = [0,0,0,0];
-    laps= [0,0,0,0];
-    skipNext=[false,false,false,false];
-    winner.textContent="";
-    cube.style.transform = "rotateX(-15deg) rotateY(25deg)";
-    placeAll();
-  }
-
-  // crypto random int inclusive
-  function cryptoRandomInt(min,max){
-    if (window.crypto?.getRandomValues){
-      const range = max-min+1;
-      const x = new Uint32Array(1); crypto.getRandomValues(x);
-      return min + (x[0] % range);
-    }
-    return Math.floor(Math.random()*(max-min+1))+min;
-  }
-
-  // Confetti (emoji fall)
   function confetti(){
     const emojis = ["🎉","🎊","🏆","🐎"];
-    let count = 0;
-    const timer = setInterval(()=>{
-      const e = document.createElement("div");
-      e.textContent = emojis[cryptoRandomInt(0,emojis.length-1)];
-      e.style.position="fixed";
-      e.style.left = Math.random()*100+"vw";
-      e.style.top  = "-10px";
-      e.style.fontSize = "2.2rem";
-      e.style.pointerEvents="none";
-      e.style.animation="fall 2s linear forwards";
+    let n=0;
+    const t=setInterval(()=>{
+      const e=document.createElement("div");
+      e.textContent=emojis[cryptoInt(0,emojis.length-1)];
+      e.style.position="fixed"; e.style.left=Math.random()*100+"vw"; e.style.top="-10px";
+      e.style.fontSize="2.2rem"; e.style.pointerEvents="none"; e.style.animation="fall 2s linear forwards";
       document.body.appendChild(e);
       setTimeout(()=>e.remove(),2050);
-      if (++count>48) clearInterval(timer);
+      if(++n>48) clearInterval(t);
     },60);
-    const style = document.createElement("style");
-    style.textContent = "@keyframes fall{to{transform:translateY(100vh) rotate(360deg); opacity:.2}}";
+    const style=document.createElement("style");
+    style.textContent="@keyframes fall{to{transform:translateY(100vh) rotate(360deg);opacity:.2}}";
     document.head.appendChild(style);
   }
 
-  // Fullscreen
-  fsBtn.addEventListener("click", ()=>{
-    const el = document.documentElement;
-    if (!document.fullscreenElement) el.requestFullscreen().catch(()=>{});
-    else document.exitFullscreen();
-  });
+  // ===== DICE =====
+  async function roll(){
+    if (finished || rolling) return;
 
-  // Wire
+    if (skipNext[current]){
+      skipNext[current]=false;
+      setBanner(`⏳ ${NAMES[current]} loses this turn`);
+      await sleep(900);
+      nextPlayer();
+      return;
+    }
+
+    rolling = true;
+
+    // spin
+    cube.classList.remove("rolling");
+    void cube.offsetWidth; // reflow
+    cube.classList.add("rolling");
+
+    // choose face
+    const idx = cryptoInt(0, FACES.length-1);
+    const face = FACES[idx];
+
+    await sleep(900);
+    cube.classList.remove("rolling");
+    const [rx,ry] = face.rot;
+    cube.style.transform = `rotateX(${rx}deg) rotateY(${ry}deg)`;
+
+    await sleep(200);
+    await applyEffect(face.effect);
+    rolling = false;
+  }
+
+  async function applyEffect(effect){
+    const me = current;
+
+    if (effect.type === "move"){
+      const spaces = effect.steps;
+      if (spaces>0) setBanner(`${NAMES[me]} moves +${spaces}`);
+      if (spaces<0) setBanner(`${NAMES[me]} goes ${spaces}`);
+      const pixels = Math.abs(spaces) * SPACE; // convert spaces to ellipse steps
+      const dir = Math.sign(spaces);
+      await moveSteps(me, dir*pixels);
+      const won = addLapProgress(me, dir>0 ? pixels : 0);
+      updateLapUI();
+      if (won){ announceWinner(me); return; }
+      nextPlayer();
+      return;
+    }
+
+    if (effect.type === "skip"){
+      setBanner(`⏳ ${NAMES[me]} will lose next turn`);
+      skipNext[me] = true;
+      await sleep(800);
+      nextPlayer();
+      return;
+    }
+
+    if (effect.type === "again"){
+      setBanner(`🍀 ${NAMES[me]} rolls again`);
+      await sleep(600);
+      // same player keeps turn — do nothing
+      return;
+    }
+  }
+
+  function nextPlayer(){
+    current = (current+1) % 4;
+    highlightTurn();
+    setTurnBanner();
+  }
+
+  function resetGame(){
+    finished=false; rolling=false;
+    current=0; pos=[0,0,0,0]; laps=[0,0,0,0]; skipNext=[false,false,false,false];
+    cube.style.transform = "rotateX(-15deg) rotateY(25deg)";
+    placeAll(); updateLapUI(); highlightTurn();
+    banner.innerHTML = `Your turn: <b style="color:#dc2626">Ruby</b> — click the die`;
+  }
+
+  // ===== WIRE =====
   rollBtn.addEventListener("click", roll);
   cube.addEventListener("click", roll);
-  cube.addEventListener("keydown", (e)=>{ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); roll(); } });
+  cube.addEventListener("keydown", e=>{ if(e.key===" "||e.key==="Enter"){ e.preventDefault(); roll(); }});
   resetBtn.addEventListener("click", resetGame);
+  fsBtn.addEventListener("click", ()=>{
+    const el=document.documentElement;
+    if(!document.fullscreenElement) el.requestFullscreen().catch(()=>{});
+    else document.exitFullscreen();
+  });
   window.addEventListener("resize", placeAll);
-  window.addEventListener("load", placeAll);
+  window.addEventListener("load", ()=>{ placeAll(); highlightTurn(); setTurnBanner(); });
+
+  // Keyboard helpers
   document.addEventListener("keydown", (e)=>{
     if(e.key===" "){ e.preventDefault(); roll(); }
     if(e.key.toLowerCase()==="r") resetGame();
     if(e.key.toLowerCase()==="f") fsBtn.click();
   });
 </script>
-
 </body>
 </html>
