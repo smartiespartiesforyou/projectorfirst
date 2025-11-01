@@ -9,34 +9,41 @@
   <link rel="icon" href="/logo.svg" type="image/svg+xml"/>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    .skip-link{position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden}
-    .skip-link:focus{left:1rem;top:1rem;width:auto;height:auto;padding:.75rem 1rem;background:#1e3a8a;color:#fff;border-radius:.75rem;z-index:50}
+    .skip-link {
+      position:absolute; left:-9999px; top:auto; width:1px; height:1px; overflow:hidden;
+    }
+    .skip-link:focus {
+      left:1rem; top:1rem; width:auto; height:auto;
+      padding:.75rem 1rem; background:#1e3a8a; color:#fff;
+      border-radius:.75rem; z-index:50;
+    }
   </style>
 </head>
+
 <body class="bg-white text-black">
   <a href="#main" class="skip-link">Skip to main content</a>
 
   <!-- Header -->
   <header class="bg-white border-b border-black/10 py-4 shadow-sm" role="banner">
     <div class="max-w-6xl mx-auto px-4 flex items-center justify-between">
-      <a href="/" class="flex items-center gap-3 focus:outline-none focus:ring-4 focus:ring-blue-400 rounded-xl">
+      <a href="index.html" class="flex items-center gap-3 focus:outline-none focus:ring-4 focus:ring-blue-400 rounded-xl">
         <img src="/logo.svg" alt="ProjectorFirst logo" class="w-12 h-12"/>
         <span class="text-3xl font-extrabold text-blue-900">ProjectorFirst</span>
       </a>
       <nav class="space-x-2" aria-label="Primary">
-        <a href="/index.html"
+        <a href="index.html"
            class="px-5 py-3 rounded-xl bg-blue-900/90 text-white text-xl font-bold hover:bg-blue-800 transition focus:outline-none focus:ring-4 focus:ring-blue-400">
           Home
         </a>
-        <a href="/apps.html"
+        <a href="apps.html"
            class="px-5 py-3 rounded-xl bg-blue-900/90 text-white text-xl font-bold hover:bg-blue-800 transition focus:outline-none focus:ring-4 focus:ring-blue-400">
           Apps
         </a>
-        <a href="/about.html" aria-current="page"
+        <a href="about.html" aria-current="page"
            class="px-5 py-3 rounded-xl bg-blue-900 text-white text-xl font-bold focus:outline-none focus:ring-4 focus:ring-blue-400">
           About
         </a>
-        <a href="/contact.html"
+        <a href="contact.html"
            class="px-5 py-3 rounded-xl bg-blue-900/90 text-white text-xl font-bold hover:bg-blue-800 transition focus:outline-none focus:ring-4 focus:ring-blue-400">
           Contact
         </a>
@@ -49,17 +56,37 @@
     <h1 class="text-5xl sm:text-6xl font-extrabold mb-8 text-blue-900 text-center">
       About ProjectorFirst
     </h1>
+
     <p class="text-2xl leading-relaxed mb-8 text-center">
       ProjectorFirst was created to make technology more accessible for seniors and care communities.
       We focus on <strong>big fonts, simple layouts, and one-click apps</strong> that work beautifully on projectors and TVs.
     </p>
+
     <p class="text-2xl leading-relaxed mb-8 text-center">
       Our goal is to support nursing homes, senior centers, and caregivers by providing easy-to-use digital activities
       that bring people together. No small buttons. No clutter. Just clear, fun tools.
     </p>
 
-    <!-- Mission Statement Card -->
-    <div class="bg-white border-2 border-blue-900 rounded-2xl p-10 shadow-sm text-center">
+    <!-- Accessibility Story Section -->
+    <hr class="my-10 border-gray-300"/>
+
+    <h2 class="text-3xl font-extrabold text-blue-900 mb-4 text-center">Accessibility at the Heart 💙</h2>
+    <p class="text-xl leading-relaxed mb-8 text-center text-gray-800">
+      ProjectorFirst is designed for use on large displays and by individuals with limited vision or dexterity.
+      All games use high-contrast visuals and large text. We continuously test for keyboard navigation
+      and simple interface control. This project was built out of a desire to help residents
+      engage more comfortably — technology should adapt to people, not the other way around.
+    </p>
+
+    <p class="text-lg text-gray-700 text-center">
+      If you encounter an accessibility issue, email us at
+      <a href="mailto:helloprojectorfirst@gmail.com" class="text-blue-700 underline hover:text-blue-900">
+        helloprojectorfirst@gmail.com
+      </a>.
+    </p>
+
+    <!-- Mission Card -->
+    <div class="bg-white border-2 border-blue-900 rounded-2xl p-10 shadow-sm text-center mt-14">
       <h2 class="text-3xl font-extrabold text-blue-900 mb-4">💙 Our Mission</h2>
       <p class="text-2xl leading-relaxed">
         To empower seniors with technology that feels natural, accessible, and enjoyable on the big screen.
@@ -68,9 +95,9 @@
 
     <!-- Back Button -->
     <div class="text-center mt-12">
-      <a href="/index.html"
+      <a href="index.html"
          class="inline-block px-10 py-5 rounded-xl bg-blue-900 text-white font-bold text-3xl hover:bg-blue-800 transition focus:outline-none focus:ring-4 focus:ring-blue-400">
-        Back to Home
+        ⬅ Back to Home
       </a>
     </div>
   </main>
