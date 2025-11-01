@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>🐎 Lucky Horses — ProjectorFirst</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    body {
+      background: #fff;
+      color: #111;
+      font-family: ui-sans-serif, system-ui, -apple-system, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      min-height: 100vh;
+      padding: 1rem;
+    }
+    h1 {
+      font-size: 3rem;
+      font-weight: 800;
+      color: #1e3a8a;
+      margin-bottom: 1rem;
+    }
+    .track {
+      width: 100%;
+      max-width: 900px;
+      border-top: 4px dashed #ccc;
+      border-bottom: 4px dashed #ccc;
+      padding: 1rem 0;
+      position: relative;
+      overflow: hidden;
+    }
+    .horse {
+      display: flex;
+      align-items: center;
+      font-size: 3rem;
+      position: relative;
+      transition: transform 0.2s ease-out;
+    }
+    .lane {
+      border-bottom: 2px solid #ddd;
+      padding: 0.5rem 0;
+    }
+    .finish {
+      position: absolute;
+      top: 0;
+      right: 20px;
+      width: 4px;
+      height: 100%;
+      background: #1e3a8a;
+    }
+    .btn {
+      font-size: 1.75rem;
+      font-weight: bold;
+      padding: 1rem 2rem;
+      border-radius: 1rem;
+      background: #1e3a8a;
+      color: #fff;
+      cursor: pointer;
+      margin-top: 1.5rem;
+      transition: transform 0.1s;
+    }
+    .btn:hover { transform: scale(1.05); }
+    .winner {
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: #16a34a;
+      margin-top: 1rem;
+    }
+  </style>
+</head>
+
+<body>
+  <main class="w-full max-w-5xl text-center">
+    <div class="mb-4">
+      <a href="apps.html" class="btn">⬅ Back to Apps</a>
+    </div>
+
+    <h1>🐎 Lucky Horses</h1>
+    <p class="text-xl text-gray-700 mb-6">Cheer for your favorite horse — first to the finish wins!</p>
+
+    <!-- ✅ Race Track -->
+    <div class="track">
+      <div class="finish"></div>
+      <div id="lanes"></div>
+    </div>
+
+    <button id="startBtn" class="btn">🏁 Start Race</button>
+    <div id="winnerBox" class="winner"></div>
+  </main>
+
+  <script>
+    const horses = ["🐴","🦄","🐎","🏇","🐕","🦓"];
+    const colors = ["#1e3a8a","#dc2626","#16a34a","#f59e0b","#7c3aed","#0ea5e9"];
+    const lanes = document.getElementById("lanes");
+    const startBtn = document.getElementById("startBtn");
+    const winnerBox = document.getElementById("winnerBox");
+    let raceActive = false;
+
+    // Build lanes
+    horses.forEach((emoji, i) => {
+      const lane = document.createElement("div");
+      lane.className = "lane";
+      const horse = document.createElement("div");
+      horse.className = "horse";
+      horse.style.color = colors[i];
+      horse.id = "horse" + i;
+      horse.innerHTML = `${emoji} <span class="ml-2 font-bold text-xl text-gray-700">Horse ${i+1}</span>`;
+      lane.appendChild(horse);
+      lanes.appendChild(lane);
+    });
+
+    function startRace() {
+      if (raceActive) return;
+      raceActive = true;
+      winnerBox.textContent = "";
+      const positions = Array(horses.length).fill(0);
+      const finishLine = 80; // adjust for screen width
+      const interval = setInterval(() => {
+        let winner = null;
+        for (let i=0;i<horses.length;i++) {
+          const move = Math.random() * 8; // random distance
+          positions[i] += move;
+          const horse = document.getElementById("horse"+i);
+          horse.style.transform = `translateX(${positions[i]}%)`;
+          if (positions[i] >= finishLine && !winner) {
+            winner = i;
+          }
+        }
+        if (winner !== null) {
+          clearInterval(interval);
+          const winningHorse = winner + 1;
+          winnerBox.textContent = `🏆 Winner: Horse ${winningHorse}! ${horses[winner]} `;
+          raceActive = false;
+        }
+      }, 200);
+    }
+
+    startBtn.addEventListener("click", startRace);
+  </script>
+</body>
+</html>
