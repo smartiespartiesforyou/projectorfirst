@@ -7,9 +7,9 @@
   <meta name="description" content="Private tester access to ProjectorFirst games.">
   <script src="https://cdn.tailwindcss.com"></script>
 
-  <!-- ✅ Memberstack must load BEFORE any buttons -->
+  <!-- ✅ VERIFIED MEMBERSTACK SCRIPT -->
   <script
-    data-memberstack-app="app_cmgnwpg8y00x10suih4pua785"
+    data-memberstack-id="app_cmgnwpg8y00x10suih4pua785"
     src="https://static.memberstack.com/scripts/v2/memberstack.js"
     type="text/javascript">
   </script>
@@ -17,7 +17,7 @@
   <style>
     body {
       font-family: 'Inter', sans-serif;
-      background: #f9fafb;
+      background-color: #f9fafb;
     }
   </style>
 </head>
@@ -32,7 +32,7 @@
       Click below to unlock free tester access to all ProjectorFirst games.
     </p>
 
-    <!-- ✅ WORKING MEMBERSTACK BUTTON -->
+    <!-- ✅ MEMBERSTACK BUTTON -->
     <button
       data-ms-plan:add="pln_tester-access-pz107f5"
       data-ms-redirect="/apps.html"
@@ -45,13 +45,19 @@
     </p>
   </main>
 
-  <!-- ✅ Optional helper: ensure Memberstack loads fully -->
+  <!-- ✅ CONNECTION TEST SCRIPT -->
   <script>
     document.addEventListener("DOMContentLoaded", () => {
+      const msScript = document.querySelector('script[src*="memberstack"]');
       if (typeof MemberStack === "undefined") {
-        console.error("❌ Memberstack not loaded. Check your app ID or script position.");
+        console.error("❌ Memberstack not loaded. Double-check the script or app ID.");
+        if (!msScript) {
+          console.error("⚠️ Memberstack script not found in the DOM.");
+        } else {
+          console.log("🔍 Found Memberstack script tag:", msScript);
+        }
       } else {
-        console.log("✅ Memberstack loaded successfully.");
+        console.log("✅ Memberstack loaded successfully!");
       }
     });
   </script>
