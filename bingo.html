@@ -201,9 +201,8 @@
         for (let i=0; i<letters.length; i++) {
           const [min,max] = ranges[i];
           for (let n=min; n<=max; n++) pool.push({letter:letters[i], number:n});
-        }
-      } else {
-        for (let n=1; n<=maxNum; n++) pool.push({letter:"", number:n});
+              } else {
+        for (let n = 1; n <= maxNum; n++) pool.push({ letter: "", number: n });
       }
       shuffle(pool);
       callerText.textContent = "—";
@@ -211,10 +210,13 @@
       recentDiv.innerHTML = "";
     }
 
+    // ✅ Correct placement: only ONE closing brace above this line
     function shuffle(arr) {
-      for (let i=arr.length-1; i>0; i--) {
-        const j=Math.floor(Math.random()*(i+1));
-        [arr[i],arr[j]]=[arr[j],arr[i]];
+      const randomValues = new Uint32Array(arr.length);
+      crypto.getRandomValues(randomValues);
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = randomValues[i] % (i + 1);
+        [arr[i], arr[j]] = [arr[j], arr[i]];
       }
     }
 
