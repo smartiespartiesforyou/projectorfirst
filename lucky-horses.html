@@ -1,100 +1,63 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>🐎 Lucky Horses — ProjectorFirst</title>
-  <meta name="description" content="Roll the dice to race four horses around their own oval tracks. Big, simple, projector-friendly fun." />
-  <meta name="theme-color" content="#1e3a8a" />
-  <link rel="icon" href="/logo.svg" type="image/svg+xml" />
+  <meta name="description" content="Candy Land–style horse race. Roll 0–6 (0 = Go Back Home). Specials: Jump Ahead, Go Back, Roll Again, Lose Turn."/>
+  <meta name="theme-color" content="#1e3a8a"/>
+  <link rel="icon" href="/logo.svg" type="image/svg+xml"/>
   <script src="https://cdn.tailwindcss.com"></script>
 
   <style>
-    body{
-      background:#fff; color:#111;
-      font-family: ui-sans-serif, system-ui, -apple-system, sans-serif;
-      display:flex; flex-direction:column; align-items:center; min-height:100vh;
-      padding:2rem; text-align:center;
-    }
-    h1{ font-size:3rem; font-weight:900; color:#1e3a8a; margin-bottom:.75rem; }
-    .sub{ font-size:1.25rem; color:#374151; }
+    body{background:#fff;color:#111;font-family:ui-sans-serif,system-ui,-apple-system,sans-serif;
+      display:flex;flex-direction:column;align-items:center;min-height:100vh;padding:1.5rem;text-align:center}
+    h1{font-size:3rem;font-weight:900;color:#1e3a8a;margin-bottom:.5rem}
+    .sub{font-size:1.125rem;color:#374151}
 
-    /* Track area */
-    #arena{
-      width: min(95vw, 1100px);
-      margin-top: 1.5rem;
-    }
-    .lane{
-      position: relative;
-      height: 140px;
-      margin: 18px 0;
-    }
-    /* Visual oval (rounded rectangle) behind the horse */
-    .oval{
-      position:absolute; inset: 10px 20px;
-      border: 6px dashed #c7d2fe; /* light indigo */
-      border-radius: 70px;
-    }
-    /* Start flag */
-    .start-flag{
-      position:absolute; left: 36px; top: 50%;
-      transform: translateY(-50%);
-      font-size: 1.5rem; color:#1e3a8a; font-weight:800;
-    }
+    /* Board area */
+    #board{width:min(96vw,1300px);margin:1.25rem auto}
+    .lane{position:relative;margin:14px 0;padding:10px;border:3px solid #1e3a8a22;border-radius:14px}
+    .track{display:grid;grid-auto-flow:column;grid-auto-columns:clamp(38px,3.2vw,56px);gap:6px;overflow-x:auto;padding:6px}
+    .sq{height:clamp(38px,3.2vw,56px);border-radius:10px;border:2px solid #93c5fd;display:flex;align-items:center;justify-content:center;position:relative;background:#fff}
+    /* Candy stripe palette for columns */
+    .c0{background:#fde68a} .c1{background:#bfdbfe} .c2{background:#bbf7d0} .c3{background:#fecaca}
+    .mark{position:absolute;right:4px;bottom:2px;font-size:1.05rem}
+    .start{outline:3px dashed #1e3a8a;outline-offset:-6px}
+    .finish{outline:3px solid #16a34a;outline-offset:-6px}
 
-    /* Horse icon */
-    .horse{
-      position:absolute;
-      font-size: 3rem;
-      line-height: 1;
-      transition: left .22s ease, top .22s ease;
-      filter: drop-shadow(0 2px 0 rgba(0,0,0,.15));
-    }
-    .horse .tag{
-      display:inline-block; margin-left:.4rem;
-      font-size: 1rem; font-weight:800; padding:.1rem .45rem; border-radius:.6rem;
-      color:#fff;
-      vertical-align: middle;
-    }
-
-    /* Gallop bounce */
-    .gallop{
-      animation: gallop .22s ease-in-out infinite alternate;
-    }
-    @keyframes gallop {
-      from { transform: translateY(0); }
-      to   { transform: translateY(-6px); }
-    }
+    /* Horse token */
+    .horse{position:absolute;font-size:2rem;line-height:1;filter:drop-shadow(0 2px 0 rgba(0,0,0,.15))}
+    .gallop{animation:gallop .18s ease-in-out infinite alternate}
+    @keyframes gallop{from{transform:translateY(0)}to{transform:translateY(-5px)}}
 
     /* Buttons & status */
-    .btn{
-      font-size:1.6rem; font-weight:800; padding:1rem 2rem; border-radius:1rem; min-width:220px;
-      transition: transform .08s; cursor:pointer;
-    }
-    .btn:hover{ transform: scale(1.04); }
-    .btn-blue{ background:#1e3a8a; color:#fff; }
-    .btn-red{ background:#dc2626; color:#fff; }
-    #status{ margin-top:1rem; font-size:2rem; color:#1e3a8a; font-weight:800; }
-    #winner{ margin-top:1rem; font-size:2.4rem; font-weight:900; color:#16a34a; }
+    .btn{font-size:1.6rem;font-weight:800;padding:1rem 2rem;border-radius:1rem;min-width:220px;cursor:pointer;transition:transform .08s}
+    .btn:hover{transform:scale(1.04)}
+    .btn-blue{background:#1e3a8a;color:#fff}
+    .btn-red{background:#dc2626;color:#fff}
+    #status{margin-top:.8rem;font-size:2rem;color:#1e3a8a;font-weight:800}
+    #winner{margin-top:.6rem;font-size:2.2rem;font-weight:900;color:#16a34a}
 
-    /* Color tags for horses */
-    .c1{ background:#1e3a8a; } /* indigo */
-    .c2{ background:#dc2626; } /* red    */
-    .c3{ background:#16a34a; } /* green  */
-    .c4{ background:#7c3aed; } /* violet */
+    /* Legend */
+    .legend{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-top:.6rem;color:#374151}
+    .tag{display:inline-flex;align-items:center;gap:6px;border:2px solid #cbd5e1;border-radius:999px;padding:4px 10px;font-weight:700}
+
+    /* Lane headers */
+    .laneHdr{display:flex;align-items:center;gap:10px;margin:4px 0 8px 6px;font-weight:900;color:#1e3a8a}
+    .pill{border-radius:999px;color:#fff;padding:2px 10px;font-weight:800}
+    .p1{background:#1e3a8a}.p2{background:#dc2626}.p3{background:#16a34a}.p4{background:#7c3aed}
   </style>
 </head>
 <body>
-  <a href="apps.html" class="text-white bg-blue-800 hover:bg-blue-900 px-6 py-3 rounded-full text-xl font-bold mb-5">⬅ Back to Apps</a>
+  <a href="apps.html" class="text-white bg-blue-800 hover:bg-blue-900 px-6 py-3 rounded-full text-xl font-bold mb-4">⬅ Back to Apps</a>
 
   <h1>🐎 Lucky Horses</h1>
-  <p class="sub">Roll the dice and watch your horse **gallop** around its own oval track. First to finish a lap wins!</p>
+  <p class="sub">Roll the dice (0–6). <strong>0 = Go Back Home.</strong> Land on ⭐ to jump ahead, 💀 to go back, 🔁 to roll again, 🚫 to lose next turn.</p>
 
-  <div id="arena">
-    <!-- Lanes get injected by JS -->
-  </div>
+  <div id="board"></div>
 
-  <div class="flex flex-wrap gap-4 justify-center mt-6">
+  <div class="flex flex-wrap gap-4 justify-center mt-5">
     <button id="rollBtn" class="btn btn-blue">🎲 Roll Dice</button>
     <button id="resetBtn" class="btn btn-red">🔁 Reset</button>
   </div>
@@ -102,222 +65,271 @@
   <div id="status"></div>
   <div id="winner"></div>
 
+  <div class="legend">
+    <span class="tag">⭐ Jump +3</span>
+    <span class="tag">💀 Back −3</span>
+    <span class="tag">🔁 Roll Again</span>
+    <span class="tag">🚫 Lose Next Turn</span>
+    <span class="tag">🏁 Finish</span>
+  </div>
+
   <script>
-    // Config
-    const HORSE_EMOJI = ["🐎","🐴","🏇","🦄"];
-    const TAG_TXT     = ["Horse 1","Horse 2","Horse 3","Horse 4"];
-    const TAG_CLASS   = ["c1","c2","c3","c4"];
-    const LANE_COUNT  = 4;
-    const POINTS_PER_SIDE = 6;   // 6 points per straight side
-    const TRACK_POINTS = POINTS_PER_SIDE * 4; // 24 total points
+    // ====== CONFIG ======
+    const HORSES = ["🐎","🐴","🏇","🦄"];
+    const HORSE_NAMES = ["Horse 1","Horse 2","Horse 3","Horse 4"];
+    const HORSE_PILLS = ["p1","p2","p3","p4"];
+    const LANE_COUNT = 4;
+    const TRACK_LEN = 30; // squares per lane
+    const SPECIAL_COUNTS = { jump:4, back:4, again:2, skip:2 }; // per board
+    const JUMP_VALUE = 3;
+    const BACK_VALUE = 3;
 
-    let positions = Array(LANE_COUNT).fill(0);
-    let currentHorse = 0;
-    let raceOver = false;
+    // ====== STATE ======
+    let lanes = [];                 // per-lane track DOM containers
+    let squares = [];               // shared specials per column index (0..TRACK_LEN-1)
+    let horseElems = [];            // horse DOM elements (absolute within lane)
+    let positions = new Array(LANE_COUNT).fill(0); // per-lane current index
+    let skipNext  = new Array(LANE_COUNT).fill(false);
+    let current   = 0;              // whose turn
+    let finished  = false;
 
-    const arena = document.getElementById("arena");
+    const board = document.getElementById("board");
     const status = document.getElementById("status");
     const winner = document.getElementById("winner");
     const rollBtn = document.getElementById("rollBtn");
     const resetBtn = document.getElementById("resetBtn");
 
-    // Build 4 lanes (DOM)
-    const lanes = [];
-    const horses = [];
-    const paths  = [];  // per-lane array of points [{x,y},...]
+    // ====== UTIL ======
+    function randInt(max){ return Math.floor(Math.random()*max); }
+    function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=randInt(i+1); [arr[i],arr[j]]=[arr[j],arr[i]]; } return arr; }
+    function wait(ms){ return new Promise(res=>setTimeout(res,ms)); }
 
-    function buildLanes(){
-      arena.innerHTML = "";
-      lanes.length = 0; horses.length = 0; paths.length = 0;
-
-      for(let i=0;i<LANE_COUNT;i++){
-        const lane = document.createElement("div");
-        lane.className = "lane";
-        // oval backdrop
-        const oval = document.createElement("div");
-        oval.className = "oval";
-        lane.appendChild(oval);
-
-        // start label
-        const flag = document.createElement("div");
-        flag.className = "start-flag";
-        flag.textContent = "START";
-        lane.appendChild(flag);
-
-        // horse
-        const h = document.createElement("div");
-        h.className = "horse";
-        h.innerHTML = `${HORSE_EMOJI[i]} <span class="tag ${TAG_CLASS[i]}">${TAG_TXT[i]}</span>`;
-        lane.appendChild(h);
-
-        arena.appendChild(lane);
-        lanes.push(lane);
-        horses.push(h);
+    // Build specials array once per game (shared across lanes)
+    function makeSpecials(){
+      const types = [];
+      for(let i=0;i<SPECIAL_COUNTS.jump;i++) types.push("jump");
+      for(let i=0;i<SPECIAL_COUNTS.back;i++) types.push("back");
+      for(let i=0;i<SPECIAL_COUNTS.again;i++) types.push("again");
+      for(let i=0;i<SPECIAL_COUNTS.skip;i++) types.push("skip");
+      const indices = shuffle([...Array(TRACK_LEN-2).keys()].map(i=>i+1)); // avoid start(0) & last(TRACK_LEN-1)
+      const map = new Array(TRACK_LEN).fill(null);
+      for(let k=0;k<types.length && k<indices.length;k++){
+        map[indices[k]] = types[k];
       }
-      computePaths();     // compute points for each lane
-      placeAllHorses();   // initial placement
+      map[TRACK_LEN-1] = "finish";
+      return map;
+    }
+
+    // Build the whole board DOM
+    function buildBoard(){
+      board.innerHTML = "";
+      lanes = []; horseElems = [];
+      squares = makeSpecials();
+
+      for(let ln=0; ln<LANE_COUNT; ln++){
+        const lane = document.createElement("section");
+        lane.className = "lane";
+
+        const hdr = document.createElement("div");
+        hdr.className = "laneHdr";
+        hdr.innerHTML = `${HORSES[ln]} <span class="pill ${HORSE_PILLS[ln]}">${HORSE_NAMES[ln]}</span>`;
+        lane.appendChild(hdr);
+
+        const track = document.createElement("div");
+        track.className = "track";
+        lane.appendChild(track);
+
+        // squares (shared specials by column)
+        for(let i=0;i<TRACK_LEN;i++){
+          const sq = document.createElement("div");
+          sq.className = `sq c${i%4}`;
+          if(i===0) sq.classList.add("start");
+          if(i===TRACK_LEN-1) sq.classList.add("finish");
+
+          const t = squares[i];
+          if(t){
+            const m = document.createElement("div");
+            m.className = "mark";
+            m.textContent = (t==="jump")?"⭐":(t==="back")?"💀":(t==="again")?"🔁":(t==="skip")?"🚫":"";
+            sq.appendChild(m);
+          }
+          track.appendChild(sq);
+        }
+
+        // horse element positioned over the first square
+        const token = document.createElement("div");
+        token.className = "horse";
+        token.textContent = HORSES[ln];
+        lane.appendChild(token);
+
+        board.appendChild(lane);
+        lanes.push(lane);
+        horseElems.push(token);
+      }
+
+      // initial placement
+      for(let ln=0; ln<LANE_COUNT; ln++){
+        placeHorse(ln, positions[ln]);
+      }
       showTurn();
     }
 
-    // Compute 24 points around each lane's rounded-rect
-    function computePaths(){
-      // We’ll compute points relative to each lane’s .oval box
-      lanes.forEach((lane, idx) => {
-        const oval = lane.querySelector(".oval");
-        const rect = oval.getBoundingClientRect();
-
-        // convert to lane-local coords
-        const pad = 14; // keep horse inside the dashed border
-        const left   = oval.offsetLeft + pad;
-        const top    = oval.offsetTop  + pad;
-        const width  = oval.clientWidth  - pad*2;
-        const height = oval.clientHeight - pad*2;
-
-        // We use a rounded-rect loop (top -> right -> bottom -> left)
-        // Divide each side into POINTS_PER_SIDE segments.
-        const pts = [];
-
-        // Top: left -> right
-        for(let i=0;i<POINTS_PER_SIDE;i++){
-          const x = left + (width/(POINTS_PER_SIDE-1))*i;
-          const y = top;
-          pts.push({x,y});
-        }
-        // Right: top -> bottom
-        for(let i=1;i<POINTS_PER_SIDE;i++){
-          const x = left + width;
-          const y = top + (height/(POINTS_PER_SIDE-1))*i;
-          pts.push({x,y});
-        }
-        // Bottom: right -> left
-        for(let i=1;i<POINTS_PER_SIDE;i++){
-          const x = left + width - (width/(POINTS_PER_SIDE-1))*i;
-          const y = top + height;
-          pts.push({x,y});
-        }
-        // Left: bottom -> top
-        for(let i=1;i<POINTS_PER_SIDE;i++){
-          const x = left;
-          const y = top + height - (height/(POINTS_PER_SIDE-1))*i;
-          pts.push({x,y});
-        }
-
-        paths[idx] = pts; // 24 points
-      });
+    // Position horse over a given square index in its lane
+    function placeHorse(ln, idx){
+      const track = lanes[ln].querySelector(".track");
+      const sq = track.children[Math.max(0, Math.min(idx, TRACK_LEN-1))];
+      const rect = track.getBoundingClientRect();
+      const srect = sq.getBoundingClientRect();
+      const token = horseElems[ln];
+      // translate to lane-local coordinates:
+      const left = (srect.left - rect.left) + srect.width/2 - 14; // center it, token ~28px width
+      const top  = (srect.top  - rect.top ) + srect.height/2 - 16;
+      token.style.left = left + "px";
+      token.style.top  = top  + "px";
     }
 
-    function placeHorse(laneIndex){
-      const p = positions[laneIndex] % TRACK_POINTS;
-      const {x,y} = paths[laneIndex][p];
-      const el = horses[laneIndex];
-      el.style.left = x + "px";
-      el.style.top  = y + "px";
+    // Animate step-by-step movement (forward or backward)
+    async function stepMove(ln, steps){
+      const dir = Math.sign(steps);
+      const count = Math.abs(steps);
+      const token = horseElems[ln];
+      token.classList.add("gallop");
+      for(let s=0; s<count; s++){
+        positions[ln] += dir;
+        if(positions[ln] < 0) positions[ln] = 0;
+        if(positions[ln] > TRACK_LEN-1) positions[ln] = TRACK_LEN-1;
+        placeHorse(ln, positions[ln]);
+        await wait(190);
+      }
+      token.classList.remove("gallop");
     }
 
-    function placeAllHorses(){
-      for(let i=0;i<LANE_COUNT;i++) placeHorse(i);
+    // Dice roll 0–6 (0 triggers "Go Back Home")
+    function rollD7(){
+      // slightly fairer: crypto if available
+      if(window.crypto && crypto.getRandomValues){
+        const arr = new Uint32Array(1);
+        crypto.getRandomValues(arr);
+        return arr[0] % 7; // 0..6
+      }
+      return Math.floor(Math.random()*7);
     }
 
     function showTurn(msg){
-      if (raceOver) return;
-      const who = `${HORSE_EMOJI[currentHorse]} ${TAG_TXT[currentHorse]}`;
-      status.textContent = msg ? msg : `Your turn: ${who} — click “Roll Dice”`;
+      if(finished) return;
+      const who = `${HORSES[current]} ${HORSE_NAMES[current]}`;
+      status.textContent = msg || `Your turn: ${who} — click “Roll Dice”`;
     }
 
-    // Gallop move: step-by-step animation for N steps
-    async function moveSteps(laneIndex, steps){
-      const el = horses[laneIndex];
-      el.classList.add("gallop");
+    async function handleSpecial(ln){
+      const tile = squares[positions[ln]];
+      if(!tile || tile==="finish") return;
 
-      for(let s=0; s<steps; s++){
-        positions[laneIndex] = (positions[laneIndex] + 1) % TRACK_POINTS;
-        placeHorse(laneIndex);
-        await wait(230); // match CSS transition ~.22s
+      if(tile==="jump"){
+        status.textContent = `⭐ ${HORSE_NAMES[ln]} jumps ahead +${JUMP_VALUE}!`;
+        await stepMove(ln, +JUMP_VALUE);
+      } else if(tile==="back"){
+        status.textContent = `💀 ${HORSE_NAMES[ln]} goes back −${BACK_VALUE}.`;
+        await stepMove(ln, -BACK_VALUE);
+      } else if(tile==="again"){
+        status.textContent = `🔁 ${HORSE_NAMES[ln]} rolls again!`;
+        await wait(450);
+        await takeTurn(ln, /*forceSame=*/true); // immediate extra turn
+      } else if(tile==="skip"){
+        status.textContent = `🚫 ${HORSE_NAMES[ln]} will lose next turn.`;
+        skipNext[ln] = true;
       }
-
-      el.classList.remove("gallop");
     }
 
-    function wait(ms){ return new Promise(res => setTimeout(res, ms)); }
+    async function takeTurn(ln, forceSame=false){
+      if(finished) return;
 
-    async function rollDice(){
-      if (raceOver) return;
-      // simple D6
-      const roll = Math.floor(Math.random()*6)+1;
-      const whoTxt = `${HORSE_EMOJI[currentHorse]} ${TAG_TXT[currentHorse]}`;
-      status.textContent = `${whoTxt} rolled a ${roll}…`;
-
-      // animate
-      await moveSteps(currentHorse, roll);
-
-      // Win check: full lap when position returns to 0 (passed START)
-      if (positions[currentHorse] === 0){
-        winner.textContent = `🏆 Winner: ${whoTxt}!`;
-        confetti();
-        raceOver = true;
+      // Skip turn handling
+      if(skipNext[ln]){
+        skipNext[ln] = false;
+        status.textContent = `🚫 ${HORSE_NAMES[ln]} skips this turn.`;
+        await wait(700);
+        if(!forceSame){ current = (current+1)%LANE_COUNT; showTurn(); }
         return;
       }
 
-      // Next horse
-      currentHorse = (currentHorse + 1) % LANE_COUNT;
-      showTurn();
+      // Roll dice
+      const roll = rollD7(); // 0..6
+      const whoTxt = `${HORSES[ln]} ${HORSE_NAMES[ln]}`;
+      if(roll===0){
+        status.textContent = `🎲 ${whoTxt} rolled 0 — Go Back Home!`;
+        await stepMove(ln, -positions[ln]); // back to start
+      } else {
+        status.textContent = `🎲 ${whoTxt} rolled a ${roll}.`;
+        await stepMove(ln, roll);
+      }
+
+      // Win check
+      if(positions[ln] >= TRACK_LEN-1){
+        positions[ln] = TRACK_LEN-1;
+        placeHorse(ln, positions[ln]);
+        winner.textContent = `🏆 Winner: ${whoTxt}!`;
+        confetti();
+        finished = true;
+        return;
+      }
+
+      // Handle special tile (may chain)
+      await handleSpecial(ln);
+      if(finished) return;
+
+      // Advance turn unless we forced same (used by "again")
+      if(!forceSame){
+        current = (current+1)%LANE_COUNT;
+        showTurn();
+      }
+    }
+
+    async function onRoll(){
+      if(finished) return;
+      await takeTurn(current, /*forceSame=*/false);
     }
 
     function resetGame(){
-      positions = Array(LANE_COUNT).fill(0);
-      currentHorse = 0;
-      raceOver = false;
-      status.textContent = "";
+      finished = false;
+      positions = new Array(LANE_COUNT).fill(0);
+      skipNext  = new Array(LANE_COUNT).fill(false);
+      current = 0;
       winner.textContent = "";
-      computePaths();
-      placeAllHorses();
-      showTurn();
+      status.textContent = "";
+      buildBoard();
     }
 
     // Simple falling emoji confetti
     function confetti(){
       const emojis = ["🎉","🎊","🏆","🐎"];
       let count = 0;
-      const timer = setInterval(() => {
+      const timer = setInterval(()=>{
         const e = document.createElement("div");
-        e.textContent = emojis[Math.floor(Math.random()*emojis.length)];
+        e.textContent = emojis[randInt(emojis.length)];
         e.style.position="fixed";
         e.style.left = Math.random()*100 + "vw";
         e.style.top  = "-10px";
         e.style.fontSize = "2rem";
-        e.style.pointerEvents = "none";
-        e.style.animation = "fall 2s linear forwards";
+        e.style.pointerEvents="none";
+        e.style.animation="fall 2s linear forwards";
         document.body.appendChild(e);
-        setTimeout(()=>e.remove(), 2100);
-        if(++count>40) clearInterval(timer);
-      }, 60);
-
+        setTimeout(()=>e.remove(),2050);
+        if(++count>42) clearInterval(timer);
+      },60);
       const style = document.createElement("style");
-      style.innerHTML = `@keyframes fall { to { transform: translateY(100vh) rotate(360deg); opacity:.1; } }`;
+      style.innerHTML = "@keyframes fall{to{transform:translateY(100vh) rotate(360deg);opacity:.1}}";
       document.head.appendChild(style);
     }
 
-    // Build on load
-    window.addEventListener("load", () => {
-      buildLanes();
-      // Add colored tags now that horses exist
-      horses.forEach((h,i)=>{
-        const tag = h.querySelector(".tag");
-        tag.classList.add(TAG_CLASS[i]);
-      });
+    // Build & wire
+    window.addEventListener("load", resetGame);
+    window.addEventListener("resize", ()=>{
+      // re-place horses on resize to keep tokens centered on squares
+      lanes.forEach((_,ln)=>placeHorse(ln, positions[ln]));
     });
-
-    // Recompute paths if window resizes (keeps positions aligned)
-    window.addEventListener("resize", () => {
-      const saved = [...positions];
-      computePaths();
-      for(let i=0;i<LANE_COUNT;i++) positions[i]=saved[i]%TRACK_POINTS;
-      placeAllHorses();
-    });
-
-    // Controls
-    rollBtn.addEventListener("click", rollDice);
-    resetBtn.addEventListener("click", resetGame);
+    document.getElementById("rollBtn").addEventListener("click", onRoll);
+    document.getElementById("resetBtn").addEventListener("click", resetGame);
   </script>
 </body>
 </html>
