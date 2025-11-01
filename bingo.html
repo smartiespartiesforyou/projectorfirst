@@ -1,13 +1,14 @@
-<!-- ✅ Memberstack Script -->
-<script 
-  data-memberstack-app="app_cmgnwpg8y00x10suih4pua785"
-  src="https://static.memberstack.com/scripts/v2/memberstack.js"
-  type="text/javascript">
-</script>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- ✅ Memberstack Script -->
+  <script 
+    data-memberstack-app="app_cmgnwpg8y00x10suih4pua785"
+    src="https://static.memberstack.com/scripts/v2/memberstack.js"
+    type="text/javascript">
+  </script>
 
-<!-- ✅ Gate Bingo Page -->
-<body data-ms-content="bingo">
-
+  <!-- ✅ Gate Bingo Page -->
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>Classic Bingo Caller — ProjectorFirst</title>
@@ -32,14 +33,12 @@
       min-height: 100vh;
       padding: 1rem;
     }
-
     h1 {
       font-size: 2.5rem;
       font-weight: 800;
       color: #1e3a8a;
       margin-bottom: 0.5rem;
     }
-
     .bingo-container {
       display: flex;
       align-items: center;
@@ -48,7 +47,6 @@
       flex-wrap: wrap;
       margin-bottom: 1rem;
     }
-
     .caller-box {
       width: min(70vw, 600px);
       aspect-ratio: 1 / 1;
@@ -63,24 +61,20 @@
       box-shadow: 0 0 30px rgba(0,0,0,0.3);
       user-select: none;
     }
-
     .caller-number {
       font-size: clamp(12rem, 30vmin, 24rem);
       letter-spacing: 0.05em;
       line-height: 0.9;
     }
-
     .caller-emoji {
       font-size: clamp(3rem, 8vmin, 5rem);
       margin-top: 1rem;
     }
-
     .controls {
       display: flex;
       flex-direction: column;
       gap: 1rem;
     }
-
     .btn {
       font-size: 1.75rem;
       font-weight: bold;
@@ -90,14 +84,11 @@
       min-width: 200px;
       transition: transform 0.1s;
     }
-
     .btn:hover { transform: scale(1.05); }
-
     .btn-next { background: #1e3a8a; color: #fff; }
     .btn-fullscreen { background: #7c3aed; color: #fff; }
     .btn-reset { background: #dc2626; color: #fff; }
     .btn-sound { background: #fff; color: #1e3a8a; border: 2px solid #1e3a8a; }
-
     .recent-calls {
       display: flex;
       flex-wrap: wrap;
@@ -107,7 +98,6 @@
       margin-top: 2rem;
       max-width: 90vw;
     }
-
     .recent-calls span {
       display: inline-flex;
       align-items: center;
@@ -120,20 +110,19 @@
       font-weight: bold;
       box-shadow: 0 0 8px rgba(0,0,0,0.3);
     }
-
     .ball-B { background: #1e3a8a; }
     .ball-I { background: #dc2626; }
     .ball-N { background: #16a34a; }
     .ball-G { background: #f97316; }
     .ball-O { background: #7c3aed; }
-
     @media (max-width: 768px) {
       .bingo-container { flex-direction: column; }
       .controls { flex-direction: row; flex-wrap: wrap; justify-content: center; }
     }
   </style>
 </head>
-<body>
+
+<body data-ms-content="bingo">
   <div class="w-full max-w-6xl text-center">
     <div class="mb-3">
       <a href="apps.html" class="text-white bg-blue-800 hover:bg-blue-900 px-6 py-3 rounded-full text-xl font-bold">⬅ Back to Home</a>
@@ -141,6 +130,7 @@
 
     <h1>🎉 Classic Bingo Caller</h1>
 
+    <!-- Theme Selector -->
     <div class="mb-4">
       <label for="theme" class="block text-lg font-semibold text-blue-900 mb-1">Theme</label>
       <select id="theme" class="border-2 border-blue-900 text-xl rounded-xl p-2">
@@ -152,15 +142,16 @@
         <option value="patriotic">Patriotic 🇺🇸</option>
       </select>
     </div>
-<!-- Game Type -->
-<div class="mb-6">
-  <label for="gameType" class="block text-lg font-semibold text-blue-900 mb-1">Game Type</label>
-  <select id="gameType" class="border-2 border-blue-900 text-xl rounded-xl p-2">
-    <option value="75">USA (1–75)</option>
-    <option value="90">UK (1–90)</option>
-    <option value="100">Extended (1–100)</option>
-  </select>
-</div>
+
+    <!-- Game Type Selector -->
+    <div class="mb-6">
+      <label for="gameType" class="block text-lg font-semibold text-blue-900 mb-1">Game Type</label>
+      <select id="gameType" class="border-2 border-blue-900 text-xl rounded-xl p-2">
+        <option value="75">USA (1–75)</option>
+        <option value="90">UK (1–90)</option>
+        <option value="100">Extended (1–100)</option>
+      </select>
+    </div>
 
     <div class="bingo-container">
       <div class="controls">
@@ -191,9 +182,10 @@
     const callerEmoji = document.getElementById("callerEmoji");
     const recentDiv = document.getElementById("recentCalls");
     const themeSel = document.getElementById("theme");
+    const gameTypeSel = document.getElementById("gameType");
 
     const THEMES = {
-      classic: { emoji: "", colors: {} },
+      classic: { emoji: "" },
       halloween: { emoji: "🎃" },
       christmas: { emoji: "🎄" },
       easter: { emoji: "🐣" },
@@ -204,9 +196,14 @@
     function initGame() {
       pool = [];
       history = [];
-      for (let i=0;i<letters.length;i++) {
-        const [min,max] = ranges[i];
-        for (let n=min;n<=max;n++) pool.push({letter:letters[i], number:n});
+      const maxNum = parseInt(gameTypeSel.value);
+      if (maxNum === 75) {
+        for (let i=0; i<letters.length; i++) {
+          const [min,max] = ranges[i];
+          for (let n=min; n<=max; n++) pool.push({letter:letters[i], number:n});
+        }
+      } else {
+        for (let n=1; n<=maxNum; n++) pool.push({letter:"", number:n});
       }
       shuffle(pool);
       callerText.textContent = "—";
@@ -215,7 +212,7 @@
     }
 
     function shuffle(arr) {
-      for (let i=arr.length-1;i>0;i--) {
+      for (let i=arr.length-1; i>0; i--) {
         const j=Math.floor(Math.random()*(i+1));
         [arr[i],arr[j]]=[arr[j],arr[i]];
       }
@@ -226,18 +223,18 @@
       const pick = pool.pop();
       history.push(pick);
       const emoji = THEMES[themeSel.value]?.emoji || "";
-      callerText.textContent = `${pick.letter} ${pick.number}`;
+      callerText.textContent = pick.letter ? `${pick.letter} ${pick.number}` : `${pick.number}`;
       callerEmoji.textContent = emoji;
       addRecent(pick);
-      if (soundOn) speak(`${pick.letter} ${pick.number}`);
+      if (soundOn) speak(pick.letter ? `${pick.letter} ${pick.number}` : `${pick.number}`);
     }
 
     function addRecent(call) {
       const el = document.createElement("span");
-      el.textContent = `${call.letter} ${call.number}`;
-      el.className = `ball-${call.letter}`;
+      el.textContent = call.letter ? `${call.letter} ${call.number}` : `${call.number}`;
+      el.className = call.letter ? `ball-${call.letter}` : "ball-B";
       recentDiv.appendChild(el);
-      if (recentDiv.children.length > 75) recentDiv.firstChild.remove();
+      if (recentDiv.children.length > 100) recentDiv.firstChild.remove();
     }
 
     function resetGame() { initGame(); }
@@ -273,6 +270,7 @@
       if (e.code === "KeyS") toggleSound();
     });
 
+    gameTypeSel.addEventListener("change", initGame);
     initGame();
   </script>
 </body>
