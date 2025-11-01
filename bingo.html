@@ -1,14 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <!-- ✅ Memberstack Script -->
-  <script 
-    data-memberstack-app="app_cmgnwpg8y00x10suih4pua785"
-    src="https://static.memberstack.com/scripts/v2/memberstack.js"
-    type="text/javascript">
-  </script>
-
-  <!-- ✅ Gate Bingo Page -->
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>Classic Bingo Caller — ProjectorFirst</title>
@@ -16,10 +8,6 @@
   <meta name="theme-color" content="#1e3a8a"/>
   <link rel="icon" href="/logo.svg" type="image/svg+xml"/>
   <script src="https://cdn.tailwindcss.com"></script>
-
-  <script data-memberstack-id="pk_650cfbc9692b47a2c045"
-          src="https://api.memberstack.com/static/memberstack.js"
-          async></script>
 
   <style>
     body {
@@ -122,7 +110,7 @@
   </style>
 </head>
 
-<body data-ms-content="bingo">
+<body>
   <div class="w-full max-w-6xl text-center">
     <div class="mb-3">
       <a href="apps.html" class="text-white bg-blue-800 hover:bg-blue-900 px-6 py-3 rounded-full text-xl font-bold">⬅ Back to Home</a>
@@ -130,26 +118,20 @@
 
     <h1>🎉 Classic Bingo Caller</h1>
 
-    <!-- Theme Selector -->
-    <div class="mb-4">
-      <label for="theme" class="block text-lg font-semibold text-blue-900 mb-1">Theme</label>
-      <select id="theme" class="border-2 border-blue-900 text-xl rounded-xl p-2">
-        <option value="classic">Classic</option>
-        <option value="halloween">Halloween 🎃</option>
-        <option value="christmas">Christmas 🎄</option>
-        <option value="easter">Easter 🐣</option>
-        <option value="valentines">Valentine’s 💘</option>
-        <option value="patriotic">Patriotic ⭐</option>
-      </select>
-    </div>
-
-    <!-- Game Type Selector -->
+    <!-- ✅ Combined Theme + Game Type Selector -->
     <div class="mb-6">
-      <label for="gameType" class="block text-lg font-semibold text-blue-900 mb-1">Game Type</label>
-      <select id="gameType" class="border-2 border-blue-900 text-xl rounded-xl p-2">
-        <option value="75">USA (1–75)</option>
-        <option value="90">UK (1–90)</option>
-        <option value="100">Extended (1–100)</option>
+      <label for="themeGame" class="block text-lg font-semibold text-blue-900 mb-1">
+        Game Style
+      </label>
+      <select id="themeGame" class="border-2 border-blue-900 text-xl rounded-xl p-2">
+        <option value="classic-75">Classic 🇺🇸 (1–75)</option>
+        <option value="halloween-75">Halloween 🎃 (1–75)</option>
+        <option value="christmas-75">Christmas 🎄 (1–75)</option>
+        <option value="easter-75">Easter 🐣 (1–75)</option>
+        <option value="valentines-75">Valentine’s 💘 (1–75)</option>
+        <option value="patriotic-75">Patriotic ⭐ (1–75)</option>
+        <option value="classic-90">UK 🇬🇧 (1–90)</option>
+        <option value="classic-100">Extended 💫 (1–100)</option>
       </select>
     </div>
 
@@ -176,13 +158,12 @@
   <script>
     const letters = ["B","I","N","G","O"];
     const ranges = [[1,15],[16,30],[31,45],[46,60],[61,75]];
-    let pool = [], history = [], soundOn = true;
+    let pool = [], history = [], soundOn = true, currentTheme = "classic";
 
     const callerText = document.getElementById("callerText");
     const callerEmoji = document.getElementById("callerEmoji");
     const recentDiv = document.getElementById("recentCalls");
-    const themeSel = document.getElementById("theme");
-    const gameTypeSel = document.getElementById("gameType");
+    const themeGameSel = document.getElementById("themeGame");
 
     const THEMES = {
       classic: { emoji: "" },
@@ -193,37 +174,33 @@
       patriotic: { emoji: "⭐" }
     };
 
-  function initGame() {
-  pool = [];
-  history = [];
-  const maxNum = parseInt(gameTypeSel.value);
+    function initGame() {
+      pool = [];
+      history = [];
 
-  if (maxNum === 75) {
-    // Build B–I–N–G–O columns
-    for (let i = 0; i < letters.length; i++) {
-      const [min, max] = ranges[i];
-      for (let n = min; n <= max; n++) {
-        pool.push({ letter: letters[i], number: n });
+      const [theme, size] = themeGameSel.value.split("-");
+      const maxNum = parseInt(size);
+      currentTheme = theme;
+
+      if (maxNum === 75) {
+        for (let i = 0; i < letters.length; i++) {
+          const [min, max] = ranges[i];
+          for (let n = min; n <= max; n++) {
+            pool.push({ letter: letters[i], number: n });
+          }
+        }
+      } else {
+        for (let n = 1; n <= maxNum; n++) {
+          pool.push({ letter: "", number: n });
+        }
       }
+
+      shuffle(pool);
+      callerText.textContent = "—";
+      callerEmoji.textContent = "";
+      recentDiv.innerHTML = "";
     }
-  } else {
-    // Build generic pool for UK/Extended
-    for (let n = 1; n <= maxNum; n++) {
-      pool.push({ letter: "", number: n });
-    }
-  }
 
-  // Shuffle the numbers securely
-  shuffle(pool);
-
-  // Reset display
-  callerText.textContent = "—";
-  callerEmoji.textContent = "";
-  recentDiv.innerHTML = "";
-}
-
-
-    // ✅ Correct placement: only ONE closing brace above this line
     function shuffle(arr) {
       const randomValues = new Uint32Array(arr.length);
       crypto.getRandomValues(randomValues);
@@ -237,7 +214,7 @@
       if (pool.length === 0) return;
       const pick = pool.pop();
       history.push(pick);
-      const emoji = THEMES[themeSel.value]?.emoji || "";
+      const emoji = THEMES[currentTheme]?.emoji || "";
       callerText.textContent = pick.letter ? `${pick.letter} ${pick.number}` : `${pick.number}`;
       callerEmoji.textContent = emoji;
       addRecent(pick);
@@ -285,7 +262,7 @@
       if (e.code === "KeyS") toggleSound();
     });
 
-    gameTypeSel.addEventListener("change", initGame);
+    themeGameSel.addEventListener("change", initGame);
     initGame();
   </script>
 </body>
