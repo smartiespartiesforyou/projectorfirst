@@ -1,4 +1,9 @@
-<link rel="icon" href="logo.svg" type="image/svg+xml" />
-<link rel="manifest" href="manifest.json">
-<meta name="msapplication-config" content="browserconfig.xml">
-<script src="https://cdn.tailwindcss.com"></script>
+<?xml version="1.0" encoding="utf-8"?>
+<browserconfig>
+  <msapplication>
+    <tile>
+      <square150x150logo src="/logo.svg"/>
+      <TileColor>#1e3a8a</TileColor>
+    </tile>
+  </msapplication>
+</browserconfig>
