@@ -43,50 +43,57 @@
 <body data-ms-content="public" class="bg-white text-black">
   <a href="#main" class="skip-link">Skip to main content</a>
 
-  <!-- Header -->
-  <header class="bg-white border-b border-black/10 py-4 shadow-sm" role="banner">
-    <div class="max-w-6xl mx-auto px-4 flex items-center justify-between">
-      <a href="index.html" class="flex items-center gap-3 focus:outline-none focus:ring-4 focus:ring-blue-400 rounded-xl">
-        <img src="logo.svg" alt="ProjectorFirst logo" class="w-12 h-12" />
-        <span class="text-3xl font-extrabold text-blue-900">ProjectorFirst</span>
+<!-- Header -->
+<header class="bg-white border-b border-black/10 py-4 shadow-sm" role="banner">
+  <div class="max-w-6xl mx-auto px-4 flex items-center justify-between">
+    <!-- Logo -->
+    <a href="index.html" class="flex items-center gap-3 focus:outline-none focus:ring-4 focus:ring-blue-400 rounded-xl">
+      <img src="logo.svg" alt="ProjectorFirst logo" class="w-12 h-12"/>
+      <span class="text-3xl font-extrabold text-blue-900">ProjectorFirst</span>
+    </a>
+
+    <!-- Navigation -->
+    <nav class="space-x-2" aria-label="Primary">
+      <!-- Main links -->
+      <a href="index.html"
+         class="px-5 py-3 rounded-xl bg-blue-900 text-white text-xl font-bold focus:outline-none focus:ring-4 focus:ring-blue-400">
+        Home
+      </a>
+      <a href="apps.html"
+         class="px-5 py-3 rounded-xl bg-blue-900/90 text-white text-xl font-bold hover:bg-blue-800 transition focus:outline-none focus:ring-4 focus:ring-blue-400">
+        Apps
+      </a>
+      <a href="about.html"
+         class="px-5 py-3 rounded-xl bg-blue-900/90 text-white text-xl font-bold hover:bg-blue-800 transition focus:outline-none focus:ring-4 focus:ring-blue-400">
+        About
+      </a>
+      <a href="contact.html"
+         class="px-5 py-3 rounded-xl bg-blue-900/90 text-white text-xl font-bold hover:bg-blue-800 transition focus:outline-none focus:ring-4 focus:ring-blue-400">
+        Contact
       </a>
 
-      <nav class="space-x-2" aria-label="Primary">
-        <a href="index.html"
-          class="px-5 py-3 rounded-xl bg-blue-900 text-white text-xl font-bold focus:outline-none focus:ring-4 focus:ring-blue-400">
-          Home
-        </a>
-        <a href="apps.html"
-          class="px-5 py-3 rounded-xl bg-blue-900/90 text-white text-xl font-bold hover:bg-blue-800 transition focus:outline-none focus:ring-4 focus:ring-blue-400">
-          Apps
-        </a>
-        <a href="about.html"
-          class="px-5 py-3 rounded-xl bg-blue-900/90 text-white text-xl font-bold hover:bg-blue-800 transition focus:outline-none focus:ring-4 focus:ring-blue-400">
-          About
-        </a>
-        <a href="contact.html"
-          class="px-5 py-3 rounded-xl bg-blue-900/90 text-white text-xl font-bold hover:bg-blue-800 transition focus:outline-none focus:ring-4 focus:ring-blue-400">
-          Contact
-        </a>
+      <!-- ✅ Show only when logged OUT -->
+      <a href="#" data-ms-modal="signup" data-ms-content="!members"
+         class="px-5 py-3 rounded-xl bg-green-700 text-white text-xl font-bold hover:bg-green-600 transition focus:outline-none focus:ring-4 focus:ring-green-400">
+        Sign up
+      </a>
+      <a href="#" data-ms-modal="login" data-ms-content="!members"
+         class="px-5 py-3 rounded-xl bg-blue-900/90 text-white text-xl font-bold hover:bg-blue-800 transition focus:outline-none focus:ring-4 focus:ring-blue-400">
+        Log in
+      </a>
 
-        <!-- ✅ Show when logged OUT -->
-        <a href="#" data-ms-modal="signup" data-ms-content="!members"
-          class="px-5 py-3 rounded-xl bg-blue-900/90 text-white text-xl font-bold hover:bg-blue-800 transition focus:outline-none focus:ring-4 focus:ring-blue-400">
-          Sign up
-        </a>
-        <a href="#" data-ms-modal="login" data-ms-content="!members"
-          class="px-5 py-3 rounded-xl bg-blue-900/90 text-white text-xl font-bold hover:bg-blue-800 transition focus:outline-none focus:ring-4 focus:ring-blue-400">
-          Log in
-        </a>
-
-        <!-- ✅ Show when logged IN -->
-        <a href="#" data-ms-action="logout" data-ms-content="members"
-          class="px-5 py-3 rounded-xl bg-gray-400 text-white text-xl font-bold hover:bg-gray-500 transition focus:outline-none focus:ring-4 focus:ring-gray-300">
-          Log out
-        </a>
-      </nav>
-    </div>
-  </header>
+      <!-- ✅ Show only when logged IN -->
+      <a href="#" data-ms-profile="true" data-ms-content="members"
+         class="px-5 py-3 rounded-xl bg-green-700 text-white text-xl font-bold hover:bg-green-600 transition focus:outline-none focus:ring-4 focus:ring-green-400">
+        My Account
+      </a>
+      <a href="#" data-ms-action="logout" data-ms-content="members"
+         class="px-5 py-3 rounded-xl bg-gray-700 text-white text-xl font-bold hover:bg-gray-600 transition focus:outline-none focus:ring-4 focus:ring-gray-400">
+        Log out
+      </a>
+    </nav>
+  </div>
+</header>
 
   <!-- Main Content -->
   <main id="main" class="max-w-6xl mx-auto px-4 py-14 text-center">
