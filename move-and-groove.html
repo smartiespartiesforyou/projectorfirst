@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>💃 Move & Groove — ProjectorFirst</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    body {
+      background: #fff;
+      color: #111;
+      font-family: ui-sans-serif, system-ui, -apple-system, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      min-height: 100vh;
+      padding: 1rem;
+    }
+    h1 {
+      font-size: 3rem;
+      font-weight: 800;
+      color: #1e3a8a;
+      margin-bottom: 1rem;
+    }
+    .display-box {
+      background: #000;
+      color: #fff;
+      font-size: clamp(2.5rem, 6vw, 4rem);
+      font-weight: 700;
+      padding: 2rem;
+      border-radius: 1.25rem;
+      margin-top: 1rem;
+      box-shadow: 0 0 20px rgba(0,0,0,0.3);
+      min-height: 250px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+    .btn {
+      font-size: 1.75rem;
+      font-weight: bold;
+      padding: 1.25rem 2.5rem;
+      border-radius: 1rem;
+      cursor: pointer;
+      transition: transform 0.1s;
+    }
+    .btn:hover { transform: scale(1.05); }
+    .btn-primary { background: #1e3a8a; color: white; }
+  </style>
+</head>
+
+<body>
+  <main class="w-full max-w-5xl text-center">
+    <div class="mb-4">
+      <a href="apps.html" class="btn btn-primary">⬅ Back to Apps</a>
+    </div>
+
+    <h1>💃 Move & Groove</h1>
+
+    <!-- ✅ Dropdown -->
+    <div class="mb-6 text-left">
+      <label for="theme" class="block text-xl font-semibold text-blue-900 mb-2">Choose Theme</label>
+      <select id="theme" class="w-full text-2xl p-3 border-2 border-blue-900 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-400">
+        <option value="classic">Classic Moves</option>
+        <option value="holiday">Holiday Fun</option>
+        <option value="silly">Silly Moves</option>
+        <option value="stretch">Gentle Stretch</option>
+      </select>
+    </div>
+
+    <!-- ✅ Display Area -->
+    <div id="display" class="display-box">Press “Start Grooving” to begin!</div>
+
+    <div class="flex justify-center gap-4 mt-6">
+      <button id="rollBtn" class="btn btn-primary">🎲 Start Grooving</button>
+    </div>
+  </main>
+
+  <script>
+    const MOVES = {
+      classic: [
+        "Clap your hands 5 times!",
+        "Raise both arms high!",
+        "Tap your feet on the floor!",
+        "Roll your shoulders back!",
+        "Big smile for 5 seconds!",
+        "Touch your knees and reach for the sky!",
+      ],
+      holiday: [
+        "Wave like Santa! 🎅",
+        "Shake like a jingle bell! 🔔",
+        "Fly like a reindeer! 🦌",
+        "Wrap an imaginary gift! 🎁",
+        "Ring an invisible bell! 🛎️",
+        "Stretch like a Christmas tree! 🎄",
+      ],
+      silly: [
+        "Make your silliest face! 🤪",
+        "Pretend to swim!",
+        "Flap your wings like a bird!",
+        "March in place!",
+        "Spin your wrists like helicopter blades!",
+        "Wiggle your fingers like magic sparkles!",
+      ],
+      stretch: [
+        "Take a deep breath in... and out...",
+        "Stretch both arms wide!",
+        "Tilt your head side to side.",
+        "Reach down toward your toes.",
+        "Circle your wrists slowly.",
+        "Roll your neck gently.",
+      ]
+    };
+
+    const display = document.getElementById("display");
+    const themeSel = document.getElementById("theme");
+    const rollBtn = document.getElementById("rollBtn");
+
+    function rollMove() {
+      const theme = themeSel.value;
+      const moves = MOVES[theme];
+      const roll = Math.floor(Math.random() * moves.length);
+      display.textContent = moves[roll];
+    }
+
+    rollBtn.addEventListener("click", rollMove);
+  </script>
+</body>
+</html>
