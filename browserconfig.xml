@@ -1,0 +1,4 @@
+<link rel="icon" href="logo.svg" type="image/svg+xml" />
+<link rel="manifest" href="manifest.json">
+<meta name="msapplication-config" content="browserconfig.xml">
+<script src="https://cdn.tailwindcss.com"></script>
