@@ -1,189 +1,132 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Dice Roller — ProjectorFirst</title>
-  <meta name="description" content="Big, simple dice roller for activities and games." />
-  <meta name="theme-color" content="#1e3a8a"/>
-  <link rel="icon" href="/logo.svg" type="image/svg+xml" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>🎲 Movement Dice — ProjectorFirst</title>
   <script src="https://cdn.tailwindcss.com"></script>
 
-  <!-- ✅ Memberstack Script -->
-  <script data-memberstack-app="app_cmgnwpg8y00x10suih4pua785"
-          src="https://static.memberstack.com/scripts/v2/memberstack.js"
-          type="text/javascript"></script>
-  <script>
-document.addEventListener("DOMContentLoaded", async () => {
-  try {
-    const member = await window.$memberstackDom.getCurrentMember();
-    if (!member.data) {
-      window.location.href = "/subscribe.html";
-    }
-  } catch {
-    window.location.href = "/subscribe.html";
-  }
-});
-</script>
-
   <style>
-    .die {
-      width: 140px; height: 140px;
-      background: white; color: #111827;
-      border-radius: 18px;
-      box-shadow: 0 18px 45px rgba(0,0,0,.25), inset 0 0 0 6px #1e3a8a;
-      display: grid; place-items: center;
-      font-size: 5rem; font-weight: 800;
-      user-select: none;
+    body {
+      background: #fff;
+      color: #111;
+      font-family: ui-sans-serif, system-ui, -apple-system, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      min-height: 100vh;
+      padding: 1rem;
     }
-    .shake { animation: shake .5s ease-in-out; }
-    @keyframes shake {
-      0% { transform: rotate(0deg) translate(0,0); }
-      25% { transform: rotate(3deg) translate(2px,-2px); }
-      50% { transform: rotate(-3deg) translate(-2px,2px); }
-      75% { transform: rotate(2deg) translate(1px,-1px); }
-      100% { transform: rotate(0deg) translate(0,0); }
+    h1 {
+      font-size: 3rem;
+      font-weight: 800;
+      color: #1e3a8a;
+      margin-bottom: 1rem;
     }
-    @media (min-width: 1280px){
-      .die { width: 170px; height: 170px; font-size: 6rem; }
+    .display-box {
+      background: #000;
+      color: #fff;
+      font-size: clamp(2.5rem, 6vw, 4rem);
+      font-weight: 700;
+      padding: 2rem;
+      border-radius: 1.25rem;
+      margin-top: 1rem;
+      box-shadow: 0 0 20px rgba(0,0,0,0.3);
+      min-height: 250px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
     }
     .btn {
-      font-size: 1.5rem;
+      font-size: 1.75rem;
       font-weight: bold;
-      padding: 1rem 2rem;
+      padding: 1.25rem 2.5rem;
       border-radius: 1rem;
-      transition: background 0.2s;
+      cursor: pointer;
+      transition: transform 0.1s;
     }
-    .btn-roll { background: #1e3a8a; color: white; }
-    .btn-roll:hover { background: #1d4ed8; }
-    .btn-reset { background: #dc2626; color: white; }
-    .btn-fullscreen { background: #6d28d9; color: white; }
-    .btn-dice { border: 2px solid #1e3a8a; color: #1e3a8a; background: white; }
-    .btn-dice.active { background: #1e3a8a; color: white; }
-    .btn-next { background: #1e3a8a; color: white; }
-    .btn-next:hover { background: #1d4ed8; }
+    .btn:hover { transform: scale(1.05); }
+    .btn-primary { background: #1e3a8a; color: white; }
   </style>
 </head>
 
-<body data-ms-content="dice-roller" class="flex flex-col items-center justify-start min-h-screen py-10 bg-white text-black">
-  <main class="max-w-6xl mx-auto p-6 text-center">
-    <h2 class="text-4xl font-extrabold mb-4 text-green-300">Dice Roller</h2>
-
-    <!-- Back to Apps -->
-    <div class="mb-6">
-      <a href="apps.html" class="btn btn-next">⬅ Back to Apps</a>
+<body>
+  <main class="w-full max-w-5xl text-center">
+    <div class="mb-4">
+      <a href="apps.html" class="btn btn-primary">⬅ Back to Apps</a>
     </div>
 
-    <!-- Controls -->
-    <div class="flex flex-wrap items-center justify-center gap-3 mb-6">
-      <span class="text-lg font-semibold text-blue-900">Dice:</span>
-      <div id="diceButtons" class="flex gap-2"></div>
+    <h1>🎲 Movement Dice</h1>
+
+    <!-- ✅ Dropdown -->
+    <div class="mb-6 text-left">
+      <label for="theme" class="block text-xl font-semibold text-blue-900 mb-2">Choose Theme</label>
+      <select id="theme" class="w-full text-2xl p-3 border-2 border-blue-900 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-400">
+        <option value="classic">Classic Moves</option>
+        <option value="holiday">Holiday Fun</option>
+        <option value="silly">Silly Moves</option>
+        <option value="stretch">Gentle Stretch</option>
+      </select>
     </div>
 
-    <div class="flex flex-wrap justify-center gap-4 mb-6">
-      <button id="rollBtn" class="btn btn-roll">Roll (Space)</button>
-      <button onclick="resetDice()" class="btn btn-reset">Reset</button>
-      <button onclick="toggleFullScreen()" class="btn btn-fullscreen">Fullscreen</button>
+    <!-- ✅ Display Area -->
+    <div id="display" class="display-box">Press “Roll Dice” to start!</div>
+
+    <div class="flex justify-center gap-4 mt-6">
+      <button id="rollBtn" class="btn btn-primary">🎲 Roll Dice</button>
     </div>
-
-    <!-- Dice Grid -->
-    <div id="diceGrid" class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-4 justify-items-center mb-6"></div>
-
-    <!-- Total -->
-    <div id="totalBox" class="text-blue-900 font-extrabold text-5xl">Total: —</div>
-    <div class="text-gray-600 mt-2 text-base">Tip: Press <span class="font-bold">Space</span> to roll.</div>
   </main>
 
-  <audio id="rollSound" src="https://actions.google.com/sounds/v1/cartoon/wood_plank_flicks.ogg" preload="auto"></audio>
-
   <script>
-    let diceCount = 2;
-    let diceValues = [];
+    const MOVES = {
+      classic: [
+        "Clap your hands 5 times!",
+        "Raise both arms high!",
+        "Tap your feet on the floor!",
+        "Roll your shoulders back!",
+        "Big smile for 5 seconds!",
+        "Touch your knees and reach for the sky!",
+      ],
+      holiday: [
+        "Wave like Santa! 🎅",
+        "Shake like a jingle bell! 🔔",
+        "Fly like a reindeer! 🦌",
+        "Wrap an imaginary gift! 🎁",
+        "Ring an invisible bell! 🛎️",
+        "Stretch like a Christmas tree! 🎄",
+      ],
+      silly: [
+        "Make your silliest face! 🤪",
+        "Pretend to swim!",
+        "Flap your wings like a bird!",
+        "March in place!",
+        "Spin your wrists like helicopter blades!",
+        "Wiggle your fingers like magic sparkles!",
+      ],
+      stretch: [
+        "Take a deep breath in... and out...",
+        "Stretch both arms wide!",
+        "Tilt your head side to side.",
+        "Reach down toward your toes.",
+        "Circle your wrists slowly.",
+        "Roll your neck gently.",
+      ]
+    };
 
-    const diceGrid = document.getElementById('diceGrid');
-    const totalBox = document.getElementById('totalBox');
-    const rollBtn = document.getElementById('rollBtn');
+    const display = document.getElementById("display");
+    const themeSel = document.getElementById("theme");
+    const rollBtn = document.getElementById("rollBtn");
 
-    function buildDiceButtons(){
-      const wrap = document.getElementById('diceButtons');
-      wrap.innerHTML = '';
-      for (let i=1; i<=6; i++){
-        const b = document.createElement('button');
-        b.className = 'btn btn-dice';
-        b.textContent = i;
-        b.onclick = ()=> setDiceCount(i);
-        if (i === diceCount) b.classList.add('active');
-        wrap.appendChild(b);
-      }
+    function rollMove() {
+      const theme = themeSel.value;
+      const moves = MOVES[theme];
+      const roll = Math.floor(Math.random() * moves.length);
+      display.textContent = moves[roll];
     }
 
-    function setDiceCount(n){
-      diceCount = n;
-      buildDiceButtons();
-      renderDice(true);
-    }
-
-    function renderDice(blank=false){
-      diceGrid.innerHTML = '';
-      diceValues = Array(diceCount).fill(0);
-      for (let i=0; i<diceCount; i++){
-        const d = document.createElement('div');
-        d.className = 'die';
-        d.textContent = blank ? '—' : (diceValues[i] || '—');
-        diceGrid.appendChild(d);
-      }
-      totalBox.textContent = 'Total: —';
-    }
-
-    function randomDie(){
-      return Math.floor(Math.random()*6)+1;
-    }
-
-    function roll(){
-      const sound = document.getElementById('rollSound');
-      sound.currentTime = 0; sound.play().catch(()=>{});
-      const dieElems = [...document.querySelectorAll('.die')];
-      dieElems.forEach(el => el.classList.add('shake'));
-      setTimeout(()=>{
-        let total = 0;
-        diceValues = diceValues.map(()=> {
-          const v = randomDie(); total += v; return v;
-        });
-        dieElems.forEach((el, idx)=>{
-          el.textContent = diceValues[idx];
-          el.classList.remove('shake');
-        });
-        totalBox.textContent = 'Total: ' + total;
-      }, 500);
-    }
-
-    function resetDice(){
-      renderDice(true);
-      totalBox.textContent = 'Total: —';
-    }
-
-    function toggleFullScreen(){
-      if (!document.fullscreenElement){
-        document.documentElement.requestFullscreen().catch(err=>{
-          alert(`Full-screen error: ${err.message}`);
-        });
-      } else {
-        document.exitFullscreen();
-      }
-    }
-
-    document.addEventListener('keydown', (e)=>{
-      if (e.code === 'Space'){ e.preventDefault(); roll(); }
-      if (['Digit1','Numpad1','Digit2','Numpad2','Digit3','Numpad3','Digit4','Numpad4','Digit5','Numpad5','Digit6','Numpad6'].includes(e.code)){
-        const n = Number(e.key);
-        if (n>=1 && n<=6) setDiceCount(n);
-      }
-    });
-
-    rollBtn.addEventListener('click', roll);
-
-    buildDiceButtons();
-    renderDice(true);
+    rollBtn.addEventListener("click", rollMove);
   </script>
 </body>
 </html>
