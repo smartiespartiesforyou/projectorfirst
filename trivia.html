@@ -3,47 +3,101 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Pop the Balloon — Word Guess</title>
+  <title>❓ Trivia Game — ProjectorFirst</title>
   <script src="https://cdn.tailwindcss.com"></script>
 
   <!-- ✅ Memberstack Loader -->
-  <script data-memberstack-app="app_cmgnwpg8y00x10suih4pua785"
-          src="https://static.memberstack.com/scripts/v2/memberstack.js"
-          type="text/javascript"></script>
+  <script 
+    data-memberstack-app="app_cmgnwpg8y00x10suih4pua785"
+    src="https://static.memberstack.com/scripts/v2/memberstack.js"
+    type="text/javascript">
+  </script>
 
-  <!-- ✅ Protect this page -->
+  <!-- ✅ Protect Page -->
   <script>
     document.addEventListener("DOMContentLoaded", async () => {
       try {
         const member = await window.$memberstackDom.getCurrentMember();
-        if (!member.data) {
-          window.location.href = "/subscribe.html";
-        }
+        if (!member.data) window.location.href = "/subscribe.html";
       } catch {
         window.location.href = "/subscribe.html";
       }
     });
   </script>
+
+  <style>
+    body {
+      background: #fff;
+      color: #111;
+      font-family: ui-sans-serif, system-ui, -apple-system, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      min-height: 100vh;
+      padding: 1rem;
+    }
+    h1 {
+      font-size: 3rem;
+      font-weight: 800;
+      color: #1e3a8a;
+      margin-bottom: 1rem;
+    }
+    .question-box {
+      background: #000;
+      color: #fff;
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      font-weight: 700;
+      padding: 2rem;
+      border-radius: 1.25rem;
+      margin-top: 1rem;
+      box-shadow: 0 0 20px rgba(0,0,0,0.3);
+      min-height: 200px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+    .answer-box {
+      font-size: 2rem;
+      font-weight: 700;
+      margin-top: 1rem;
+      min-height: 60px;
+    }
+    .btn {
+      font-size: 1.5rem;
+      font-weight: bold;
+      padding: 1rem 2rem;
+      border-radius: 1rem;
+      cursor: pointer;
+      transition: transform 0.1s;
+    }
+    .btn:hover { transform: scale(1.05); }
+    .btn-primary { background: #1e3a8a; color: white; }
+    .btn-true { background: #16a34a; color: white; }
+    .btn-false { background: #dc2626; color: white; }
+  </style>
 </head>
 
-<body class="flex flex-col items-center justify-start min-h-screen py-10">
-  <main class="w-full max-w-4xl text-center">
-    <h1 class="text-5xl font-extrabold text-blue-900 mb-6">❓ Trivia Game</h1>
-
-    <div class="mb-6">
+<body>
+  <main class="w-full max-w-5xl text-center">
+    <div class="mb-4">
       <a href="apps.html" class="btn btn-primary">⬅ Back to Apps</a>
     </div>
 
+    <h1>❓ Trivia Game</h1>
+
+    <!-- ✅ Dropdown for Theme -->
     <div class="mb-6 text-left">
-      <label for="theme" class="block text-lg font-semibold text-blue-900 mb-2">Choose Theme</label>
-      <select id="theme"
-              class="w-full text-xl p-3 border-2 border-blue-900 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-400">
-      </select>
+      <label for="theme" class="block text-xl font-semibold text-blue-900 mb-2">Choose Theme</label>
+      <select id="theme" class="w-full text-2xl p-3 border-2 border-blue-900 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-400"></select>
     </div>
 
+    <!-- ✅ Question + Answer -->
     <div id="questionBox" class="question-box">Press "Next Question" to begin</div>
     <div id="answerBox" class="answer-box"></div>
 
+    <!-- ✅ Buttons -->
     <div class="flex flex-wrap justify-center gap-4 mt-6">
       <button onclick="nextQuestion()" class="btn btn-primary">Next Question</button>
       <button onclick="checkAnswer(true)" class="btn btn-true">True</button>
@@ -59,155 +113,41 @@
         {q:"The Great Wall of China is visible from space.",a:false},
         {q:"A triangle has three sides.",a:true},
         {q:"The Pacific Ocean is the largest ocean.",a:true},
-        {q:"Shakespeare wrote 'Romeo and Juliet.'",a:true},
-        {q:"The sun rises in the west.",a:false},
-        {q:"Dogs are mammals.",a:true},
-        {q:"The human body has 300 bones.",a:false},
-        {q:"Mount Everest is the tallest mountain on Earth.",a:true},
-        {q:"There are 60 minutes in an hour.",a:true},
-        {q:"The capital of Italy is Madrid.",a:false},
-        {q:"Bananas grow on trees.",a:false},
-        {q:"The Amazon River is the longest river in the world.",a:false},
-        {q:"An octagon has eight sides.",a:true},
-        {q:"The Statue of Liberty was a gift from France.",a:true},
-        {q:"Goldfish have a memory span of only 3 seconds.",a:false},
-        {q:"The Eiffel Tower is in Berlin.",a:false},
-        {q:"Water boils at 100°C at sea level.",a:true},
-        {q:"The moon is bigger than Earth.",a:false}
       ],
-
       holidays: [
         {q:"Christmas is celebrated on December 25.",a:true},
         {q:"Halloween is in July.",a:false},
         {q:"People celebrate New Year’s Day on January 1.",a:true},
         {q:"Easter always falls on the same date.",a:false},
         {q:"Independence Day in the USA is July 4.",a:true},
-        {q:"Thanksgiving is celebrated with turkey in the USA.",a:true},
-        {q:"Valentine’s Day is on February 14.",a:true},
-        {q:"Labor Day in the USA is in October.",a:false},
-        {q:"Memorial Day honors soldiers who died in service.",a:true},
-        {q:"St. Patrick’s Day is in March.",a:true},
-        {q:"Flag Day in the USA is June 14.",a:true},
-        {q:"Hanukkah lasts 12 nights.",a:false},
-        {q:"Kwanzaa is celebrated in December.",a:true},
-        {q:"Fireworks are often used on the Fourth of July.",a:true},
-        {q:"Mother’s Day is always in April.",a:false},
-        {q:"Father’s Day is in June in the USA.",a:true},
-        {q:"Oktoberfest began in Germany.",a:true},
-        {q:"Easter uses eggs and bunnies as symbols.",a:true},
-        {q:"Christmas colors are pink and yellow.",a:false},
-        {q:"New Year’s Eve is December 31.",a:true}
       ],
-
       movies: [
         {q:"Leonardo DiCaprio starred in Titanic.",a:true},
         {q:"The wizarding school in Harry Potter is called Hogwarts.",a:true},
         {q:"Batman’s real name is Clark Kent.",a:false},
         {q:"Toy Story features a cowboy named Woody.",a:true},
         {q:"Steven Spielberg directed Jaws.",a:true},
-        {q:"The Lion King’s main character is named Mufasa.",a:false},
-        {q:"Frozen has a character named Elsa.",a:true},
-        {q:"Olaf is a reindeer in Frozen.",a:false},
-        {q:"Finding Nemo is about a clownfish.",a:true},
-        {q:"Dorothy’s shoes in The Wizard of Oz are silver.",a:false},
-        {q:"The Lord of the Rings is about a magic ring.",a:true},
-        {q:"Forrest Gump loves running.",a:true},
-        {q:"Tom Cruise starred in Mission Impossible.",a:true},
-        {q:"Shrek is a green ogre.",a:true},
-        {q:"R2-D2 is from Star Trek.",a:false},
-        {q:"Cruella de Vil is the villain in 101 Dalmatians.",a:true},
-        {q:"Peter Pan never grows up.",a:true},
-        {q:"Inside Out is about superheroes.",a:false},
-        {q:"Tom Hanks voiced Woody in Toy Story.",a:true},
-        {q:"Frozen is set in the desert.",a:false}
       ],
-
       residentRights: [
-        {q:"Residents have the right to make their own choices about their daily routine, such as when to wake up and when to go to bed.",a:true},
-        {q:"Staff can read a resident’s mail if they suspect it contains bad news that might upset them.",a:false},
-        {q:"Residents have the right to refuse any medication or treatment.",a:true},
-        {q:"A resident’s medical records can be shared with anyone who asks, as long as they work at the facility.",a:false},
-        {q:"Residents have the right to privacy during bathing, dressing, and personal care.",a:true},
-        {q:"If a resident doesn’t like their roommate, they must stay in the same room until discharge.",a:false},
-        {q:"Residents have the right to voice complaints or concerns without fear of punishment.",a:true},
-        {q:"Residents can participate in planning their own care and treatment.",a:true},
-        {q:"The facility can make a resident attend activities even if they don’t want to.",a:false},
-        {q:"Residents have the right to receive visitors of their choosing, at any reasonable hour.",a:true},
-        {q:"Residents can be transferred or discharged without notice if the facility needs the bed for another patient.",a:false},
-        {q:"Married residents have the right to share a room with their spouse if both agree and space allows.",a:true},
-        {q:"Staff members can decide how a resident spends their personal money.",a:false},
-        {q:"Residents have the right to practice their religion or choose not to practice any religion at all.",a:true},
-        {q:"Residents must get permission from the facility to vote.",a:false},
-        {q:"Residents have the right to be free from verbal, sexual, physical, and mental abuse.",a:true},
-        {q:"The facility must post a copy of the Resident Rights in a place everyone can see.",a:true},
-        {q:"Residents can be restrained (tied down) to prevent falls even if they don’t consent.",a:false},
-        {q:"Residents have the right to manage their own finances if they are able.",a:true},
-        {q:"Only the Administrator can file a complaint on behalf of a resident.",a:false},
-        {q:"If a resident is asleep during meal time, staff can skip offering food since they’re resting.",a:false},
-        {q:"Residents have the right to know the name and position of anyone providing their care.",a:true},
-        {q:"A resident can be punished for refusing to take part in an activity.",a:false},
-        {q:"Residents have the right to keep and use their own personal belongings as space allows.",a:true},
-        {q:"Staff are allowed to discuss a resident’s health loudly in the hallway.",a:false},
-        {q:"Residents have the right to social interaction with anyone they choose, including romantic relationships.",a:true},
-        {q:"Residents can be asked to leave the facility if their family complains too often.",a:false},
-        {q:"Residents have the right to receive information in a language or way they understand.",a:true},
-        {q:"Residents can be forced to share personal information in front of other residents.",a:false},
-        {q:"Residents have the right to participate in community and religious activities both inside and outside the facility.",a:true},
-        {q:"If a resident’s clothing gets lost in laundry, that’s just part of living in a nursing home.",a:false},
-        {q:"Residents have the right to access their medical records within 24 hours of a request.",a:true},
-        {q:"Staff can decide when a resident can see their own doctor.",a:false},
-        {q:"Residents have the right to be informed about their total health condition and any changes in their care.",a:true},
-        {q:"Residents can request a change in their plan of care at any time.",a:true},
-        {q:"If a resident can’t speak, they lose their right to make choices.",a:false},
-        {q:"Residents have the right to personal privacy, including phone calls and visits.",a:true},
-        {q:"The facility can hold a resident’s personal funds to ensure payment.",a:false},
-        {q:"Residents have the right to make advance directives such as living wills or power of attorney.",a:true}
+        {q:"Residents have the right to make their own choices about their daily routine.",a:true},
+        {q:"Staff can read a resident’s mail if they suspect it has bad news.",a:false},
+        {q:"Residents can refuse any medication or treatment.",a:true},
+        {q:"Residents have the right to privacy during personal care.",a:true},
+        {q:"Residents have the right to voice complaints without punishment.",a:true},
       ],
-
       science: [
         {q:"Mars is called the Red Planet.",a:true},
         {q:"Plants take in oxygen and release carbon dioxide.",a:false},
         {q:"Gravity keeps us on the ground.",a:true},
         {q:"The nucleus is the center of an atom.",a:true},
         {q:"Venus is the hottest planet.",a:true},
-        {q:"The heart pumps blood.",a:true},
-        {q:"The brain controls thinking.",a:true},
-        {q:"Earth is the fourth planet from the sun.",a:false},
-        {q:"Humans breathe in oxygen.",a:true},
-        {q:"Jupiter is the largest planet.",a:true},
-        {q:"Diamonds are the hardest natural substance.",a:true},
-        {q:"Photosynthesis is how plants make food.",a:true},
-        {q:"Humans have 500 bones.",a:false},
-        {q:"The Peregrine Falcon is the fastest bird.",a:true},
-        {q:"White blood cells fight infection.",a:true},
-        {q:"The Milky Way is a galaxy.",a:true},
-        {q:"Water freezes at 0°C.",a:true},
-        {q:"Gold’s chemical symbol is Ag.",a:false},
-        {q:"The sun is a star.",a:true},
-        {q:"Sharks are mammals.",a:false}
       ],
-
       sports: [
         {q:"A baseball team has 9 players.",a:true},
         {q:"Soccer is played with a puck.",a:false},
         {q:"Basketball uses a hoop and ball.",a:true},
-        {q:"Tennis is played at Wimbledon.",a:true},
         {q:"A strike in bowling means all pins are knocked down.",a:true},
-        {q:"The quarterback is a position in football.",a:true},
-        {q:"A birdie in golf is 1 under par.",a:true},
         {q:"Hockey uses a puck.",a:true},
-        {q:"The Stanley Cup is for basketball.",a:false},
-        {q:"A volleyball game has spiking.",a:true},
-        {q:"There are 12 pins in bowling.",a:false},
-        {q:"Soccer teams have 11 players on the field.",a:true},
-        {q:"Cheerleading uses pom-poms.",a:true},
-        {q:"The Super Bowl is a hockey championship.",a:false},
-        {q:"A marathon is 26.2 miles long.",a:true},
-        {q:"The Olympics happen every 2 years.",a:false},
-        {q:"The Tour de France is a cycling race.",a:true},
-        {q:"Baseball has touchdowns.",a:false},
-        {q:"Gymnastics can use a balance beam.",a:true},
-        {q:"Michael Jordan played baseball professionally.",a:true}
       ]
     };
 
@@ -241,8 +181,10 @@
     }
 
     function shuffle(arr) {
+      const randomValues = new Uint32Array(arr.length);
+      crypto.getRandomValues(randomValues);
       for (let i = arr.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
+        const j = randomValues[i] % (i + 1);
         [arr[i], arr[j]] = [arr[j], arr[i]];
       }
     }
