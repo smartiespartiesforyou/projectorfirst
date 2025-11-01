@@ -1,0 +1,15 @@
+User-agent: *
+Allow: /
+
+# Disallow internal files or hidden directories (if any)
+Disallow: /admin/
+Disallow: /test/
+Disallow: /private/
+
+# Sitemap location
+Sitemap: https://projectorfirst.com/sitemap.xml
+
+# Helpful notes
+# This file tells search engines what they can and cannot access.
+# "Allow: /" means everything on your site is crawlable.
+# Google, Bing, and others use this file to improve indexing efficiency.
