@@ -193,22 +193,35 @@
       patriotic: { emoji: "⭐" }
     };
 
-    function initGame() {
-      pool = [];
-      history = [];
-      const maxNum = parseInt(gameTypeSel.value);
-      if (maxNum === 75) {
-        for (let i=0; i<letters.length; i++) {
-          const [min,max] = ranges[i];
-          for (let n=min; n<=max; n++) pool.push({letter:letters[i], number:n});
-              } else {
-        for (let n = 1; n <= maxNum; n++) pool.push({ letter: "", number: n });
+  function initGame() {
+  pool = [];
+  history = [];
+  const maxNum = parseInt(gameTypeSel.value);
+
+  if (maxNum === 75) {
+    // Build B–I–N–G–O columns
+    for (let i = 0; i < letters.length; i++) {
+      const [min, max] = ranges[i];
+      for (let n = min; n <= max; n++) {
+        pool.push({ letter: letters[i], number: n });
       }
-      shuffle(pool);
-      callerText.textContent = "—";
-      callerEmoji.textContent = "";
-      recentDiv.innerHTML = "";
     }
+  } else {
+    // Build generic pool for UK/Extended
+    for (let n = 1; n <= maxNum; n++) {
+      pool.push({ letter: "", number: n });
+    }
+  }
+
+  // Shuffle the numbers securely
+  shuffle(pool);
+
+  // Reset display
+  callerText.textContent = "—";
+  callerEmoji.textContent = "";
+  recentDiv.innerHTML = "";
+}
+
 
     // ✅ Correct placement: only ONE closing brace above this line
     function shuffle(arr) {
