@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>🎵 Finish the Song Lyric — ProjectorFirst</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    body {
+      background: #fff;
+      color: #111;
+      font-family: ui-sans-serif, system-ui, -apple-system, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      min-height: 100vh;
+      padding: 1rem;
+    }
+    h1 {
+      font-size: 3rem;
+      font-weight: 800;
+      color: #1e3a8a;
+      margin-bottom: 1rem;
+    }
+    .display-box {
+      background: #000;
+      color: #fff;
+      font-size: clamp(2rem, 6vw, 3.5rem);
+      font-weight: 700;
+      padding: 2rem;
+      border-radius: 1.25rem;
+      margin-top: 1rem;
+      box-shadow: 0 0 20px rgba(0,0,0,0.3);
+      min-height: 200px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      flex-direction: column;
+      gap: 1rem;
+    }
+    .btn {
+      font-size: 1.75rem;
+      font-weight: bold;
+      padding: 1.25rem 2.5rem;
+      border-radius: 1rem;
+      cursor: pointer;
+      transition: transform 0.1s;
+    }
+    .btn:hover { transform: scale(1.05); }
+    .btn-primary { background: #1e3a8a; color: white; }
+  </style>
+</head>
+
+<body>
+  <main class="w-full max-w-5xl text-center">
+    <div class="mb-4">
+      <a href="apps.html" class="btn btn-primary">⬅ Back to Apps</a>
+    </div>
+
+    <h1>🎵 Finish the Song Lyric</h1>
+
+    <!-- ✅ Category Dropdown -->
+    <div class="mb-6 text-left">
+      <label for="theme" class="block text-xl font-semibold text-blue-900 mb-2">Choose Theme</label>
+      <select id="theme" class="w-full text-2xl p-3 border-2 border-blue-900 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-400">
+        <option value="classic">Classic Hits</option>
+        <option value="holiday">Holiday Songs</option>
+        <option value="patriotic">Patriotic Tunes</option>
+      </select>
+    </div>
+
+    <!-- ✅ Display Area -->
+    <div id="display" class="display-box">Press “Show Lyric” to begin!</div>
+
+    <div class="flex justify-center gap-4 mt-6">
+      <button id="rollBtn" class="btn btn-primary">🎵 Show Lyric</button>
+    </div>
+  </main>
+
+  <script>
+    const LYRICS = {
+      classic: [
+        { prompt: "You are my sunshine, my only...", answer: "sunshine." },
+        { prompt: "I’ve got sunshine on a...", answer: "cloudy day." },
+        { prompt: "Take me home, country...", answer: "roads." },
+        { prompt: "You ain't nothin' but a...", answer: "hound dog!" },
+        { prompt: "Can't help falling in...", answer: "love with you." },
+        { prompt: "Stop! In the name of...", answer: "love." },
+        { prompt: "I wanna hold your...", answer: "hand." },
+        { prompt: "You are the dancing...", answer: "queen." },
+        { prompt: "Hit the road Jack, and don’t you...", answer: "come back no more!" },
+        { prompt: "Somewhere over the...", answer: "rainbow." }
+      ],
+      holiday: [
+        { prompt: "Jingle bells, jingle bells, jingle all...", answer: "the way!" },
+        { prompt: "Silent night, holy...", answer: "night." },
+        { prompt: "Frosty the snowman was a jolly...", answer: "happy soul." },
+        { prompt: "Deck the halls with boughs of...", answer: "holly!" },
+        { prompt: "Rudolph the red-nosed...", answer: "reindeer." },
+        { prompt: "I’m dreaming of a...", answer: "white Christmas." },
+        { prompt: "We wish you a Merry...", answer: "Christmas!" },
+        { prompt: "Joy to the...", answer: "world!" },
+        { prompt: "Let it snow, let it...", answer: "snow, let it snow!" },
+        { prompt: "Santa Claus is coming...", answer: "to town!" }
+      ],
+      patriotic: [
+        { prompt: "You’re a grand old...", answer: "flag." },
+        { prompt: "My country, ’tis of...", answer: "thee." },
+        { prompt: "God bless...", answer: "America." },
+        { prompt: "From the mountains, to the prairies, to the...", answer: "oceans white with foam." },
+        { prompt: "Oh say can you see, by the dawn’s...", answer: "early light." },
+        { prompt: "This land is your land, this land is...", answer: "my land." },
+        { prompt: "Yankee Doodle went to town, riding on a...", answer: "pony." },
+        { prompt: "You’re a high flying flag that forever in...", answer: "peace may you wave." },
+        { prompt: "Stars and stripes forever, let freedom...", answer: "ring!" },
+        { prompt: "God bless the USA, where at least I know...", answer: "I’m free." }
+      ]
+    };
+
+    const display = document.getElementById("display");
+    const themeSel = document.getElementById("theme");
+    const rollBtn = document.getElementById("rollBtn");
+
+    function showLyric() {
+      const theme = themeSel.value;
+      const list = LYRICS[theme];
+      const random = Math.floor(Math.random() * list.length);
+      const chosen = list[random];
+
+      display.innerHTML = `
+        <div>
+          <p>${chosen.prompt}</p>
+          <button id="showAnswer" class="btn btn-primary mt-6">Show Answer</button>
+        </div>
+      `;
+
+      document.getElementById("showAnswer").addEventListener("click", () => {
+        display.innerHTML = `<p>${chosen.prompt} <strong>${chosen.answer}</strong></p>`;
+      });
+    }
+
+    rollBtn.addEventListener("click", showLyric);
+  </script>
+</body>
+</html>
