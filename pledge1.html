@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>🇺🇸 Pledge of Allegiance — ProjectorFirst</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      background: linear-gradient(180deg, #1e3a8a 0%, #ffffff 50%, #b91c1c 100%);
+      color: white;
+      font-family: ui-sans-serif, system-ui, sans-serif;
+      text-align: center;
+      overflow: hidden;
+    }
+    .pledge {
+      background: rgba(0, 0, 0, 0.5);
+      padding: 2rem;
+      border-radius: 1.25rem;
+      box-shadow: 0 0 30px rgba(0,0,0,0.3);
+      max-width: 900px;
+    }
+    .line {
+      font-size: clamp(1.5rem, 3vw, 2.75rem);
+      font-weight: 700;
+      line-height: 1.4;
+      margin: 1rem 0;
+      opacity: 0;
+      transition: opacity 1s ease-in-out;
+    }
+    .visible {
+      opacity: 1;
+    }
+    .controls {
+      margin-top: 2rem;
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .btn {
+      font-size: 1.5rem;
+      font-weight: bold;
+      padding: 0.75rem 2rem;
+      border-radius: 1rem;
+      cursor: pointer;
+      background: #1e3a8a;
+      color: white;
+      transition: transform 0.1s;
+    }
+    .btn:hover { transform: scale(1.05); }
+  </style>
+</head>
+
+<body>
+  <div class="pledge">
+    <h1 class="text-4xl font-extrabold mb-4">🇺🇸 The Pledge of Allegiance</h1>
+
+    <div id="lines">
+      <p class="line">I pledge allegiance</p>
+      <p class="line">to the Flag</p>
+      <p class="line">of the United States of America,</p>
+      <p class="line">and to the Republic for which it stands,</p>
+      <p class="line">one Nation under God,</p>
+      <p class="line">indivisible,</p>
+      <p class="line">with liberty and justice for all.</p>
+    </div>
+
+    <div class="controls">
+      <button id="startBtn" class="btn">🎤 Play Line by Line</button>
+      <button id="resetBtn" class="btn">🔄 Start Over</button>
+      <a href="apps.html" class="btn">⬅ Back to Apps</a>
+    </div>
+  </div>
+
+  <script>
+    const lines = document.querySelectorAll(".line");
+    const startBtn = document.getElementById("startBtn");
+    const resetBtn = document.getElementById("resetBtn");
+    let index = 0;
+
+    function showNextLine() {
+      if (index < lines.length) {
+        lines[index].classList.add("visible");
+        index++;
+        setTimeout(showNextLine, 2500); // delay between lines
+      }
+    }
+
+    startBtn.addEventListener("click", () => {
+      index = 0;
+      lines.forEach(l => l.classList.remove("visible"));
+      showNextLine();
+    });
+
+    resetBtn.addEventListener("click", () => {
+      lines.forEach(l => l.classList.remove("visible"));
+      index = 0;
+    });
+  </script>
+</body>
+</html>
