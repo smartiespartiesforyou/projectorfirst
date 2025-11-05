@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>🐘 Build It! — Elephant Edition</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      background: #e5e7eb;
+      font-family: ui-sans-serif, system-ui, -apple-system, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      height: 100vh;
+      overflow: hidden;
+    }
+    h1 {
+      font-size: 3rem;
+      font-weight: 800;
+      color: #1e3a8a;
+      margin: 1rem 0;
+    }
+    #gameArea {
+      position: relative;
+      width: 80vw;
+      height: 70vh;
+      background: #d1d5db;
+      border: 6px solid #1e3a8a;
+      border-radius: 1rem;
+      overflow: hidden;
+    }
+    #elephant {
+      position: absolute;
+      width: 60%;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      opacity: 0.15;
+      user-select: none;
+      pointer-events: none;
+    }
+    .piece {
+      position: absolute;
+      border-radius: 10px;
+      cursor: grab;
+      user-select: none;
+    }
+    .controls {
+      margin-top: 1rem;
+      display: flex;
+      gap: 1rem;
+    }
+    .btn {
+      font-size: 1.5rem;
+      font-weight: bold;
+      padding: 0.75rem 2rem;
+      border-radius: 0.75rem;
+      cursor: pointer;
+      transition: transform 0.1s;
+    }
+    .btn:hover { transform: scale(1.05); }
+    .btn-primary { background: #1e3a8a; color: #fff; }
+    .btn-secondary { background: #9ca3af; color: #111; }
+    #message {
+      margin-top: 1rem;
+      font-size: 2rem;
+      font-weight: bold;
+      color: #1e3a8a;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>🐘 Build It! — Elephant Edition</h1>
+  <div id="gameArea">
+    <img id="elephant" src="https://upload.wikimedia.org/wikipedia/commons/3/37/African_Bush_Elephant_%28Loxodonta_africana%29_silhouette.svg" alt="Elephant Silhouette">
+    <div id="piece1" class="piece" style="width:100px;height:100px;background:#f87171;top:10%;left:10%;"></div>
+    <div id="piece2" class="piece" style="width:120px;height:60px;background:#60a5fa;top:20%;left:25%;"></div>
+    <div id="piece3" class="piece" style="width:80px;height:80px;background:#34d399;border-radius:50%;top:5%;left:40%;"></div>
+    <div id="piece4" class="piece" style="width:140px;height:80px;background:#fbbf24;top:30%;left:55%;"></div>
+    <div id="piece5" class="piece" style="width:100px;height:100px;background:#a78bfa;top:10%;left:70%;"></div>
+  </div>
+
+  <div class="controls">
+    <button id="checkBtn" class="btn btn-primary">✅ Check</button>
+    <button id="resetBtn" class="btn btn-secondary">🔄 Reset</button>
+  </div>
+  <div id="message"></div>
+
+  <script>
+    const pieces = document.querySelectorAll(".piece");
+    const gameArea = document.getElementById("gameArea");
+    const message = document.getElementById("message");
+    const startPositions = [];
+
+    // Save start positions
+    pieces.forEach(p => {
+      startPositions.push({ el: p, top: p.offsetTop, left: p.offsetLeft });
+    });
+
+    // Drag logic
+    pieces.forEach(piece => {
+      piece.addEventListener("mousedown", startDrag);
+      piece.addEventListener("touchstart", startDrag);
+
+      function startDrag(e) {
+        e.preventDefault();
+        let offsetX = e.clientX - piece.offsetLeft;
+        let offsetY = e.clientY - piece.offsetTop;
+
+        function moveAt(ev) {
+          let x = (ev.touches ? ev.touches[0].clientX : ev.clientX) - offsetX;
+          let y = (ev.touches ? ev.touches[0].clientY : ev.clientY) - offsetY;
+          piece.style.left = x + "px";
+          piece.style.top = y + "px";
+        }
+
+        function stopDrag() {
+          document.removeEventListener("mousemove", moveAt);
+          document.removeEventListener("mouseup", stopDrag);
+          document.removeEventListener("touchmove", moveAt);
+          document.removeEventListener("touchend", stopDrag);
+        }
+
+        document.addEventListener("mousemove", moveAt);
+        document.addEventListener("mouseup", stopDrag);
+        document.addEventListener("touchmove", moveAt);
+        document.addEventListener("touchend", stopDrag);
+      }
+    });
+
+    // Check placement (simple version)
+    document.getElementById("checkBtn").addEventListener("click", () => {
+      const area = gameArea.getBoundingClientRect();
+      let success = true;
+      pieces.forEach(piece => {
+        const rect = piece.getBoundingClientRect();
+        const cx = rect.left + rect.width / 2;
+        const cy = rect.top + rect.height / 2;
+        if (cx < area.left + area.width * 0.25 ||
+            cx > area.right - area.width * 0.25 ||
+            cy < area.top + area.height * 0.25 ||
+            cy > area.bottom - area.height * 0.25) {
+          success = false;
+        }
+      });
+      message.textContent = success ? "🎉 You built an elephant! 🐘" : "Keep adjusting the blocks!";
+    });
+
+    // Reset positions
+    document.getElementById("resetBtn").addEventListener("click", () => {
+      message.textContent = "";
+      startPositions.forEach(pos => {
+        pos.el.style.top = pos.top + "px";
+        pos.el.style.left = pos.left + "px";
+      });
+    });
+  </script>
+</body>
+</html>
