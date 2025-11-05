@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>😄 Emoji Guess It! — ProjectorFirst</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    body {
+      background: #fff;
+      color: #111;
+      font-family: ui-sans-serif, system-ui, -apple-system, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      min-height: 100vh;
+      padding: 1rem;
+    }
+    h1 {
+      font-size: 3rem;
+      font-weight: 800;
+      color: #1e3a8a;
+      margin-bottom: 1rem;
+    }
+    .display-box {
+      background: #000;
+      color: #fff;
+      font-size: clamp(3rem, 6vw, 5rem);
+      font-weight: 700;
+      padding: 2rem;
+      border-radius: 1.25rem;
+      margin-top: 1rem;
+      box-shadow: 0 0 20px rgba(0,0,0,0.3);
+      min-height: 200px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      flex-direction: column;
+      gap: 1rem;
+      line-height: 1.2;
+    }
+    .btn {
+      font-size: 1.75rem;
+      font-weight: bold;
+      padding: 1.25rem 2.5rem;
+      border-radius: 1rem;
+      cursor: pointer;
+      transition: transform 0.1s;
+    }
+    .btn:hover { transform: scale(1.05); }
+    .btn-primary { background: #1e3a8a; color: white; }
+  </style>
+</head>
+
+<body>
+  <main class="w-full max-w-5xl text-center">
+    <div class="mb-4">
+      <a href="apps.html" class="btn btn-primary">⬅ Back to Apps</a>
+    </div>
+
+    <h1>😄 Emoji Guess It!</h1>
+
+    <!-- ✅ Category Dropdown -->
+    <div class="mb-6 text-left">
+      <label for="theme" class="block text-xl font-semibold text-blue-900 mb-2">Choose Category</label>
+      <select id="theme" class="w-full text-2xl p-3 border-2 border-blue-900 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-400">
+        <option value="movies">🎬 Movies</option>
+        <option value="phrases">💬 Phrases</option>
+        <option value="songs">🎵 Songs</option>
+      </select>
+    </div>
+
+    <!-- ✅ Display Area -->
+    <div id="display" class="display-box">Press “Show Emoji” to begin!</div>
+
+    <div class="flex justify-center gap-4 mt-6">
+      <button id="rollBtn" class="btn btn-primary">🎲 Show Emoji</button>
+    </div>
+  </main>
+
+  <script>
+    const EMOJIS = {
+      movies: [
+        { emoji: "🧙‍♂️💍🔥", answer: "The Lord of the Rings" },
+        { emoji: "🧊🚢💔", answer: "Titanic" },
+        { emoji: "🦁👑", answer: "The Lion King" },
+        { emoji: "🐠🔍", answer: "Finding Nemo" },
+        { emoji: "👠🎃🕰️", answer: "Cinderella" },
+        { emoji: "🐘🎪", answer: "Dumbo" },
+        { emoji: "👩‍🎤🚀", answer: "Rocketman" },
+        { emoji: "🕷️🧑‍🎓", answer: "Spider-Man" },
+        { emoji: "👧🐺🌕", answer: "Little Red Riding Hood" },
+        { emoji: "🏠🎈👴🏻", answer: "Up" }
+      ],
+      phrases: [
+        { emoji: "🌧️🌈", answer: "After the rain comes the rainbow" },
+        { emoji: "🦆🚶‍♂️🚶‍♀️", answer: "Take a walk in the park" },
+        { emoji: "🪣🪣", answer: "Kick the bucket" },
+        { emoji: "🐝🍯", answer: "Busy as a bee" },
+        { emoji: "🌞🌙", answer: "Day and night" },
+        { emoji: "🐈🪜☔", answer: "Raining cats and dogs" },
+        { emoji: "🔥🔥🔥", answer: "On fire!" },
+        { emoji: "💤💤💤", answer: "Sleeping on the job" },
+        { emoji: "💡😲", answer: "A bright idea" },
+        { emoji: "💘🕒", answer: "Love at first sight" }
+      ],
+      songs: [
+        { emoji: "🎶🌞", answer: "You Are My Sunshine" },
+        { emoji: "💃🔥", answer: "Great Balls of Fire" },
+        { emoji: "🌹❤️", answer: "Love Me Tender" },
+        { emoji: "👢👢👣", answer: "These Boots Are Made for Walkin’" },
+        { emoji: "🕺💃", answer: "Dancing Queen" },
+        { emoji: "🌕🚗🏡", answer: "Blue Moon" },
+        { emoji: "🎄🎁🎅", answer: "Jingle Bells" },
+        { emoji: "🌧️☂️", answer: "Singing in the Rain" },
+        { emoji: "⭐👶🏽", answer: "Twinkle Twinkle Little Star" },
+        { emoji: "🌎🤍", answer: "What a Wonderful World" }
+      ]
+    };
+
+    const display = document.getElementById("display");
+    const themeSel = document.getElementById("theme");
+    const rollBtn = document.getElementById("rollBtn");
+
+    function showEmoji() {
+      const theme = themeSel.value;
+      const list = EMOJIS[theme];
+      const random = Math.floor(Math.random() * list.length);
+      const chosen = list[random];
+
+      display.innerHTML = `
+        <div>
+          <p>${chosen.emoji}</p>
+          <button id="showAnswer" class="btn btn-primary mt-6">Show Answer</button>
+        </div>
+      `;
+
+      document.getElementById("showAnswer").addEventListener("click", () => {
+        display.innerHTML = `<p>${chosen.emoji}</p><p class="text-3xl mt-4 font-bold text-blue-400">${chosen.answer}</p>`;
+      });
+    }
+
+    rollBtn.addEventListener("click", showEmoji);
+  </script>
+</body>
+</html>
