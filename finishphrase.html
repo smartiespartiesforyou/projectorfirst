@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>💬 Finish the Phrase — ProjectorFirst</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    body {
+      background: #fff;
+      color: #111;
+      font-family: ui-sans-serif, system-ui, -apple-system, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      min-height: 100vh;
+      padding: 1rem;
+    }
+    h1 {
+      font-size: 3rem;
+      font-weight: 800;
+      color: #1e3a8a;
+      margin-bottom: 1rem;
+    }
+    .display-box {
+      background: #000;
+      color: #fff;
+      font-size: clamp(2rem, 6vw, 3.5rem);
+      font-weight: 700;
+      padding: 2rem;
+      border-radius: 1.25rem;
+      margin-top: 1rem;
+      box-shadow: 0 0 20px rgba(0,0,0,0.3);
+      min-height: 200px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+    .btn {
+      font-size: 1.75rem;
+      font-weight: bold;
+      padding: 1.25rem 2.5rem;
+      border-radius: 1rem;
+      cursor: pointer;
+      transition: transform 0.1s;
+    }
+    .btn:hover { transform: scale(1.05); }
+    .btn-primary { background: #1e3a8a; color: white; }
+  </style>
+</head>
+
+<body>
+  <main class="w-full max-w-5xl text-center">
+    <div class="mb-4">
+      <a href="apps.html" class="btn btn-primary">⬅ Back to Apps</a>
+    </div>
+
+    <h1>💬 Finish the Phrase</h1>
+
+    <!-- ✅ Category Dropdown -->
+    <div class="mb-6 text-left">
+      <label for="theme" class="block text-xl font-semibold text-blue-900 mb-2">Choose Theme</label>
+      <select id="theme" class="w-full text-2xl p-3 border-2 border-blue-900 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-400">
+        <option value="sayings">Common Sayings</option>
+        <option value="holiday">Holiday Phrases</option>
+        <option value="funny">Funny Endings</option>
+      </select>
+    </div>
+
+    <!-- ✅ Display Area -->
+    <div id="display" class="display-box">Press “Show Phrase” to begin!</div>
+
+    <div class="flex justify-center gap-4 mt-6">
+      <button id="rollBtn" class="btn btn-primary">💬 Show Phrase</button>
+    </div>
+  </main>
+
+  <script>
+    const PHRASES = {
+      sayings: [
+        "A penny saved is...",
+        "You can’t judge a book by...",
+        "Don’t count your chickens before...",
+        "The grass is always greener on...",
+        "When it rains, it...",
+        "Better late than...",
+        "Practice makes...",
+        "Don’t bite the hand that...",
+        "Where there’s smoke, there’s...",
+        "Two heads are better than..."
+      ],
+      holiday: [
+        "All I want for Christmas is...",
+        "Twas the night before...",
+        "Deck the halls with...",
+        "Rudolph the red-nosed...",
+        "Let it snow, let it...",
+        "Jingle all the...",
+        "Frosty the...",
+        "Joy to the...",
+        "Peace on earth and...",
+        "Silent night, holy..."
+      ],
+      funny: [
+        "I came, I saw, I...",
+        "If at first you don’t succeed...",
+        "Why did the chicken...",
+        "A balanced diet means...",
+        "Never trust a person who...",
+        "Behind every great man is...",
+        "To err is human, to blame...",
+        "When life gives you lemons...",
+        "You can lead a horse to water, but...",
+        "I’m not lazy, I’m just..."
+      ]
+    };
+
+    const display = document.getElementById("display");
+    const themeSel = document.getElementById("theme");
+    const rollBtn = document.getElementById("rollBtn");
+
+    function showPhrase() {
+      const theme = themeSel.value;
+      const list = PHRASES[theme];
+      const random = Math.floor(Math.random() * list.length);
+      display.textContent = list[random];
+    }
+
+    rollBtn.addEventListener("click", showPhrase);
+  </script>
+</body>
+</html>
