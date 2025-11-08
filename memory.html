@@ -72,9 +72,9 @@
       <span class="text-lg text-gray-700">Flip two cards — find the pairs!</span>
     </div>
 
-    <!-- GRID -->
+    <!-- ✅ FIXED GRID -->
     <div id="grid"
-         class="grid grid-cols-2 sm:grid-cols-4 gap-5 max-w-5xl mx-auto"
+         class="grid grid-cols-4 gap-6 justify-center mx-auto"
          aria-label="Memory grid">
     </div>
 
@@ -141,26 +141,24 @@
       deck.forEach((card, idx) => {
         const btn = document.createElement("button");
         btn.className = [
-         relative w-[140px] h-[140px]
+          "relative w-[140px] h-[140px]",
           "rounded-2xl border-[6px] border-blue-600",
           "bg-white focus:outline-none focus:ring-4 focus:ring-blue-300",
           "flex items-center justify-center"
         ].join(" ");
         btn.dataset.index = idx;
 
-        // ✅ Smaller numbers (fixed)
         const back = document.createElement("div");
         back.className = "back absolute inset-0 flex items-center justify-center";
         back.innerHTML = `
-          <span class="leading-none text-[4rem] sm:text-[5rem] md:text-[6rem] lg:text-[7rem] font-extrabold text-blue-700">
+          <span class="leading-none text-[4rem] font-extrabold text-blue-700">
             ${card.id}
           </span>`;
 
-        // ✅ Smaller emoji front (fixed)
         const front = document.createElement("div");
         front.className = "front absolute inset-0 hidden items-center justify-center";
         front.innerHTML = `
-          <span class="leading-none text-[3.5rem] sm:text-[4.5rem] md:text-[5.5rem] lg:text-[6.5rem]">
+          <span class="leading-none text-[4.5rem]">
             ${card.value}
           </span>`;
 
@@ -191,7 +189,7 @@
 
     function handleFlip(btn) {
       if (busy) return;
-      const i = parseInt(btn.dataset.index, 10);
+      const i = parseInt(btn.dataset.index);
       const card = deck[i];
       if (card.matched) return;
 
@@ -217,16 +215,14 @@
         deck[firstCard.i].matched = true;
         deck[secondCard.i].matched = true;
 
-        firstCard.btn.classList.remove("ring-4","ring-blue-300");
-        secondCard.btn.classList.remove("ring-4","ring-blue-300");
-
         firstCard.btn.classList.add("border-green-600");
         secondCard.btn.classList.add("border-green-600");
 
         matchesFound++;
         status.textContent = `Matched! Pairs found: ${matchesFound} / ${totalPairs}`;
-
+        
         resetTurn();
+
         if (matchesFound === totalPairs) {
           status.textContent = "🎉 All pairs matched! Great job!";
         }
@@ -235,12 +231,8 @@
         setTimeout(() => {
           showFront(firstCard.btn, false);
           showFront(secondCard.btn, false);
-
-          firstCard.btn.classList.remove("ring-4","ring-blue-300");
-          secondCard.btn.classList.remove("ring-4","ring-blue-300");
-
           resetTurn();
-        }, 1300);
+        }, 1200);
       }
     }
 
