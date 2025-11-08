@@ -1,409 +1,272 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Pictionary — ProjectorFirst</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>ProjectorFirst — Pictionary</title>
+  <meta name="description" content="High-contrast Pictionary for seniors: large buttons, bold images, timer, keyboard shortcuts." />
+
+  <!-- Tailwind (CDN) -->
   <script src="https://cdn.tailwindcss.com"></script>
 
-  <!-- Memberstack Gate -->
-  <script data-memberstack-app="app_cmgnwpg8y00x10suih4pua785"
-          src="https://static.memberstack.com/scripts/v2/memberstack.js"
-          type="text/javascript"></script>
-
-  <script>
-    document.addEventListener("DOMContentLoaded", async () => {
-      try {
-        const member = await window.$memberstackDom.getCurrentMember();
-        if (!member.data) window.location.href = "/subscribe.html";
-      } catch {
-        window.location.href = "/subscribe.html";
-      }
-    });
-  </script>
-
   <style>
-    svg { width: 100%; height: auto; }
-    .unselectable { user-select: none; }
+    /* Ultra-simple, projector-friendly theme */
+    :root {
+      --bg: #ffffff;
+      --fg: #000000;
+      --accent: #111111;
+    }
+    body { background: var(--bg); color: var(--fg); }
+    .btn {
+      @apply text-2xl md:text-3xl font-bold px-5 py-4 rounded-2xl shadow;
+      background: var(--fg); color: var(--bg);
+    }
+    .btn-outline {
+      @apply text-2xl md:text-3xl font-bold px-5 py-4 rounded-2xl border-4;
+      border-color: var(--fg); color: var(--fg); background: transparent;
+    }
+    .card {
+      @apply rounded-3xl p-4 md:p-8 shadow;
+      border: 6px solid var(--fg);
+      background: var(--bg);
+    }
+    /* “Bolden” PNG line art: stack drop-shadows to thicken strokes visually */
+    .bold-lines {
+      filter:
+        drop-shadow(0 0 1px #000)
+        drop-shadow(0 0 1px #000)
+        drop-shadow(0 0 1.5px #000)
+        contrast(140%);
+      /* Prevent browser from blurring on scale-up */
+      image-rendering: -webkit-optimize-contrast;
+      image-rendering: crisp-edges;
+      image-rendering: pixelated;
+    }
+    .timer {
+      font-variant-numeric: tabular-nums;
+    }
+    .kbd {
+      @apply border-2 rounded-lg px-2 py-0.5 text-xl font-bold;
+      border-color: var(--fg);
+    }
+    .hidden-word {
+      @apply text-5xl md:text-6xl font-black tracking-wide;
+      color: var(--bg);
+      text-shadow: 0 0 12px var(--bg);
+      user-select: none;
+    }
   </style>
 </head>
+<body class="min-h-screen">
+  <main class="max-w-6xl mx-auto p-4 md:p-8 space-y-6">
 
-<body class="bg-white text-gray-900 min-h-screen unselectable">
-  <div class="w-full px-2 sm:px-6 lg:px-12 py-6 max-w-7xl mx-auto">
-    <!-- Title -->
-    <h1 class="text-6xl font-extrabold mb-4 text-blue-900 text-center">Pictionary</h1>
-
-    <!-- Controls -->
-    <div class="flex justify-center gap-4 flex-wrap mb-6">
-      <a href="apps.html"
-         class="px-8 py-4 bg-blue-900 text-white rounded-2xl text-2xl font-bold hover:bg-blue-800">← Apps</a>
-
-      <button id="fullscreenBtn"
-              class="px-8 py-4 bg-blue-700 text-white rounded-2xl text-2xl font-bold hover:bg-blue-800">⛶ Full Screen</button>
-
-      <button id="startBtn"
-              class="px-8 py-4 bg-green-700 text-white rounded-2xl text-2xl font-bold hover:bg-green-800">Start</button>
-
-      <button id="pauseBtn"
-              class="px-8 py-4 bg-yellow-500 text-white rounded-2xl text-2xl font-bold hover:bg-yellow-600" disabled>Pause</button>
-
-      <button id="nextBtn"
-              class="px-8 py-4 bg-blue-600 text-white rounded-2xl text-2xl font-bold hover:bg-blue-700">Next</button>
-
-      <button id="revealBtn"
-              class="px-8 py-4 bg-purple-700 text-white rounded-2xl text-2xl font-bold hover:bg-purple-800">Show Answer</button>
-
-      <label class="flex items-center gap-3 px-4 py-2 rounded-xl border-4 border-blue-800 text-xl font-bold">
-        Speed
-        <input id="speed" type="range" min="50" max="800" value="300" class="accent-blue-800 w-40">
-      </label>
-    </div>
-
-    <!-- Prompt / Answer -->
-    <div class="text-center mb-3">
-      <div id="prompt" class="text-3xl font-bold text-gray-600">Mystery Drawing…</div>
-      <div id="answer" class="text-4xl font-extrabold text-blue-900 mt-1 opacity-0 transition-opacity">Answer</div>
-    </div>
-
-    <!-- Drawing Area -->
-    <div class="bg-white border-8 border-blue-900 rounded-2xl shadow-2xl p-4">
-      <!-- We keep square-ish space so it fills projectors nicely -->
-      <div class="mx-auto" style="max-width: 1100px;">
-        <svg id="stage" viewBox="0 0 800 600" xmlns="http://www.w3.org/2000/svg"
-             aria-label="Animated drawing"
-             role="img"></svg>
+    <!-- Header -->
+    <header class="flex items-center justify-between gap-4">
+      <h1 class="text-4xl md:text-5xl font-extrabold">Pictionary</h1>
+      <div class="flex gap-3">
+        <button id="fullscreenBtn" class="btn-outline" title="F">Fullscreen</button>
+        <button id="contrastBtn" class="btn-outline" title="C">Invert</button>
       </div>
-    </div>
+    </header>
 
-    <!-- Status -->
-    <div id="status" class="text-center mt-4 text-2xl font-semibold text-blue-700"></div>
-  </div>
+    <!-- Display -->
+    <section class="grid md:grid-cols-2 gap-6">
+      <div class="card flex items-center justify-center">
+        <img id="pic"
+             class="bold-lines max-h-[65vh] w-auto mx-auto"
+             alt="Pictionary image"
+             src=""
+             draggable="false" />
+      </div>
+
+      <div class="card flex flex-col justify-between gap-6">
+        <div class="space-y-4">
+          <div class="text-6xl md:text-7xl font-black timer text-center" id="timer">01:00</div>
+          <div class="text-center">
+            <button id="startStopBtn" class="btn mr-3" title="S">Start</button>
+            <button id="resetBtn" class="btn-outline" title="R">Reset</button>
+          </div>
+          <div class="flex justify-center gap-3">
+            <button data-min="30" class="btn-outline timeBtn">30s</button>
+            <button data-min="60" class="btn-outline timeBtn">60s</button>
+            <button data-min="90" class="btn-outline timeBtn">90s</button>
+            <button data-min="120" class="btn-outline timeBtn">120s</button>
+          </div>
+        </div>
+
+        <div class="space-y-3 text-center">
+          <div id="word" class="hidden-word select-none">•••••</div>
+          <div class="flex flex-wrap justify-center gap-3">
+            <button id="peekBtn" class="btn" title="W">Reveal Word</button>
+            <button id="nextBtn" class="btn" title="N">Next</button>
+            <button id="shuffleBtn" class="btn-outline" title="H">Shuffle Deck</button>
+          </div>
+          <p class="text-xl md:text-2xl opacity-80">
+            Shortcuts:
+            <span class="kbd">N</span> next,
+            <span class="kbd">W</span> reveal word,
+            <span class="kbd">S</span> start/pause,
+            <span class="kbd">R</span> reset,
+            <span class="kbd">F</span> fullscreen,
+            <span class="kbd">C</span> invert.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="text-center text-xl md:text-2xl opacity-70">
+      Images: bold-lined, high-contrast for projector use.
+    </footer>
+  </main>
 
   <script>
-    // ---------- UTILITIES ----------
-    const strokeStyle = {
-      stroke: '#1e3a8a',
-      'stroke-width': 10,
-      fill: 'none',
-      'stroke-linecap': 'round',
-      'stroke-linejoin': 'round'
-    };
+    // === Image Deck ===========================================================
+    // Put these PNGs into ./images/ with these exact names.
+    // You can add more; just push another {word, src} entry.
+    const deck = [
+      { word: "Book",       src: "images/book.png" },
+      { word: "Lips",       src: "images/lips.png" },
+      { word: "Calculator", src: "images/calculator.png" },
+      { word: "Swing",      src: "images/swing.png" },
+      { word: "Corn",       src: "images/corn.png" },
+      { word: "Boot",       src: "images/boot.png" },
+      { word: "Pineapple",  src: "images/pineapple.png" },
+    ];
 
-    function E(tag, attrs = {}) {
-      const el = document.createElementNS('http://www.w3.org/2000/svg', tag);
-      for (const [k, v] of Object.entries(attrs)) el.setAttribute(k, v);
-      // apply default stroke style if stroke/ fill not set
-      if (!attrs.stroke && tag !== 'g') {
-        for (const [k, v] of Object.entries(strokeStyle)) el.setAttribute(k, v);
+    // === State ================================================================
+    let order = [...deck.keys()];
+    let index = -1;
+    let peekVisible = false;
+
+    // Timer
+    let duration = 60;      // seconds
+    let remaining = duration;
+    let ticking = false;
+    let tickHandle = null;
+
+    // === Elements =============================================================
+    const imgEl       = document.getElementById("pic");
+    const wordEl      = document.getElementById("word");
+    const nextBtn     = document.getElementById("nextBtn");
+    const peekBtn     = document.getElementById("peekBtn");
+    const shuffleBtn  = document.getElementById("shuffleBtn");
+    const timerEl     = document.getElementById("timer");
+    const startStopBtn= document.getElementById("startStopBtn");
+    const resetBtn    = document.getElementById("resetBtn");
+    const timeBtns    = document.querySelectorAll(".timeBtn");
+    const fsBtn       = document.getElementById("fullscreenBtn");
+    const contrastBtn = document.getElementById("contrastBtn");
+
+    // === Utilities ============================================================
+    function zfill(n) { return n.toString().padStart(2,"0"); }
+    function formatTime(sec){
+      const m = Math.floor(sec/60), s = sec%60;
+      return `${zfill(m)}:${zfill(s)}`;
+    }
+    function setTimer(sec) {
+      remaining = sec;
+      timerEl.textContent = formatTime(remaining);
+    }
+    function startTimer(){
+      if (ticking) return;
+      ticking = true;
+      startStopBtn.textContent = "Pause";
+      tickHandle = setInterval(() => {
+        remaining = Math.max(0, remaining - 1);
+        timerEl.textContent = formatTime(remaining);
+        if (remaining === 0) stopTimer();
+      }, 1000);
+    }
+    function stopTimer(){
+      ticking = false;
+      startStopBtn.textContent = "Start";
+      clearInterval(tickHandle);
+    }
+    function resetTimer(){
+      stopTimer();
+      setTimer(duration);
+    }
+
+    function shuffle() {
+      order = [...deck.keys()];
+      // Fisher-Yates
+      for (let i = order.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [order[i], order[j]] = [order[j], order[i]];
       }
-      return el;
+      index = -1;
     }
 
-    function setDashForAnimate(el) {
-      // Works for path, circle, rect, line, polyline, polygon, ellipse
-      const len = (el).getTotalLength();
-      el.style.strokeDasharray = String(len);
-      el.style.strokeDashoffset = String(len);
-      return len;
+    function showNext() {
+      index = (index + 1) % order.length;
+      const item = deck[order[index]];
+      imgEl.src = item.src;
+      imgEl.alt = item.word;
+      hideWord();
     }
 
-    // ---------- DRAWING LIBRARY (STROKES) ----------
-    // All coordinates are inside viewBox 800x600, centered nicely.
-    // Each item returns an array of SVG elements (paths/shapes), drawn in order.
-
-    const library = {
-      // 1) APPLE
-      Apple: () => {
-        const group = [];
-        // Apple body (rounded heart-ish path)
-        group.push(E('path', { d: 'M400 200 C340 160 260 210 260 300 C260 380 330 430 400 470 C470 430 540 380 540 300 C540 210 460 160 400 200 Z' }));
-        // Stem
-        group.push(E('path', { d: 'M400 200 C400 160 410 140 430 120' }));
-        // Leaf
-        group.push(E('path', { d: 'M440 120 C500 110 520 160 460 170 C460 170 450 150 440 120 Z' }));
-        return group;
-      },
-
-      // 2) HOUSE
-      House: () => {
-        const g = [];
-        // Base
-        g.push(E('rect', { x: 260, y: 280, width: 280, height: 200, rx: 8, ry: 8 }));
-        // Roof
-        g.push(E('polygon', { points: '240,280 400,170 560,280' }));
-        // Door
-        g.push(E('rect', { x: 370, y: 360, width: 60, height: 120, rx: 6 }));
-        // Window left
-        g.push(E('rect', { x: 290, y: 320, width: 80, height: 60, rx: 6 }));
-        // Window right
-        g.push(E('rect', { x: 430, y: 320, width: 80, height: 60, rx: 6 }));
-        return g;
-      },
-
-      // 3) DOG (simple cartoon)
-      Dog: () => {
-        const g = [];
-        // Head
-        g.push(E('ellipse', { cx: 320, cy: 300, rx: 70, ry: 55 }));
-        // Ear
-        g.push(E('path', { d: 'M280 270 C250 250 250 310 280 290' }));
-        // Eye
-        g.push(E('circle', { cx: 340, cy: 290, r: 6 }));
-        // Nose
-        g.push(E('circle', { cx: 285, cy: 310, r: 6 }));
-        // Body
-        g.push(E('ellipse', { cx: 460, cy: 330, rx: 110, ry: 70 }));
-        // Tail
-        g.push(E('path', { d: 'M560 330 C600 320 600 360 560 350' }));
-        // Legs
-        g.push(E('line', { x1: 420, y1: 390, x2: 420, y2: 450 }));
-        g.push(E('line', { x1: 500, y1: 390, x2: 500, y2: 450 }));
-        return g;
-      },
-
-      // 4) FLOWER
-      Flower: () => {
-        const g = [];
-        // Stem
-        g.push(E('line', { x1: 400, y1: 260, x2: 400, y2: 460 }));
-        // Leaves
-        g.push(E('path', { d: 'M400 340 C360 330 340 350 350 370 C360 350 380 350 400 350' }));
-        g.push(E('path', { d: 'M400 380 C440 370 460 390 450 410 C440 390 420 390 400 390' }));
-        // Center
-        g.push(E('circle', { cx: 400, cy: 220, r: 26 }));
-        // Petals
-        g.push(E('circle', { cx: 400, cy: 180, r: 22 }));
-        g.push(E('circle', { cx: 440, cy: 200, r: 22 }));
-        g.push(E('circle', { cx: 360, cy: 200, r: 22 }));
-        g.push(E('circle', { cx: 380, cy: 245, r: 22 }));
-        g.push(E('circle', { cx: 420, cy: 245, r: 22 }));
-        return g;
-      },
-
-      // 5) CAR (simple side view)
-      Car: () => {
-        const g = [];
-        // Body
-        g.push(E('path', { d: 'M230 360 L250 320 C270 300 320 280 420 280 L520 280 C550 280 560 300 570 320 L590 360 Z' }));
-        // Base line
-        g.push(E('line', { x1: 230, y1: 360, x2: 590, y2: 360 }));
-        // Windows
-        g.push(E('rect', { x: 360, y: 295, width: 90, height: 40, rx: 6 }));
-        g.push(E('rect', { x: 460, y: 295, width: 70, height: 40, rx: 6 }));
-        // Wheels
-        g.push(E('circle', { cx: 300, cy: 360, r: 34 }));
-        g.push(E('circle', { cx: 520, cy: 360, r: 34 }));
-        return g;
-      },
-
-      // 6) TREE
-      Tree: () => {
-        const g = [];
-        // Trunk
-        g.push(E('rect', { x: 385, y: 340, width: 30, height: 120, rx: 4 }));
-        // Foliage (three blobs)
-        g.push(E('circle', { cx: 360, cy: 280, r: 60 }));
-        g.push(E('circle', { cx: 440, cy: 280, r: 60 }));
-        g.push(E('circle', { cx: 400, cy: 230, r: 65 }));
-        return g;
-      },
-
-      // 7) FISH
-      Fish: () => {
-        const g = [];
-        // Body
-        g.push(E('ellipse', { cx: 400, cy: 320, rx: 120, ry: 60 }));
-        // Tail (triangle)
-        g.push(E('polygon', { points: '520,320 580,290 580,350' }));
-        // Eye
-        g.push(E('circle', { cx: 350, cy: 305, r: 6 }));
-        // Fin
-        g.push(E('path', { d: 'M420 280 C410 260 460 260 450 285' }));
-        return g;
-      },
-
-      // 8) ICE CREAM
-      IceCream: () => {
-        const g = [];
-        // Cone
-        g.push(E('polygon', { points: '400,420 350,520 450,520' }));
-        // Scoops (circles)
-        g.push(E('circle', { cx: 380, cy: 380, r: 40 }));
-        g.push(E('circle', { cx: 420, cy: 380, r: 40 }));
-        g.push(E('circle', { cx: 400, cy: 350, r: 35 }));
-        // Drip
-        g.push(E('path', { d: 'M420 420 C415 440 395 440 390 420' }));
-        return g;
-      },
-
-      // 9) SUN
-      Sun: () => {
-        const g = [];
-        // Core
-        g.push(E('circle', { cx: 400, cy: 300, r: 70 }));
-        // Rays
-        const rays = [
-          [400, 190, 400, 120],
-          [400, 410, 400, 480],
-          [290, 300, 220, 300],
-          [510, 300, 580, 300],
-          [330, 230, 280, 180],
-          [470, 230, 520, 180],
-          [330, 370, 280, 420],
-          [470, 370, 520, 420]
-        ];
-        rays.forEach(([x1,y1,x2,y2]) => g.push(E('line', { x1, y1, x2, y2 })));
-        return g;
-      },
-
-      // 10) BOAT
-      Boat: () => {
-        const g = [];
-        // Hull
-        g.push(E('path', { d: 'M250 380 C300 430 500 430 550 380 L250 380 Z' }));
-        // Mast
-        g.push(E('line', { x1: 400, y1: 380, x2: 400, y2: 220 }));
-        // Sail
-        g.push(E('polygon', { points: '400,220 520,300 400,300' }));
-        // Flag
-        g.push(E('path', { d: 'M400 220 C420 225 430 210 450 215' }));
-        return g;
-      }
-    };
-
-    const itemNames = Object.keys(library); // ["Apple","House",...]
-    let order = shuffle([...itemNames]);
-    let current = 0;
-
-    const stage = document.getElementById('stage');
-    const prompt = document.getElementById('prompt');
-    const answer = document.getElementById('answer');
-    const status = document.getElementById('status');
-
-    const startBtn = document.getElementById('startBtn');
-    const pauseBtn = document.getElementById('pauseBtn');
-    const nextBtn = document.getElementById('nextBtn');
-    const revealBtn = document.getElementById('revealBtn');
-    const speedInput = document.getElementById('speed');
-
-    let animQueue = [];   // [{el, len, remaining}]
-    let rafId = null;
-    let paused = false;
-    let pxPerSec = +speedInput.value;
-
-    function shuffle(a) {
-      for (let i = a.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random()* (i+1));
-        [a[i], a[j]] = [a[j], a[i]];
-      }
-      return a;
+    function showWord() {
+      const item = deck[order[index]] || null;
+      if (!item) return;
+      wordEl.textContent = item.word.toUpperCase();
+      wordEl.classList.remove("hidden-word");
+      peekVisible = true;
+    }
+    function hideWord() {
+      wordEl.textContent = "•••••";
+      wordEl.classList.add("hidden-word");
+      peekVisible = false;
     }
 
-    // Build current drawing
-    function loadDrawing(name) {
-      stage.innerHTML = '';
-      answer.textContent = name;
-      answer.style.opacity = 0;
-      prompt.textContent = 'Mystery Drawing…';
-      status.textContent = '';
-      animQueue = [];
+    // === Events ===============================================================
+    nextBtn.addEventListener("click", showNext);
+    shuffleBtn.addEventListener("click", () => { shuffle(); showNext(); });
 
-      const strokes = library[name]();
-      const group = E('g', {});
-      stage.appendChild(group);
-
-      strokes.forEach(el => {
-        group.appendChild(el);
-        const len = setDashForAnimate(el);
-        animQueue.push({ el, len, remaining: len });
-      });
-
-      cancelAnimationFrame(rafId);
-      paused = false;
-      pauseBtn.textContent = 'Pause';
-      pauseBtn.disabled = true; // until Start
-    }
-
-    function startAnimation() {
-      if (!animQueue.length) return;
-      pauseBtn.disabled = false;
-      const start = performance.now();
-      let last = start;
-
-      function step(now) {
-        if (paused) { rafId = requestAnimationFrame(step); return; }
-        const dt = (now - last) / 1000; // seconds
-        last = now;
-        const advance = pxPerSec * dt;
-
-        let finishedAll = true;
-
-        for (const seg of animQueue) {
-          if (seg.remaining <= 0) continue;
-          finishedAll = false;
-
-          seg.remaining = Math.max(0, seg.remaining - advance);
-          seg.el.style.strokeDashoffset = String(seg.remaining);
-
-          // draw one stroke at a time; if this stroke isn’t done, stop loop to keep strokes sequential
-          if (seg.remaining > 0) break;
-        }
-
-        if (finishedAll) {
-          status.textContent = 'Done!';
-          pauseBtn.disabled = true;
-          cancelAnimationFrame(rafId);
-          return;
-        }
-
-        rafId = requestAnimationFrame(step);
-      }
-
-      rafId = requestAnimationFrame(step);
-    }
-
-    // Controls
-    startBtn.addEventListener('click', () => {
-      // Restart animation from the beginning of current drawing
-      loadDrawing(order[current]);
-      startAnimation();
-    });
-
-    pauseBtn.addEventListener('click', () => {
-      if (pauseBtn.disabled) return;
-      paused = !paused;
-      pauseBtn.textContent = paused ? 'Resume' : 'Pause';
-      if (!paused) { /* resume */ }
-    });
-
-    nextBtn.addEventListener('click', () => {
-      current = (current + 1) % order.length;
-      loadDrawing(order[current]);
-      startAnimation();
-    });
-
-    revealBtn.addEventListener('click', () => {
-      answer.style.opacity = 1;
-    });
-
-    speedInput.addEventListener('input', e => {
-      pxPerSec = +e.target.value; // pixels per second along the stroke
-      status.textContent = `Speed: ${pxPerSec}px/s`;
-    });
-
-    // Fullscreen
-    document.getElementById('fullscreenBtn').addEventListener('click', () => {
-      if (!document.fullscreenElement) {
-        document.documentElement.requestFullscreen();
-        fullscreenBtn.textContent = "Exit Full Screen";
+    peekBtn.addEventListener("click", () => {
+      if (!peekVisible) {
+        showWord();
+        // Auto-hide after 3 seconds so only the drawer gets the hint
+        setTimeout(() => hideWord(), 3000);
       } else {
-        document.exitFullscreen();
-        fullscreenBtn.textContent = "⛶ Full Screen";
+        hideWord();
       }
     });
 
-    // Initialize first drawing
-    loadDrawing(order[current]);
+    startStopBtn.addEventListener("click", () => ticking ? stopTimer() : startTimer());
+    resetBtn.addEventListener("click", resetTimer);
+    timeBtns.forEach(b => b.addEventListener("click", () => {
+      duration = parseInt(b.dataset.min, 10);
+      resetTimer();
+    }));
+
+    fsBtn.addEventListener("click", () => {
+      if (!document.fullscreenElement) document.documentElement.requestFullscreen();
+      else document.exitFullscreen();
+    });
+
+    // Invert for dark rooms / extra contrast (flips colors)
+    let inverted = false;
+    contrastBtn.addEventListener("click", () => {
+      inverted = !inverted;
+      document.documentElement.style.filter = inverted ? "invert(100%) hue-rotate(180deg)" : "none";
+    });
+
+    // Keyboard shortcuts
+    window.addEventListener("keydown", (e) => {
+      const k = e.key.toLowerCase();
+      if (k === "n") { showNext(); }
+      else if (k === "w") { peekBtn.click(); }
+      else if (k === "s") { startStopBtn.click(); }
+      else if (k === "r") { resetBtn.click(); }
+      else if (k === "f") { fsBtn.click(); }
+      else if (k === "c") { contrastBtn.click(); }
+    });
+
+    // === Boot ================================================================
+    shuffle();
+    setTimer(duration);
+    showNext();
   </script>
 </body>
 </html>
