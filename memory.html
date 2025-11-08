@@ -6,19 +6,16 @@
   <title>Memory Match — ProjectorFirst</title>
   <script src="https://cdn.tailwindcss.com"></script>
 
-  <!-- ✅ Memberstack Loader -->
+  <!-- Memberstack -->
   <script data-memberstack-app="app_cmgnwpg8y00x10suih4pua785"
           src="https://static.memberstack.com/scripts/v2/memberstack.js"
           type="text/javascript"></script>
 
-  <!-- ✅ Protect this page -->
   <script>
     document.addEventListener("DOMContentLoaded", async () => {
       try {
         const member = await window.$memberstackDom.getCurrentMember();
-        if (!member.data) {
-          window.location.href = "/subscribe.html";
-        }
+        if (!member.data) window.location.href = "/subscribe.html";
       } catch {
         window.location.href = "/subscribe.html";
       }
@@ -29,10 +26,9 @@
 <body class="bg-white text-gray-900 min-h-screen">
 
   <div class="max-w-6xl mx-auto p-6">
-    <!-- Title -->
+
     <h1 class="text-5xl font-extrabold mb-4 text-blue-900 text-center">Memory Match</h1>
-    
-    <!-- Navigation & Fullscreen -->
+
     <div class="flex justify-center gap-4 mb-6 flex-wrap">
       <a href="apps.html"
          class="inline-flex items-center gap-2 px-6 py-3 bg-blue-900 text-white rounded-xl font-extrabold text-xl shadow hover:bg-blue-800">
@@ -45,7 +41,6 @@
       </button>
     </div>
 
-    <!-- Controls -->
     <div class="flex flex-col items-center gap-4 mb-6">
       <div class="flex flex-wrap gap-3 justify-center">
         <button id="resetBtn"
@@ -53,7 +48,7 @@
           New Game
         </button>
 
-        <label for="themeSelect" class="text-lg font-bold text-blue-900 self-center">Theme:</label>
+        <label for="themeSelect" class="text-lg font-bold text-blue-900">Theme:</label>
 
         <select id="themeSelect"
                 class="border-2 border-blue-600 rounded-xl px-3 py-2 text-lg font-semibold text-blue-900">
@@ -72,19 +67,16 @@
       <span class="text-lg text-gray-700">Flip two cards — find the pairs!</span>
     </div>
 
-    <!-- ✅ FIXED GRID -->
+    <!-- ✅ BIG, TIGHT GRID -->
     <div id="grid"
-         class="grid grid-cols-4 gap-6 justify-center mx-auto"
+         class="grid grid-cols-4 gap-4 justify-center mx-auto"
          aria-label="Memory grid">
     </div>
 
-    <!-- Status -->
     <div id="status" class="text-center mt-6 text-2xl font-semibold text-blue-700"></div>
   </div>
 
-  <!-- ✅ SCRIPT -->
   <script>
-    // Fullscreen toggle
     const fullscreenBtn = document.getElementById("fullscreenBtn");
     fullscreenBtn.addEventListener("click", () => {
       if (!document.fullscreenElement) {
@@ -96,7 +88,6 @@
       }
     });
 
-    // SETTINGS
     const totalPairs = 8;
 
     const themes = {
@@ -130,8 +121,11 @@
       let pool = [...themes[currentTheme]];
       if (pool.length < totalPairs) pool = [...pool, ...pool];
       const picks = shuffle(pool).slice(0, totalPairs);
-      const pairDeck = shuffle([...picks, ...picks]);
-      return pairDeck.map((val, i) => ({ id: i + 1, value: val, matched: false }));
+      return shuffle([...picks, ...picks]).map((val, i) => ({
+        id: i + 1,
+        value: val,
+        matched: false
+      }));
     }
 
     function renderGrid() {
@@ -140,27 +134,25 @@
 
       deck.forEach((card, idx) => {
         const btn = document.createElement("button");
-        btn.className = [
-          "relative w-[140px] h-[140px]",
-          "rounded-2xl border-[6px] border-blue-600",
-          "bg-white focus:outline-none focus:ring-4 focus:ring-blue-300",
-          "flex items-center justify-center"
-        ].join(" ");
         btn.dataset.index = idx;
+
+        btn.className = [
+          "relative w-[180px] h-[180px]",
+          "rounded-2xl border-[6px] border-blue-600",
+          "bg-white shadow-sm hover:shadow-md",
+          "flex items-center justify-center",
+          "focus:outline-none"
+        ].join(" ");
 
         const back = document.createElement("div");
         back.className = "back absolute inset-0 flex items-center justify-center";
-        back.innerHTML = `
-          <span class="leading-none text-[4rem] font-extrabold text-blue-700">
-            ${card.id}
-          </span>`;
+        back.innerHTML =
+          `<span class="text-[5rem] font-extrabold text-blue-700">${card.id}</span>`;
 
         const front = document.createElement("div");
         front.className = "front absolute inset-0 hidden items-center justify-center";
-        front.innerHTML = `
-          <span class="leading-none text-[4.5rem]">
-            ${card.value}
-          </span>`;
+        front.innerHTML =
+          `<span class="text-[6rem] leading-none">${card.value}</span>`;
 
         if (card.matched) {
           front.classList.remove("hidden");
@@ -169,22 +161,14 @@
 
         btn.appendChild(back);
         btn.appendChild(front);
-
         btn.addEventListener("click", () => handleFlip(btn));
         grid.appendChild(btn);
       });
     }
 
     function showFront(btn, show) {
-      const front = btn.querySelector(".front");
-      const back  = btn.querySelector(".back");
-      if (show) {
-        front.classList.remove("hidden");
-        back.classList.add("hidden");
-      } else {
-        front.classList.add("hidden");
-        back.classList.remove("hidden");
-      }
+      btn.querySelector(".front").classList.toggle("hidden", !show);
+      btn.querySelector(".back").classList.toggle("hidden", show);
     }
 
     function handleFlip(btn) {
@@ -197,9 +181,9 @@
       if (frontVisible) return;
 
       showFront(btn, true);
+
       if (!firstCard) {
         firstCard = { btn, i, card };
-        btn.classList.add("ring-4","ring-blue-300");
       } else if (!secondCard && btn !== firstCard.btn) {
         secondCard = { btn, i, card };
         busy = true;
@@ -219,20 +203,21 @@
         secondCard.btn.classList.add("border-green-600");
 
         matchesFound++;
-        status.textContent = `Matched! Pairs found: ${matchesFound} / ${totalPairs}`;
-        
+        status.textContent = `Matched: ${matchesFound}/${totalPairs}`;
+
         resetTurn();
 
         if (matchesFound === totalPairs) {
-          status.textContent = "🎉 All pairs matched! Great job!";
+          status.textContent = "🎉 All pairs matched!";
         }
       } else {
-        status.textContent = "Not a match… flipping back.";
+        status.textContent = "Not a match…";
+
         setTimeout(() => {
           showFront(firstCard.btn, false);
           showFront(secondCard.btn, false);
           resetTurn();
-        }, 1200);
+        }, 900);
       }
     }
 
