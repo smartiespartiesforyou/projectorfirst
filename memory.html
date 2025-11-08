@@ -11,6 +11,7 @@
           src="https://static.memberstack.com/scripts/v2/memberstack.js"
           type="text/javascript"></script>
 
+  <!-- Restrict Page -->
   <script>
     document.addEventListener("DOMContentLoaded", async () => {
       try {
@@ -36,7 +37,7 @@
     <div class="flex justify-center gap-4 mb-6 flex-wrap">
       <a href="apps.html"
          class="px-8 py-4 bg-blue-900 text-white rounded-2xl text-2xl font-bold hover:bg-blue-800">
-        ← Back
+        ← Apps
       </a>
 
       <button id="fullscreenBtn"
@@ -50,19 +51,19 @@
       </button>
 
       <select id="themeSelect"
-        class="border-4 border-blue-700 rounded-xl px-4 py-3 text-2xl font-bold text-blue-900 bg-white">
-        <option value="animals">🐶 Animals</option>
-        <option value="food">🍔 Food</option>
-        <option value="sports">⚽ Sports</option>
-        <option value="christmas">🎄 Christmas</option>
-        <option value="halloween">🎃 Halloween</option>
-        <option value="easter">🐣 Easter</option>
+          class="border-4 border-blue-700 rounded-xl px-4 py-3 text-2xl font-bold text-blue-900 bg-white">
+          <option value="animals">🐶 Animals</option>
+          <option value="food">🍔 Food</option>
+          <option value="sports">⚽ Sports</option>
+          <option value="christmas">🎄 Christmas</option>
+          <option value="halloween">🎃 Halloween</option>
+          <option value="easter">🐣 Easter</option>
       </select>
     </div>
 
-    <!-- ✅ GIANT FULL-WIDTH PROJECTOR GRID -->
+    <!-- ✅ CARDS TOUCHING (gap-0) -->
     <div id="grid"
-         class="w-full max-w-7xl mx-auto grid grid-cols-4 gap-3 justify-center">
+         class="w-full max-w-7xl mx-auto grid grid-cols-4 gap-0 justify-center">
     </div>
 
     <!-- Status -->
@@ -70,6 +71,7 @@
   </div>
 
   <script>
+    // Fullscreen toggle
     const fullscreenBtn = document.getElementById("fullscreenBtn");
     fullscreenBtn.addEventListener("click", () => {
       if (!document.fullscreenElement) {
@@ -125,9 +127,9 @@
         const btn = document.createElement("button");
         btn.dataset.index = idx;
 
+        // ✅ Bigger cards, touching
         btn.className = [
-          "relative",
-          "w-[220px] h-[220px]",
+          "relative w-[240px] h-[240px]",
           "rounded-2xl border-[8px] border-blue-700",
           "bg-white shadow-md",
           "flex items-center justify-center"
@@ -136,12 +138,12 @@
         const back = document.createElement("div");
         back.className = "back absolute inset-0 flex items-center justify-center";
         back.innerHTML =
-          `<span class="text-[7rem] font-extrabold text-blue-700">${card.id}</span>`;
+          `<span class="text-[8rem] font-extrabold text-blue-700">${card.id}</span>`;
 
         const front = document.createElement("div");
         front.className = "front absolute inset-0 hidden items-center justify-center";
         front.innerHTML =
-          `<span class="text-[8rem]">${card.value}</span>`;
+          `<span class="text-[9rem] leading-none">${card.value}</span>`;
 
         btn.appendChild(back);
         btn.appendChild(front);
