@@ -30,7 +30,6 @@
 
 <body class="bg-white text-gray-900 min-h-screen unselectable">
   <div class="w-full px-2 sm:px-6 lg:px-12 py-6 max-w-7xl mx-auto">
-    <!-- Title -->
     <h1 class="text-6xl font-extrabold mb-4 text-blue-900 text-center">Pictionary</h1>
 
     <!-- Controls -->
@@ -68,13 +67,12 @@
       </div>
     </div>
 
-    <!-- Status -->
     <div id="status" class="text-center mt-4 text-2xl font-semibold text-blue-700"></div>
   </div>
 
   <script>
     // ---------- SETTINGS ----------
-    // Bold projector strokes + steady pace
+    // Bold projector strokes + SLOW, fixed speed
     const strokeStyle = {
       stroke: '#1e3a8a',
       'stroke-width': 14,
@@ -82,7 +80,7 @@
       'stroke-linecap': 'round',
       'stroke-linejoin': 'round'
     };
-    const PX_PER_SEC = 300; // fixed animation speed (no slider)
+    const PX_PER_SEC = 20; // << super slow for seniors
 
     // ---------- HELPERS ----------
     function E(tag, attrs = {}) {
@@ -179,6 +177,7 @@
       },
       IceCream: () => {
         const g = [];
+        // redrawn, cleaner cone + scoops
         g.push(E('polygon', { points: '400,420 350,520 450,520' }));
         g.push(E('circle', { cx: 380, cy: 380, r: 44 }));
         g.push(E('circle', { cx: 420, cy: 380, r: 44 }));
@@ -202,57 +201,45 @@
         g.push(E('path', { d: 'M400 210 C420 220 430 205 455 210' }));
         return g;
       },
-      // ---- Custom items (bold strokes) ----
+      Book: () => {
+        const g = [];
+        g.push(E('path', { d: 'M220 240 C300 210 380 230 400 260 C420 230 500 210 580 240 L580 420 C500 390 420 410 400 440 C380 410 300 390 220 420 Z' }));
+        g.push(E('path', { d: 'M400 260 L400 440' }));
+        g.push(E('path', { d: 'M360 290 C330 280 290 285 250 300' }));
+        g.push(E('path', { d: 'M360 330 C330 320 290 325 250 340' }));
+        g.push(E('path', { d: 'M440 290 C470 280 510 285 550 300' }));
+        g.push(E('path', { d: 'M440 330 C470 320 510 325 550 340' }));
+        return g;
+      },
+
+      // ---- Your custom uploads (kept as-is stylistically) ----
       Key: () => {
         const g = [];
-        // key ring + inner ring
+        // Approximated vectorization of your key outline (bold)
         g.push(E('ellipse', { cx: 340, cy: 210, rx: 60, ry: 45 }));
         g.push(E('ellipse', { cx: 320, cy: 230, rx: 45, ry: 35 }));
-        // shank + teeth
         g.push(E('path', { d: 'M320 260 L320 470 L360 470 L360 440 L380 440 L380 410 L400 410 L400 380 L430 380 L430 330' }));
-        // head inner contour
         g.push(E('path', { d: 'M290 250 C270 220 360 190 380 240 C390 270 340 280 320 260 Z' }));
-        // tag + string (simple)
         g.push(E('path', { d: 'M395 235 C445 260 480 220 520 250' }));
         g.push(E('polygon', { points: '520,250 570,280 560,220' }));
-        g.push(E('path', { d: 'M550 255 L565 270' })); // tiny heart hint (just a notch)
         return g;
       },
       Microwave: () => {
         const g = [];
-        // outer box
         g.push(E('rect', { x: 220, y: 200, width: 360, height: 220, rx: 6 }));
-        // door frame
         g.push(E('rect', { x: 250, y: 230, width: 250, height: 170, rx: 4 }));
-        // handle
         g.push(E('path', { d: 'M485 255 C500 255 500 375 485 375' }));
-        // control buttons
         g.push(E('circle', { cx: 540, cy: 260, r: 18 }));
         g.push(E('circle', { cx: 540, cy: 310, r: 14 }));
         g.push(E('circle', { cx: 540, cy: 360, r: 18 }));
-        // feet
         g.push(E('rect', { x: 260, y: 420, width: 40, height: 15, rx: 6 }));
         g.push(E('rect', { x: 480, y: 420, width: 40, height: 15, rx: 6 }));
-        return g;
-      },
-      Book: () => {
-        const g = [];
-        // open book outline
-        g.push(E('path', { d: 'M220 240 C300 210 380 230 400 260 C420 230 500 210 580 240 L580 420 C500 390 420 410 400 440 C380 410 300 390 220 420 Z' }));
-        // center spine
-        g.push(E('path', { d: 'M400 260 L400 440' }));
-        // page lines (left)
-        g.push(E('path', { d: 'M360 290 C330 280 290 285 250 300' }));
-        g.push(E('path', { d: 'M360 330 C330 320 290 325 250 340' }));
-        // page lines (right)
-        g.push(E('path', { d: 'M440 290 C470 280 510 285 550 300' }));
-        g.push(E('path', { d: 'M440 330 C470 320 510 325 550 340' }));
         return g;
       }
     };
 
     // ---------- RUNTIME ----------
-    const itemNames = Object.keys(library);  // includes custom items
+    const itemNames = Object.keys(library);
     let order = shuffle([...itemNames]);
     let current = 0;
 
@@ -304,7 +291,6 @@
         const advance = PX_PER_SEC * dt;
 
         let finishedAll = true;
-
         for (const seg of animQueue) {
           if (seg.remaining <= 0) continue;
           finishedAll = false;
@@ -312,7 +298,7 @@
           seg.remaining = Math.max(0, seg.remaining - advance);
           seg.el.style.strokeDashoffset = String(seg.remaining);
 
-          if (seg.remaining > 0) break; // keep strokes sequential
+          if (seg.remaining > 0) break; // sequential: finish one stroke before next
         }
 
         if (finishedAll) {
