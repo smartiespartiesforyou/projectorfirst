@@ -51,33 +51,29 @@
   </div>
 
   <!-- ✅ Free Trial: Set 30-Day Expiration -->
-  <script>
-  document.addEventListener("DOMContentLoaded", async function() {
-    const memberstack = window.$memberstackDom;
+<script>
+document.addEventListener("DOMContentLoaded", async () => {
+  const memberstack = window.$memberstackDom;
 
-    const updateDate = async function() {
-      const member = await memberstack.getMemberJSON();
+  const member = await memberstack.getMemberJSON();
+  if (!member?.data) {
+    member.data = {};
+  }
 
-      if (!member.data) {
-        member.data = {};
-      }
+  // ✅ Only set the date if it does NOT exist yet
+  if (!member.data["free-trial-expiration"]) {
+    const now = new Date();
+    const expiration = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
 
-      if (!member.data['free-trial-date']) {
-        const currentTime = new Date();
+    member.data["free-trial-expiration"] = expiration.toISOString();
 
-        // ✅ 720 hours = 30 days
-        const expirationTime = new Date(
-          currentTime.getTime() + (720 * 60 * 60 * 1000)
-        );
+    await memberstack.updateMemberJSON({
+      json: member.data
+    });
+  }
+});
+</script>
 
-        member.data['free-trial-date'] = expirationTime.toISOString();
-
-        await memberstack.updateMemberJSON({ json: member.data });
-      }
-    };
-
-    updateDate();
-  });
   </script>
 
 </body>
