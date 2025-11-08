@@ -1,132 +1,144 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>🎲 Movement Dice — ProjectorFirst</title>
-  <script src="https://cdn.tailwindcss.com"></script>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Dice Roller — ProjectorFirst</title>
+<script src="https://cdn.tailwindcss.com"></script>
 
-  <style>
-    body {
-      background: #fff;
-      color: #111;
-      font-family: ui-sans-serif, system-ui, -apple-system, sans-serif;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: flex-start;
-      min-height: 100vh;
-      padding: 1rem;
-    }
-    h1 {
-      font-size: 3rem;
-      font-weight: 800;
-      color: #1e3a8a;
-      margin-bottom: 1rem;
-    }
-    .display-box {
-      background: #000;
-      color: #fff;
-      font-size: clamp(2.5rem, 6vw, 4rem);
-      font-weight: 700;
-      padding: 2rem;
-      border-radius: 1.25rem;
-      margin-top: 1rem;
-      box-shadow: 0 0 20px rgba(0,0,0,0.3);
-      min-height: 250px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-    }
-    .btn {
-      font-size: 1.75rem;
-      font-weight: bold;
-      padding: 1.25rem 2.5rem;
-      border-radius: 1rem;
-      cursor: pointer;
-      transition: transform 0.1s;
-    }
-    .btn:hover { transform: scale(1.05); }
-    .btn-primary { background: #1e3a8a; color: white; }
-  </style>
+<style>
+  body {
+    background: #ffffff;
+    font-family: ui-sans-serif, system-ui, sans-serif;
+    text-align: center;
+    padding: 20px;
+    color: #000;
+  }
+
+  .dice-area {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    margin-top: 40px;
+    margin-bottom: 40px;
+  }
+
+  .die {
+    width: 300px;
+    height: 300px;
+    background: #fff;
+    border: 10px solid #000;
+    border-radius: 20px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    padding: 20px;
+    box-shadow: 0 10px 0 rgba(0,0,0,0.2);
+  }
+
+  .pip {
+    width: 45px;
+    height: 45px;
+    background: #000;
+    border-radius: 50%;
+    justify-self: center;
+    align-self: center;
+  }
+
+  /* Bounce animation */
+  .bounce {
+    animation: bounce 0.3s ease;
+  }
+
+  @keyframes bounce {
+    0% { transform: scale(1); }
+    40% { transform: scale(1.2); }
+    100% { transform: scale(1); }
+  }
+</style>
 </head>
 
 <body>
-  <main class="w-full max-w-5xl text-center">
-    <div class="mb-4">
-      <a href="apps.html" class="btn btn-primary">⬅ Back to Apps</a>
-    </div>
+  <h1 class="text-5xl font-extrabold text-blue-900">🎲 Dice Roller</h1>
 
-    <h1>🎲 Movement Dice</h1>
+  <div class="dice-area">
+    <div id="die1" class="die"></div>
+    <div id="die2" class="die"></div>
+  </div>
 
-    <!-- ✅ Dropdown -->
-    <div class="mb-6 text-left">
-      <label for="theme" class="block text-xl font-semibold text-blue-900 mb-2">Choose Theme</label>
-      <select id="theme" class="w-full text-2xl p-3 border-2 border-blue-900 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-400">
-        <option value="classic">Classic Moves</option>
-        <option value="holiday">Holiday Fun</option>
-        <option value="silly">Silly Moves</option>
-        <option value="stretch">Gentle Stretch</option>
-      </select>
-    </div>
+  <div class="flex justify-center gap-6 mt-10">
+    <button id="rollBtn"
+      class="px-10 py-5 bg-blue-900 text-white rounded-2xl text-3xl font-bold shadow hover:bg-blue-800">
+      ROLL 🎲
+    </button>
 
-    <!-- ✅ Display Area -->
-    <div id="display" class="display-box">Press “Roll Dice” to start!</div>
+    <button id="fsBtn"
+      class="px-10 py-5 bg-green-700 text-white rounded-2xl text-3xl font-bold shadow hover:bg-green-600">
+      FULLSCREEN ⛶
+    </button>
+  </div>
 
-    <div class="flex justify-center gap-4 mt-6">
-      <button id="rollBtn" class="btn btn-primary">🎲 Roll Dice</button>
-    </div>
-  </main>
+<script>
+  const die1 = document.getElementById("die1");
+  const die2 = document.getElementById("die2");
+  const rollBtn = document.getElementById("rollBtn");
+  const fsBtn = document.getElementById("fsBtn");
 
-  <script>
-    const MOVES = {
-      classic: [
-        "Clap your hands 5 times!",
-        "Raise both arms high!",
-        "Tap your feet on the floor!",
-        "Roll your shoulders back!",
-        "Big smile for 5 seconds!",
-        "Touch your knees and reach for the sky!",
-      ],
-      holiday: [
-        "Wave like Santa! 🎅",
-        "Shake like a jingle bell! 🔔",
-        "Fly like a reindeer! 🦌",
-        "Wrap an imaginary gift! 🎁",
-        "Ring an invisible bell! 🛎️",
-        "Stretch like a Christmas tree! 🎄",
-      ],
-      silly: [
-        "Make your silliest face! 🤪",
-        "Pretend to swim!",
-        "Flap your wings like a bird!",
-        "March in place!",
-        "Spin your wrists like helicopter blades!",
-        "Wiggle your fingers like magic sparkles!",
-      ],
-      stretch: [
-        "Take a deep breath in... and out...",
-        "Stretch both arms wide!",
-        "Tilt your head side to side.",
-        "Reach down toward your toes.",
-        "Circle your wrists slowly.",
-        "Roll your neck gently.",
-      ]
-    };
+  // Pip layouts for numbers 1–6
+  const pipLayout = {
+    1: [5],
+    2: [1, 9],
+    3: [1, 5, 9],
+    4: [1, 3, 7, 9],
+    5: [1, 3, 5, 7, 9],
+    6: [1, 3, 4, 6, 7, 9],
+  };
 
-    const display = document.getElementById("display");
-    const themeSel = document.getElementById("theme");
-    const rollBtn = document.getElementById("rollBtn");
+  function drawDie(dieEl, number) {
+    dieEl.innerHTML = "";
+    dieEl.classList.add("bounce");
 
-    function rollMove() {
-      const theme = themeSel.value;
-      const moves = MOVES[theme];
-      const roll = Math.floor(Math.random() * moves.length);
-      display.textContent = moves[roll];
+    setTimeout(() => dieEl.classList.remove("bounce"), 300);
+
+    for (let i = 1; i <= 9; i++) {
+      const spot = document.createElement("div");
+
+      if (pipLayout[number].includes(i)) {
+        spot.className = "pip";
+      }
+
+      dieEl.appendChild(spot);
     }
+  }
 
-    rollBtn.addEventListener("click", rollMove);
-  </script>
+  function rollDice() {
+    const n1 = Math.floor(Math.random() * 6) + 1;
+    const n2 = Math.floor(Math.random() * 6) + 1;
+    drawDie(die1, n1);
+    drawDie(die2, n2);
+  }
+
+  rollBtn.addEventListener("click", rollDice);
+
+  // Spacebar to roll
+  document.addEventListener("keydown", (e) => {
+    if (e.code === "Space") {
+      e.preventDefault();
+      rollDice();
+    }
+  });
+
+  // Fullscreen
+  fsBtn.addEventListener("click", () => {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen();
+    } else {
+      document.exitFullscreen();
+    }
+  });
+
+  // Init
+  rollDice();
+</script>
 </body>
 </html>
