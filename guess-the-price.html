@@ -1,42 +1,86 @@
-[
-  {
-    "name": "Bananas (1 bunch)",
-    "price": 1.49,
-    "image": "https://images.unsplash.com/photo-1571772805064-207c8435df79?q=80&w=1920&auto=format&fit=crop"
-  },
-  {
-    "name": "White Bread (loaf)",
-    "price": 2.49,
-    "image": "https://images.unsplash.com/photo-1549931319-a545dcf3bc73?q=80&w=1920&auto=format&fit=crop"
-  },
-  {
-    "name": "Milk (1 gallon)",
-    "price": 3.99,
-    "image": "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?q=80&w=1920&auto=format&fit=crop"
-  },
-  {
-    "name": "Breakfast Cereal",
-    "price": 3.79,
-    "image": "https://images.unsplash.com/photo-1542838132-92c53300491e?q=80&w=1920&auto=format&fit=crop"
-  },
-  {
-    "name": "Ground Coffee (12 oz)",
-    "price": 6.99,
-    "image": "https://images.unsplash.com/photo-1509042239860-f550ce710b93?q=80&w=1920&auto=format&fit=crop"
-  },
-  {
-    "name": "Toothpaste",
-    "price": 3.49,
-    "image": "https://images.unsplash.com/photo-1622206176268-7591a8d5a1fb?q=80&w=1920&auto=format&fit=crop"
-  },
-  {
-    "name": "Hand Soap",
-    "price": 1.99,
-    "image": "https://images.unsplash.com/photo-1581605405669-fcdf81165afa?q=80&w=1920&auto=format&fit=crop"
-  },
-  {
-    "name": "Facial Tissues",
-    "price": 2.99,
-    "image": "https://images.unsplash.com/photo-1581147318340-39e4f7fd0d43?q=80&w=1920&auto=format&fit=crop"
-  }
-]
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Guess the Price</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    .fade-in {
+      opacity: 0;
+      animation: fadeIn 0.7s forwards;
+    }
+    @keyframes fadeIn {
+      from {opacity: 0;}
+      to {opacity: 1;}
+    }
+  </style>
+</head>
+
+<body class="bg-blue-900 text-white min-h-screen">
+
+  <div class="max-w-3xl mx-auto text-center pt-10 px-4">
+    <h1 class="text-5xl font-extrabold mb-6">Guess the Price</h1>
+
+    <button id="newItemBtn"
+            class="bg-yellow-400 hover:bg-yellow-500 text-blue-900 text-2xl font-bold px-6 py-3 rounded-xl mb-8">
+      New Item
+    </button>
+
+    <!-- Item Display -->
+    <div id="itemContainer" class="bg-white text-blue-900 rounded-2xl shadow-2xl p-6 fade-in">
+      <img id="itemImage" src="" class="w-full h-80 object-cover rounded-xl mb-6 shadow-lg"/>
+      <h2 id="itemName" class="text-4xl font-extrabold mb-4"></h2>
+
+      <input id="guessInput"
+             type="number"
+             placeholder="Enter your guess..."
+             class="w-full text-3xl text-center border-4 border-blue-900 rounded-xl py-3 mb-6"/>
+
+      <button id="revealBtn"
+              class="bg-green-500 hover:bg-green-600 text-white text-2xl font-bold px-6 py-3 rounded-xl mb-4">
+        Reveal Price
+      </button>
+
+      <div id="answer"
+           class="text-5xl font-extrabold mt-4 hidden">
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let items = [];
+
+    async function loadItems() {
+      const response = await fetch("price-items/items.json");
+      items = await response.json();
+    }
+
+    function newItem() {
+      const random = items[Math.floor(Math.random() * items.length)];
+
+      document.getElementById("itemName").textContent = random.name;
+      document.getElementById("itemImage").src = random.image;
+      document.getElementById("answer").classList.add("hidden");
+      document.getElementById("guessInput").value = "";
+      document.getElementById("answer").textContent = "$" + random.price.toFixed(2);
+
+      document.getElementById("itemContainer").classList.remove("fade-in");
+      void itemContainer.offsetWidth;
+      document.getElementById("itemContainer").classList.add("fade-in");
+
+      window.currentItem = random;
+    }
+
+    document.getElementById("newItemBtn").addEventListener("click", newItem);
+
+    document.getElementById("revealBtn").addEventListener("click", () => {
+      document.getElementById("answer").classList.remove("hidden");
+    });
+
+    loadItems().then(newItem);
+  </script>
+
+</body>
+</html>
