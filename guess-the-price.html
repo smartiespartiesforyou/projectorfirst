@@ -1,85 +1,141 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Guess the Price</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Guess the Price — Higher or Lower</title>
   <script src="https://cdn.tailwindcss.com"></script>
 
   <style>
-    .fade-in {
-      opacity: 0;
-      animation: fadeIn 0.7s forwards;
+    .fade {
+      animation: fadein 0.6s ease-out forwards;
     }
-    @keyframes fadeIn {
-      from {opacity: 0;}
-      to {opacity: 1;}
+    @keyframes fadein {
+      from { opacity: 0; transform: scale(0.8); }
+      to   { opacity: 1; transform: scale(1); }
+    }
+
+    .overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.7);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 50;
+      font-size: 10rem;
+      color: white;
+      font-weight: 900;
     }
   </style>
 </head>
 
-<body class="bg-blue-900 text-white min-h-screen">
+<body class="bg-blue-800 text-white min-h-screen">
 
-  <div class="max-w-3xl mx-auto text-center pt-10 px-4">
-    <h1 class="text-5xl font-extrabold mb-6">Guess the Price</h1>
+  <div class="max-w-3xl mx-auto text-center py-10 px-4">
+    <h1 class="text-5xl font-extrabold mb-8">Guess the Price</h1>
 
     <button id="newItemBtn"
-            class="bg-yellow-400 hover:bg-yellow-500 text-blue-900 text-2xl font-bold px-6 py-3 rounded-xl mb-8">
+      class="bg-yellow-400 hover:bg-yellow-500 text-blue-900 text-2xl font-extrabold px-6 py-3 rounded-xl mb-8 shadow">
       New Item
     </button>
 
-    <!-- Item Display -->
-    <div id="itemContainer" class="bg-white text-blue-900 rounded-2xl shadow-2xl p-6 fade-in">
-      <img id="itemImage" src="" class="w-full h-80 object-cover rounded-xl mb-6 shadow-lg"/>
-      <h2 id="itemName" class="text-4xl font-extrabold mb-4"></h2>
+    <!-- Image -->
+    <div class="bg-white rounded-xl shadow-xl p-4 mb-6">
+      <img id="itemImage" src="" alt="Item Image" class="w-full max-h-[400px] object-contain mx-auto fade">
+    </div>
 
-      <input id="guessInput"
-             type="number"
-             placeholder="Enter your guess..."
-             class="w-full text-3xl text-center border-4 border-blue-900 rounded-xl py-3 mb-6"/>
+    <!-- Item Name -->
+    <h2 id="itemName" class="text-4xl font-bold mb-4"></h2>
 
-      <button id="revealBtn"
-              class="bg-green-500 hover:bg-green-600 text-white text-2xl font-bold px-6 py-3 rounded-xl mb-4">
-        Reveal Price
+    <!-- Fake Price -->
+    <p class="text-3xl mb-6">
+      Fake Price:
+      <span id="fakePrice" class="font-extrabold text-yellow-300"></span>
+    </p>
+
+    <!-- Buttons -->
+    <div class="flex justify-center gap-6 mb-10">
+      <button id="higherBtn"
+        class="bg-green-500 hover:bg-green-600 text-3xl font-bold px-8 py-4 rounded-xl shadow">
+        Higher
       </button>
 
-      <div id="answer"
-           class="text-5xl font-extrabold mt-4 hidden">
-      </div>
+      <button id="lowerBtn"
+        class="bg-red-500 hover:bg-red-600 text-3xl font-bold px-8 py-4 rounded-xl shadow">
+        Lower
+      </button>
     </div>
+
+    <!-- Real Price Reveal -->
+    <div id="realPriceBox" class="hidden text-4xl font-extrabold mt-6"></div>
   </div>
+
+  <!-- Overlay for ✔️ or ✖️ -->
+  <div id="overlay" class="overlay hidden"></div>
 
   <script>
     let items = [];
+    let currentItem = null;
+    let fakePrice = 0;
 
     async function loadItems() {
-      const response = await fetch("price-items/items.json");
+      const response = await fetch("/price-items/items.json");
       items = await response.json();
     }
 
     function newItem() {
       const random = items[Math.floor(Math.random() * items.length)];
+      currentItem = random;
 
-      document.getElementById("itemName").textContent = random.name;
+      // Fake price ± up to $3.00
+      const offset = (Math.random() * 6 - 3).toFixed(2);
+      fakePrice = (parseFloat(random.price) + parseFloat(offset)).toFixed(2);
+
+      // Update UI
       document.getElementById("itemImage").src = random.image;
-      document.getElementById("answer").classList.add("hidden");
-      document.getElementById("guessInput").value = "";
-      document.getElementById("answer").textContent = "$" + random.price.toFixed(2);
-
-      document.getElementById("itemContainer").classList.remove("fade-in");
-      void itemContainer.offsetWidth;
-      document.getElementById("itemContainer").classList.add("fade-in");
-
-      window.currentItem = random;
+      document.getElementById("itemName").textContent = random.name;
+      document.getElementById("fakePrice").textContent = "$" + fakePrice;
+      document.getElementById("realPriceBox").classList.add("hidden");
     }
 
+    function showOverlay(symbol, color) {
+      const overlay = document.getElementById("overlay");
+      overlay.textContent = symbol;
+      overlay.style.color = color;
+      overlay.classList.remove("hidden");
+
+      setTimeout(() => overlay.classList.add("hidden"), 1500);
+    }
+
+    function guess(isHigher) {
+      const real = parseFloat(currentItem.price);
+      const fake = parseFloat(fakePrice);
+
+      const correct =
+        (isHigher && real > fake) ||
+        (!isHigher && real < fake);
+
+      if (correct) {
+        showOverlay("✔️", "lime");
+        document.getElementById("realPriceBox").textContent =
+          "Correct! Real Price: $" + real.toFixed(2);
+      } else {
+        showOverlay("✖️", "red");
+        document.getElementById("realPriceBox").textContent =
+          "Wrong! Real Price: $" + real.toFixed(2);
+      }
+
+      document.getElementById("realPriceBox").classList.remove("hidden");
+    }
+
+    // Event Listeners
     document.getElementById("newItemBtn").addEventListener("click", newItem);
+    document.getElementById("higherBtn").addEventListener("click", () => guess(true));
+    document.getElementById("lowerBtn").addEventListener("click", () => guess(false));
 
-    document.getElementById("revealBtn").addEventListener("click", () => {
-      document.getElementById("answer").classList.remove("hidden");
-    });
-
-    loadItems().then(newItem);
+    // Load items & start
+    loadItems().then(() => newItem());
   </script>
 
 </body>
