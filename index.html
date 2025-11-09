@@ -57,37 +57,22 @@
 <body data-ms-content="public" class="bg-white text-black">
   <a href="#main" class="skip-link">Skip to main content</a>
 
-  <!-- ✅ ✅ ✅ FREE TRIAL BANNER ADDED HERE ✅ ✅ ✅ -->
-  <div style="
-    width: 100%;
-    background: #1E3A8A;
-    color: white;
-    padding: 30px 20px;
-    text-align: center;
-    font-family: Arial, sans-serif;
-  ">
-    <h2 style="margin: 0; font-size: 36px; font-weight: bold;">
+  <!-- ✅ ✅ ✅ RESPONSIVE FREE TRIAL BANNER ✅ ✅ ✅ -->
+  <div class="w-full bg-blue-900 text-white text-center px-4 py-6 sm:py-10">
+    <h2 class="text-2xl sm:text-4xl font-extrabold mb-2">
       Start Your 30-Day Free Trial — No Credit Card Needed
     </h2>
 
-    <p style="margin: 10px 0 20px; font-size: 20px;">
+    <p class="text-lg sm:text-2xl mb-6 max-w-3xl mx-auto">
       Instant access to all ProjectorFirst games: Bingo, Move & Groove, Memory Match, Trivia, and more.
     </p>
 
-    <a href="/signup.html" style="
-      background: #FACC15;
-      color: #1E293B;
-      padding: 14px 28px;
-      border-radius: 10px;
-      font-size: 22px;
-      font-weight: bold;
-      text-decoration: none;
-      display: inline-block;
-    ">
+    <a href="/signup.html"
+       class="inline-block bg-yellow-400 text-gray-900 font-bold text-xl sm:text-2xl px-6 py-3 rounded-xl shadow hover:bg-yellow-300">
       Start Free Trial
     </a>
   </div>
-  <!-- ✅ ✅ ✅ END OF BANNER ✅ ✅ ✅ -->
+  <!-- ✅ ✅ ✅ END RESPONSIVE BANNER ✅ ✅ ✅ -->
 
 
 <!-- Header -->
@@ -101,7 +86,7 @@
 
     <!-- Navigation -->
     <nav class="space-x-2" aria-label="Primary">
-      <!-- Main links -->
+
       <a href="index.html"
          class="px-5 py-3 rounded-xl bg-blue-900 text-white text-xl font-bold focus:outline-none focus:ring-4 focus:ring-blue-400">
         Home
@@ -119,7 +104,7 @@
         Contact
       </a>
 
-      <!-- ✅ Show only when logged OUT -->
+      <!-- Logged OUT -->
       <a href="#" data-ms-modal="signup" data-ms-content="!members"
          class="px-5 py-3 rounded-xl bg-green-700 text-white text-xl font-bold hover:bg-green-600 transition focus:outline-none focus:ring-4 focus:ring-green-400">
         Sign up
@@ -129,7 +114,7 @@
         Log in
       </a>
 
-      <!-- ✅ Show only when logged IN -->
+      <!-- Logged IN -->
       <a href="#" data-ms-profile="true" data-ms-content="members"
          class="px-5 py-3 rounded-xl bg-green-700 text-white text-xl font-bold hover:bg-green-600 transition focus:outline-none focus:ring-4 focus:ring-green-400">
         My Account
@@ -138,6 +123,7 @@
          class="px-5 py-3 rounded-xl bg-gray-700 text-white text-xl font-bold hover:bg-gray-600 transition focus:outline-none focus:ring-4 focus:ring-gray-400">
         Log out
       </a>
+
     </nav>
   </div>
 </header>
