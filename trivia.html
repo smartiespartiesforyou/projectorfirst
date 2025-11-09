@@ -1,214 +1,156 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>❓ Trivia Game — ProjectorFirst</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Trivia — ProjectorFirst</title>
   <script src="https://cdn.tailwindcss.com"></script>
 
-  <!-- ✅ Memberstack Loader -->
-  <script 
-    data-memberstack-app="app_cmgnwpg8y00x10suih4pua785"
-    src="https://static.memberstack.com/scripts/v2/memberstack.js"
-    type="text/javascript">
-  </script>
-
-  <!-- ✅ Protect Page -->
-  <script>
-    document.addEventListener("DOMContentLoaded", async () => {
-      try {
-        const member = await window.$memberstackDom.getCurrentMember();
-        if (!member.data) window.location.href = "/subscribe.html";
-      } catch {
-        window.location.href = "/subscribe.html";
-      }
-    });
-  </script>
-
   <style>
-    body {
-      background: #fff;
-      color: #111;
-      font-family: ui-sans-serif, system-ui, -apple-system, sans-serif;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: flex-start;
-      min-height: 100vh;
-      padding: 1rem;
-    }
-    h1 {
-      font-size: 3rem;
-      font-weight: 800;
-      color: #1e3a8a;
-      margin-bottom: 1rem;
-    }
-    .question-box {
-      background: #000;
-      color: #fff;
-      font-size: clamp(2rem, 5vw, 3.5rem);
-      font-weight: 700;
-      padding: 2rem;
-      border-radius: 1.25rem;
-      margin-top: 1rem;
-      box-shadow: 0 0 20px rgba(0,0,0,0.3);
-      min-height: 200px;
-      display: flex;
-      align-items: center;
+    body { background: #0d2a7a; color: white; }
+    .modal-bg {
+      background: rgba(0,0,0,0.55);
+      position: fixed;
+      inset: 0;
+      display: none;
       justify-content: center;
-      text-align: center;
+      align-items: center;
+      z-index: 50;
     }
-    .answer-box {
-      font-size: 2rem;
+    .modal {
+      background: white;
+      color: black;
+      border-radius: 20px;
+      padding: 30px;
+      width: 90%;
+      max-width: 700px;
+    }
+    .big-btn {
+      font-size: 32px;
+      padding: 20px 40px;
       font-weight: 700;
-      margin-top: 1rem;
-      min-height: 60px;
+      border-radius: 16px;
     }
-    .btn {
-      font-size: 1.5rem;
-      font-weight: bold;
-      padding: 1rem 2rem;
-      border-radius: 1rem;
-      cursor: pointer;
-      transition: transform 0.1s;
-    }
-    .btn:hover { transform: scale(1.05); }
-    .btn-primary { background: #1e3a8a; color: white; }
-    .btn-true { background: #16a34a; color: white; }
-    .btn-false { background: #dc2626; color: white; }
   </style>
 </head>
 
-<body>
-  <main class="w-full max-w-5xl text-center">
-    <div class="mb-4">
-      <a href="apps.html" class="btn btn-primary">⬅ Back to Apps</a>
+<body class="min-h-screen">
+
+  <!-- Header -->
+  <div class="flex justify-between items-center p-6">
+    <a href="apps.html" class="text-white text-xl font-bold bg-blue-900 px-5 py-3 rounded-xl">← Back to Apps</a>
+    <button id="openEditor" class="text-white text-xl font-bold bg-purple-700 px-6 py-3 rounded-xl">
+      Question Editor
+    </button>
+  </div>
+
+  <!-- Question Display -->
+  <div class="text-center mt-16">
+    <h1 id="questionDisplay" class="text-6xl font-extrabold mb-10">Press “Next Question”</h1>
+    <button id="revealBtn" class="big-btn bg-green-600 hover:bg-green-500 hidden">Reveal Answer</button>
+    <h2 id="answerDisplay" class="text-6xl font-extrabold text-yellow-300 mt-10 hidden"></h2>
+
+    <div class="mt-16">
+      <button id="nextBtn" class="big-btn bg-blue-600 hover:bg-blue-500">Next Question</button>
     </div>
+  </div>
 
-    <h1>❓ Trivia Game</h1>
+  <!-- ✅ Modal Editor -->
+  <div id="modalBg" class="modal-bg">
+    <div class="modal">
+      <div class="flex justify-between items-center mb-4">
+        <h2 class="text-3xl font-bold">Question Editor</h2>
+        <button id="closeEditor" class="text-xl font-bold px-4 py-1 bg-gray-300 rounded-lg">Close</button>
+      </div>
 
-    <!-- ✅ Dropdown for Theme -->
-    <div class="mb-6 text-left">
-      <label for="theme" class="block text-xl font-semibold text-blue-900 mb-2">Choose Theme</label>
-      <select id="theme" class="w-full text-2xl p-3 border-2 border-blue-900 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-400"></select>
+      <label class="font-bold">Question</label>
+      <input id="inputQuestion" class="w-full border p-3 rounded-xl mb-4" placeholder="Type your question…">
+
+      <label class="font-bold">Correct Answer</label>
+      <input id="inputAnswer" class="w-full border p-3 rounded-xl mb-6" placeholder="Type the correct answer…">
+
+      <div class="flex gap-4">
+        <button id="saveBtn" class="bg-green-600 text-white font-bold px-6 py-3 rounded-xl">
+          Save Question
+        </button>
+      </div>
+
+      <h3 class="text-xl font-bold mt-8 mb-2">Your Saved Questions</h3>
+      <ul id="savedList" class="space-y-2 text-lg"></ul>
     </div>
-
-    <!-- ✅ Question + Answer -->
-    <div id="questionBox" class="question-box">Press "Next Question" to begin</div>
-    <div id="answerBox" class="answer-box"></div>
-
-    <!-- ✅ Buttons -->
-    <div class="flex flex-wrap justify-center gap-4 mt-6">
-      <button onclick="nextQuestion()" class="btn btn-primary">Next Question</button>
-      <button onclick="checkAnswer(true)" class="btn btn-true">True</button>
-      <button onclick="checkAnswer(false)" class="btn btn-false">False</button>
-    </div>
-  </main>
+  </div>
 
   <script>
-    const QUESTIONS = {
-      general: [
-        {q:"The capital of France is Paris.",a:true},
-        {q:"There are 8 continents on Earth.",a:false},
-        {q:"The Great Wall of China is visible from space.",a:false},
-        {q:"A triangle has three sides.",a:true},
-        {q:"The Pacific Ocean is the largest ocean.",a:true},
-      ],
-      holidays: [
-        {q:"Christmas is celebrated on December 25.",a:true},
-        {q:"Halloween is in July.",a:false},
-        {q:"People celebrate New Year’s Day on January 1.",a:true},
-        {q:"Easter always falls on the same date.",a:false},
-        {q:"Independence Day in the USA is July 4.",a:true},
-      ],
-      movies: [
-        {q:"Leonardo DiCaprio starred in Titanic.",a:true},
-        {q:"The wizarding school in Harry Potter is called Hogwarts.",a:true},
-        {q:"Batman’s real name is Clark Kent.",a:false},
-        {q:"Toy Story features a cowboy named Woody.",a:true},
-        {q:"Steven Spielberg directed Jaws.",a:true},
-      ],
-      residentRights: [
-        {q:"Residents have the right to make their own choices about their daily routine.",a:true},
-        {q:"Staff can read a resident’s mail if they suspect it has bad news.",a:false},
-        {q:"Residents can refuse any medication or treatment.",a:true},
-        {q:"Residents have the right to privacy during personal care.",a:true},
-        {q:"Residents have the right to voice complaints without punishment.",a:true},
-      ],
-      science: [
-        {q:"Mars is called the Red Planet.",a:true},
-        {q:"Plants take in oxygen and release carbon dioxide.",a:false},
-        {q:"Gravity keeps us on the ground.",a:true},
-        {q:"The nucleus is the center of an atom.",a:true},
-        {q:"Venus is the hottest planet.",a:true},
-      ],
-      sports: [
-        {q:"A baseball team has 9 players.",a:true},
-        {q:"Soccer is played with a puck.",a:false},
-        {q:"Basketball uses a hoop and ball.",a:true},
-        {q:"A strike in bowling means all pins are knocked down.",a:true},
-        {q:"Hockey uses a puck.",a:true},
-      ]
+    let questions = JSON.parse(localStorage.getItem("triviaQuestions") || "[]");
+    const modalBg = document.getElementById("modalBg");
+
+    function updateSavedList() {
+      const list = document.getElementById("savedList");
+      list.innerHTML = "";
+
+      questions.forEach((q, i) => {
+        const li = document.createElement("li");
+        li.innerHTML = `<div class='flex justify-between bg-gray-100 p-3 rounded-xl'>
+          <div>${i + 1}. <strong>${q.question}</strong></div>
+          <button onclick="deleteQuestion(${i})" class='bg-red-500 text-white px-3 py-1 rounded-lg'>Delete</button>
+        </div>`;
+        list.appendChild(li);
+      });
+    }
+
+    function deleteQuestion(index) {
+      questions.splice(index, 1);
+      localStorage.setItem("triviaQuestions", JSON.stringify(questions));
+      updateSavedList();
+    }
+
+    // OPEN EDITOR
+    document.getElementById("openEditor").onclick = () => {
+      modalBg.style.display = "flex";
+      updateSavedList();
     };
 
-    let currentTheme = "general";
-    let questionPool = [];
-    let currentQuestion = null;
+    // CLOSE EDITOR
+    document.getElementById("closeEditor").onclick = () => {
+      modalBg.style.display = "none";
+    };
 
-    function initThemePicker() {
-      const sel = document.getElementById("theme");
-      sel.innerHTML = "";
-      Object.keys(QUESTIONS).forEach(key => {
-        const opt = document.createElement("option");
-        opt.value = key;
-        opt.textContent = key.charAt(0).toUpperCase() + key.slice(1);
-        if (key === currentTheme) opt.selected = true;
-        sel.appendChild(opt);
-      });
-      sel.addEventListener("change", (e) => {
-        currentTheme = e.target.value;
-        resetGame();
-      });
-      resetGame();
-    }
+    // SAVE QUESTION
+    document.getElementById("saveBtn").onclick = () => {
+      const q = document.getElementById("inputQuestion").value.trim();
+      const a = document.getElementById("inputAnswer").value.trim();
 
-    function resetGame() {
-      questionPool = [...QUESTIONS[currentTheme]];
-      shuffle(questionPool);
-      document.getElementById("questionBox").textContent = "Press 'Next Question' to begin";
-      document.getElementById("answerBox").textContent = "";
-      currentQuestion = null;
-    }
+      if (!q || !a) return alert("Please enter both question and answer.");
 
-    function shuffle(arr) {
-      const randomValues = new Uint32Array(arr.length);
-      crypto.getRandomValues(randomValues);
-      for (let i = arr.length - 1; i > 0; i--) {
-        const j = randomValues[i] % (i + 1);
-        [arr[i], arr[j]] = [arr[j], arr[i]];
+      questions.push({ question: q, answer: a });
+      localStorage.setItem("triviaQuestions", JSON.stringify(questions));
+
+      document.getElementById("inputQuestion").value = "";
+      document.getElementById("inputAnswer").value = "";
+      updateSavedList();
+    };
+
+    // GAME LOGIC
+    let current = null;
+
+    document.getElementById("nextBtn").onclick = () => {
+      if (questions.length === 0) {
+        alert("Add questions first!");
+        return;
       }
-    }
 
-    function nextQuestion() {
-      if (questionPool.length === 0) resetGame();
-      currentQuestion = questionPool.pop();
-      document.getElementById("questionBox").textContent = currentQuestion.q;
-      document.getElementById("answerBox").textContent = "";
-    }
+      current = questions[Math.floor(Math.random() * questions.length)];
 
-    function checkAnswer(choice) {
-      if (!currentQuestion) return;
-      const answerBox = document.getElementById("answerBox");
-      if (choice === currentQuestion.a) {
-        answerBox.textContent = "✅ Correct!";
-        answerBox.style.color = "green";
-      } else {
-        answerBox.textContent = "❌ Wrong!";
-        answerBox.style.color = "red";
-      }
-    }
+      document.getElementById("questionDisplay").textContent = current.question;
+      document.getElementById("answerDisplay").classList.add("hidden");
+      document.getElementById("revealBtn").classList.remove("hidden");
+    };
 
-    initThemePicker();
+    document.getElementById("revealBtn").onclick = () => {
+      document.getElementById("answerDisplay").textContent = current.answer;
+      document.getElementById("answerDisplay").classList.remove("hidden");
+      document.getElementById("revealBtn").classList.add("hidden");
+    };
   </script>
 </body>
 </html>
