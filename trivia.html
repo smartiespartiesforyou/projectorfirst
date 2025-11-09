@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>True or False — ProjectorFirst</title>
+  <title>Trivia — ProjectorFirst</title>
   <script src="https://cdn.tailwindcss.com"></script>
 
   <style>
@@ -51,9 +51,16 @@
     </button>
   </div>
 
-  <!-- Game Display -->
-  <div class="text-center mt-16 px-4">
-    <h1 class="text-6xl font-extrabold mb-10">True or False?</h1>
+  <!-- CATEGORY SELECT SCREEN -->
+  <div id="categoryScreen" class="text-center mt-10 px-6">
+    <h1 class="text-6xl font-extrabold mb-10">Choose a Category</h1>
+
+    <div id="categoryButtons" class="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-3xl mx-auto"></div>
+  </div>
+
+  <!-- GAME SCREEN -->
+  <div id="gameScreen" class="text-center mt-16 px-4 hidden">
+    <h1 class="text-6xl font-extrabold mb-10" id="categoryTitle">Category</h1>
 
     <h2 id="questionDisplay" class="text-5xl font-bold mb-16">
       Press “Next Question”
@@ -75,7 +82,7 @@
     </button>
   </div>
 
-  <!-- ✅ Modal Editor -->
+  <!-- ✅ QUESTION EDITOR MODAL -->
   <div id="modalBg" class="modal-bg">
     <div class="modal">
       <div class="flex justify-between items-center mb-6">
@@ -86,6 +93,13 @@
       <label class="font-bold">Question</label>
       <input id="inputQuestion" class="w-full border p-3 rounded-xl mb-4"
              placeholder="Type your true/false question…">
+
+      <label class="font-bold">Category</label>
+      <select id="inputCategory" class="w-full border p-3 rounded-xl mb-4"></select>
+
+      <input id="newCategoryInput"
+             class="w-full border p-3 rounded-xl mb-4 hidden"
+             placeholder="Enter new category…">
 
       <label class="font-bold">Correct Answer</label>
       <select id="inputAnswer" class="w-full border p-3 rounded-xl mb-6">
@@ -98,36 +112,67 @@
       </button>
 
       <h3 class="text-xl font-bold mt-8 mb-2">Your Saved Questions</h3>
-
       <ul id="savedList" class="space-y-2 text-lg"></ul>
     </div>
   </div>
 
   <script>
+    // DEFAULT CATEGORIES
+    let categories = JSON.parse(localStorage.getItem("tfCategories") || "[]");
+    if (categories.length === 0) {
+      categories = ["Bible", "Animals", "History", "Food", "Fun Facts"];
+      localStorage.setItem("tfCategories", JSON.stringify(categories));
+    }
+
+    // QUESTION DATA
     let questions = JSON.parse(localStorage.getItem("tfQuestions") || "[]");
+
+    // HTML REFERENCES
     const modalBg = document.getElementById("modalBg");
+    const categoryButtons = document.getElementById("categoryButtons");
+    const inputCategory = document.getElementById("inputCategory");
+    const newCategoryInput = document.getElementById("newCategoryInput");
 
-    function updateSavedList() {
-      const list = document.getElementById("savedList");
-      list.innerHTML = "";
-
-      questions.forEach((q, i) => {
-        const li = document.createElement("li");
-        li.innerHTML = `
-          <div class="flex justify-between bg-gray-100 p-3 rounded-xl">
-            <div>${i + 1}. <strong>${q.question}</strong> — ${q.answer}</div>
-            <button onclick="deleteQuestion(${i})"
-            class="bg-red-500 text-white px-3 py-1 rounded-lg">Delete</button>
-          </div>`;
-        list.appendChild(li);
+    // RENDER CATEGORY BUTTONS
+    function renderCategoryButtons() {
+      categoryButtons.innerHTML = "";
+      categories.forEach(cat => {
+        const btn = document.createElement("button");
+        btn.className = "bg-blue-700 hover:bg-blue-600 text-white text-3xl font-bold py-6 rounded-2xl";
+        btn.textContent = cat;
+        btn.onclick = () => startCategory(cat);
+        categoryButtons.appendChild(btn);
       });
     }
 
-    function deleteQuestion(index) {
-      questions.splice(index, 1);
-      localStorage.setItem("tfQuestions", JSON.stringify(questions));
-      updateSavedList();
+    renderCategoryButtons();
+
+    // SETUP CATEGORY DROPDOWN
+    function updateCategoryDropdown() {
+      inputCategory.innerHTML = "";
+
+      categories.forEach(cat => {
+        const opt = document.createElement("option");
+        opt.value = cat;
+        opt.textContent = cat;
+        inputCategory.appendChild(opt);
+      });
+
+      const addNew = document.createElement("option");
+      addNew.value = "__NEW__";
+      addNew.textContent = "+ Add New Category";
+      inputCategory.appendChild(addNew);
     }
+
+    updateCategoryDropdown();
+
+    inputCategory.onchange = () => {
+      if (inputCategory.value === "__NEW__") {
+        newCategoryInput.classList.remove("hidden");
+      } else {
+        newCategoryInput.classList.add("hidden");
+      }
+    };
 
     // OPEN EDITOR
     document.getElementById("openEditor").onclick = () => {
@@ -138,43 +183,89 @@
     // CLOSE EDITOR
     document.getElementById("closeEditor").onclick = () => {
       modalBg.style.display = "none";
+      newCategoryInput.value = "";
+      newCategoryInput.classList.add("hidden");
     };
 
     // SAVE QUESTION
     document.getElementById("saveBtn").onclick = () => {
       const q = document.getElementById("inputQuestion").value.trim();
+      let cat = inputCategory.value;
       const a = document.getElementById("inputAnswer").value;
 
       if (!q) return alert("Please enter a question.");
 
-      questions.push({ question: q, answer: a });
+      if (cat === "__NEW__") {
+        cat = newCategoryInput.value.trim();
+        if (!cat) return alert("Enter a category name.");
+        categories.push(cat);
+        localStorage.setItem("tfCategories", JSON.stringify(categories));
+        renderCategoryButtons();
+        updateCategoryDropdown();
+      }
+
+      questions.push({ question: q, answer: a, category: cat });
       localStorage.setItem("tfQuestions", JSON.stringify(questions));
 
       document.getElementById("inputQuestion").value = "";
+      newCategoryInput.value = "";
+      newCategoryInput.classList.add("hidden");
+      inputCategory.value = cat;
+
       updateSavedList();
     };
 
+    function updateSavedList() {
+      const list = document.getElementById("savedList");
+      list.innerHTML = "";
+
+      questions.forEach((q, i) => {
+        const li = document.createElement("li");
+        li.innerHTML = `
+          <div class="flex justify-between bg-gray-100 p-3 rounded-xl">
+            <div><strong>${q.question}</strong> — ${q.answer} <em>(${q.category})</em></div>
+            <button onclick="deleteQuestion(${i})"
+            class="bg-red-500 text-white px-3 py-1 rounded-lg">Delete</button>
+          </div>`;
+        list.appendChild(li);
+      });
+    }
+
+    function deleteQuestion(i) {
+      questions.splice(i, 1);
+      localStorage.setItem("tfQuestions", JSON.stringify(questions));
+      updateSavedList();
+    }
+
     // GAME LOGIC
     let current = null;
+    let filtered = [];
+
+    function startCategory(cat) {
+      filtered = questions.filter(q => q.category === cat);
+
+      document.getElementById("categoryScreen").classList.add("hidden");
+      document.getElementById("gameScreen").classList.remove("hidden");
+
+      document.getElementById("categoryTitle").textContent = cat;
+    }
 
     document.getElementById("nextBtn").onclick = () => {
-      if (questions.length === 0) {
-        alert("Add at least one question first!");
+      if (filtered.length === 0) {
+        alert("No questions in this category yet!");
         return;
       }
 
-      current = questions[Math.floor(Math.random() * questions.length)];
+      current = filtered[Math.floor(Math.random() * filtered.length)];
 
       document.getElementById("questionDisplay").textContent = current.question;
       document.getElementById("answerDisplay").classList.add("hidden");
-
       document.getElementById("trueBtn").classList.remove("hidden");
       document.getElementById("falseBtn").classList.remove("hidden");
     };
 
     function checkAnswer(choice) {
       let correct = current.answer === choice;
-
       document.getElementById("answerDisplay").textContent =
         correct ? "✅ Correct!" : "❌ Wrong!";
       document.getElementById("answerDisplay").classList.remove("hidden");
