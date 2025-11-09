@@ -3,11 +3,15 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Trivia — ProjectorFirst</title>
+  <title>True or False — ProjectorFirst</title>
   <script src="https://cdn.tailwindcss.com"></script>
 
   <style>
-    body { background: #0d2a7a; color: white; }
+    body {
+      background: #0b2a8a;
+      color: white;
+      font-family: Arial, sans-serif;
+    }
     .modal-bg {
       background: rgba(0,0,0,0.55);
       position: fixed;
@@ -26,62 +30,81 @@
       max-width: 700px;
     }
     .big-btn {
-      font-size: 32px;
-      padding: 20px 40px;
-      font-weight: 700;
-      border-radius: 16px;
+      font-size: 40px;
+      padding: 25px 60px;
+      border-radius: 20px;
+      font-weight: 800;
     }
   </style>
 </head>
 
-<body class="min-h-screen">
+<body>
 
   <!-- Header -->
   <div class="flex justify-between items-center p-6">
-    <a href="apps.html" class="text-white text-xl font-bold bg-blue-900 px-5 py-3 rounded-xl">← Back to Apps</a>
+    <a href="apps.html" class="text-white text-xl font-bold bg-blue-900 px-5 py-3 rounded-xl">
+      ← Back to Apps
+    </a>
+
     <button id="openEditor" class="text-white text-xl font-bold bg-purple-700 px-6 py-3 rounded-xl">
       Question Editor
     </button>
   </div>
 
-  <!-- Question Display -->
-  <div class="text-center mt-16">
-    <h1 id="questionDisplay" class="text-6xl font-extrabold mb-10">Press “Next Question”</h1>
-    <button id="revealBtn" class="big-btn bg-green-600 hover:bg-green-500 hidden">Reveal Answer</button>
-    <h2 id="answerDisplay" class="text-6xl font-extrabold text-yellow-300 mt-10 hidden"></h2>
+  <!-- Game Display -->
+  <div class="text-center mt-16 px-4">
+    <h1 class="text-6xl font-extrabold mb-10">True or False?</h1>
 
-    <div class="mt-16">
-      <button id="nextBtn" class="big-btn bg-blue-600 hover:bg-blue-500">Next Question</button>
+    <h2 id="questionDisplay" class="text-5xl font-bold mb-16">
+      Press “Next Question”
+    </h2>
+
+    <div class="flex justify-center gap-10 mb-16">
+      <button id="trueBtn" class="big-btn bg-green-600 hover:bg-green-500 hidden">
+        TRUE
+      </button>
+      <button id="falseBtn" class="big-btn bg-red-600 hover:bg-red-500 hidden">
+        FALSE
+      </button>
     </div>
+
+    <h2 id="answerDisplay" class="text-6xl font-extrabold mt-10 hidden"></h2>
+
+    <button id="nextBtn" class="big-btn bg-blue-600 hover:bg-blue-500 mt-12">
+      Next Question
+    </button>
   </div>
 
   <!-- ✅ Modal Editor -->
   <div id="modalBg" class="modal-bg">
     <div class="modal">
-      <div class="flex justify-between items-center mb-4">
+      <div class="flex justify-between items-center mb-6">
         <h2 class="text-3xl font-bold">Question Editor</h2>
-        <button id="closeEditor" class="text-xl font-bold px-4 py-1 bg-gray-300 rounded-lg">Close</button>
+        <button id="closeEditor" class="px-4 py-1 bg-gray-300 rounded-xl font-bold">Close</button>
       </div>
 
       <label class="font-bold">Question</label>
-      <input id="inputQuestion" class="w-full border p-3 rounded-xl mb-4" placeholder="Type your question…">
+      <input id="inputQuestion" class="w-full border p-3 rounded-xl mb-4"
+             placeholder="Type your true/false question…">
 
       <label class="font-bold">Correct Answer</label>
-      <input id="inputAnswer" class="w-full border p-3 rounded-xl mb-6" placeholder="Type the correct answer…">
+      <select id="inputAnswer" class="w-full border p-3 rounded-xl mb-6">
+        <option value="TRUE">TRUE</option>
+        <option value="FALSE">FALSE</option>
+      </select>
 
-      <div class="flex gap-4">
-        <button id="saveBtn" class="bg-green-600 text-white font-bold px-6 py-3 rounded-xl">
-          Save Question
-        </button>
-      </div>
+      <button id="saveBtn" class="bg-green-600 text-white font-bold px-6 py-3 rounded-xl">
+        Save Question
+      </button>
 
       <h3 class="text-xl font-bold mt-8 mb-2">Your Saved Questions</h3>
+
       <ul id="savedList" class="space-y-2 text-lg"></ul>
     </div>
   </div>
 
   <script>
-    let questions = JSON.parse(localStorage.getItem("triviaQuestions") || "[]");
+    let questions = JSON.parse(localStorage.getItem("tfQuestions") || "[]");
     const modalBg = document.getElementById("modalBg");
 
     function updateSavedList() {
@@ -90,17 +113,19 @@
 
       questions.forEach((q, i) => {
         const li = document.createElement("li");
-        li.innerHTML = `<div class='flex justify-between bg-gray-100 p-3 rounded-xl'>
-          <div>${i + 1}. <strong>${q.question}</strong></div>
-          <button onclick="deleteQuestion(${i})" class='bg-red-500 text-white px-3 py-1 rounded-lg'>Delete</button>
-        </div>`;
+        li.innerHTML = `
+          <div class="flex justify-between bg-gray-100 p-3 rounded-xl">
+            <div>${i + 1}. <strong>${q.question}</strong> — ${q.answer}</div>
+            <button onclick="deleteQuestion(${i})"
+            class="bg-red-500 text-white px-3 py-1 rounded-lg">Delete</button>
+          </div>`;
         list.appendChild(li);
       });
     }
 
     function deleteQuestion(index) {
       questions.splice(index, 1);
-      localStorage.setItem("triviaQuestions", JSON.stringify(questions));
+      localStorage.setItem("tfQuestions", JSON.stringify(questions));
       updateSavedList();
     }
 
@@ -118,15 +143,14 @@
     // SAVE QUESTION
     document.getElementById("saveBtn").onclick = () => {
       const q = document.getElementById("inputQuestion").value.trim();
-      const a = document.getElementById("inputAnswer").value.trim();
+      const a = document.getElementById("inputAnswer").value;
 
-      if (!q || !a) return alert("Please enter both question and answer.");
+      if (!q) return alert("Please enter a question.");
 
       questions.push({ question: q, answer: a });
-      localStorage.setItem("triviaQuestions", JSON.stringify(questions));
+      localStorage.setItem("tfQuestions", JSON.stringify(questions));
 
       document.getElementById("inputQuestion").value = "";
-      document.getElementById("inputAnswer").value = "";
       updateSavedList();
     };
 
@@ -135,7 +159,7 @@
 
     document.getElementById("nextBtn").onclick = () => {
       if (questions.length === 0) {
-        alert("Add questions first!");
+        alert("Add at least one question first!");
         return;
       }
 
@@ -143,14 +167,22 @@
 
       document.getElementById("questionDisplay").textContent = current.question;
       document.getElementById("answerDisplay").classList.add("hidden");
-      document.getElementById("revealBtn").classList.remove("hidden");
+
+      document.getElementById("trueBtn").classList.remove("hidden");
+      document.getElementById("falseBtn").classList.remove("hidden");
     };
 
-    document.getElementById("revealBtn").onclick = () => {
-      document.getElementById("answerDisplay").textContent = current.answer;
+    function checkAnswer(choice) {
+      let correct = current.answer === choice;
+
+      document.getElementById("answerDisplay").textContent =
+        correct ? "✅ Correct!" : "❌ Wrong!";
       document.getElementById("answerDisplay").classList.remove("hidden");
-      document.getElementById("revealBtn").classList.add("hidden");
-    };
+    }
+
+    document.getElementById("trueBtn").onclick = () => checkAnswer("TRUE");
+    document.getElementById("falseBtn").onclick = () => checkAnswer("FALSE");
   </script>
+
 </body>
 </html>
