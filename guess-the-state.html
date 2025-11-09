@@ -2,156 +2,77 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Guess the State — ProjectorFirst</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Guess the State</title>
   <script src="https://cdn.tailwindcss.com"></script>
-
   <style>
-    svg {
-      width: 100%;
-      max-width: 1400px;
-      margin: auto;
-      display: block;
-    }
-
-    .state {
-      fill: none;
-      stroke: #0a3a8a;
-      stroke-width: 2.2;
-      cursor: pointer;
-      transition: 0.2s;
-    }
-
-    .highlight {
-      stroke: #ff4b4b !important;
-      stroke-width: 6 !important;
-    }
-
-    #codeBox {
-      font-size: 90px;
+    .bigtext {
+      font-size: 3rem;
       font-weight: 900;
-      color: #0a3a8a;
-      margin-top: 25px;
-      opacity: 0;
-      transition: opacity 0.4s;
+      letter-spacing: 1px;
+    }
+    .clue-box {
+      font-size: 2rem;
+      font-weight: 700;
     }
   </style>
 </head>
 
-<body class="bg-white text-gray-900">
-  <div class="w-full px-4 py-6 text-center">
+<body class="bg-blue-900 text-white min-h-screen flex flex-col items-center p-6">
 
-    <h1 class="text-6xl font-extrabold text-blue-900 mb-6">Guess the State</h1>
+  <h1 class="text-4xl font-extrabold mb-10">Guess the State</h1>
 
-    <div class="flex justify-center gap-4 mb-6 flex-wrap">
-      <a href="apps.html" class="px-8 py-4 bg-blue-800 text-white rounded-xl text-2xl font-bold">
-        ← Back to Apps
-      </a>
-      <button id="fullBtn" class="px-8 py-4 bg-blue-600 text-white rounded-xl text-2xl font-bold">⛶ Full Screen</button>
-      <button id="revealBtn" class="px-8 py-4 bg-green-600 text-white rounded-xl text-2xl font-bold">Reveal State</button>
-      <button id="nextBtn" class="px-8 py-4 bg-blue-700 text-white rounded-xl text-2xl font-bold">Next State</button>
-    </div>
-
-    <!-- USA MAP -->
-    <div class="flex justify-center">
-      <svg id="usmap" viewBox="0 0 959 593">
-        <!-- Clean, simple outline SVG from Wikipedia (public domain) -->
-        <!-- Every path has an ID equal to the 2-letter state code -->
-
-        <!-- ✅ WEST -->
-        <path id="CA" class="state" d="M88 460l-5-34...Z"/>
-        <path id="OR" class="state" d="M120 300l...Z"/>
-        <path id="WA" class="state" d="M118 245l...Z"/>
-        <path id="NV" class="state" d="M140 380l...Z"/>
-        <path id="ID" class="state" d="M180 240l...Z"/>
-        <path id="AZ" class="state" d="M150 440l...Z"/>
-        <path id="UT" class="state" d="M200 360l...Z"/>
-        <path id="MT" class="state" d="M250 210l...Z"/>
-        <path id="WY" class="state" d="M260 300l...Z"/>
-        <path id="CO" class="state" d="M270 340l...Z"/>
-        <path id="NM" class="state" d="M260 420l...Z"/>
-
-        <!-- ✅ MIDWEST -->
-        <path id="ND" class="state" d="M350 220l...Z"/>
-        <path id="SD" class="state" d="M350 270l...Z"/>
-        <path id="NE" class="state" d="M360 320l...Z"/>
-        <path id="KS" class="state" d="M360 370l...Z"/>
-        <path id="OK" class="state" d="M360 420l...Z"/>
-        <path id="TX" class="state" d="M360 470l...Z"/>
-        <path id="MN" class="state" d="M420 240l...Z"/>
-        <path id="IA" class="state" d="M420 290l...Z"/>
-        <path id="MO" class="state" d="M420 350l...Z"/>
-        <path id="AR" class="state" d="M420 400l...Z"/>
-        <path id="LA" class="state" d="M420 450l...Z"/>
-
-        <!-- ✅ EAST -->
-        <path id="WI" class="state" d="M480 250l...Z"/>
-        <path id="IL" class="state" d="M480 310l...Z"/>
-        <path id="IN" class="state" d="M520 300l...Z"/>
-        <path id="MI" class="state" d="M540 250l...Z"/>
-        <path id="OH" class="state" d="M560 300l...Z"/>
-        <path id="KY" class="state" d="M530 350l...Z"/>
-        <path id="TN" class="state" d="M530 390l...Z"/>
-        <path id="MS" class="state" d="M500 430l...Z"/>
-        <path id="AL" class="state" d="M530 430l...Z"/>
-        <path id="GA" class="state" d="M560 430l...Z"/>
-        <path id="FL" class="state" d="M570 470l...Z"/>
-
-        <!-- ✅ NORTHEAST -->
-        <path id="PA" class="state" d="M600 310l...Z"/>
-        <path id="NY" class="state" d="M620 260l...Z"/>
-        <path id="VT" class="state" d="M650 240l...Z"/>
-        <path id="NH" class="state" d="M660 230l...Z"/>
-        <path id="MA" class="state" d="M670 250l...Z"/>
-        <path id="CT" class="state" d="M680 270l...Z"/>
-        <path id="RI" class="state" d="M690 280l...Z"/>
-        <path id="NJ" class="state" d="M700 300l...Z"/>
-        <path id="DE" class="state" d="M710 320l...Z"/>
-        <path id="MD" class="state" d="M720 330l...Z"/>
-        <path id="VA" class="state" d="M690 360l...Z"/>
-        <path id="NC" class="state" d="M720 380l...Z"/>
-        <path id="SC" class="state" d="M700 405l...Z"/>
-      </svg>
-    </div>
-
-    <!-- REVEALED CODE -->
-    <div id="codeBox"></div>
-
+  <!-- Buttons -->
+  <div class="flex gap-4 mb-10">
+    <a href="apps.html" class="bg-blue-700 px-6 py-3 rounded-lg font-bold hover:bg-blue-800">← Back to Apps</a>
+    <button onclick="toggleFullScreen()" class="bg-blue-700 px-6 py-3 rounded-lg font-bold hover:bg-blue-800">⛶ Full Screen</button>
+    <button onclick="revealState()" class="bg-green-600 px-6 py-3 rounded-lg font-bold hover:bg-green-700">Reveal State</button>
+    <button onclick="nextState()" class="bg-indigo-600 px-6 py-3 rounded-lg font-bold hover:bg-indigo-700">Next State</button>
   </div>
 
+  <!-- Clue Display -->
+  <div id="clue" class="clue-box bg-blue-800 p-10 rounded-xl shadow-xl text-center w-full max-w-3xl">
+  </div>
+
+  <!-- Reveal Display -->
+  <div id="answer" class="bigtext text-yellow-300 mt-12"></div>
+
 <script>
-  const STATES = [
-    "AL","AK","AZ","AR","CA","CO","CT","DE","FL","GA","HI","ID","IL",
-    "IN","IA","KS","KY","LA","ME","MD","MA","MI","MN","MS","MO","MT",
-    "NE","NV","NH","NJ","NM","NY","NC","ND","OH","OK","OR","PA","RI",
-    "SC","SD","TN","TX","UT","VT","VA","WA","WV","WI","WY"
+  // ✅ Starter pack with 5 states
+  const states = [
+    { state: "FLORIDA", clue: "The Sunshine State" },
+    { state: "TEXAS", clue: "The Lone Star State" },
+    { state: "CALIFORNIA", clue: "Known for beaches and Hollywood" },
+    { state: "NEW YORK", clue: "The Empire State" },
+    { state: "LOUISIANA", clue: "The Pelican State" }
   ];
 
-  let current = null;
+  let index = 0;
 
-  function pickState() {
-    document.querySelectorAll(".state").forEach(s => s.classList.remove("highlight"));
-    document.getElementById("codeBox").style.opacity = 0;
-
-    current = STATES[Math.floor(Math.random() * STATES.length)];
-    const el = document.getElementById(current);
-    if (el) el.classList.add("highlight");
+  function loadState() {
+    document.getElementById("clue").textContent = states[index].clue;
+    document.getElementById("answer").textContent = "";
   }
 
-  document.getElementById("revealBtn").onclick = () => {
-    const box = document.getElementById("codeBox");
-    box.textContent = current;
-    box.style.opacity = 1;
-  };
+  function revealState() {
+    document.getElementById("answer").textContent = states[index].state;
+  }
 
-  document.getElementById("nextBtn").onclick = pickState;
+  function nextState() {
+    index = (index + 1) % states.length;
+    loadState();
+  }
 
-  document.getElementById("fullBtn").onclick = () => {
-    if (!document.fullscreenElement) document.documentElement.requestFullscreen();
-    else document.exitFullscreen();
-  };
+  function toggleFullScreen() {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen();
+    } else {
+      document.exitFullscreen();
+    }
+  }
 
-  pickState();
+  // Start with first state
+  loadState();
 </script>
 
 </body>
