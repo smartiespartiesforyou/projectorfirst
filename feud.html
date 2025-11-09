@@ -103,6 +103,12 @@
 
     <button id="saveQ" class="bg-green-600 hover:bg-green-500 text-white font-bold px-6 py-3 rounded-xl">Save Question</button>
 
+    <!-- ✅ Refresh reminder appears after saving -->
+    <div id="refreshReminder" 
+         class="mt-4 p-3 bg-yellow-200 text-yellow-900 font-bold text-xl rounded-xl hidden">
+      ✅ Questions Saved! Refresh the page to load new questions.
+    </div>
+
     <hr class="my-6 border-blue-200">
 
     <h3 class="text-2xl font-extrabold mb-2">Saved Questions</h3>
@@ -209,7 +215,7 @@ function renderQuestion(qObj) {
           <div class="text-2xl sm:text-3xl font-extrabold uppercase">#${idx+1}</div>
           <div class="text-2xl sm:text-3xl font-extrabold text-blue-900">[ HIDDEN ]</div>
         </div>
-        <div class="mt-3 text-3xl sm:text-4xl font-black">${escapeHtml(a.text)}</div>
+        <div class="answer-text hidden mt-3 text-3xl sm:text-4xl font-black">${escapeHtml(a.text)}</div>
         <div class="mt-2 text-3xl sm:text-4xl font-black text-green-700 hidden">+ ${+a.points}</div>
       `;
 
@@ -222,7 +228,8 @@ function renderQuestion(qObj) {
         const tags = card.querySelectorAll('div');
         // tags[0] is header row; tags[1] is text; tags[2] is points row
         tags[0].lastElementChild.textContent = '[ REVEALED ]';
-        tags[2].classList.remove('hidden');
+        tags[1].classList.remove('hidden'); // ✅ show the answer text
+        tags[2].classList.remove('hidden'); // show +points line
 
         // award points ONLY if a team is active
         const pts = +card.dataset.points;
@@ -255,7 +262,10 @@ document.getElementById('nextQ').addEventListener('click', () => {
 
 /* ------------------ Editor Drawer ------------------ */
 const drawer = document.getElementById('drawer');
-document.getElementById('openEditor').addEventListener('click', () => drawer.classList.add('open'));
+document.getElementById('openEditor').addEventListener('click', () => {
+  drawer.classList.add('open');
+  rebuildSaved(); // keep the saved list fresh when opening
+});
 document.getElementById('closeEditor').addEventListener('click', () => drawer.classList.remove('open'));
 
 const ansList = document.getElementById('ansList');
@@ -302,6 +312,10 @@ document.getElementById('saveQ').addEventListener('click', () => {
   ansList.innerHTML = '';
   addAnswerRow(); addAnswerRow();
   rebuildSaved();
+
+  // ✅ Show the refresh reminder after saving
+  const notice = document.getElementById('refreshReminder');
+  if (notice) notice.classList.remove('hidden');
 });
 
 function rebuildSaved() {
