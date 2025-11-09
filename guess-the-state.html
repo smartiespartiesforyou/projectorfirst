@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Guess the State — ProjectorFirst</title>
+<script src="https://cdn.tailwindcss.com"></script>
+
+<style>
+  .pulse {
+    animation: pulse 1.4s infinite ease-in-out;
+  }
+
+  @keyframes pulse {
+    0% { opacity: 1; transform: scale(1); }
+    50% { opacity: .4; transform: scale(1.03); }
+    100% { opacity: 1; transform: scale(1); }
+  }
+
+  .state-number {
+    font-size: 2.7rem;
+    font-weight: 800;
+    fill: #1e3a8a;
+    text-anchor: middle;
+    dominant-baseline: central;
+    pointer-events: none;
+  }
+
+  .highlight {
+    stroke: #ef4444 !important; /* red outline */
+    stroke-width: 4 !important;
+  }
+</style>
+
+</head>
+
+<body class="bg-white text-gray-900 min-h-screen">
+
+<!-- Title -->
+<h1 class="text-5xl font-extrabold text-center text-blue-900 my-6">
+  Guess the State
+</h1>
+
+<!-- Buttons -->
+<div class="flex justify-center flex-wrap gap-4 mb-6">
+  <a href="apps.html"
+     class="px-6 py-3 bg-blue-900 text-white rounded-xl text-xl font-bold shadow">
+    ← Back to Apps
+  </a>
+
+  <button id="fullscreenBtn"
+          class="px-6 py-3 bg-blue-700 text-white rounded-xl text-xl font-bold shadow">
+    ⛶ Full Screen
+  </button>
+
+  <button id="revealBtn"
+          class="px-6 py-3 bg-green-700 text-white rounded-xl text-xl font-bold shadow">
+    Reveal State
+  </button>
+
+  <button id="nextBtn"
+          class="px-6 py-3 bg-blue-600 text-white rounded-xl text-xl font-bold shadow">
+    Next State
+  </button>
+</div>
+
+<!-- Reveal Text -->
+<div id="revealBox"
+     class="text-center text-blue-900 font-extrabold text-4xl mb-4 opacity-0 transition-opacity">
+</div>
+
+<!-- MAP -->
+<div class="flex justify-center">
+  <!-- ✅ ENTIRE SVG USA MAP -->
+  <svg id="usMap" xmlns="http://www.w3.org/2000/svg"
+       viewBox="0 0 1000 600" width="95%" class="max-w-5xl">
+
+    <!-- STATES (paths) -->
+    <!-- ✅ Each state has an ID matching its abbreviation -->
+    <!-- ✅ Outlines are high-contrast dark blue: #1e3a8a -->
+
+    <!-- Using a simplified, clean SVG suitable for projector use -->
+
+    <!-- Alabama -->
+    <path id="AL" d="M640,360 l40,0 5,70 -45,0z"
+          fill="none" stroke="#1e3a8a" stroke-width="2"/>
+
+    <!-- Alaska (small simplified box version for projector clarity) -->
+    <rect id="AK" x="50" y="450" width="80" height="60"
+          fill="none" stroke="#1e3a8a" stroke-width="2"/>
+
+    <!-- Arizona -->
+    <path id="AZ" d="M200,330 l80,0 5,60 -70,20z"
+          fill="none" stroke="#1e3a8a" stroke-width="2"/>
+
+    <!-- Arkansas -->
+    <path id="AR" d="M560,330 l40,0 0,50 -40,0z"
+          fill="none" stroke="#1e3a8a" stroke-width="2"/>
+
+    <!-- California -->
+    <path id="CA" d="M120,250 l40,0 10,120 -30,40 -30,-20z"
+          fill="none" stroke="#1e3a8a" stroke-width="2"/>
+
+    <!-- Colorado -->
+    <rect id="CO" x="320" y="280" width="100" height="60"
+          fill="none" stroke="#1e3a8a" stroke-width="2"/>
+
+    <!-- Connecticut -->
+    <rect id="CT" x="880" y="170" width="40" height="20"
+          fill="none" stroke="#1e3a8a" stroke-width="2"/>
+
+    <!-- Delaware -->
+    <rect id="DE" x="860" y="210" width="20" height="20"
+          fill="none" stroke="#1e3a8a" stroke-width="2"/>
+
+    <!-- Florida -->
+    <path id="FL" d="M750,380 l80,0 -20,60 -40,-10z"
+          fill="none" stroke="#1e3a8a" stroke-width="2"/>
+
+    <!-- Georgia -->
+    <path id="GA" d="M690,330 l60,0 10,60 -70,0z"
+          fill="none" stroke="#1e3a8a" stroke-width="2"/>
+
+    <!-- Hawaii -->
+    <circle id="HI" cx="200" cy="500" r="25"
+            fill="none" stroke="#1e3a8a" stroke-width="2"/>
+
+    <!-- Idaho -->
+    <path id="ID" d="M200,150 l40,0 0,120 -20,0 -10,-40z"
+          fill="none" stroke="#1e3a8a" stroke-width="2"/>
+
+    <!-- Illinois -->
+    <path id="IL" d="M520,220 l40,0 0,80 -40,0z"
+          fill="none" stroke="#1e3a8a" stroke-width="2"/>
+
+    <!-- Indiana -->
+    <rect id="IN" x="560" y="220" width="40" height="80"
+          fill="none" stroke="#1e3a8a" stroke-width="2"/>
+
+    <!-- Iowa -->
+    <rect id="IA" x="480" y="180" width="80" height="40"
+          fill="none" stroke="#1e3a8a" stroke-width="2"/>
+
+    <!-- Kansas -->
+    <rect id="KS" x="460" y="280" width="100" height="50"
+          fill="none" stroke="#11e3a8a" stroke-width="2"/>
+
+    <!-- Kentucky -->
+    <path id="KY" d="M620,260 l80,0 10,30 -90,10z"
+          fill="none" stroke="#1e3a8a" stroke-width="2"/>
+
+    <!-- Louisiana -->
+    <path id="LA" d="M600,380 l40,0 0,60 -30,-10z"
+          fill="none" stroke="#1e3a8a" stroke-width="2"/>
+
+    <!-- Maine -->
+    <rect id="ME" x="900" y="80" width="50" height="70"
+          fill="none" stroke="#1e3a8a" stroke-width="2"/>
+
+    <!-- Maryland -->
+    <rect id="MD" x="840" y="210" width="20" height="15"
+          fill="none" stroke="#1e3a8a" stroke-width="2"/>
+
+    <!-- Massachusetts -->
+    <rect id="MA" x="880" y="150" width="40" height="20"
+          fill="none" stroke="#1e3a8a" stroke-width="2"/>
+
+    <!-- Michigan -->
+    <rect id="MI" x="560" y="150" width="60" height="40"
+          fill="none" stroke="#1e3a8a" stroke-width="2"/>
+
+    <!-- Minnesota -->
+    <rect id="MN" x="480" y="140" width="80" height="40"
+          fill="none" stroke="#1e3a8a" stroke-width="2"/>
+
+    <!-- Mississippi -->
+    <rect id="MS" x="600" y="330" width="40" height="60"
+          fill="none" stroke="#1e3a8a" stroke-width="2"/>
+
+    <!-- Missouri -->
+    <rect id="MO" x="520" y="260" width="80" height="60"
+          fill="none" stroke="#1e3a8a" stroke-width="2"/>
+
+    <!-- Montana -->
+    <rect id="MT" x="260" y="120" width="120" height="60"
+          fill="none" stroke="#1e3a8a" stroke-width="2"/>
+
+    <!-- Nebraska -->
+    <rect id="NE" x="460" y="230" width="100" height="50"
+          fill="none" stroke="#1e3a8a" stroke-width="2"/>
+
+    <!-- Nevada -->
+    <path id="NV" d="M160,200 l60,0 10,120 -40,20z"
+          fill="none" stroke="#1e3a8a" stroke-width="2"/>
+
+    <!-- New Hampshire -->
+    <rect id="NH" x="880" y="130" width="20" height="20"
+          fill="none" stroke="#1e3a8a" stroke-width="2"/>
+
+    <!-- New Jersey -->
+    <rect id="NJ" x="860" y="180" width="20" height="30"
+          fill="none" stroke="#1e3a8a" stroke-width="2"/>
+
+    <!-- New Mexico -->
+    <rect id="NM" x="280" y="330" width="100" height="60"
+          fill="none" stroke="#1e3a8a" stroke-width="2"/>
+
+    <!-- New York -->
+    <rect id="NY" x="840" y="150" width="40" height="40"
+          fill="none" stroke="#1e3a8a" stroke-width="2"/>
+
+    <!-- North Carolina -->
+    <path id="NC" d="M740,300 l100,0 10,30 -110,5z"
+          fill="none" stroke="#1e3a8a" stroke-width="2"/>
+
+    <!-- North Dakota -->
+    <rect id="ND" x="480" y="100" width="80" height="40"
+          fill="none" stroke="#1e3a8a" stroke-width="2"/>
+
+    <!-- Ohio -->
+    <rect id="OH" x="620" y="220" width="60" height="50"
+          fill="none" stroke="#1e3a8a" stroke-width="2"/>
+
+    <!-- Oklahoma -->
+    <rect id="OK" x="460" y="330" width="100" height="40"
+          fill="none" stroke="#1e3a8a" stroke-width="2"/>
+
+    <!-- Oregon -->
+    <path id="OR" d="M140,160 l80,0 0,90 -80,0z"
+          fill="none" stroke="#1e3a8a" stroke-width="2"/>
+
+    <!-- Pennsylvania -->
+    <rect id="PA" x="800" y="180" width="60" height="40"
+          fill="none" stroke="#1e3a8a" stroke-width="2"/>
+
+    <!-- Rhode Island -->
+    <rect id="RI" x="900" y="170" width="15" height="15"
+          fill="none" stroke="#1e3a8a" stroke-width="2"/>
+
+    <!-- South Carolina -->
+    <rect id="SC" x="740" y="330" width="60" height="40"
+          fill="none" stroke="#1e3a8a" stroke-width="2"/>
+
+    <!-- South Dakota -->
+    <rect id="SD" x="480" y="140" width="80" height="40"
+          fill="none" stroke="#1e3a8a" stroke-width="2"/>
+
+    <!-- Tennessee -->
+    <rect id="TN" x="680" y="290" width="100" height="30"
+          fill="none" stroke="#1e3a8a" stroke-width="2"/>
+
+    <!-- Texas -->
+    <path id="TX" d="M440,350 l150,0 0,70 -100,20 -60,-20z"
+          fill="none" stroke="#1e3a8a" stroke-width="2"/>
+
+    <!-- Utah -->
+    <rect id="UT" x="240" y="260" width="60" height="80"
+          fill="none" stroke="#1e3a8a" stroke-width="2"/>
+
+    <!-- Vermont -->
+    <rect id="VT" x="860" y="130" width="20" height="20"
+          fill="none" stroke="#1e3a8a" stroke-width="2"/>
+
+    <!-- Virginia -->
+    <rect id="VA" x="780" y="230" width="80" height="30"
+          fill="none" stroke="#1e3a8a" stroke-width="2"/>
+
+    <!-- Washington -->
+    <rect id="WA" x="140" y="120" width="80" height="40"
+          fill="none" stroke="#1e3a8a" stroke-width="2"/>
+
+    <!-- West Virginia -->
+    <rect id="WV" x="760" y="220" width="30" height="30"
+          fill="none" stroke="#1e3a8a" stroke-width="2"/>
+
+    <!-- Wisconsin -->
+    <rect id="WI" x="520" y="160" width="60" height="40"
+          fill="none" stroke="#1e3a8a" stroke-width="2"/>
+
+    <!-- Wyoming -->
+    <rect id="WY" x="320" y="220" width="100" height="60"
+          fill="none" stroke="#1e3a8a" stroke-width="2"/>
+
+  </svg>
+</div>
+
+<script>
+/* ----- STATE LIST ----- */
+const states = {
+  AL: "Alabama",
+  AK: "Alaska",
+  AZ: "Arizona",
+  AR: "Arkansas",
+  CA: "California",
+  CO: "Colorado",
+  CT: "Connecticut",
+  DE: "Delaware",
+  FL: "Florida",
+  GA: "Georgia",
+  HI: "Hawaii",
+  ID: "Idaho",
+  IL: "Illinois",
+  IN: "Indiana",
+  IA: "Iowa",
+  KS: "Kansas",
+  KY: "Kentucky",
+  LA: "Louisiana",
+  ME: "Maine",
+  MD: "Maryland",
+  MA: "Massachusetts",
+  MI: "Michigan",
+  MN: "Minnesota",
+  MS: "Mississippi",
+  MO: "Missouri",
+  MT: "Montana",
+  NE: "Nebraska",
+  NV: "Nevada",
+  NH: "New Hampshire",
+  NJ: "New Jersey",
+  NM: "New Mexico",
+  NY: "New York",
+  NC: "North Carolina",
+  ND: "North Dakota",
+  OH: "Ohio",
+  OK: "Oklahoma",
+  OR: "Oregon",
+  PA: "Pennsylvania",
+  RI: "Rhode Island",
+  SC: "South Carolina",
+  SD: "South Dakota",
+  TN: "Tennessee",
+  TX: "Texas",
+  UT: "Utah",
+  VT: "Vermont",
+  VA: "Virginia",
+  WA: "Washington",
+  WV: "West Virginia",
+  WI: "Wisconsin",
+  WY: "Wyoming"
+};
+
+let current = null;
+
+/* ----- PICK RANDOM STATE ----- */
+function pickState() {
+  resetMap();
+  const keys = Object.keys(states);
+  const randomKey = keys[Math.floor(Math.random() * keys.length)];
+  current = randomKey;
+
+  const el = document.getElementById(randomKey);
+  el.classList.add("highlight", "pulse");
+
+  placeNumber(el, randomKey);
+}
+
+/* ----- PLACE NUMBER OVER STATE ----- */
+function placeNumber(stateEl, code) {
+  const svg = document.getElementById("usMap");
+  const pos = stateEl.getBBox();
+
+  const num = document.createElementNS("http://www.w3.org/2000/svg", "text");
+  num.setAttribute("x", pos.x + pos.width / 2);
+  num.setAttribute("y", pos.y + pos.height / 2);
+  num.classList.add("state-number");
+  num.textContent = code;
+
+  num.id = "stateNumber";
+  svg.appendChild(num);
+}
+
+/* ----- RESET MAP ----- */
+function resetMap() {
+  for (const key of Object.keys(states)) {
+    const el = document.getElementById(key);
+    el.classList.remove("highlight", "pulse");
+  }
+  const oldNum = document.getElementById("stateNumber");
+  if (oldNum) oldNum.remove();
+
+  document.getElementById("revealBox").style.opacity = 0;
+}
+
+/* ----- REVEAL ----- */
+function reveal() {
+  if (!current) return;
+  const name = states[current];
+  document.getElementById("revealBox").textContent = `${current} = ${name}`;
+  document.getElementById("revealBox").style.opacity = 1;
+}
+
+/* ----- FULLSCREEN BUTTON ----- */
+document.getElementById("fullscreenBtn").onclick = () => {
+  if (!document.fullscreenElement) {
+    document.documentElement.requestFullscreen();
+  } else {
+    document.exitFullscreen();
+  }
+};
+
+/* ----- BUTTONS ----- */
+document.getElementById("nextBtn").onclick = pickState;
+document.getElementById("revealBtn").onclick = reveal;
+
+/* ----- INITIALIZE ----- */
+pickState();
+</script>
+
+</body>
+</html>
