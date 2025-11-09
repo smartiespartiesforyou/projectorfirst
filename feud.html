@@ -30,6 +30,43 @@
       .giant { font-size: 3.8rem; }
       .hugest { font-size: 5rem; }
     }
+
+    /* ---- BIG X overlay (classic Feud style) ---- */
+    #bigXOverlay {
+      backdrop-filter: none;           /* no dimming—just the X */
+      animation: fade 1s ease-out both;
+    }
+    .bigX {
+      font-family: Impact, Haettenschweiler, 'Arial Black', sans-serif;
+      line-height: 0.9;
+      color: white;                    /* fill */
+      -webkit-text-stroke: 22px #dc2626; /* thick red outline */
+      text-stroke: 22px #dc2626;
+      text-shadow:
+        0 6px 0 rgba(0,0,0,.25),
+        0 10px 20px rgba(0,0,0,.25);
+    }
+    @media (min-width: 1024px) {
+      .bigX { font-size: 26rem; }
+    }
+    @media (max-width: 1023.98px) {
+      .bigX { font-size: 18rem; }
+    }
+    @keyframes fade {
+      0%   { opacity: 0; transform: scale(.9); }
+      10%  { opacity: 1; transform: scale(1.02); }
+      100% { opacity: 0; transform: scale(1); }
+    }
+
+    /* Strike “X” flash */
+    .strike-flash {
+      animation: strikeFlash 350ms ease-out;
+    }
+    @keyframes strikeFlash {
+      0%   { transform: scale(0.8); opacity: 0.5; }
+      50%  { transform: scale(1.15); opacity: 1; }
+      100% { transform: scale(1); opacity: 1; }
+    }
   </style>
 </head>
 
@@ -44,7 +81,7 @@
                 class="px-5 py-3 rounded-xl bg-blue-700 text-white text-xl font-bold hover:bg-blue-800">⛶ Full Screen</button>
       </div>
 
-      <!-- Team Scores / Turn -->
+      <!-- Team Scores / Turn (unchanged) -->
       <div class="flex items-center gap-4">
         <div class="flex items-center gap-3">
           <button id="team1Turn" class="px-4 py-2 rounded-lg text-white font-bold bg-blue-900">Table 1 Turn</button>
@@ -82,7 +119,12 @@
     </div>
 
     <!-- Board -->
-    <div class="bg-blue-900 text-white rounded-3xl p-5 shadow-deep">
+    <div class="bg-blue-900 text-white rounded-3xl p-5 shadow-deep relative overflow-hidden">
+      <!-- BIG X overlay -->
+      <div id="bigXOverlay" class="hidden pointer-events-none fixed inset-0 grid place-items-center z-50">
+        <div class="bigX select-none">X</div>
+      </div>
+
       <!-- Question -->
       <div id="question" class="hugest font-extrabold text-center mb-4">Question</div>
 
@@ -92,12 +134,13 @@
       <!-- Controls Row -->
       <div class="flex flex-wrap items-center justify-between gap-3">
         <!-- Strikes -->
-        <div class="flex items-center gap-2">
+        <div class="flex items-center gap-3">
           <div class="text-xl font-bold">Strikes (Active Team):</div>
-          <div id="strikes" class="flex gap-2">
-            <div class="w-12 h-12 rounded-xl bg-red-800/30 border-4 border-red-600 grid place-items-center text-3xl font-black">X</div>
-            <div class="w-12 h-12 rounded-xl bg-red-800/30 border-4 border-red-600 grid place-items-center text-3xl font-black">X</div>
-            <div class="w-12 h-12 rounded-xl bg-red-800/30 border-4 border-red-600 grid place-items-center text-3xl font-black">X</div>
+          <div id="strikes" class="flex items-center gap-3">
+            <!-- Bigger strike indicators -->
+            <div class="w-16 h-16 md:w-20 md:h-20 rounded-2xl bg-red-800/30 border-[6px] border-red-600 grid place-items-center text-5xl md:text-6xl font-black opacity-20">X</div>
+            <div class="w-16 h-16 md:w-20 md:h-20 rounded-2xl bg-red-800/30 border-[6px] border-red-600 grid place-items-center text-5xl md:text-6xl font-black opacity-20">X</div>
+            <div class="w-16 h-16 md:w-20 md:h-20 rounded-2xl bg-red-800/30 border-[6px] border-red-600 grid place-items-center text-5xl md:text-6xl font-black opacity-20">X</div>
           </div>
           <button id="wrongBtn" class="ml-2 px-4 py-2 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold">Wrong</button>
           <button id="clearStrikes" class="px-4 py-2 rounded-xl bg-white text-blue-900 font-bold">Clear Strikes</button>
@@ -111,11 +154,10 @@
       </div>
     </div>
 
-    <!-- Footer note -->
     <div class="text-center mt-3 text-sm text-gray-600">Tip: Click an answer to reveal it. Points are added to the <b>active team</b>.</div>
   </div>
 
-  <!-- Question Editor Modal -->
+  <!-- Question Editor Modal (unchanged) -->
   <div id="editorWrap" class="fixed inset-0 bg-black/60 hidden items-center justify-center p-4">
     <div class="bg-white rounded-2xl max-w-3xl w-full p-5">
       <div class="flex items-center justify-between mb-3">
@@ -142,11 +184,11 @@
     </div>
   </div>
 
-  <!-- Sounds (small base64 inline) -->
+  <!-- Sounds -->
   <audio id="sndDing" preload="auto"
-    src="data:audio/mp3;base64,//uQZAAAAAAAAAAAAAAAAAAAA... (ding trimmed)"></audio>
+    src="data:audio/mp3;base64,//uQZAAAAAAAAAAAAAAAAAAAA..."></audio>
   <audio id="sndBuzz" preload="auto"
-    src="data:audio/mp3;base64,//uQZAAAAAAAAAAAAAAAAAAAA... (buzz trimmed)"></audio>
+    src="data:audio/mp3;base64,//uQZAAAAAAAAAAAAAAAAAAAA..."></audio>
 
   <script>
     // ====== Data ======
@@ -204,6 +246,7 @@
     const strikesWrap = $("#strikes");
     const ding = $("#sndDing");
     const buzz = $("#sndBuzz");
+    const bigX = $("#bigXOverlay");
 
     function renderQuestion() {
       const item = LIB[idx];
@@ -213,7 +256,6 @@
       updateStrikes();
       ansWrap.innerHTML = "";
 
-      // up to 6 tiles, big and easy
       item.a.forEach((ans, i) => {
         const tile = document.createElement("button");
         tile.className =
@@ -240,17 +282,14 @@
       if (revealed.has(i)) return;
       revealed.add(i);
 
-      // show text + points
       tile.querySelector("span.opacity-0").classList.remove("opacity-0");
       tile.querySelector(".text-5xl").classList.remove("opacity-0");
       tile.classList.add("bg-green-700");
 
-      // add points to active team
       const pts = LIB[idx].a[i].p;
       if (activeTeam === 1) { score1 += pts; $("#score1").textContent = score1; }
       else { score2 += pts; $("#score2").textContent = score2; }
 
-      // sound
       try { ding.currentTime = 0; ding.play(); } catch {}
     }
 
@@ -267,17 +306,29 @@
     function updateStrikes() {
       const boxes = [...strikesWrap.children];
       boxes.forEach((b, i) => {
-        if (i < strikes) b.style.opacity = 1;
-        else b.style.opacity = .2;
+        b.style.opacity = i < strikes ? 1 : 0.2;
+        if (i === strikes - 1) b.classList.add("strike-flash");
+        setTimeout(() => b.classList.remove("strike-flash"), 350);
       });
     }
 
+    // ------- BIG X overlay (press Wrong only) -------
+    function showBigX() {
+      bigX.classList.remove("hidden");
+      // force reflow so CSS animation restarts properly each time
+      void bigX.offsetWidth;
+      setTimeout(() => bigX.classList.add("hidden"), 1000);
+    }
+
     function wrongAnswer() {
+      // Big buzzing X (only when Wrong pressed)
+      try { buzz.currentTime = 0; buzz.play(); } catch {}
+      showBigX();
+
+      // normal strike logic
       strikes = Math.min(3, strikes + 1);
       updateStrikes();
-      try { buzz.currentTime = 0; buzz.play(); } catch {}
       if (strikes >= 3) {
-        // switch turn automatically
         activeTeam = activeTeam === 1 ? 2 : 1;
         updateTurnButtons();
         strikes = 0;
@@ -329,7 +380,7 @@
       else { document.exitFullscreen(); }
     });
 
-    // ====== Question Editor ======
+    // ====== Editor (unchanged) ======
     const editorWrap = $("#editorWrap");
     $("#openEditor").addEventListener("click", () => {
       editorWrap.classList.remove("hidden");
@@ -394,9 +445,8 @@
           </div>
         `;
         row.querySelector("[data-i]").addEventListener("click", () => {
-          // jump to play this one
           const preLen = PRELOADED.length;
-          idx = preLen + i; // in LIB order
+          idx = preLen + i;
           renderQuestion();
           editorWrap.classList.add("hidden");
         });
