@@ -5,325 +5,265 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Magic Pot — Recipe Rater</title>
   <script src="https://cdn.tailwindcss.com"></script>
+
   <style>
-    .pot { background: radial-gradient(circle at 50% 35%, #1f2937 0%, #0f172a 60%); }
-    .steam { animation: float 3s ease-in-out infinite; opacity: .85 }
-    @keyframes float {
-      0% { transform: translateY(8px); opacity: .7 }
-      50% { transform: translateY(-8px); opacity: 1 }
-      100% { transform: translateY(8px); opacity: .7 }
+    .pot-shape {
+      width: 100%;
+      max-width: 450px;
+      aspect-ratio: 1 / 0.7;
+      background: #1f2937;
+      border-radius: 40px;
+      border: 12px solid #0f172a;
+      position: relative;
+      margin: 0 auto;
     }
-    .pop { animation: pop .25s ease-out }
-    @keyframes pop { 0% { transform: scale(.9) } 100% { transform: scale(1) } }
-    .overlay {
-      position: fixed; inset: 0; background: rgba(0,0,0,.75);
-      display: none; align-items: center; justify-content: center;
-      z-index: 50;
+
+    .pot-lid {
+      width: 70%;
+      height: 35%;
+      background: #1f2937;
+      border: 10px solid #0f172a;
+      border-bottom: none;
+      border-radius: 40px 40px 10px 10px;
+      position: absolute;
+      top: -28%;
+      left: 50%;
+      transform: translateX(-50%);
     }
-    .overlay.show { display: flex; }
+
+    .handle-left,
+    .handle-right {
+      width: 55px;
+      height: 35px;
+      background: #1f2937;
+      border: 8px solid #0f172a;
+      border-radius: 12px;
+      position: absolute;
+      top: 35%;
+    }
+
+    .handle-left { left: -45px; }
+    .handle-right { right: -45px; }
+
+    .fade {
+      animation: fadein .4s ease-out;
+    }
+
+    @keyframes fadein {
+      from { opacity: 0; transform: scale(0.97); }
+      to   { opacity: 1; transform: scale(1); }
+    }
   </style>
 </head>
 
-<body class="bg-white text-gray-900 min-h-screen">
-  <div class="max-w-6xl mx-auto p-6">
-    <!-- Title & Nav -->
-    <div class="flex items-center justify-between gap-3 mb-4">
-      <a href="apps.html" class="px-5 py-3 rounded-xl bg-blue-900 text-white text-xl font-bold hover:bg-blue-800">← Apps</a>
-      <h1 class="text-3xl sm:text-5xl font-extrabold text-blue-900 text-center flex-1">🧙‍♂️ Magic Pot — Recipe Rater</h1>
-      <button id="fullscreenBtn" class="px-4 py-3 rounded-xl bg-blue-700 text-white font-bold hover:bg-blue-800">⛶ Full Screen</button>
+<body class="bg-blue-800 text-white min-h-screen">
+
+  <div class="max-w-6xl mx-auto py-8 px-4">
+
+    <!-- Title Row -->
+    <div class="flex items-center justify-between mb-8">
+      <a href="apps.html"
+         class="bg-blue-900 hover:bg-blue-700 px-6 py-3 rounded-xl text-xl font-bold shadow">
+         ← Apps
+      </a>
+
+      <h1 class="text-4xl md:text-6xl font-extrabold text-center flex-1 text-blue-100">
+        Magic Pot — Recipe Rater
+      </h1>
+
+      <button id="fullscreenBtn"
+              class="bg-blue-900 hover:bg-blue-700 px-4 py-3 rounded-xl text-xl font-bold shadow">
+        ⛶
+      </button>
     </div>
 
-    <!-- Stage -->
-    <div class="grid lg:grid-cols-2 gap-6">
-      <!-- Pot / Display -->
-      <div class="rounded-3xl border-8 border-blue-900 overflow-hidden shadow-2xl bg-blue-50">
-        <div class="p-6 sm:p-8">
-          <!-- Pot -->
-          <div class="relative w-full mx-auto" style="aspect-ratio: 16/12;">
-            <!-- pot body -->
-            <div class="absolute inset-x-8 bottom-6 top-1/3 pot rounded-3xl shadow-inner border-8 border-slate-800"></div>
-            <!-- pot rim -->
-            <div class="absolute inset-x-4 top-1/4 h-10 bg-slate-800 rounded-full shadow"></div>
-            <!-- handles -->
-            <div class="absolute left-2 top-1/3 w-10 h-16 bg-slate-800 rounded-lg"></div>
-            <div class="absolute right-2 top-1/3 w-10 h-16 bg-slate-800 rounded-lg"></div>
-            <!-- steam -->
-            <div class="absolute left-1/3 top-[14%] w-6 h-24 bg-gradient-to-b from-white/80 to-transparent rounded-full steam"></div>
-            <div class="absolute left-1/2 top-[12%] w-6 h-28 bg-gradient-to-b from-white/80 to-transparent rounded-full steam"></div>
-            <div class="absolute left-2/3 top-[16%] w-6 h-20 bg-gradient-to-b from-white/80 to-transparent rounded-full steam"></div>
+    <div class="grid md:grid-cols-2 gap-8">
 
-            <!-- ingredient chips floating -->
-            <div id="chipLayer" class="absolute inset-0 pointer-events-none"></div>
-          </div>
+      <!-- LEFT SIDE — POT + INGREDIENTS -->
+      <div class="flex flex-col items-center">
 
-          <!-- Ingredient list -->
-          <div class="mt-6 bg-white border-4 border-blue-900 rounded-2xl p-4 min-h-[120px]">
-            <div class="text-xl font-bold text-blue-900 mb-2">Ingredients in the Pot</div>
-            <div id="ingredientList" class="flex flex-wrap gap-2"></div>
+        <!-- POT -->
+        <div class="pot-shape relative mb-6 fade">
+          <div class="pot-lid"></div>
+          <div class="handle-left"></div>
+          <div class="handle-right"></div>
+        </div>
+
+        <!-- INGREDIENTS LIST -->
+        <div class="w-full bg-blue-900 border-4 border-blue-100 rounded-2xl p-4 min-h-[160px]">
+          <h2 class="text-2xl font-extrabold text-blue-200 mb-3">Ingredients in the Pot</h2>
+
+          <div id="ingredientList" class="flex flex-wrap gap-2">
+            <!-- Ingredients appear here -->
           </div>
         </div>
       </div>
 
-      <!-- Controls -->
-      <div class="rounded-3xl border-8 border-blue-900 overflow-hidden shadow-2xl bg-white">
-        <div class="p-6 sm:p-8">
-          <div class="text-2xl font-extrabold text-blue-900 mb-4">Add Ingredient</div>
-          <div class="flex flex-col sm:flex-row gap-3 mb-4">
-            <input id="ingInput" type="text" placeholder="Type an ingredient…"
-                   class="flex-1 border-4 border-blue-900 rounded-xl py-3 px-4 text-xl font-semibold"/>
-            <button id="addBtn" class="px-5 py-3 rounded-xl bg-green-600 text-white text-2xl font-extrabold hover:bg-green-700">Add</button>
+      <!-- RIGHT SIDE — CONTROLS -->
+      <div>
+
+        <!-- Add Ingredient -->
+        <div class="bg-white rounded-2xl p-6 text-blue-900 shadow-xl border-4 border-blue-900">
+          <h2 class="text-3xl font-extrabold mb-4">Add Ingredient</h2>
+
+          <div class="flex gap-3 mb-4">
+            <input id="ingInput"
+                   type="text"
+                   placeholder="Type an ingredient..."
+                   class="flex-1 border-4 border-blue-900 rounded-xl px-4 py-3 text-xl font-bold"/>
+            <button id="addBtn"
+                    class="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-xl text-2xl font-extrabold">
+              Add
+            </button>
           </div>
 
-          <!-- Quick picks -->
-          <div class="text-lg font-bold text-blue-900 mb-2">Quick Picks</div>
-          <div id="quickRow" class="flex flex-wrap gap-2 mb-6">
-            <!-- filled by JS -->
-          </div>
+          <div class="grid grid-cols-3 gap-3 mb-4">
+            <button id="undoBtn"
+              class="bg-yellow-400 text-blue-900 font-extrabold text-xl py-3 rounded-xl hover:bg-yellow-300">
+              Undo
+            </button>
 
-          <div class="grid grid-cols-3 gap-3 mb-6">
-            <button id="undoBtn" class="py-4 rounded-2xl bg-yellow-400 text-blue-900 text-xl font-extrabold hover:bg-yellow-300">Undo</button>
-            <button id="clearBtn" class="py-4 rounded-2xl bg-gray-700 text-white text-xl font-extrabold hover:bg-gray-800">Clear</button>
-            <button id="stirBtn" class="py-4 rounded-2xl bg-purple-700 text-white text-xl font-extrabold hover:bg-purple-800">Stir & Rate</button>
-          </div>
+            <button id="clearBtn"
+              class="bg-gray-700 text-white font-bold text-xl py-3 rounded-xl hover:bg-gray-800">
+              Clear
+            </button>
 
-          <div class="bg-blue-50 border-4 border-blue-900 rounded-2xl p-4">
-            <div class="text-xl font-bold text-blue-900">Result</div>
-            <div id="resultBox" class="mt-2 space-y-2">
-              <div id="dishName" class="text-3xl font-extrabold text-blue-900"></div>
-              <div id="score" class="text-4xl font-black"></div>
-              <div id="verdict" class="text-2xl font-bold"></div>
-              <div id="comment" class="text-xl"></div>
-            </div>
-          </div>
-
-          <div class="mt-4 text-sm text-gray-600">
-            Tip: Residents shout ingredients. You click Add. When ready, press <span class="font-bold">Stir & Rate</span>.
+            <button id="rateBtn"
+              class="bg-purple-700 text-white font-extrabold text-xl py-3 rounded-xl hover:bg-purple-800">
+              Rate Recipe
+            </button>
           </div>
         </div>
+
+        <!-- RESULT BOX -->
+        <div id="resultBox"
+             class="bg-blue-900 border-4 border-blue-100 rounded-2xl p-6 mt-6 hidden fade">
+
+          <h2 id="dishName" class="text-3xl font-extrabold mb-2"></h2>
+
+          <div id="score"
+               class="text-5xl md:text-6xl font-black mb-4"></div>
+
+          <div id="verdict"
+               class="text-3xl font-extrabold mb-2"></div>
+
+          <div id="comment"
+               class="text-2xl"></div>
+        </div>
+
       </div>
     </div>
   </div>
 
-  <!-- Reveal overlay -->
-  <div id="overlay" class="overlay">
-    <div class="text-center">
-      <div class="text-white text-6xl sm:text-8xl font-black mb-4">🍲 Stirring…</div>
-      <div class="text-white text-3xl">The Magic Pot is thinking…</div>
-    </div>
-  </div>
 
   <script>
-    // ---------- STATE ----------
     const ingredients = [];
-    const listEl = document.getElementById('ingredientList');
-    const chipLayer = document.getElementById('chipLayer');
+    const listEl = document.getElementById("ingredientList");
+    const dishNameEl = document.getElementById("dishName");
+    const scoreEl = document.getElementById("score");
+    const verdictEl = document.getElementById("verdict");
+    const commentEl = document.getElementById("comment");
+    const resultBox = document.getElementById("resultBox");
 
-    // Quick picks common to elders (swap/add later)
-    const QUICK = [
-      "Bread","Butter","Cheese","Eggs","Bacon","Ham","Chicken","Beef",
-      "Rice","Pasta","Potatoes","Carrots","Peas","Green Beans",
-      "Tomato","Onion","Garlic","Milk","Cream","Sugar","Salt","Pepper",
-      "Ketchup","Mustard","Pickles","Mayonnaise","Hot Sauce",
-      "Apples","Bananas","Peanut Butter","Jelly","Chocolate","Ice Cream"
-    ];
-
-    // ---------- UI ELEMENTS ----------
-    const ingInput = document.getElementById('ingInput');
-    const addBtn = document.getElementById('addBtn');
-    const undoBtn = document.getElementById('undoBtn');
-    const clearBtn = document.getElementById('clearBtn');
-    const stirBtn = document.getElementById('stirBtn');
-    const overlay = document.getElementById('overlay');
-    const fullscreenBtn = document.getElementById('fullscreenBtn');
-
-    const dishNameEl = document.getElementById('dishName');
-    const scoreEl = document.getElementById('score');
-    const verdictEl = document.getElementById('verdict');
-    const commentEl = document.getElementById('comment');
-
-    // ---------- HELPERS ----------
-    function renderList(){
-      listEl.innerHTML = '';
-      ingredients.forEach((ing, i) => {
-        const span = document.createElement('span');
-        span.className = "pop inline-flex items-center gap-2 bg-blue-900 text-white rounded-xl px-3 py-2 text-lg font-bold";
-        span.innerHTML = `<span>${ing}</span>`;
-        listEl.appendChild(span);
+    function renderIngredients() {
+      listEl.innerHTML = "";
+      ingredients.forEach(ing => {
+        const tag = document.createElement("span");
+        tag.className =
+          "bg-blue-100 text-blue-900 px-3 py-2 rounded-xl text-lg font-bold";
+        tag.textContent = ing;
+        listEl.appendChild(tag);
       });
-      renderChips();
     }
 
-    function renderChips(){
-      chipLayer.innerHTML = '';
-      const w = chipLayer.clientWidth || 800;
-      const h = chipLayer.clientHeight || 400;
-      const max = Math.min(ingredients.length, 24);
-      for (let i=0;i<max;i++){
-        const t = document.createElement('div');
-        t.textContent = ingredients[i];
-        t.className = "absolute text-white/90 text-lg font-extrabold";
-        const x = Math.random()*(w-160)+40;
-        const y = Math.random()*(h-160)+40;
-        t.style.left = x+"px"; t.style.top = y+"px";
-        chipLayer.appendChild(t);
-      }
+    function addIngredient() {
+      const val = document.getElementById("ingInput").value.trim();
+      if (!val) return;
+      ingredients.push(cap(val));
+      document.getElementById("ingInput").value = "";
+      renderIngredients();
     }
 
-    function addIngredient(text){
-      const t = text.trim();
-      if (!t) return;
-      ingredients.push(cap(t));
-      ingInput.value = "";
-      renderList();
+    function cap(s) {
+      return s.charAt(0).toUpperCase() + s.slice(1);
     }
 
-    function cap(s){ return s[0]?.toUpperCase() + s.slice(1); }
-
-    function pick(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
-
-    // ---------- SILLY RATER (offline heuristic) ----------
-    // Categorize by keywords
-    const CATS = {
-      sweet: ["sugar","honey","chocolate","ice cream","cake","cookie","jelly","jam","banana","apple","pie","pudding"],
-      savory: ["cheese","ham","bacon","chicken","beef","pork","sausage","onion","garlic","broth","gravy","stock"],
-      veg: ["lettuce","spinach","kale","cabbage","carrot","peas","beans","tomato","potato","pepper","pickle","pickles","cucumber","broccoli"],
-      carb: ["bread","rice","pasta","noodles","tortilla","bun","flour","oats","cereal"],
-      dairy: ["milk","cream","butter","yogurt","cheese","sour cream"],
-      spicy: ["hot sauce","jalapeno","chili","chilli","cayenne","curry","wasabi"],
-      weird: ["toothpaste","soap","lipstick","shoe","glitter","dirt","grass","battery","coin","socks","ketchup on cereal"]
-    };
-
-    function catOf(word){
-      const w = word.toLowerCase();
-      for (const [k,arr] of Object.entries(CATS)){
-        if (arr.some(x => w.includes(x))) return k;
-      }
-      return "other";
-    }
-
-    function rateRecipe(list){
-      if (list.length === 0) {
-        return {
-          score: 0,
-          name: "Empty Pot Mystery",
-          verdict: "No ingredients… no dinner.",
-          comment: "Add a few classics like bread, butter, and cheese."
-        };
+    // ---------- Very Simple Fun Rating System ----------
+    function rateRecipe() {
+      if (ingredients.length === 0) {
+        dishNameEl.textContent = "Empty Pot Mystery";
+        scoreEl.textContent = "0 / 10";
+        verdictEl.textContent = "Nothing in the pot!";
+        commentEl.textContent = "Add some ingredients first!";
+        return;
       }
 
-      // Tally categories
-      const tallies = {sweet:0,savory:0,veg:0,carb:0,dairy:0,spicy:0,weird:0,other:0};
-      list.forEach(i => tallies[catOf(i)]++);
-
-      // Base score from balance
+      // Just a fun heuristic
       let score = 5;
-      // Good combos
-      if (tallies.carb && (tallies.savory || tallies.veg)) score += 2;      // carb + savory/veg
-      if (tallies.dairy && (tallies.carb || tallies.savory)) score += 1.5;  // dairy complements
-      if (tallies.sweet && tallies.dairy) score += 0.8;                      // dessert vibes
-      if (tallies.veg >= 2) score += 0.7;
 
-      // Penalties
-      if (tallies.weird) score -= Math.min(4, tallies.weird*1.5);
-      if (tallies.sweet && tallies.savory && (tallies.sweet >= 2) && (tallies.savory >= 2)) score -= 1.2; // clashy
-      if (list.some(i => /fish|tuna|sardine/i.test(i)) && list.some(i => /chocolate|ice cream|cake/i.test(i))) score -= 2.5;
-      if (list.some(i => /pickle/i.test(i)) && list.some(i => /ice cream|cake|pudding|custard/i.test(i))) score -= 1.8;
+      const lower = ingredients.map(i => i.toLowerCase());
 
-      // Size/chaos adjustments
-      if (list.length >= 6) score -= 0.5;       // soups get messy
-      if (list.length >= 10) score -= 1.0;      // chaos penalty
+      const sweet = ["sugar","honey","cake","chocolate","jelly","ice cream"];
+      const savory = ["chicken","beef","bacon","garlic","onion"];
+      const weird = ["toothpaste","soap","shoe","grass","battery"];
 
-      // Clamp 0..10
+      if (lower.some(i => sweet.some(s => i.includes(s)))) score += 1;
+      if (lower.some(i => savory.some(s => i.includes(s)))) score += 1;
+      if (lower.some(i => weird.some(s => i.includes(s)))) score -= 3;
+      if (ingredients.length > 6) score -= 1;
+
       score = Math.max(0, Math.min(10, score));
 
-      // Verdicts
-      let verdict;
-      if (score >= 8) verdict = "Chef’s Kiss! 🍽️";
-      else if (score >= 6) verdict = "Tasty! 😋";
-      else if (score >= 4) verdict = "Hmm… Edible. 🤔";
-      else if (score >= 2) verdict = "Questionable… 😬";
-      else verdict = "Emergency! 🚫";
+      const verdict =
+        score >= 8 ? "Chef’s Kiss! 😋" :
+        score >= 5 ? "Pretty Good! 👍" :
+        score >= 3 ? "Questionable… 😬" :
+        "Oh No! 🚫";
 
-      // Comments (funny)
-      const commentsGood = [
-        "Balanced flavors — this could actually work!",
-        "Comfort-food energy. Grandma would approve.",
-        "Nice combo! Serve with bread and smiles."
+      const comments = [
+        "Might taste better than it looks.",
+        "A bold choice — brave chef!",
+        "Grandma would be proud… maybe.",
+        "This belongs on a cooking show!",
+        "This one’s a gamble for sure.",
+        "Not bad at all for a Magic Pot dish.",
+        "Oof… this one needs prayer."
       ];
-      const commentsMid = [
-        "Not terrible, not great… salt and butter might save it.",
-        "Close! Swap one sweet thing for something savory.",
-        "It needs a plan. Maybe make it a sandwich?"
-      ];
-      const commentsBad = [
-        "This tastes like a dare. Please don’t.",
-        "The pot is crying softly.",
-        "Pairs best with… the trash can. Kidding (sort of)."
-      ];
-      let comment;
-      if (score >= 7.5) comment = pick(commentsGood);
-      else if (score >= 4) comment = pick(commentsMid);
-      else comment = pick(commentsBad);
 
-      // Name generator
-      const adj = ["Bayou","Sunday","Grandma’s","Homestyle","Moonlight","Festival","Sunny","Lucky","River","Front-Porch"];
-      const forms = [
-        "Stew","Surprise","Casserole","Skillet","Bake","Delight","Medley","Mix","Mash","Special"
-      ];
-      // Bias to soup/stew if liquidy
-      let form = pick(forms);
-      if (list.some(i => /soup|broth|stock|stew/i.test(i))) form = "Stew";
-      const name = `${pick(adj)} ${form}`;
+      // Fun random comment
+      const comment = comments[Math.floor(Math.random() * comments.length)];
 
-      return { score: Number(score.toFixed(1)), name, verdict, comment };
+      dishNameEl.textContent = "Your Dish";
+      scoreEl.textContent = `${score} / 10`;
+      verdictEl.textContent = verdict;
+      commentEl.textContent = comment;
     }
 
-    // ---------- EVENTS ----------
-    addBtn.addEventListener('click', () => addIngredient(ingInput.value));
-    ingInput.addEventListener('keydown', e => { if (e.key === 'Enter') addIngredient(ingInput.value) });
-
-    undoBtn.addEventListener('click', () => { ingredients.pop(); renderList(); });
-    clearBtn.addEventListener('click', () => { ingredients.length = 0; renderList(); });
-
-    stirBtn.addEventListener('click', () => {
-      overlay.classList.add('show');
-      setTimeout(() => {
-        overlay.classList.remove('show');
-        const res = rateRecipe(ingredients);
-        dishNameEl.textContent = `🍲 ${res.name}`;
-        scoreEl.textContent = `Score: ${res.score} / 10`;
-        scoreEl.style.color = res.score >= 7.5 ? '#16a34a' : (res.score >= 4 ? '#ca8a04' : '#dc2626');
-        verdictEl.textContent = res.verdict;
-        commentEl.textContent = res.comment;
-      }, 1200);
-    });
+    // Buttons
+    document.getElementById("addBtn").onclick = addIngredient;
+    document.getElementById("undoBtn").onclick = () => {
+      ingredients.pop();
+      renderIngredients();
+    };
+    document.getElementById("clearBtn").onclick = () => {
+      ingredients.length = 0;
+      renderIngredients();
+    };
+    document.getElementById("rateBtn").onclick = () => {
+      resultBox.classList.remove("hidden");
+      resultBox.classList.add("fade");
+      rateRecipe();
+    };
 
     // Fullscreen
-    fullscreenBtn.addEventListener('click', () => {
+    document.getElementById("fullscreenBtn").onclick = () => {
       if (!document.fullscreenElement) {
         document.documentElement.requestFullscreen();
-        fullscreenBtn.textContent = "Exit Full Screen";
       } else {
         document.exitFullscreen();
-        fullscreenBtn.textContent = "⛶ Full Screen";
       }
-    });
-
-    // Build quick pick buttons
-    (function(){
-      const row = document.getElementById('quickRow');
-      QUICK.forEach(label => {
-        const b = document.createElement('button');
-        b.className = "px-3 py-2 rounded-xl bg-blue-100 text-blue-900 border-2 border-blue-300 hover:bg-blue-200 font-bold";
-        b.textContent = label;
-        b.addEventListener('click', () => addIngredient(label));
-        row.appendChild(b);
-      });
-    })();
-
-    // Initial render
-    renderList();
+    };
   </script>
+
 </body>
 </html>
-
