@@ -1,269 +1,152 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Magic Pot — Recipe Rater</title>
-  <script src="https://cdn.tailwindcss.com"></script>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Magic Pot — Recipe Rater</title>
+<script src="https://cdn.tailwindcss.com"></script>
 
-  <style>
-    .pot-shape {
-      width: 100%;
-      max-width: 450px;
-      aspect-ratio: 1 / 0.7;
-      background: #1f2937;
-      border-radius: 40px;
-      border: 12px solid #0f172a;
-      position: relative;
-      margin: 0 auto;
-    }
+<style>
+  .pot {
+    width: 380px;
+    height: 300px;
+    background: #111827;
+    border-radius: 40px 40px 20px 20px;
+    margin: auto;
+    position: relative;
+    box-shadow: 0 0 30px #000 inset;
+  }
+</style>
 
-    .pot-lid {
-      width: 70%;
-      height: 35%;
-      background: #1f2937;
-      border: 10px solid #0f172a;
-      border-bottom: none;
-      border-radius: 40px 40px 10px 10px;
-      position: absolute;
-      top: -28%;
-      left: 50%;
-      transform: translateX(-50%);
-    }
-
-    .handle-left,
-    .handle-right {
-      width: 55px;
-      height: 35px;
-      background: #1f2937;
-      border: 8px solid #0f172a;
-      border-radius: 12px;
-      position: absolute;
-      top: 35%;
-    }
-
-    .handle-left { left: -45px; }
-    .handle-right { right: -45px; }
-
-    .fade {
-      animation: fadein .4s ease-out;
-    }
-
-    @keyframes fadein {
-      from { opacity: 0; transform: scale(0.97); }
-      to   { opacity: 1; transform: scale(1); }
-    }
-  </style>
 </head>
 
-<body class="bg-blue-800 text-white min-h-screen">
+<body class="bg-blue-800 text-white min-h-screen p-6">
 
-  <div class="max-w-6xl mx-auto py-8 px-4">
+<!-- Back Button -->
+<a href="apps.html" class="inline-block bg-blue-900 px-5 py-2 rounded-lg mb-6 text-xl font-bold">
+  ← Apps
+</a>
 
-    <!-- Title Row -->
-    <div class="flex items-center justify-between mb-8">
-      <a href="apps.html"
-         class="bg-blue-900 hover:bg-blue-700 px-6 py-3 rounded-xl text-xl font-bold shadow">
-         ← Apps
-      </a>
+<h1 class="text-center text-4xl font-extrabold mb-8">
+  Magic Pot — Recipe Rater
+</h1>
 
-      <h1 class="text-4xl md:text-6xl font-extrabold text-center flex-1 text-blue-100">
-        Magic Pot — Recipe Rater
-      </h1>
+<div class="flex justify-center">
+  <div class="pot"></div>
+</div>
 
-      <button id="fullscreenBtn"
-              class="bg-blue-900 hover:bg-blue-700 px-4 py-3 rounded-xl text-xl font-bold shadow">
-        ⛶
-      </button>
-    </div>
+<!-- Ingredients -->
 
-    <div class="grid md:grid-cols-2 gap-8">
+<div class="max-w-xl mx-auto mt-10 text-center">
+  <input id="ingredientInput" 
+         type="text"
+         placeholder="Type an ingredient…"
+         class="w-full p-4 rounded-lg text-gray-900 text-xl" />
+  
+  <button onclick="addIngredient()"
+          class="mt-4 bg-green-500 hover:bg-green-600 px-6 py-3 rounded-lg text-xl font-bold">
+    Add Ingredient
+  </button>
 
-      <!-- LEFT SIDE — POT + INGREDIENTS -->
-      <div class="flex flex-col items-center">
+  <button onclick="rateRecipe()"
+          class="mt-4 ml-3 bg-purple-600 hover:bg-purple-700 px-6 py-3 rounded-lg text-xl font-bold">
+    Rate Recipe
+  </button>
 
-        <!-- POT -->
-        <div class="pot-shape relative mb-6 fade">
-          <div class="pot-lid"></div>
-          <div class="handle-left"></div>
-          <div class="handle-right"></div>
-        </div>
+  <button onclick="clearPot()"
+          class="mt-4 ml-3 bg-gray-600 hover:bg-gray-700 px-6 py-3 rounded-lg text-xl font-bold">
+    Clear
+  </button>
+</div>
 
-        <!-- INGREDIENTS LIST -->
-        <div class="w-full bg-blue-900 border-4 border-blue-100 rounded-2xl p-4 min-h-[160px]">
-          <h2 class="text-2xl font-extrabold text-blue-200 mb-3">Ingredients in the Pot</h2>
+<!-- Ingredient Display -->
+<div class="max-w-xl mx-auto bg-blue-900 mt-10 p-5 rounded-xl">
+  <h2 class="text-xl font-bold mb-3">Ingredients in the Pot</h2>
+  <div id="ingredientList" class="text-lg"></div>
+</div>
 
-          <div id="ingredientList" class="flex flex-wrap gap-2">
-            <!-- Ingredients appear here -->
-          </div>
-        </div>
-      </div>
-
-      <!-- RIGHT SIDE — CONTROLS -->
-      <div>
-
-        <!-- Add Ingredient -->
-        <div class="bg-white rounded-2xl p-6 text-blue-900 shadow-xl border-4 border-blue-900">
-          <h2 class="text-3xl font-extrabold mb-4">Add Ingredient</h2>
-
-          <div class="flex gap-3 mb-4">
-            <input id="ingInput"
-                   type="text"
-                   placeholder="Type an ingredient..."
-                   class="flex-1 border-4 border-blue-900 rounded-xl px-4 py-3 text-xl font-bold"/>
-            <button id="addBtn"
-                    class="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-xl text-2xl font-extrabold">
-              Add
-            </button>
-          </div>
-
-          <div class="grid grid-cols-3 gap-3 mb-4">
-            <button id="undoBtn"
-              class="bg-yellow-400 text-blue-900 font-extrabold text-xl py-3 rounded-xl hover:bg-yellow-300">
-              Undo
-            </button>
-
-            <button id="clearBtn"
-              class="bg-gray-700 text-white font-bold text-xl py-3 rounded-xl hover:bg-gray-800">
-              Clear
-            </button>
-
-            <button id="rateBtn"
-              class="bg-purple-700 text-white font-extrabold text-xl py-3 rounded-xl hover:bg-purple-800">
-              Rate Recipe
-            </button>
-          </div>
-        </div>
-
-        <!-- RESULT BOX -->
-        <div id="resultBox"
-             class="bg-blue-900 border-4 border-blue-100 rounded-2xl p-6 mt-6 hidden fade">
-
-          <h2 id="dishName" class="text-3xl font-extrabold mb-2"></h2>
-
-          <div id="score"
-               class="text-5xl md:text-6xl font-black mb-4"></div>
-
-          <div id="verdict"
-               class="text-3xl font-extrabold mb-2"></div>
-
-          <div id="comment"
-               class="text-2xl"></div>
-        </div>
-
-      </div>
-    </div>
-  </div>
+<!-- Result Section -->
+<div id="resultBox" class="max-w-2xl mx-auto mt-10 bg-blue-900 p-8 rounded-xl hidden text-center">
+  <h2 id="dishName" class="text-4xl font-extrabold mb-3"></h2>
+  <p id="score" class="text-3xl font-bold mb-2"></p>
+  <p id="reaction" class="text-2xl"></p>
+</div>
 
 
-  <script>
-    const ingredients = [];
-    const listEl = document.getElementById("ingredientList");
-    const dishNameEl = document.getElementById("dishName");
-    const scoreEl = document.getElementById("score");
-    const verdictEl = document.getElementById("verdict");
-    const commentEl = document.getElementById("comment");
-    const resultBox = document.getElementById("resultBox");
+<script>
+// Store list
+let pot = [];
 
-    function renderIngredients() {
-      listEl.innerHTML = "";
-      ingredients.forEach(ing => {
-        const tag = document.createElement("span");
-        tag.className =
-          "bg-blue-100 text-blue-900 px-3 py-2 rounded-xl text-lg font-bold";
-        tag.textContent = ing;
-        listEl.appendChild(tag);
-      });
-    }
+// Add ingredient
+function addIngredient() {
+  const input = document.getElementById("ingredientInput");
+  const value = input.value.trim();
 
-    function addIngredient() {
-      const val = document.getElementById("ingInput").value.trim();
-      if (!val) return;
-      ingredients.push(cap(val));
-      document.getElementById("ingInput").value = "";
-      renderIngredients();
-    }
+  if (value === "") return;
 
-    function cap(s) {
-      return s.charAt(0).toUpperCase() + s.slice(1);
-    }
+  pot.push(value);
+  input.value = "";
 
-    // ---------- Very Simple Fun Rating System ----------
-    function rateRecipe() {
-      if (ingredients.length === 0) {
-        dishNameEl.textContent = "Empty Pot Mystery";
-        scoreEl.textContent = "0 / 10";
-        verdictEl.textContent = "Nothing in the pot!";
-        commentEl.textContent = "Add some ingredients first!";
-        return;
-      }
+  updateList();
+}
 
-      // Just a fun heuristic
-      let score = 5;
+// Update ingredient list
+function updateList() {
+  document.getElementById("ingredientList").innerText =
+    pot.length ? pot.join(", ") : "No ingredients yet!";
+}
 
-      const lower = ingredients.map(i => i.toLowerCase());
+// Clear everything
+function clearPot() {
+  pot = [];
+  updateList();
+  document.getElementById("resultBox").classList.add("hidden");
+}
 
-      const sweet = ["sugar","honey","cake","chocolate","jelly","ice cream"];
-      const savory = ["chicken","beef","bacon","garlic","onion"];
-      const weird = ["toothpaste","soap","shoe","grass","battery"];
+// Rate the recipe (fun + random)
+function rateRecipe() {
+  if (pot.length === 0) return;
 
-      if (lower.some(i => sweet.some(s => i.includes(s)))) score += 1;
-      if (lower.some(i => savory.some(s => i.includes(s)))) score += 1;
-      if (lower.some(i => weird.some(s => i.includes(s)))) score -= 3;
-      if (ingredients.length > 6) score -= 1;
+  const funnyDishNames = [
+    "Bless-Your-Heart Surprise",
+    "Grandma’s Mystery Mix",
+    "Southern Chaos Casserole",
+    "Potluck Panic Stew",
+    "The Swamp Special",
+    "Front-Porch Gumbo Disaster",
+    "County-Fair Oops Delight",
+    "Midnight Snack Mistake",
+    "Cajun Roulette",
+    "Oops-All-Ingredients Soup"
+  ];
 
-      score = Math.max(0, Math.min(10, score));
+  const reactions = [
+    "Child… no. Just no.",
+    "Could eat it… but only once.",
+    "Might pass for edible on a good day.",
+    "Honestly? Not half bad!",
+    "Grandma would be proud!",
+    "Well butter my biscuits, that’s delicious!"
+  ];
 
-      const verdict =
-        score >= 8 ? "Chef’s Kiss! 😋" :
-        score >= 5 ? "Pretty Good! 👍" :
-        score >= 3 ? "Questionable… 😬" :
-        "Oh No! 🚫";
+  const dishName = funnyDishNames[Math.floor(Math.random() * funnyDishNames.length)];
+  const scoreValue = (Math.random() * 10).toFixed(1);
+  let reaction;
 
-      const comments = [
-        "Might taste better than it looks.",
-        "A bold choice — brave chef!",
-        "Grandma would be proud… maybe.",
-        "This belongs on a cooking show!",
-        "This one’s a gamble for sure.",
-        "Not bad at all for a Magic Pot dish.",
-        "Oof… this one needs prayer."
-      ];
+  if (scoreValue < 2) reaction = reactions[0];
+  else if (scoreValue < 4) reaction = reactions[1];
+  else if (scoreValue < 6) reaction = reactions[2];
+  else if (scoreValue < 8) reaction = reactions[3];
+  else if (scoreValue < 9) reaction = reactions[4];
+  else reaction = reactions[5];
 
-      // Fun random comment
-      const comment = comments[Math.floor(Math.random() * comments.length)];
+  document.getElementById("dishName").innerText = dishName;
+  document.getElementById("score").innerText = `Score: ${scoreValue} / 10`;
+  document.getElementById("reaction").innerText = reaction;
 
-      dishNameEl.textContent = "Your Dish";
-      scoreEl.textContent = `${score} / 10`;
-      verdictEl.textContent = verdict;
-      commentEl.textContent = comment;
-    }
-
-    // Buttons
-    document.getElementById("addBtn").onclick = addIngredient;
-    document.getElementById("undoBtn").onclick = () => {
-      ingredients.pop();
-      renderIngredients();
-    };
-    document.getElementById("clearBtn").onclick = () => {
-      ingredients.length = 0;
-      renderIngredients();
-    };
-    document.getElementById("rateBtn").onclick = () => {
-      resultBox.classList.remove("hidden");
-      resultBox.classList.add("fade");
-      rateRecipe();
-    };
-
-    // Fullscreen
-    document.getElementById("fullscreenBtn").onclick = () => {
-      if (!document.fullscreenElement) {
-        document.documentElement.requestFullscreen();
-      } else {
-        document.exitFullscreen();
-      }
-    };
-  </script>
+  document.getElementById("resultBox").classList.remove("hidden");
+}
+</script>
 
 </body>
 </html>
