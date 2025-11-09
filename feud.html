@@ -1,360 +1,339 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Family Feud — ProjectorFirst</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-
-  <!-- Sounds -->
-  <audio id="dingSound" preload="auto" src="https://assets.mixkit.co/sfx/preview/mixkit-correct-answer-tone-2870.mp3"></audio>
-  <audio id="buzzSound" preload="auto" src="https://assets.mixkit.co/sfx/preview/mixkit-wrong-answer-buzz-960.mp3"></audio>
-
-  <style>
-    /* BIG X overlay (no background; fade via opacity to avoid stuck states) */
-    #bigXOverlay {
-      position: fixed;
-      inset: 0;
-      display: grid;
-      place-items: center;
-      z-index: 50;
-      pointer-events: none;
-      transition: opacity .25s ease-out;
-    }
-    .bigX {
-      font-family: Impact, Haettenschweiler, 'Arial Black', sans-serif;
-      color: #ffffff;                 /* fill */
-      -webkit-text-stroke: 22px #dc2626; /* thick red outline */
-      text-shadow: 0 10px 22px rgba(0,0,0,.35);
-      line-height: 1;
-      user-select: none;
-    }
-    @media (min-width:1024px){ .bigX{ font-size: 22rem; } }
-    @media (max-width:1023.98px){ .bigX{ font-size: 16rem; } }
-
-    /* Strike pop */
-    .strike-pop{ animation: sp .35s ease-out; }
-    @keyframes sp{
-      0%{ transform: scale(.8); opacity:.5 }
-      60%{ transform: scale(1.2); opacity:1 }
-      100%{ transform: scale(1); opacity:1 }
-    }
-  </style>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Resident Feud — ProjectorFirst</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  body { background:#0b2a8a; color:#fff; font-family: Arial, sans-serif; }
+  .card { background:#ffffff; color:#0b2a8a; border:6px solid #1e3a8a; border-radius:20px; }
+  .answer-card { cursor:pointer; user-select:none; }
+  .answer-revealed { background:#e6ffe6 !important; border-color:#16a34a !important; }
+  .overlayX {
+    position: fixed; inset: 0; display:none; align-items:center; justify-content:center;
+    background: rgba(220, 38, 38, 0.20); z-index: 50;
+  }
+  .overlayX .bigX {
+    font-size: 22vw; line-height: 1; font-weight: 900; color:#ff0000;
+    text-shadow: 0 0 40px rgba(0,0,0,0.6);
+  }
+  /* Drawer */
+  #drawer {
+    position: fixed; top:0; right:-520px; width:520px; height:100vh; z-index:60;
+    background:#ffffff; color:#0b2a8a; border-left:8px solid #1e3a8a;
+    box-shadow: -10px 0 30px rgba(0,0,0,0.25); transition:right .25s ease;
+    overflow:auto;
+  }
+  #drawer.open { right:0; }
+  .big-btn { font-size:32px; padding:18px 28px; font-weight:800; border-radius:16px; }
+  .team-toggle.active { outline:6px solid #facc15; }
+</style>
 </head>
+<body>
 
-<body class="bg-white text-gray-900 min-h-screen">
-  <!-- BIG X (starts invisible with opacity-0) -->
-  <div id="bigXOverlay" class="opacity-0">
-    <div class="bigX">X</div>
+<!-- Top bar -->
+<div class="flex flex-wrap items-center justify-between gap-4 p-6">
+  <a href="apps.html" class="bg-blue-900 hover:bg-blue-800 px-6 py-3 rounded-xl text-white font-bold text-xl">← Apps</a>
+
+  <!-- Team Selector -->
+  <div class="flex items-center gap-3">
+    <span class="text-xl font-bold">Award points to:</span>
+    <button id="team1Btn" class="team-toggle bg-white text-blue-900 font-extrabold text-2xl rounded-xl px-5 py-3">Table 1</button>
+    <button id="team2Btn" class="team-toggle bg-white text-blue-900 font-extrabold text-2xl rounded-xl px-5 py-3">Table 2</button>
+    <span class="text-sm opacity-80">(Leave none selected to reveal with no points.)</span>
   </div>
 
-  <div class="w-full px-4 lg:px-8 py-5 max-w-7xl mx-auto">
-    <!-- Top score bar -->
-    <div class="flex items-center justify-center gap-12 mb-5">
-      <!-- Team 1 -->
-      <div class="flex flex-col items-center">
-        <button id="team1Turn" class="px-6 py-3 rounded-xl text-white font-bold bg-blue-900">Table 1 Turn</button>
-        <div class="text-center mt-2">
-          <div class="text-xl font-semibold text-blue-900">Table 1</div>
-          <div id="score1" class="text-5xl font-black text-blue-900">0</div>
+  <div class="flex items-center gap-3">
+    <button id="openEditor" class="bg-purple-700 hover:bg-purple-600 px-6 py-3 rounded-xl text-white font-bold text-xl">Question Editor</button>
+    <button id="nextQ" class="bg-green-600 hover:bg-green-500 px-6 py-3 rounded-xl text-white font-bold text-xl">Next Question</button>
+  </div>
+</div>
+
+<!-- Scores + Strike -->
+<div class="max-w-6xl mx-auto px-6 mb-4">
+  <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 items-center">
+    <!-- Scores -->
+    <div class="card p-5 text-center">
+      <div class="text-3xl font-extrabold text-blue-900">Table 1</div>
+      <div id="score1" class="text-6xl font-black text-blue-900 mt-2">0</div>
+    </div>
+    <div class="flex items-center justify-center">
+      <button id="strikeBtn" class="big-btn bg-red-600 hover:bg-red-500 text-white">❌ Strike</button>
+    </div>
+    <div class="card p-5 text-center">
+      <div class="text-3xl font-extrabold text-blue-900">Table 2</div>
+      <div id="score2" class="text-6xl font-black text-blue-900 mt-2">0</div>
+    </div>
+  </div>
+</div>
+
+<!-- Question -->
+<div class="max-w-6xl mx-auto px-6">
+  <div id="questionBox" class="card p-8 text-center">
+    <div class="text-3xl sm:text-5xl font-extrabold">Press “Next Question”</div>
+  </div>
+</div>
+
+<!-- Answers grid -->
+<div class="max-w-6xl mx-auto px-6 mt-6">
+  <div id="answersGrid" class="grid grid-cols-1 sm:grid-cols-2 gap-6"></div>
+</div>
+
+<!-- Big X overlay -->
+<div id="overlayX" class="overlayX"><div class="bigX">X</div></div>
+
+<!-- Drawer Editor -->
+<div id="drawer">
+  <div class="p-6">
+    <div class="flex items-center justify-between mb-4">
+      <h2 class="text-3xl font-extrabold">Question Editor</h2>
+      <button id="closeEditor" class="bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded-xl font-bold text-blue-900">Close</button>
+    </div>
+
+    <label class="font-bold">Question</label>
+    <textarea id="qInput" class="w-full border-2 border-blue-900 rounded-xl p-3 mb-4" rows="2" placeholder="e.g., Name something you bring to a picnic."></textarea>
+
+    <div class="flex items-center justify-between mb-2">
+      <div class="font-bold">Answers (click “+ Add Answer” to add rows)</div>
+      <button id="addAns" class="bg-blue-900 text-white px-4 py-2 rounded-xl font-bold">+ Add Answer</button>
+    </div>
+
+    <div id="ansList" class="space-y-3 mb-6"></div>
+
+    <button id="saveQ" class="bg-green-600 hover:bg-green-500 text-white font-bold px-6 py-3 rounded-xl">Save Question</button>
+
+    <hr class="my-6 border-blue-200">
+
+    <h3 class="text-2xl font-extrabold mb-2">Saved Questions</h3>
+    <div id="savedWrap" class="space-y-2"></div>
+  </div>
+</div>
+
+<script>
+/* ------------------ Audio (WebAudio tones) ------------------ */
+const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+function playTone(freq=880, dur=0.15, type='sine', vol=0.2) {
+  const o = audioCtx.createOscillator();
+  const g = audioCtx.createGain();
+  o.type = type; o.frequency.value = freq;
+  g.gain.value = vol;
+  o.connect(g).connect(audioCtx.destination);
+  o.start();
+  setTimeout(()=>{ o.stop(); }, dur*1000);
+}
+function ding() { playTone(1200, 0.10, 'sine', 0.25); setTimeout(()=>playTone(1500,0.10,'sine',0.25), 110); }
+function buzz() { playTone(200, 0.25, 'square', 0.3); setTimeout(()=>playTone(160, 0.25,'square',0.3), 260); }
+
+/* ------------------ State ------------------ */
+let questions = JSON.parse(localStorage.getItem('feudQuestions') || '[]');
+let lastIndex = -1;
+
+const defaultIfEmpty = [
+  {
+    q: "Name something you bring to a picnic.",
+    answers: [
+      { text: "Food", points: 35 },
+      { text: "Blanket", points: 20 },
+      { text: "Drinks", points: 18 },
+      { text: "Utensils/Napkins", points: 12 },
+      { text: "Games", points: 8 },
+      { text: "Sunscreen", points: 7 }
+    ]
+  },
+  {
+    q: "Name something people do first thing in the morning.",
+    answers: [
+      { text: "Brush Teeth", points: 30 },
+      { text: "Use Bathroom", points: 20 },
+      { text: "Make Coffee", points: 18 },
+      { text: "Shower", points: 12 },
+      { text: "Check Phone", points: 10 },
+      { text: "Get Dressed", points: 10 }
+    ]
+  }
+];
+if (questions.length === 0) { questions = defaultIfEmpty; localStorage.setItem('feudQuestions', JSON.stringify(questions)); }
+
+/* ------------------ UI refs ------------------ */
+const answersGrid = document.getElementById('answersGrid');
+const questionBox = document.getElementById('questionBox');
+const score1El = document.getElementById('score1');
+const score2El = document.getElementById('score2');
+const overlayX = document.getElementById('overlayX');
+
+const team1Btn = document.getElementById('team1Btn');
+const team2Btn = document.getElementById('team2Btn');
+
+let activeTeam = null; // '1' or '2' or null
+let score1 = 0, score2 = 0;
+
+/* ------------------ Team toggle ------------------ */
+function setActiveTeam(t) {
+  activeTeam = t;
+  team1Btn.classList.toggle('active', t === '1');
+  team2Btn.classList.toggle('active', t === '2');
+}
+team1Btn.addEventListener('click', ()=> setActiveTeam(activeTeam === '1' ? null : '1'));
+team2Btn.addEventListener('click', ()=> setActiveTeam(activeTeam === '2' ? null : '2'));
+
+/* ------------------ Render Question ------------------ */
+function pickRandomIndex() {
+  if (questions.length === 1) return 0;
+  let i;
+  do { i = Math.floor(Math.random() * questions.length); } while (i === lastIndex);
+  lastIndex = i;
+  return i;
+}
+
+let current = null;
+
+function renderQuestion(qObj) {
+  current = JSON.parse(JSON.stringify(qObj)); // clone for safety
+  // question
+  questionBox.innerHTML = `<div class="text-3xl sm:text-5xl font-extrabold">${escapeHtml(current.q)}</div>`;
+
+  // answers
+  answersGrid.innerHTML = '';
+  current.answers
+    .filter(a => a.text && !isNaN(+a.points))
+    .slice(0, 8) // up to 8 slots
+    .forEach((a, idx) => {
+      const card = document.createElement('button');
+      card.className = 'card answer-card p-5 text-left';
+      card.dataset.revealed = '0';
+      card.dataset.points = String(+a.points);
+
+      card.innerHTML = `
+        <div class="flex items-center justify-between gap-4">
+          <div class="text-2xl sm:text-3xl font-extrabold uppercase">#${idx+1}</div>
+          <div class="text-2xl sm:text-3xl font-extrabold text-blue-900">[ HIDDEN ]</div>
         </div>
-      </div>
-
-      <div class="w-px h-20 bg-gray-300"></div>
-
-      <!-- Team 2 -->
-      <div class="flex flex-col items-center">
-        <button id="team2Turn" class="px-6 py-3 rounded-xl text-white font-bold bg-blue-400">Table 2 Turn</button>
-        <div class="text-center mt-2">
-          <div class="text-xl font-semibold text-blue-900">Table 2</div>
-          <div id="score2" class="text-5xl font-black text-blue-900">0</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Utility controls -->
-    <div class="flex flex-wrap justify-center gap-3 mb-6">
-      <a href="apps.html" class="px-6 py-3 bg-blue-900 text-white rounded-xl text-xl font-bold">← Apps</a>
-      <button id="fullscreenBtn" class="px-6 py-3 bg-blue-700 text-white rounded-xl font-bold">⛶ Full Screen</button>
-      <button id="openEditor" class="px-6 py-3 bg-purple-700 text-white rounded-xl font-bold">Question Editor</button>
-      <button id="resetScores" class="px-6 py-3 bg-gray-700 text-white rounded-xl font-bold">Reset Scores</button>
-    </div>
-
-    <!-- Question -->
-    <div id="questionText" class="text-5xl font-extrabold text-center text-blue-900 mb-6"></div>
-
-    <!-- Answers -->
-    <div id="answersContainer" class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-5xl mx-auto"></div>
-
-    <!-- Strikes and round controls -->
-    <div class="text-center mt-6">
-      <div class="mb-4 flex justify-center gap-3">
-        <div id="strike1" class="w-16 h-16 md:w-20 md:h-20 grid place-items-center rounded-2xl border-[6px] border-red-600 text-5xl md:text-6xl font-black text-red-700 opacity-20">X</div>
-        <div id="strike2" class="w-16 h-16 md:w-20 md:h-20 grid place-items-center rounded-2xl border-[6px] border-red-600 text-5xl md:text-6xl font-black text-red-700 opacity-20">X</div>
-        <div id="strike3" class="w-16 h-16 md:w-20 md:h-20 grid place-items-center rounded-2xl border-[6px] border-red-600 text-5xl md:text-6xl font-black text-red-700 opacity-20">X</div>
-      </div>
-
-      <button id="wrongBtn" class="px-8 py-3 bg-red-600 text-white text-xl rounded-xl font-bold hover:bg-red-700">Wrong</button>
-      <button id="clearStrikes" class="px-6 py-3 bg-gray-500 text-white rounded-xl ml-3">Clear Strikes</button>
-      <button id="revealAll" class="px-6 py-3 bg-blue-500 text-white rounded-xl ml-3">Reveal All</button>
-      <button id="nextQuestion" class="px-6 py-3 bg-yellow-400 text-black rounded-xl ml-3 font-bold">Next Question ▶</button>
-    </div>
-
-    <div class="text-center mt-3 text-sm text-gray-600">Tip: Click an answer to reveal it. Points are added to the <b>active team</b>.</div>
-  </div>
-
-  <!-- Editor modal -->
-  <div id="editorWrap" class="fixed inset-0 bg-black/60 hidden items-start justify-center p-4 z-40">
-    <div class="bg-white rounded-2xl max-w-3xl w-full p-6">
-      <div class="flex items-center justify-between mb-4">
-        <h2 class="text-3xl font-extrabold text-blue-900">Question Editor</h2>
-        <button id="closeEditor" class="px-4 py-2 rounded-xl bg-gray-800 text-white font-bold">Close</button>
-      </div>
-
-      <label class="block font-bold text-blue-900 mb-1">Question</label>
-      <input id="edQ" type="text" class="w-full border-2 rounded-xl px-3 py-2 mb-4" placeholder="Type your question…">
-
-      <div id="edAnswers" class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4"></div>
-
-      <div class="flex items-center gap-2 mb-6">
-        <button id="addAnswer" class="px-4 py-2 bg-blue-900 text-white rounded-xl font-bold">+ Add Answer</button>
-        <button id="saveQuestion" class="px-4 py-2 bg-green-600 text-white rounded-xl font-bold">Save to Library</button>
-      </div>
-
-      <h3 class="text-xl font-bold text-blue-900 mb-2">Your Saved Questions</h3>
-      <div id="userList" class="space-y-2 max-h-64 overflow-auto"></div>
-    </div>
-  </div>
-
-  <script>
-    // ====== Data & storage ======
-    const DEFAULTS = [
-      { q: "Name something you do before bed.", a: [{t:"Brush teeth",p:40},{t:"Pray",p:20},{t:"Read",p:18},{t:"Watch TV",p:12},{t:"Drink water",p:10}] },
-      { q: "Name a season of the year.", a: [{t:"Summer",p:35},{t:"Winter",p:30},{t:"Fall",p:20},{t:"Spring",p:15}] },
-      { q: "Name a fruit that is red.", a: [{t:"Apple",p:44},{t:"Strawberry",p:28},{t:"Cherry",p:18},{t:"Raspberry",p:10}] },
-      { q: "Name a common pet.", a: [{t:"Dog",p:48},{t:"Cat",p:40},{t:"Fish",p:7},{t:"Bird",p:5}] },
-      { q: "Name a breakfast food.", a: [{t:"Eggs",p:28},{t:"Cereal",p:22},{t:"Pancakes",p:18},{t:"Bacon",p:16},{t:"Toast",p:16}] }
-    ];
-    const LS_KEY = "feud_user_questions_v1";
-
-    function loadUserQs(){ try { return JSON.parse(localStorage.getItem(LS_KEY)) || []; } catch { return []; } }
-    function saveUserQs(list){ localStorage.setItem(LS_KEY, JSON.stringify(list)); }
-
-    let LIB = [...DEFAULTS, ...loadUserQs()];
-    if (LIB.length === 0) LIB = [...DEFAULTS];
-
-    // ====== State ======
-    let idx = 0;
-    let revealed = new Set();
-    let strikes = 0;
-    let activeTeam = 1;
-    let score = {1:0, 2:0};
-
-    // ====== Elements ======
-    const ding = document.getElementById("dingSound");
-    const buzz = document.getElementById("buzzSound");
-    const bigX = document.getElementById("bigXOverlay");
-    const qEl = document.getElementById("questionText");
-    const answersWrap = document.getElementById("answersContainer");
-
-    // ====== Helpers ======
-    const $ = sel => document.querySelector(sel);
-
-    function updateTurnButtons(){
-      if (activeTeam === 1) {
-        $("#team1Turn").className = "px-6 py-3 rounded-xl text-white font-bold bg-blue-900";
-        $("#team2Turn").className = "px-6 py-3 rounded-xl text-white font-bold bg-blue-400";
-      } else {
-        $("#team1Turn").className = "px-6 py-3 rounded-xl text-white font-bold bg-blue-400";
-        $("#team2Turn").className = "px-6 py-3 rounded-xl text-white font-bold bg-blue-900";
-      }
-    }
-    function updateScores(){ $("#score1").textContent = score[1]; $("#score2").textContent = score[2]; }
-
-    // ====== Render question ======
-    function renderQuestion(){
-      const item = LIB[idx];
-      qEl.textContent = item.q;
-      answersWrap.innerHTML = "";
-      revealed = new Set();
-      strikes = 0; updateStrikes();
-
-      item.a.forEach((ans, i) => {
-        const btn = document.createElement("button");
-        btn.className = "relative w-full text-left bg-blue-800/70 hover:bg-blue-700/80 border-4 border-yellow-300 rounded-2xl p-6 lg:p-7 shadow-lg";
-        btn.dataset.i = i;
-
-        const line = document.createElement("div");
-        line.className = "text-4xl lg:text-5xl font-extrabold tracking-wide";
-        line.innerHTML = `<span class="mr-3">#${i+1}</span><span class="opacity-0">${ans.t}</span>`;
-
-        const pts = document.createElement("div");
-        pts.className = "absolute right-6 top-5 text-5xl font-black text-yellow-300 opacity-0";
-        pts.textContent = ans.p;
-
-        btn.appendChild(line);
-        btn.appendChild(pts);
-
-        btn.addEventListener("click", () => revealAnswer(i, btn));
-        answersWrap.appendChild(btn);
-      });
-    }
-
-    function revealAnswer(i, btn){
-      if (revealed.has(i)) return;
-      revealed.add(i);
-
-      btn.querySelector("span.opacity-0").classList.remove("opacity-0");
-      btn.querySelector(".text-5xl").classList.remove("opacity-0");
-      btn.classList.add("bg-green-700");
-
-      // score to active team
-      const pts = LIB[idx].a[i].p;
-      score[activeTeam] += pts; updateScores();
-
-      try { ding.currentTime = 0; ding.play(); } catch {}
-    }
-
-    // ====== Strikes ======
-    function updateStrikes(){
-      ["strike1","strike2","strike3"].forEach((id, k)=>{
-        const el = document.getElementById(id);
-        if (k < strikes) { el.style.opacity = 1; el.classList.add("strike-pop"); setTimeout(()=>el.classList.remove("strike-pop"), 350); }
-        else el.style.opacity = .2;
-      });
-    }
-
-    function showBigX(){
-      bigX.style.opacity = "1";              // show
-      // force reflow
-      void bigX.offsetWidth;
-      setTimeout(()=>{ bigX.style.opacity = "0"; }, 2000); // 2 seconds
-    }
-
-    function wrong(){
-      try { buzz.currentTime = 0; buzz.play(); } catch {}
-      showBigX();
-      if (strikes < 3) {
-        strikes++; updateStrikes();
-        if (strikes >= 3) {
-          // switch team after a short beat
-          setTimeout(()=>{
-            activeTeam = activeTeam === 1 ? 2 : 1;
-            updateTurnButtons();
-            strikes = 0; updateStrikes();
-          }, 450);
-        }
-      }
-    }
-
-    // ====== Navigation ======
-    function nextQ(){ idx = (idx + 1) % LIB.length; renderQuestion(); }
-    function revealAll(){
-      [...answersWrap.children].forEach((btn, i)=>{
-        if (!revealed.has(i)) revealAnswer(i, btn);
-      });
-    }
-
-    // ====== Editor ======
-    const editor = document.getElementById("editorWrap");
-    $("#openEditor").addEventListener("click", ()=>{ openEditor(); });
-    $("#closeEditor").addEventListener("click", ()=> editor.classList.add("hidden"));
-
-    function openEditor(){
-      editor.classList.remove("hidden");
-      resetEditor();
-      renderUserList();
-    }
-
-    function resetEditor(){
-      $("#edQ").value = "";
-      const ed = $("#edAnswers");
-      ed.innerHTML = "";
-      for (let i=0;i<4;i++) addAnswerRow();
-    }
-
-    function addAnswerRow(text="", points=""){
-      const row = document.createElement("div");
-      row.className = "grid grid-cols-6 gap-2 items-center";
-      row.innerHTML = `
-        <input class="col-span-4 border-2 rounded-xl px-3 py-2" placeholder="Answer" value="${text}">
-        <input type="number" class="col-span-1 border-2 rounded-xl px-3 py-2" placeholder="Pts" value="${points}">
-        <button class="col-span-1 px-3 py-2 bg-gray-200 rounded-xl font-bold">✕</button>
+        <div class="mt-3 text-3xl sm:text-4xl font-black">${escapeHtml(a.text)}</div>
+        <div class="mt-2 text-3xl sm:text-4xl font-black text-green-700 hidden">+ ${+a.points}</div>
       `;
-      row.querySelector("button").addEventListener("click", ()=> row.remove());
-      $("#edAnswers").appendChild(row);
-    }
-    $("#addAnswer").addEventListener("click", ()=> addAnswerRow());
 
-    $("#saveQuestion").addEventListener("click", ()=>{
-      const q = $("#edQ").value.trim();
-      if (!q) return alert("Enter a question.");
-      const rows = [...$("#edAnswers").children];
-      const a = rows.map(r=>{
-        const t = r.children[0].value.trim();
-        const p = Number(r.children[1].value);
-        return (t && !Number.isNaN(p)) ? {t, p: Math.max(0,p)} : null;
-      }).filter(Boolean);
-      if (!a.length) return alert("Add at least one answer with points.");
+      card.addEventListener('click', () => {
+        if (card.dataset.revealed === '1') return;
 
-      const user = loadUserQs();
-      user.push({ q, a });
-      saveUserQs(user);
-      LIB = [...DEFAULTS, ...user];
-      alert("Saved!");
-      renderUserList();
-    });
+        // reveal
+        card.dataset.revealed = '1';
+        card.classList.add('answer-revealed');
+        const tags = card.querySelectorAll('div');
+        // tags[0] is header row; tags[1] is text; tags[2] is points row
+        tags[0].lastElementChild.textContent = '[ REVEALED ]';
+        tags[2].classList.remove('hidden');
 
-    function renderUserList(){
-      const box = $("#userList");
-      const user = loadUserQs();
-      box.innerHTML = "";
-      user.forEach((it, i)=>{
-        const row = document.createElement("div");
-        row.className = "border rounded-xl p-2";
-        row.innerHTML = `
-          <div class="font-bold">${it.q}</div>
-          <div class="text-sm text-gray-600">${it.a.map(x=>`${x.t} (${x.p})`).join(" • ")}</div>
-          <div class="mt-2 flex gap-2">
-            <button data-i="${i}" class="px-3 py-1 bg-blue-900 text-white rounded-lg text-sm">Play This</button>
-            <button data-del="${i}" class="px-3 py-1 bg-red-600 text-white rounded-lg text-sm">Delete</button>
-          </div>
-        `;
-        row.querySelector("[data-i]").addEventListener("click", ()=>{
-          const pre = DEFAULTS.length;
-          idx = pre + i;
-          renderQuestion();
-          editor.classList.add("hidden");
-        });
-        row.querySelector("[data-del]").addEventListener("click", ()=>{
-          const newList = loadUserQs().filter((_,j)=> j!==i);
-          saveUserQs(newList);
-          LIB = [...DEFAULTS, ...newList];
-          renderUserList();
-        });
-        box.appendChild(row);
+        // award points ONLY if a team is active
+        const pts = +card.dataset.points;
+        if (activeTeam === '1') { score1 += pts; score1El.textContent = String(score1); ding(); }
+        else if (activeTeam === '2') { score2 += pts; score2El.textContent = String(score2); ding(); }
+        else { // reveal with no points
+          ding();
+        }
       });
-    }
 
-    // ====== Buttons ======
-    $("#wrongBtn").addEventListener("click", wrong);
-    $("#clearStrikes").addEventListener("click", ()=>{ strikes=0; updateStrikes(); });
-    $("#revealAll").addEventListener("click", revealAll);
-    $("#nextQuestion").addEventListener("click", nextQ);
-    $("#resetScores").addEventListener("click", ()=>{ score={1:0,2:0}; updateScores(); });
-
-    $("#team1Turn").addEventListener("click", ()=>{ activeTeam = 1; updateTurnButtons(); });
-    $("#team2Turn").addEventListener("click", ()=>{ activeTeam = 2; updateTurnButtons(); });
-
-    $("#fullscreenBtn").addEventListener("click", ()=>{
-      if (!document.fullscreenElement) document.documentElement.requestFullscreen();
-      else document.exitFullscreen();
+      answersGrid.appendChild(card);
     });
+}
 
-    // ====== Init ======
-    updateScores();
-    updateTurnButtons();
-    renderQuestion();
-  </script>
+/* ------------------ Strike ------------------ */
+document.getElementById('strikeBtn').addEventListener('click', () => {
+  overlayX.style.display = 'flex';
+  buzz();
+  setTimeout(()=> overlayX.style.display = 'none', 2000);
+});
+
+/* ------------------ Next Question ------------------ */
+document.getElementById('nextQ').addEventListener('click', () => {
+  // auto-clear strikes overlay if visible
+  overlayX.style.display = 'none';
+  // render new question
+  const idx = pickRandomIndex();
+  renderQuestion(questions[idx]);
+});
+
+/* ------------------ Editor Drawer ------------------ */
+const drawer = document.getElementById('drawer');
+document.getElementById('openEditor').addEventListener('click', () => drawer.classList.add('open'));
+document.getElementById('closeEditor').addEventListener('click', () => drawer.classList.remove('open'));
+
+const ansList = document.getElementById('ansList');
+document.getElementById('addAns').addEventListener('click', addAnswerRow);
+
+function addAnswerRow(textVal = '', pointsVal = '') {
+  const row = document.createElement('div');
+  row.className = 'grid grid-cols-12 gap-3 items-center';
+  row.innerHTML = `
+    <div class="col-span-7">
+      <input class="w-full border-2 border-blue-900 rounded-xl p-2" placeholder="Answer text" value="${escapeAttr(textVal)}">
+    </div>
+    <div class="col-span-3">
+      <input class="w-full border-2 border-blue-900 rounded-xl p-2" type="number" min="0" placeholder="Points" value="${escapeAttr(pointsVal)}">
+    </div>
+    <div class="col-span-2">
+      <button class="w-full bg-red-600 text-white px-3 py-2 rounded-xl">Delete</button>
+    </div>
+  `;
+  const delBtn = row.querySelector('button');
+  delBtn.addEventListener('click', () => row.remove());
+  ansList.appendChild(row);
+}
+
+// seed two rows initially
+addAnswerRow(); addAnswerRow();
+
+document.getElementById('saveQ').addEventListener('click', () => {
+  const q = (document.getElementById('qInput').value || '').trim();
+  if (!q) { alert('Enter a question.'); return; }
+
+  const rows = [...ansList.children];
+  const answers = rows.map(r => {
+    const [txtEl, ptsEl] = r.querySelectorAll('input');
+    return { text: txtEl.value.trim(), points: Number(ptsEl.value) };
+  }).filter(a => a.text && !isNaN(a.points));
+
+  if (answers.length === 0) { alert('Add at least one answer with points.'); return; }
+
+  questions.push({ q, answers });
+  localStorage.setItem('feudQuestions', JSON.stringify(questions));
+
+  document.getElementById('qInput').value = '';
+  ansList.innerHTML = '';
+  addAnswerRow(); addAnswerRow();
+  rebuildSaved();
+});
+
+function rebuildSaved() {
+  const wrap = document.getElementById('savedWrap');
+  wrap.innerHTML = '';
+  questions.forEach((item, i) => {
+    const div = document.createElement('div');
+    div.className = 'border-2 border-blue-200 rounded-xl p-3';
+    const list = item.answers.map(a => `<li>${escapeHtml(a.text)} — <strong>${a.points}</strong></li>`).join('');
+    div.innerHTML = `
+      <div class="flex items-start justify-between gap-4">
+        <div>
+          <div class="font-extrabold mb-2">${escapeHtml(item.q)}</div>
+          <ul class="list-disc list-inside text-sm">${list}</ul>
+        </div>
+        <button class="bg-red-600 text-white px-3 py-1 rounded-lg h-10">Delete</button>
+      </div>
+    `;
+    const btn = div.querySelector('button');
+    btn.addEventListener('click', () => {
+      questions.splice(i,1);
+      localStorage.setItem('feudQuestions', JSON.stringify(questions));
+      rebuildSaved();
+    });
+    wrap.appendChild(div);
+  });
+}
+rebuildSaved();
+
+/* ------------------ Helpers ------------------ */
+function escapeHtml(s){ return s.replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+function escapeAttr(s){ return String(s).replace(/"/g, '&quot;'); }
+</script>
 </body>
 </html>
