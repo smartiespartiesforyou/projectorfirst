@@ -6,427 +6,355 @@
   <title>Family Feud — ProjectorFirst</title>
   <script src="https://cdn.tailwindcss.com"></script>
 
-  <!-- ✅ Sounds -->
-  <audio id="dingSound" src="https://assets.mixkit.co/sfx/preview/mixkit-correct-answer-tone-2870.mp3"></audio>
-  <audio id="buzzSound" src="https://assets.mixkit.co/sfx/preview/mixkit-wrong-answer-buzz-960.mp3"></audio>
+  <!-- Sounds -->
+  <audio id="dingSound" preload="auto" src="https://assets.mixkit.co/sfx/preview/mixkit-correct-answer-tone-2870.mp3"></audio>
+  <audio id="buzzSound" preload="auto" src="https://assets.mixkit.co/sfx/preview/mixkit-wrong-answer-buzz-960.mp3"></audio>
 
   <style>
-    .big-x-overlay {
+    /* BIG X overlay (no background; fade via opacity to avoid stuck states) */
+    #bigXOverlay {
       position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      background: rgba(255, 0, 0, 0.75);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      z-index: 9999;
-      font-size: 22rem;
-      color: white;
-      font-weight: 900;
-      text-shadow: 0 0 20px black;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      z-index: 50;
       pointer-events: none;
+      transition: opacity .25s ease-out;
+    }
+    .bigX {
+      font-family: Impact, Haettenschweiler, 'Arial Black', sans-serif;
+      color: #ffffff;                 /* fill */
+      -webkit-text-stroke: 22px #dc2626; /* thick red outline */
+      text-shadow: 0 10px 22px rgba(0,0,0,.35);
+      line-height: 1;
+      user-select: none;
+    }
+    @media (min-width:1024px){ .bigX{ font-size: 22rem; } }
+    @media (max-width:1023.98px){ .bigX{ font-size: 16rem; } }
+
+    /* Strike pop */
+    .strike-pop{ animation: sp .35s ease-out; }
+    @keyframes sp{
+      0%{ transform: scale(.8); opacity:.5 }
+      60%{ transform: scale(1.2); opacity:1 }
+      100%{ transform: scale(1); opacity:1 }
     }
   </style>
 </head>
 
-<body class="bg-white text-gray-900">
+<body class="bg-white text-gray-900 min-h-screen">
+  <!-- BIG X (starts invisible with opacity-0) -->
+  <div id="bigXOverlay" class="opacity-0">
+    <div class="bigX">X</div>
+  </div>
 
-<div id="bigX" class="big-x-overlay hidden">X</div>
+  <div class="w-full px-4 lg:px-8 py-5 max-w-7xl mx-auto">
+    <!-- Top score bar -->
+    <div class="flex items-center justify-center gap-12 mb-5">
+      <!-- Team 1 -->
+      <div class="flex flex-col items-center">
+        <button id="team1Turn" class="px-6 py-3 rounded-xl text-white font-bold bg-blue-900">Table 1 Turn</button>
+        <div class="text-center mt-2">
+          <div class="text-xl font-semibold text-blue-900">Table 1</div>
+          <div id="score1" class="text-5xl font-black text-blue-900">0</div>
+        </div>
+      </div>
 
-<div class="w-full px-4 py-4 max-w-7xl mx-auto">
+      <div class="w-px h-20 bg-gray-300"></div>
 
-  <!-- TOP BAR -->
-  <div class="flex items-center justify-center gap-10 mb-4">
-
-    <!-- TEAM 1 -->
-    <div class="flex flex-col items-center">
-      <button id="team1Turn"
-        class="px-6 py-3 rounded-xl text-white font-bold bg-blue-900">
-        Table 1 Turn
-      </button>
-      <div class="text-center mt-2">
-        <div class="text-xl font-semibold text-blue-900">Table 1</div>
-        <div id="score1" class="text-5xl font-black text-blue-900">0</div>
+      <!-- Team 2 -->
+      <div class="flex flex-col items-center">
+        <button id="team2Turn" class="px-6 py-3 rounded-xl text-white font-bold bg-blue-400">Table 2 Turn</button>
+        <div class="text-center mt-2">
+          <div class="text-xl font-semibold text-blue-900">Table 2</div>
+          <div id="score2" class="text-5xl font-black text-blue-900">0</div>
+        </div>
       </div>
     </div>
 
-    <!-- Divider -->
-    <div class="w-px h-20 bg-gray-300"></div>
+    <!-- Utility controls -->
+    <div class="flex flex-wrap justify-center gap-3 mb-6">
+      <a href="apps.html" class="px-6 py-3 bg-blue-900 text-white rounded-xl text-xl font-bold">← Apps</a>
+      <button id="fullscreenBtn" class="px-6 py-3 bg-blue-700 text-white rounded-xl font-bold">⛶ Full Screen</button>
+      <button id="openEditor" class="px-6 py-3 bg-purple-700 text-white rounded-xl font-bold">Question Editor</button>
+      <button id="resetScores" class="px-6 py-3 bg-gray-700 text-white rounded-xl font-bold">Reset Scores</button>
+    </div>
 
-    <!-- TEAM 2 -->
-    <div class="flex flex-col items-center">
-      <button id="team2Turn"
-        class="px-6 py-3 rounded-xl text-white font-bold bg-blue-400">
-        Table 2 Turn
-      </button>
-      <div class="text-center mt-2">
-        <div class="text-xl font-semibold text-blue-900">Table 2</div>
-        <div id="score2" class="text-5xl font-black text-blue-900">0</div>
+    <!-- Question -->
+    <div id="questionText" class="text-5xl font-extrabold text-center text-blue-900 mb-6"></div>
+
+    <!-- Answers -->
+    <div id="answersContainer" class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-5xl mx-auto"></div>
+
+    <!-- Strikes and round controls -->
+    <div class="text-center mt-6">
+      <div class="mb-4 flex justify-center gap-3">
+        <div id="strike1" class="w-16 h-16 md:w-20 md:h-20 grid place-items-center rounded-2xl border-[6px] border-red-600 text-5xl md:text-6xl font-black text-red-700 opacity-20">X</div>
+        <div id="strike2" class="w-16 h-16 md:w-20 md:h-20 grid place-items-center rounded-2xl border-[6px] border-red-600 text-5xl md:text-6xl font-black text-red-700 opacity-20">X</div>
+        <div id="strike3" class="w-16 h-16 md:w-20 md:h-20 grid place-items-center rounded-2xl border-[6px] border-red-600 text-5xl md:text-6xl font-black text-red-700 opacity-20">X</div>
       </div>
+
+      <button id="wrongBtn" class="px-8 py-3 bg-red-600 text-white text-xl rounded-xl font-bold hover:bg-red-700">Wrong</button>
+      <button id="clearStrikes" class="px-6 py-3 bg-gray-500 text-white rounded-xl ml-3">Clear Strikes</button>
+      <button id="revealAll" class="px-6 py-3 bg-blue-500 text-white rounded-xl ml-3">Reveal All</button>
+      <button id="nextQuestion" class="px-6 py-3 bg-yellow-400 text-black rounded-xl ml-3 font-bold">Next Question ▶</button>
     </div>
 
+    <div class="text-center mt-3 text-sm text-gray-600">Tip: Click an answer to reveal it. Points are added to the <b>active team</b>.</div>
   </div>
 
+  <!-- Editor modal -->
+  <div id="editorWrap" class="fixed inset-0 bg-black/60 hidden items-start justify-center p-4 z-40">
+    <div class="bg-white rounded-2xl max-w-3xl w-full p-6">
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="text-3xl font-extrabold text-blue-900">Question Editor</h2>
+        <button id="closeEditor" class="px-4 py-2 rounded-xl bg-gray-800 text-white font-bold">Close</button>
+      </div>
 
-  <!-- CONTROLS -->
-  <div class="flex justify-center gap-3 mb-6">
-    <a href="apps.html"
-       class="px-6 py-3 bg-blue-900 text-white rounded-xl text-xl font-bold">← Apps</a>
+      <label class="block font-bold text-blue-900 mb-1">Question</label>
+      <input id="edQ" type="text" class="w-full border-2 rounded-xl px-3 py-2 mb-4" placeholder="Type your question…">
 
-    <button id="fullscreenBtn"
-            class="px-6 py-3 bg-blue-700 text-white rounded-xl font-bold">⛶ Full Screen</button>
+      <div id="edAnswers" class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4"></div>
 
-    <button id="openEditor"
-            class="px-6 py-3 bg-purple-700 text-white rounded-xl font-bold">Question Editor</button>
+      <div class="flex items-center gap-2 mb-6">
+        <button id="addAnswer" class="px-4 py-2 bg-blue-900 text-white rounded-xl font-bold">+ Add Answer</button>
+        <button id="saveQuestion" class="px-4 py-2 bg-green-600 text-white rounded-xl font-bold">Save to Library</button>
+      </div>
 
-    <button id="resetScores"
-            class="px-6 py-3 bg-gray-700 text-white rounded-xl font-bold">Reset Scores</button>
-  </div>
-
-
-  <!-- QUESTION -->
-  <div id="questionText"
-       class="text-5xl font-extrabold text-center text-blue-900 mb-6">
-  </div>
-
-  <!-- ANSWERS GRID -->
-  <div id="answersContainer"
-       class="grid grid-cols-2 gap-6 max-w-5xl mx-auto">
-  </div>
-
-  <!-- STRIKES + BUTTONS -->
-  <div class="text-center mt-6">
-    <div class="mb-3 flex justify-center gap-2">
-      <div id="strike1" class="text-6xl text-red-600 font-black opacity-20">X</div>
-      <div id="strike2" class="text-6xl text-red-600 font-black opacity-20">X</div>
-      <div id="strike3" class="text-6xl text-red-600 font-black opacity-20">X</div>
+      <h3 class="text-xl font-bold text-blue-900 mb-2">Your Saved Questions</h3>
+      <div id="userList" class="space-y-2 max-h-64 overflow-auto"></div>
     </div>
-
-    <button id="wrongBtn"
-            class="px-8 py-3 bg-red-600 text-white text-xl rounded-xl font-bold hover:bg-red-700">
-      Wrong
-    </button>
-
-    <button id="clearStrikes"
-            class="px-6 py-3 bg-gray-500 text-white rounded-xl ml-3">
-      Clear Strikes
-    </button>
-
-    <button id="revealAll"
-            class="px-6 py-3 bg-blue-500 text-white rounded-xl ml-3">
-      Reveal All
-    </button>
-
-    <button id="nextQuestion"
-            class="px-6 py-3 bg-yellow-400 text-black rounded-xl ml-3 font-bold">
-      Next Question ➜
-    </button>
   </div>
-</div>
-<script>
-/* --------------------------------------------------
-   ✅ FULL JAVASCRIPT FOR FAMILY FEUD
--------------------------------------------------- */
 
-const dingSound = document.getElementById("dingSound");
-const buzzSound = document.getElementById("buzzSound");
+  <script>
+    // ====== Data & storage ======
+    const DEFAULTS = [
+      { q: "Name something you do before bed.", a: [{t:"Brush teeth",p:40},{t:"Pray",p:20},{t:"Read",p:18},{t:"Watch TV",p:12},{t:"Drink water",p:10}] },
+      { q: "Name a season of the year.", a: [{t:"Summer",p:35},{t:"Winter",p:30},{t:"Fall",p:20},{t:"Spring",p:15}] },
+      { q: "Name a fruit that is red.", a: [{t:"Apple",p:44},{t:"Strawberry",p:28},{t:"Cherry",p:18},{t:"Raspberry",p:10}] },
+      { q: "Name a common pet.", a: [{t:"Dog",p:48},{t:"Cat",p:40},{t:"Fish",p:7},{t:"Bird",p:5}] },
+      { q: "Name a breakfast food.", a: [{t:"Eggs",p:28},{t:"Cereal",p:22},{t:"Pancakes",p:18},{t:"Bacon",p:16},{t:"Toast",p:16}] }
+    ];
+    const LS_KEY = "feud_user_questions_v1";
 
-const bigX = document.getElementById("bigX");
+    function loadUserQs(){ try { return JSON.parse(localStorage.getItem(LS_KEY)) || []; } catch { return []; } }
+    function saveUserQs(list){ localStorage.setItem(LS_KEY, JSON.stringify(list)); }
 
-function showBigX() {
-  bigX.classList.remove("hidden");
-  void bigX.offsetWidth;
-  setTimeout(() => bigX.classList.add("hidden"), 2000); // ✅ 2 seconds
-}
+    let LIB = [...DEFAULTS, ...loadUserQs()];
+    if (LIB.length === 0) LIB = [...DEFAULTS];
 
-/* --------------------------------------------------
-   ✅ DATA + SAVE/LOAD
--------------------------------------------------- */
+    // ====== State ======
+    let idx = 0;
+    let revealed = new Set();
+    let strikes = 0;
+    let activeTeam = 1;
+    let score = {1:0, 2:0};
 
-let questions = JSON.parse(localStorage.getItem("feudQuestions") || "[]");
+    // ====== Elements ======
+    const ding = document.getElementById("dingSound");
+    const buzz = document.getElementById("buzzSound");
+    const bigX = document.getElementById("bigXOverlay");
+    const qEl = document.getElementById("questionText");
+    const answersWrap = document.getElementById("answersContainer");
 
-let currentIndex = 0;
-let currentStrikes = 0;
+    // ====== Helpers ======
+    const $ = sel => document.querySelector(sel);
 
-let activeTeam = 1; // 1 or 2
+    function updateTurnButtons(){
+      if (activeTeam === 1) {
+        $("#team1Turn").className = "px-6 py-3 rounded-xl text-white font-bold bg-blue-900";
+        $("#team2Turn").className = "px-6 py-3 rounded-xl text-white font-bold bg-blue-400";
+      } else {
+        $("#team1Turn").className = "px-6 py-3 rounded-xl text-white font-bold bg-blue-400";
+        $("#team2Turn").className = "px-6 py-3 rounded-xl text-white font-bold bg-blue-900";
+      }
+    }
+    function updateScores(){ $("#score1").textContent = score[1]; $("#score2").textContent = score[2]; }
 
-let score = {
-  1: 0,
-  2: 0
-};
+    // ====== Render question ======
+    function renderQuestion(){
+      const item = LIB[idx];
+      qEl.textContent = item.q;
+      answersWrap.innerHTML = "";
+      revealed = new Set();
+      strikes = 0; updateStrikes();
 
-const score1Display = document.getElementById("score1");
-const score2Display = document.getElementById("score2");
+      item.a.forEach((ans, i) => {
+        const btn = document.createElement("button");
+        btn.className = "relative w-full text-left bg-blue-800/70 hover:bg-blue-700/80 border-4 border-yellow-300 rounded-2xl p-6 lg:p-7 shadow-lg";
+        btn.dataset.i = i;
 
-function updateScores() {
-  score1Display.textContent = score[1];
-  score2Display.textContent = score[2];
-}
+        const line = document.createElement("div");
+        line.className = "text-4xl lg:text-5xl font-extrabold tracking-wide";
+        line.innerHTML = `<span class="mr-3">#${i+1}</span><span class="opacity-0">${ans.t}</span>`;
 
-/* --------------------------------------------------
-   ✅ RENDER QUESTION + ANSWERS
--------------------------------------------------- */
+        const pts = document.createElement("div");
+        pts.className = "absolute right-6 top-5 text-5xl font-black text-yellow-300 opacity-0";
+        pts.textContent = ans.p;
 
-const questionText = document.getElementById("questionText");
-const answersContainer = document.getElementById("answersContainer");
+        btn.appendChild(line);
+        btn.appendChild(pts);
 
-function renderQuestion() {
-  const q = questions[currentIndex];
-  questionText.textContent = q.question;
+        btn.addEventListener("click", () => revealAnswer(i, btn));
+        answersWrap.appendChild(btn);
+      });
+    }
 
-  answersContainer.innerHTML = "";
+    function revealAnswer(i, btn){
+      if (revealed.has(i)) return;
+      revealed.add(i);
 
-  q.answers.forEach((ans, i) => {
-    const tile = document.createElement("div");
-    tile.className =
-      "bg-green-700 text-white text-4xl font-extrabold p-6 rounded-2xl border-4 border-yellow-300 cursor-pointer";
+      btn.querySelector("span.opacity-0").classList.remove("opacity-0");
+      btn.querySelector(".text-5xl").classList.remove("opacity-0");
+      btn.classList.add("bg-green-700");
 
-    tile.innerHTML = `#${i + 1} ${ans.text} <span class="float-right">${ans.points}</span>`;
-    tile.style.opacity = "0";
+      // score to active team
+      const pts = LIB[idx].a[i].p;
+      score[activeTeam] += pts; updateScores();
 
-    tile.addEventListener("click", () => {
-      if (tile.dataset.revealed) return;
+      try { ding.currentTime = 0; ding.play(); } catch {}
+    }
 
-      tile.dataset.revealed = true;
-      tile.style.opacity = "1";
+    // ====== Strikes ======
+    function updateStrikes(){
+      ["strike1","strike2","strike3"].forEach((id, k)=>{
+        const el = document.getElementById(id);
+        if (k < strikes) { el.style.opacity = 1; el.classList.add("strike-pop"); setTimeout(()=>el.classList.remove("strike-pop"), 350); }
+        else el.style.opacity = .2;
+      });
+    }
 
-      dingSound.currentTime = 0;
-      dingSound.play();
+    function showBigX(){
+      bigX.style.opacity = "1";              // show
+      // force reflow
+      void bigX.offsetWidth;
+      setTimeout(()=>{ bigX.style.opacity = "0"; }, 2000); // 2 seconds
+    }
 
-      // ✅ Auto-score to active team
-      score[activeTeam] += ans.points;
-      updateScores();
+    function wrong(){
+      try { buzz.currentTime = 0; buzz.play(); } catch {}
+      showBigX();
+      if (strikes < 3) {
+        strikes++; updateStrikes();
+        if (strikes >= 3) {
+          // switch team after a short beat
+          setTimeout(()=>{
+            activeTeam = activeTeam === 1 ? 2 : 1;
+            updateTurnButtons();
+            strikes = 0; updateStrikes();
+          }, 450);
+        }
+      }
+    }
+
+    // ====== Navigation ======
+    function nextQ(){ idx = (idx + 1) % LIB.length; renderQuestion(); }
+    function revealAll(){
+      [...answersWrap.children].forEach((btn, i)=>{
+        if (!revealed.has(i)) revealAnswer(i, btn);
+      });
+    }
+
+    // ====== Editor ======
+    const editor = document.getElementById("editorWrap");
+    $("#openEditor").addEventListener("click", ()=>{ openEditor(); });
+    $("#closeEditor").addEventListener("click", ()=> editor.classList.add("hidden"));
+
+    function openEditor(){
+      editor.classList.remove("hidden");
+      resetEditor();
+      renderUserList();
+    }
+
+    function resetEditor(){
+      $("#edQ").value = "";
+      const ed = $("#edAnswers");
+      ed.innerHTML = "";
+      for (let i=0;i<4;i++) addAnswerRow();
+    }
+
+    function addAnswerRow(text="", points=""){
+      const row = document.createElement("div");
+      row.className = "grid grid-cols-6 gap-2 items-center";
+      row.innerHTML = `
+        <input class="col-span-4 border-2 rounded-xl px-3 py-2" placeholder="Answer" value="${text}">
+        <input type="number" class="col-span-1 border-2 rounded-xl px-3 py-2" placeholder="Pts" value="${points}">
+        <button class="col-span-1 px-3 py-2 bg-gray-200 rounded-xl font-bold">✕</button>
+      `;
+      row.querySelector("button").addEventListener("click", ()=> row.remove());
+      $("#edAnswers").appendChild(row);
+    }
+    $("#addAnswer").addEventListener("click", ()=> addAnswerRow());
+
+    $("#saveQuestion").addEventListener("click", ()=>{
+      const q = $("#edQ").value.trim();
+      if (!q) return alert("Enter a question.");
+      const rows = [...$("#edAnswers").children];
+      const a = rows.map(r=>{
+        const t = r.children[0].value.trim();
+        const p = Number(r.children[1].value);
+        return (t && !Number.isNaN(p)) ? {t, p: Math.max(0,p)} : null;
+      }).filter(Boolean);
+      if (!a.length) return alert("Add at least one answer with points.");
+
+      const user = loadUserQs();
+      user.push({ q, a });
+      saveUserQs(user);
+      LIB = [...DEFAULTS, ...user];
+      alert("Saved!");
+      renderUserList();
     });
 
-    answersContainer.appendChild(tile);
-  });
-
-  resetStrikes();
-}
-
-/* --------------------------------------------------
-   ✅ STRIKES
--------------------------------------------------- */
-
-function resetStrikes() {
-  currentStrikes = 0;
-  ["strike1", "strike2", "strike3"].forEach(id => {
-    document.getElementById(id).style.opacity = ".2";
-  });
-}
-
-function addStrike() {
-  if (currentStrikes >= 3) return;
-
-  buzzSound.currentTime = 0;
-  buzzSound.play();
-  showBigX();
-
-  currentStrikes++;
-  document.getElementById("strike" + currentStrikes).style.opacity = "1";
-}
-
-/* --------------------------------------------------
-   ✅ QUESTION NAVIGATION
--------------------------------------------------- */
-
-function nextQuestion() {
-  currentIndex++;
-  if (currentIndex >= questions.length) currentIndex = 0;
-  renderQuestion();
-}
-
-/* --------------------------------------------------
-   ✅ EDITOR PANEL
--------------------------------------------------- */
-
-const editorPanel = document.createElement("div");
-editorPanel.className =
-  "fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 hidden z-50 flex items-start justify-center p-10";
-
-editorPanel.innerHTML = `
-  <div class="bg-white rounded-2xl p-8 w-full max-w-3xl shadow-2xl">
-    <div class="flex justify-between items-center mb-4">
-      <h2 class="text-3xl font-bold text-blue-900">Question Editor</h2>
-      <button id="closeEditor"
-        class="px-4 py-2 bg-gray-800 text-white rounded-xl">Close</button>
-    </div>
-
-    <label class="font-bold text-lg">Question</label>
-    <input id="editQuestion" class="w-full border-2 border-blue-800 rounded-xl p-3 text-lg mb-4">
-
-    <div id="answerList"></div>
-
-    <button id="addAnswer"
-      class="mt-4 px-4 py-2 bg-blue-700 text-white rounded-xl">+ Add Answer</button>
-
-    <div class="mt-6 text-right">
-      <button id="saveQuestion"
-        class="px-6 py-3 bg-green-700 text-white rounded-xl font-bold">Save to Library</button>
-    </div>
-
-    <h3 class="text-xl font-bold mt-8">Your Saved Questions</h3>
-    <ul id="savedList" class="mt-3 text-lg"></ul>
-  </div>
-`;
-
-document.body.appendChild(editorPanel);
-
-function openEditor() {
-  editorPanel.classList.remove("hidden");
-  loadEditor();
-}
-
-function closeEditor() {
-  editorPanel.classList.add("hidden");
-}
-
-function loadEditor() {
-  const q = questions[currentIndex];
-  document.getElementById("editQuestion").value = q.question;
-
-  const ansList = document.getElementById("answerList");
-  ansList.innerHTML = "";
-
-  q.answers.forEach((ans, i) => addAnswerRow(ans.text, ans.points));
-
-  loadSavedList();
-}
-
-function addAnswerRow(text = "", points = "") {
-  const row = document.createElement("div");
-  row.className = "flex gap-3 mb-2";
-
-  row.innerHTML = `
-    <input class="flex-1 border-2 border-blue-800 rounded-xl p-2" placeholder="Answer" value="${text}">
-    <input class="w-20 border-2 border-blue-800 rounded-xl p-2" placeholder="Pt" value="${points}">
-    <button class="px-3 bg-red-500 text-white rounded-xl removeAns">X</button>
-  `;
-
-  row.querySelector(".removeAns").onclick = () => row.remove();
-
-  document.getElementById("answerList").appendChild(row);
-}
-
-function loadSavedList() {
-  const list = document.getElementById("savedList");
-  list.innerHTML = "";
-
-  questions.forEach((q, i) => {
-    const item = document.createElement("li");
-    item.className = "mb-1 cursor-pointer text-blue-800";
-    item.textContent = q.question;
-
-    item.onclick = () => {
-      currentIndex = i;
-      renderQuestion();
-      closeEditor();
-    };
-
-    list.appendChild(item);
-  });
-}
-
-function saveQuestion() {
-  const newQuestion = document.getElementById("editQuestion").value.trim();
-
-  if (!newQuestion) return;
-
-  const answerRows = [...document.querySelectorAll("#answerList > div")];
-
-  let newAnswers = [];
-
-  answerRows.forEach(r => {
-    const text = r.children[0].value.trim();
-    const pts = parseInt(r.children[1].value.trim());
-    if (text && pts >= 0) {
-      newAnswers.push({ text, points: pts });
+    function renderUserList(){
+      const box = $("#userList");
+      const user = loadUserQs();
+      box.innerHTML = "";
+      user.forEach((it, i)=>{
+        const row = document.createElement("div");
+        row.className = "border rounded-xl p-2";
+        row.innerHTML = `
+          <div class="font-bold">${it.q}</div>
+          <div class="text-sm text-gray-600">${it.a.map(x=>`${x.t} (${x.p})`).join(" • ")}</div>
+          <div class="mt-2 flex gap-2">
+            <button data-i="${i}" class="px-3 py-1 bg-blue-900 text-white rounded-lg text-sm">Play This</button>
+            <button data-del="${i}" class="px-3 py-1 bg-red-600 text-white rounded-lg text-sm">Delete</button>
+          </div>
+        `;
+        row.querySelector("[data-i]").addEventListener("click", ()=>{
+          const pre = DEFAULTS.length;
+          idx = pre + i;
+          renderQuestion();
+          editor.classList.add("hidden");
+        });
+        row.querySelector("[data-del]").addEventListener("click", ()=>{
+          const newList = loadUserQs().filter((_,j)=> j!==i);
+          saveUserQs(newList);
+          LIB = [...DEFAULTS, ...newList];
+          renderUserList();
+        });
+        box.appendChild(row);
+      });
     }
-  });
 
-  questions[currentIndex] = {
-    question: newQuestion,
-    answers: newAnswers
-  };
+    // ====== Buttons ======
+    $("#wrongBtn").addEventListener("click", wrong);
+    $("#clearStrikes").addEventListener("click", ()=>{ strikes=0; updateStrikes(); });
+    $("#revealAll").addEventListener("click", revealAll);
+    $("#nextQuestion").addEventListener("click", nextQ);
+    $("#resetScores").addEventListener("click", ()=>{ score={1:0,2:0}; updateScores(); });
 
-  localStorage.setItem("feudQuestions", JSON.stringify(questions));
+    $("#team1Turn").addEventListener("click", ()=>{ activeTeam = 1; updateTurnButtons(); });
+    $("#team2Turn").addEventListener("click", ()=>{ activeTeam = 2; updateTurnButtons(); });
 
-  renderQuestion();
-  loadSavedList();
-  closeEditor();
-}
+    $("#fullscreenBtn").addEventListener("click", ()=>{
+      if (!document.fullscreenElement) document.documentElement.requestFullscreen();
+      else document.exitFullscreen();
+    });
 
-/* --------------------------------------------------
-   ✅ BUTTON HOOKS
--------------------------------------------------- */
-
-document.getElementById("wrongBtn").onclick = addStrike;
-document.getElementById("clearStrikes").onclick = resetStrikes;
-document.getElementById("nextQuestion").onclick = nextQuestion;
-document.getElementById("revealAll").onclick = () => {
-  [...answersContainer.children].forEach(t => {
-    if (!t.dataset.revealed) {
-      t.dataset.revealed = true;
-      t.style.opacity = "1";
-      dingSound.currentTime = 0;
-      dingSound.play();
-
-      const pts = parseInt(t.querySelector("span").textContent);
-      score[activeTeam] += pts;
-      updateScores();
-    }
-  });
-};
-
-document.getElementById("team1Turn").onclick = () => { activeTeam = 1; };
-document.getElementById("team2Turn").onclick = () => { activeTeam = 2; };
-
-document.getElementById("resetScores").onclick = () => {
-  score = {1: 0, 2: 0};
-  updateScores();
-};
-
-document.getElementById("openEditor").onclick = openEditor;
-document.getElementById("closeEditor").onclick = closeEditor;
-
-document.getElementById("addAnswer").onclick = () => addAnswerRow();
-
-/* --------------------------------------------------
-   ✅ FULLSCREEN
--------------------------------------------------- */
-
-document.getElementById("fullscreenBtn").onclick = () => {
-  if (!document.fullscreenElement) {
-    document.documentElement.requestFullscreen();
-  } else {
-    document.exitFullscreen();
-  }
-};
-
-/* --------------------------------------------------
-   ✅ AUTO-LOAD FIRST QUESTION
--------------------------------------------------- */
-
-if (questions.length === 0) {
-  questions = [
-    {
-      question: "Name a season of the year.",
-      answers: [
-        { text: "Summer", points: 35 },
-        { text: "Winter", points: 30 },
-        { text: "Fall", points: 20 },
-        { text: "Spring", points: 15 }
-      ]
-    }
-  ];
-  localStorage.setItem("feudQuestions", JSON.stringify(questions));
-}
-
-renderQuestion();
-
-</script>
-
+    // ====== Init ======
+    updateScores();
+    updateTurnButtons();
+    renderQuestion();
+  </script>
 </body>
 </html>
