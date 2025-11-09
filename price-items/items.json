@@ -1,0 +1,42 @@
+[
+  {
+    "name": "Bananas (1 bunch)",
+    "price": 1.49,
+    "image": "https://images.unsplash.com/photo-1571772805064-207c8435df79?q=80&w=1920&auto=format&fit=crop"
+  },
+  {
+    "name": "White Bread (loaf)",
+    "price": 2.49,
+    "image": "https://images.unsplash.com/photo-1549931319-a545dcf3bc73?q=80&w=1920&auto=format&fit=crop"
+  },
+  {
+    "name": "Milk (1 gallon)",
+    "price": 3.99,
+    "image": "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?q=80&w=1920&auto=format&fit=crop"
+  },
+  {
+    "name": "Breakfast Cereal",
+    "price": 3.79,
+    "image": "https://images.unsplash.com/photo-1542838132-92c53300491e?q=80&w=1920&auto=format&fit=crop"
+  },
+  {
+    "name": "Ground Coffee (12 oz)",
+    "price": 6.99,
+    "image": "https://images.unsplash.com/photo-1509042239860-f550ce710b93?q=80&w=1920&auto=format&fit=crop"
+  },
+  {
+    "name": "Toothpaste",
+    "price": 3.49,
+    "image": "https://images.unsplash.com/photo-1622206176268-7591a8d5a1fb?q=80&w=1920&auto=format&fit=crop"
+  },
+  {
+    "name": "Hand Soap",
+    "price": 1.99,
+    "image": "https://images.unsplash.com/photo-1581605405669-fcdf81165afa?q=80&w=1920&auto=format&fit=crop"
+  },
+  {
+    "name": "Facial Tissues",
+    "price": 2.99,
+    "image": "https://images.unsplash.com/photo-1581147318340-39e4f7fd0d43?q=80&w=1920&auto=format&fit=crop"
+  }
+]
