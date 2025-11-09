@@ -1,156 +1,378 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Pop the Balloon — Word Guess</title>
+  <title>Armchair Travel — ProjectorFirst</title>
   <script src="https://cdn.tailwindcss.com"></script>
 
-  <!-- ✅ Memberstack Loader -->
-  <script data-memberstack-app="app_cmgnwpg8y00x10suih4pua785"
-          src="https://static.memberstack.com/scripts/v2/memberstack.js"
-          type="text/javascript"></script>
-
-  <!-- ✅ Protect this page -->
+  <!-- Memberstack Gate (same app id as your other pages) -->
+  <script
+    data-memberstack-app="app_cmgnwpg8y00x10suih4pua785"
+    src="https://static.memberstack.com/scripts/v2/memberstack.js"
+    type="text/javascript">
+  </script>
   <script>
     document.addEventListener("DOMContentLoaded", async () => {
       try {
-        const member = await window.$memberstackDom.getCurrentMember();
-        if (!member.data) {
-          window.location.href = "/subscribe.html";
-        }
-      } catch {
-        window.location.href = "/subscribe.html";
-      }
+        const m = await window.$memberstackDom.getCurrentMember();
+        if (!m.data) window.location.href = "/subscribe.html";
+      } catch { window.location.href = "/subscribe.html"; }
     });
   </script>
-</head>
-
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Armchair Travel — ProjectorFirst</title>
-  <meta name="description" content="Armchair Travel — guided picture tours for big screens. Work in progress." />
-  <meta name="theme-color" content="#1e3a8a" />
-  <link rel="icon" href="logo.svg" type="image/svg+xml"/>
-  <script src="https://cdn.tailwindcss.com"></script>
 
   <style>
-    /* small helper so skip link appears only when focused */
-    .sr-only{position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden}
-    .sr-only:focus{position:static;width:auto;height:auto;margin:0;padding:.5rem 1rem;background:#1e3a8a;color:#fff;border-radius:.5rem}
+    /* Smooth fade between slides */
+    .fade-enter { opacity: 0 }
+    .fade-enter-active { opacity: 1; transition: opacity 1200ms ease-in-out }
+    .fade-exit { opacity: 1 }
+    .fade-exit-active { opacity: 0; transition: opacity 800ms ease-in-out }
+
+    /* Gentle Ken Burns (slow zoom/pan). We randomize direction via JS classes. */
+    .kb-zoom {
+      will-change: transform;
+      animation: kbZoom 22s linear forwards;
+      transform-origin: center center;
+    }
+    .kb-zoom.alt-1 { animation-name: kbZoom1; }
+    .kb-zoom.alt-2 { animation-name: kbZoom2; }
+    .kb-zoom.alt-3 { animation-name: kbZoom3; }
+
+    @keyframes kbZoom   { from { transform: scale(1)   translate(0,0) } to { transform: scale(1.06) translate(0,0) } }
+    @keyframes kbZoom1  { from { transform: scale(1)   translate(-1.5%, -1.5%) } to { transform: scale(1.08) translate(1.5%, 1.5%) } }
+    @keyframes kbZoom2  { from { transform: scale(1)   translate(1.5%, -1.5%) }  to { transform: scale(1.08) translate(-1.5%, 1.5%) } }
+    @keyframes kbZoom3  { from { transform: scale(1)   translate(0, 1.5%) }      to { transform: scale(1.08) translate(0, -1.5%) } }
+
+    /* Prevent accidental text selection on projector */
+    .unselectable { -webkit-user-select: none; -moz-user-select: none; user-select: none; }
   </style>
 </head>
-<body class="bg-white text-black min-h-screen">
-  <a href="#main" class="sr-only">Skip to main content</a>
 
-  <!-- Header -->
-  <header class="bg-white border-b border-black/10 py-4">
-    <div class="max-w-6xl mx-auto px-4 flex items-center justify-between">
-      <a href="index.html" class="flex items-center gap-3 focus:outline-none focus:ring-4 focus:ring-blue-400 rounded-xl">
-        <img src="logo.svg" alt="ProjectorFirst logo" class="w-12 h-12"/>
-        <span class="text-2xl font-extrabold text-blue-900">ProjectorFirst</span>
-      </a>
-
-      <nav class="space-x-2" aria-label="Primary">
-        <a href="index.html" class="px-4 py-2 rounded-xl bg-blue-900 text-white text-lg font-bold focus:outline-none">Home</a>
-        <a href="apps.html" class="px-4 py-2 rounded-xl bg-blue-900/90 text-white text-lg font-bold focus:outline-none">Apps</a>
-        <a href="checkout.html" class="px-4 py-2 rounded-xl bg-green-700 text-white text-lg font-bold focus:outline-none">Subscribe</a>
-      </nav>
-    </div>
-  </header>
-
-  <main id="main" class="max-w-6xl mx-auto px-6 py-12">
-    <!-- Work-in-progress banner (no notify) -->
-    <div role="status" aria-live="polite"
-         class="mb-8 p-6 rounded-2xl bg-yellow-50 border-2 border-yellow-300 text-center">
-      <h1 class="text-3xl font-extrabold text-yellow-900 mb-2">🛠 Work in progress</h1>
-      <p class="text-xl text-yellow-900 mb-4">
-        Armchair Travel is still being built and is not yet available. We're curating images and tuning large-screen controls — please check back soon.
-      </p>
-
-      <div class="flex flex-col sm:flex-row gap-4 justify-center">
+<body class="bg-white text-gray-900 min-h-screen unselectable">
+  <div class="w-full px-2 sm:px-6 lg:px-10 py-6 max-w-7xl mx-auto">
+    <!-- Title + top controls -->
+    <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
+      <div class="flex items-center gap-3">
         <a href="apps.html"
-           class="inline-block px-6 py-3 text-2xl font-bold text-white bg-blue-800 rounded-2xl shadow hover:bg-blue-700 focus:outline-none" >
-          ⬅ Back to Apps
-        </a>
-
-        <a href="index.html"
-           class="inline-block px-6 py-3 text-2xl font-semibold text-gray-700 bg-gray-200 rounded-2xl hover:bg-gray-300 focus:outline-none">
-          ⬅ Back to Home
-        </a>
+           class="px-5 py-3 rounded-xl bg-blue-900 text-white text-xl font-bold hover:bg-blue-800">← Apps</a>
+        <h1 class="text-4xl sm:text-5xl font-extrabold text-blue-900">Armchair Travel</h1>
       </div>
 
-      <p class="text-sm text-yellow-800 mt-4">No sign-ups — just check back here for updates.</p>
+      <div class="flex flex-wrap items-center gap-2">
+        <button id="fullscreenBtn"
+                class="px-4 py-3 rounded-xl bg-blue-700 text-white font-bold hover:bg-blue-800">⛶ Full Screen</button>
+        <button id="playPauseBtn"
+                class="px-4 py-3 rounded-xl bg-green-700 text-white font-bold hover:bg-green-800">▶ Play</button>
+        <button id="prevBtn"
+                class="px-4 py-3 rounded-xl bg-blue-100 text-blue-900 font-bold hover:bg-blue-200">⟵ Back</button>
+        <button id="nextBtn"
+                class="px-4 py-3 rounded-xl bg-blue-600 text-white font-bold hover:bg-blue-700">Next ⟶</button>
+      </div>
     </div>
 
-    <!-- Page content placeholder (keeps layout so it's obvious what will come) -->
-    <section class="bg-white border-2 border-blue-900 rounded-2xl p-8 shadow-sm text-center">
-      <h2 class="text-4xl font-extrabold text-blue-900 mb-6">Armchair Travel</h2>
-
-      <!-- Back to Apps (centered) -->
-      <div class="flex justify-center mb-6">
-        <a href="apps.html"
-           class="inline-flex items-center gap-2 px-6 py-3 bg-blue-900 text-white rounded-xl font-extrabold text-xl shadow hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300">
-          ← Back to Apps
-        </a>
-      </div>
-
-      <!-- Theme selector (visual only while WIP) -->
-      <div class="flex flex-wrap justify-center gap-3 mb-6">
-        <label for="theme" class="text-xl font-bold text-blue-900 self-center">Choose a Trip:</label>
-        <select id="theme"
-                class="border-2 border-blue-600 rounded-xl px-3 py-2 text-lg font-semibold text-blue-900"
-                disabled aria-disabled="true" title="Coming soon">
-          <option>🇮🇹 Italy</option>
-          <option>🦁 Africa</option>
-          <option>🌍 Around the World</option>
-          <option>🏞️ National Parks</option>
-          <option>🌊 Oceans</option>
-          <option>🛣️ Route 66</option>
-          <option>🎷 Louisiana</option>
+    <!-- Secondary controls -->
+    <div class="flex flex-wrap items-center gap-3 mb-5">
+      <label class="flex items-center gap-2 px-3 py-2 rounded-xl border-2 border-blue-800">
+        Theme
+        <select id="themeSelect" class="border-0 text-blue-900 font-bold focus:outline-none">
+          <option value="italy">🇮🇹 Italy</option>
+          <option value="japan">🇯🇵 Japan</option>
+          <option value="safari">🦁 Safari</option>
+          <option value="ocean">🌊 Ocean</option>
+          <option value="nationalparks">🏞️ National Parks</option>
+          <option value="louisiana">⚜️ Louisiana</option>
         </select>
+      </label>
 
-        <!-- Disabled Start button while work in progress -->
-        <button id="startBtn"
-                class="bg-gray-300 text-gray-600 px-6 py-2 rounded-xl font-bold text-lg cursor-not-allowed"
-                disabled aria-disabled="true" title="Coming soon">
-          Start (coming soon)
-        </button>
-      </div>
+      <label class="flex items-center gap-2 px-3 py-2 rounded-xl border-2 border-blue-800">
+        Slide Time
+        <select id="intervalSelect" class="border-0 text-blue-900 font-bold focus:outline-none">
+          <option value="12">12s</option>
+          <option value="15" selected>15s</option>
+          <option value="20">20s</option>
+          <option value="30">30s</option>
+          <option value="60">60s</option>
+        </select>
+      </label>
 
-      <!-- Informational placeholder area -->
-      <div class="text-lg text-gray-800 mb-6 max-w-3xl mx-auto">
-        <p class="mb-4">
-          Armchair Travel will show large, beautiful images and friendly captions you can read from across the room.
-        </p>
-        <p class="mb-4">
-          Right now the experience is under construction. We’re working on reliable images, large controls, and a smooth slideshow for big screens.
-        </p>
-        <p class="text-sm text-gray-600">Tip: Check back later — we'll replace this page with the full interactive experience when it's ready.</p>
-      </div>
+      <label class="flex items-center gap-2 px-3 py-2 rounded-xl border-2 border-blue-800">
+        Ambient
+        <select id="soundSelect" class="border-0 text-blue-900 font-bold focus:outline-none">
+          <option value="none" selected>None</option>
+          <option value="ocean">Ocean</option>
+          <option value="rain">Rain</option>
+          <option value="birds">Birds</option>
+          <option value="city">Soft City</option>
+          <option value="strings">Soft Strings</option>
+        </select>
+      </label>
 
-      <!-- Non-functional navigation placeholders (visual) -->
-      <div class="flex justify-center gap-6 mt-4">
-        <button class="bg-gray-200 text-gray-700 px-6 py-3 rounded-xl font-semibold text-xl cursor-not-allowed" disabled>← Back</button>
-        <button class="bg-gray-200 text-gray-700 px-6 py-3 rounded-xl font-semibold text-xl cursor-not-allowed" disabled>Next →</button>
-      </div>
-    </section>
-  </main>
-
-  <!-- Footer -->
-  <footer class="bg-white border-t border-black/10 py-6 mt-12">
-    <div class="max-w-6xl mx-auto px-4 text-center text-lg">
-      © <span id="year"></span> ProjectorFirst • Big, Simple Apps for Senior Care
+      <button id="muteBtn"
+              class="px-4 py-2 rounded-xl bg-gray-200 text-gray-900 font-bold hover:bg-gray-300">🔈 Sound On</button>
     </div>
-  </footer>
+
+    <!-- Image stage -->
+    <div class="relative rounded-3xl overflow-hidden border-8 border-blue-900 shadow-2xl">
+      <!-- Slide holder (fixed aspect on projectors) -->
+      <div class="w-full" style="aspect-ratio: 16 / 9;">
+        <!-- Current slide -->
+        <img id="slideImg"
+             class="w-full h-full object-cover kb-zoom"
+             alt="Travel scene" src="">
+
+        <!-- Fade overlay for transitions (we toggle classes) -->
+        <div id="fadeLayer" class="absolute inset-0 pointer-events-none"></div>
+      </div>
+
+      <!-- Caption / narration -->
+      <div class="absolute left-0 right-0 bottom-0 bg-white/85 text-blue-900 p-4 sm:p-6">
+        <div class="flex items-start justify-between gap-3">
+          <div>
+            <h2 id="captionTitle" class="text-3xl sm:text-4xl font-extrabold leading-tight mb-1">—</h2>
+            <p id="captionText" class="text-xl sm:text-2xl leading-snug">
+              —
+            </p>
+          </div>
+          <div class="text-right shrink-0">
+            <div id="progressText" class="text-xl font-bold">1 / 1</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Dots -->
+    <div id="dots" class="flex flex-wrap justify-center gap-2 mt-4"></div>
+  </div>
+
+  <!-- Ambient audio (we swap the source) -->
+  <audio id="ambient" loop preload="auto"></audio>
 
   <script>
-    // set footer year
-    document.getElementById('year').textContent = new Date().getFullYear();
+    // ---------- DATA (swap URLs any time) ----------
+    // Use your own images later. These example URLs are typical stock/public images.
+    // Keep 16:9-ish for best projector fit.
+    const THEMES = {
+      italy: [
+        { src: "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?q=80&w=1920&auto=format&fit=crop",
+          title: "Venice, Italy",
+          text: "Boats glide through quiet canals. The buildings are centuries old. Imagine the soft echo of voices over water." },
+        { src: "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?q=80&w=1920&auto=format&fit=crop",
+          title: "Tuscan Countryside",
+          text: "Rolling vineyards and warm light. Imagine the smell of earth and grapes in late afternoon." },
+        { src: "https://images.unsplash.com/photo-1527694224015-b28c6eeabf69?q=80&w=1920&auto=format&fit=crop",
+          title: "Rome Colosseum",
+          text: "Stone arches and golden light at sunset. Close your eyes: you can almost hear a city humming." },
+        { src: "https://images.unsplash.com/photo-1483721310020-03333e577078?q=80&w=1920&auto=format&fit=crop",
+          title: "Florence Cathedral",
+          text: "Red roofs and a grand dome. Picture church bells drifting over the river." }
+      ],
+      japan: [
+        { src: "https://images.unsplash.com/photo-1470115636492-6d2b56f9146e?q=80&w=1920&auto=format&fit=crop",
+          title: "Cherry Blossoms",
+          text: "Soft petals drift on the breeze. Gentle pink clouds mark the start of spring." },
+        { src: "https://images.unsplash.com/photo-1449452198679-05c7fd30f416?q=80&w=1920&auto=format&fit=crop",
+          title: "Kyoto Bamboo Forest",
+          text: "Tall green stalks whisper. Imagine the cool shade and the smell of fresh leaves." },
+        { src: "https://images.unsplash.com/photo-1491553895911-0055eca6402d?q=80&w=1920&auto=format&fit=crop",
+          title: "Tokyo At Night",
+          text: "Neon lights and a busy city. Watch the glow and imagine a calm walk among bright signs." }
+      ],
+      safari: [
+        { src: "https://images.unsplash.com/photo-1543248939-ff40856f65d4?q=80&w=1920&auto=format&fit=crop",
+          title: "Savanna Sunset",
+          text: "Warm orange sky and quiet grasslands. Imagine the soft rustle of the wind." },
+        { src: "https://images.unsplash.com/photo-1508672019048-805c876b67e2?q=80&w=1920&auto=format&fit=crop",
+          title: "Giraffes",
+          text: "Tall and gentle. Picture their slow steps and curious eyes." },
+        { src: "https://images.unsplash.com/photo-1508675801627-066ac4346a5f?q=80&w=1920&auto=format&fit=crop",
+          title: "Elephants",
+          text: "Strong and calm. Imagine the soft rumble of a family moving together." }
+      ],
+      ocean: [
+        { src: "https://images.unsplash.com/photo-1500375592092-40eb2168fd21?q=80&w=1920&auto=format&fit=crop",
+          title: "Ocean Waves",
+          text: "Blue water and gentle foam. Imagine a slow breath in time with the surf." },
+        { src: "https://images.unsplash.com/photo-1505764706515-aa95265c5abc?q=80&w=1920&auto=format&fit=crop",
+          title: "Quiet Shore",
+          text: "Soft sand, wide horizon. The sunlight dances on the water." },
+        { src: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?q=80&w=1920&auto=format&fit=crop",
+          title: "Sea Cliffs",
+          text: "Steep rocks and deep blue water. Feel the cool breeze on your face." }
+      ],
+      nationalparks: [
+        { src: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?q=80&w=1920&auto=format&fit=crop",
+          title: "Grand Teton",
+          text: "Sharp peaks mirrored in calm water. Imagine the clean mountain air." },
+        { src: "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=1920&auto=format&fit=crop",
+          title: "Yosemite Valley",
+          text: "Granite walls and tall pines. Picture a quiet walk through shade." },
+        { src: "https://images.unsplash.com/photo-1501785888041-af3ef285b470?q=80&w=1920&auto=format&fit=crop",
+          title: "Zion Canyon",
+          text: "Red rock and narrow canyons. Warm light glows on stone." }
+      ],
+      louisiana: [
+        { src: "https://images.unsplash.com/photo-1543985601-76f8f7136b5c?q=80&w=1920&auto=format&fit=crop",
+          title: "New Orleans Balcony",
+          text: "Wrought iron and hanging plants. Hear a soft jazz drifting down the street." },
+        { src: "https://images.unsplash.com/photo-1602968407347-5c6b9f95a44a?q=80&w=1920&auto=format&fit=crop",
+          title: "Bayou Cypress",
+          text: "Still water and moss. Imagine the quiet calls of birds at dusk." },
+        { src: "https://images.unsplash.com/photo-1542641728-6e6a57e72f56?q=80&w=1920&auto=format&fit=crop",
+          title: "French Quarter",
+          text: "Colorful buildings and old brick. Picture powdered sugar on warm beignets." }
+      ],
+    };
 
-    // Optional: if you later want to enable the UI, remove the disabled attribute
-    // and implement the slideshow code. For now, UI elements are intentionally disabled
-    // so visitors clearly see this page is coming soon.
+    // Ambient sounds (swap later if you want local files)
+    const AMBIENT = {
+      none: "",
+      ocean:  "https://cdn.pixabay.com/download/audio/2021/09/07/audio_5f1b1f9e15.mp3?filename=ocean-waves-ambient-6003.mp3",
+      rain:   "https://cdn.pixabay.com/download/audio/2021/09/16/audio_3a3a3bfb24.mp3?filename=soft-rain-ambient-6343.mp3",
+      birds:  "https://cdn.pixabay.com/download/audio/2022/03/14/audio_1a5a2e3b0a.mp3?filename=birds-in-forest-ambient-25105.mp3",
+      city:   "https://cdn.pixabay.com/download/audio/2021/10/04/audio_9b9a3c4bde.mp3?filename=city-ambience-6766.mp3",
+      strings:"https://cdn.pixabay.com/download/audio/2021/09/02/audio_58a1d06eaf.mp3?filename=calm-piano-ambient-5924.mp3"
+    };
+
+    // ---------- ELEMENTS ----------
+    const slideImg = document.getElementById('slideImg');
+    const fadeLayer = document.getElementById('fadeLayer');
+    const captionTitle = document.getElementById('captionTitle');
+    const captionText = document.getElementById('captionText');
+    const progressText = document.getElementById('progressText');
+    const dots = document.getElementById('dots');
+
+    const playPauseBtn = document.getElementById('playPauseBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const prevBtn = document.getElementById('prevBtn');
+    const fullscreenBtn = document.getElementById('fullscreenBtn');
+
+    const themeSelect = document.getElementById('themeSelect');
+    const intervalSelect = document.getElementById('intervalSelect');
+
+    const ambient = document.getElementById('ambient');
+    const soundSelect = document.getElementById('soundSelect');
+    const muteBtn = document.getElementById('muteBtn');
+
+    // ---------- STATE ----------
+    let theme = themeSelect.value;
+    let i = 0;
+    let timer = null;
+    let isPlaying = false;
+    let secs = +intervalSelect.value;
+    let kbClass = "kb-zoom";
+
+    // ---------- HELPERS ----------
+    function setAmbient(which){
+      const src = AMBIENT[which] || "";
+      ambient.pause();
+      ambient.src = src;
+      if (src && !ambient.muted) ambient.play().catch(()=>{});
+      soundSelect.value = which;
+    }
+
+    function setDots(arr, index) {
+      dots.innerHTML = "";
+      arr.forEach((_, idx) => {
+        const dot = document.createElement("button");
+        dot.className = "w-4 h-4 rounded-full " + (idx === index ? "bg-blue-900" : "bg-blue-200");
+        dot.addEventListener("click", () => { goTo(idx); });
+        dots.appendChild(dot);
+      });
+    }
+
+    function kbVariant(){
+      const n = Math.floor(Math.random()*4); // 0..3
+      return ["", "alt-1", "alt-2", "alt-3"][n];
+    }
+
+    function applySlide(obj, index, total){
+      // fade out
+      fadeLayer.className = "absolute inset-0 pointer-events-none fade-exit fade-exit-active";
+      setTimeout(()=>{ fadeLayer.className = "absolute inset-0 pointer-events-none"; }, 800);
+
+      slideImg.className = "w-full h-full object-cover kb-zoom"; // reset
+      // add a random alt-* to vary pan direction
+      slideImg.classList.add(kbVariant());
+      slideImg.src = obj.src;
+      slideImg.alt = obj.title || "Travel scene";
+
+      captionTitle.textContent = obj.title || "—";
+      captionText.textContent = obj.text || "—";
+      progressText.textContent = (index+1) + " / " + total;
+
+      setDots(THEMES[theme], index);
+    }
+
+    function next(){
+      const arr = THEMES[theme];
+      i = (i + 1) % arr.length;
+      applySlide(arr[i], i, arr.length);
+    }
+    function prev(){
+      const arr = THEMES[theme];
+      i = (i - 1 + arr.length) % arr.length;
+      applySlide(arr[i], i, arr.length);
+    }
+    function goTo(idx){
+      const arr = THEMES[theme];
+      i = Math.max(0, Math.min(idx, arr.length-1));
+      applySlide(arr[i], i, arr.length);
+    }
+
+    function play(){
+      if (isPlaying) return;
+      isPlaying = true;
+      playPauseBtn.textContent = "⏸ Pause";
+      timer = setInterval(next, secs*1000);
+    }
+    function pause(){
+      isPlaying = false;
+      playPauseBtn.textContent = "▶ Play";
+      clearInterval(timer); timer = null;
+    }
+    function togglePlay(){
+      isPlaying ? pause() : play();
+    }
+
+    function changeTheme(newTheme){
+      theme = newTheme;
+      i = 0;
+      applySlide(THEMES[theme][i], i, THEMES[theme].length);
+      if (isPlaying) { clearInterval(timer); timer = setInterval(next, secs*1000); }
+    }
+
+    // ---------- EVENTS ----------
+    playPauseBtn.addEventListener('click', togglePlay);
+    nextBtn.addEventListener('click', next);
+    prevBtn.addEventListener('click', prev);
+
+    themeSelect.addEventListener('change', (e)=> changeTheme(e.target.value));
+    intervalSelect.addEventListener('change', (e)=>{
+      secs = +e.target.value;
+      if (isPlaying) { clearInterval(timer); timer = setInterval(next, secs*1000); }
+    });
+
+    soundSelect.addEventListener('change', (e)=> setAmbient(e.target.value));
+    muteBtn.addEventListener('click', ()=>{
+      ambient.muted = !ambient.muted;
+      if (!ambient.muted && ambient.src) ambient.play().catch(()=>{});
+      muteBtn.textContent = ambient.muted ? "🔇 Sound Off" : "🔈 Sound On";
+    });
+
+    fullscreenBtn.addEventListener('click', ()=>{
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen();
+        fullscreenBtn.textContent = "Exit Full Screen";
+      } else {
+        document.exitFullscreen();
+        fullscreenBtn.textContent = "⛶ Full Screen";
+      }
+    });
+
+    // ---------- INIT ----------
+    // Default: Italy, first slide
+    applySlide(THEMES[theme][i], i, THEMES[theme].length);
+    setAmbient("none"); // start muted
   </script>
 </body>
 </html>
