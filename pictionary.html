@@ -84,7 +84,8 @@
         <h1 class="order-1 sm:order-2 text-4xl md:text-5xl font-extrabold pf-blue-text text-center mb-4 sm:mb-0">
             Pictionary 🎨
         </h1>
-        <div class="order-3 w-28 sm:w-auto"></div> </div>
+        <div class="order-3 w-28 sm:w-auto"></div> 
+    </div>
 
     <div class="flex justify-center gap-4 flex-wrap mb-8 hide-on-fullscreen">
         
@@ -143,7 +144,7 @@
       'stroke-linecap': 'round',
       'stroke-linejoin': 'round'
     };
-    const PX_PER_SEC = 25; // Super slow for senior viewing/guessing time
+    const PX_PER_SEC = 50; // <--- DRAWING SPEED SET TO 50 PX/SEC (Faster)
 
     // ---------- HELPERS ----------
     function E(tag, attrs = {}) {
@@ -348,7 +349,14 @@
     }
 
     function startAnimation() {
-      if (isAnimating) return;
+      if (isAnimating && !paused) return; // Only prevent double start if already animating AND not paused
+      
+      // If we are starting from a paused state
+      if (paused) {
+          paused = false;
+          pauseBtn.textContent = 'Pause';
+      }
+
       if (!animQueue.length) {
          status.textContent = 'All drawings done!';
          return;
@@ -394,12 +402,15 @@
 
     // Controls
     startBtn.addEventListener('click', () => {
-      // If already started and paused, resume. Otherwise, load new.
-      if (paused) {
-        paused = false;
-        pauseBtn.textContent = 'Pause';
+      // If already animating, this acts as a resume/restart from the current word
+      if (isAnimating && !paused) {
+          // Do nothing if already running
+          return;
+      } else if (paused) {
+        // Resume from pause
         startAnimation();
       } else {
+        // Start new drawing
         loadDrawing(order[current]);
         startAnimation();
       }
@@ -409,7 +420,7 @@
       if (pauseBtn.disabled) return;
       paused = !paused;
       pauseBtn.textContent = paused ? 'Resume' : 'Pause';
-      if (!paused) startAnimation(); // Resume animation if unpausing
+      if (!paused && isAnimating) startAnimation(); // Resume animation if unpausing
     });
     
     nextBtn.addEventListener('click', () => {
