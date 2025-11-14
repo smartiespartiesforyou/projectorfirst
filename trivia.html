@@ -7,9 +7,10 @@
   <script src="https://cdn.tailwindcss.com"></script>
 
   <style>
+    /* 🎨 PROJECTORFIRST STYLE UPDATE: White Background, Dark Text */
     body {
-      background: #0b2a8a;
-      color: white;
+      background: #fff; /* White background */
+      color: #111; /* Dark text */
       font-family: Arial, sans-serif;
     }
     .modal-bg {
@@ -28,45 +29,50 @@
       padding: 30px;
       width: 90%;
       max-width: 700px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.3); /* Add subtle shadow */
     }
+    /* 🎨 PROJECTORFIRST STYLE UPDATE: Use 1rem border-radius from the site style */
     .big-btn {
       font-size: 40px;
       padding: 25px 60px;
-      border-radius: 20px;
+      border-radius: 1rem; /* Consistent large border-radius */
       font-weight: 800;
+      color: white; /* Ensure text is white */
+      transition: background-color .1s ease;
     }
+    
+    /* Utility class for the main ProjectorFirst blue accent color */
+    .pf-blue { background: #1e3a8a; } 
+    .pf-blue:hover { background: #1d4ed8; }
   </style>
 </head>
 
-<body>
+<body class="min-h-screen">
 
-  <!-- Header -->
-  <div class="flex justify-between items-center p-6">
-    <a href="apps.html" class="text-white text-xl font-bold bg-blue-900 px-5 py-3 rounded-xl">
+  <div class="max-w-6xl mx-auto flex justify-between items-center p-6 border-b border-gray-200">
+    <a href="apps.html" class="pf-blue text-white text-xl font-bold px-5 py-3 rounded-xl hover:pf-blue">
       ← Back to Apps
     </a>
 
-    <button id="openEditor" class="text-white text-xl font-bold bg-purple-700 px-6 py-3 rounded-xl">
-      Question Editor
+    <button id="openEditor" class="bg-purple-700 text-white text-xl font-bold px-6 py-3 rounded-xl hover:bg-purple-600">
+      Question Editor 📝
     </button>
   </div>
 
-  <!-- CATEGORY SELECT SCREEN -->
-  <div id="categoryScreen" class="text-center mt-10 px-6">
-    <h1 class="text-6xl font-extrabold mb-10">Choose a Category</h1>
+  <div id="categoryScreen" class="text-center mt-10 px-6 max-w-6xl mx-auto">
+    <h1 class="text-4xl md:text-6xl font-extrabold text-blue-800 mb-10">Choose a Category</h1>
 
-    <div id="categoryButtons" class="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-3xl mx-auto"></div>
+    <div id="categoryButtons" class="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-4xl mx-auto"></div>
   </div>
 
-  <!-- GAME SCREEN -->
-  <div id="gameScreen" class="text-center mt-16 px-4 hidden">
-    <h1 class="text-6xl font-extrabold mb-10" id="categoryTitle">Category</h1>
+  <div id="gameScreen" class="text-center mt-16 px-4 hidden max-w-6xl mx-auto">
+    <h1 class="text-4xl md:text-6xl font-extrabold text-blue-800 mb-10" id="categoryTitle">Category</h1>
 
-    <h2 id="questionDisplay" class="text-5xl font-bold mb-16">
+    <h2 id="questionDisplay" class="text-3xl md:text-5xl font-bold mb-16">
       Press “Next Question”
     </h2>
 
-    <div class="flex justify-center gap-10 mb-16">
+    <div class="flex justify-center gap-6 md:gap-10 mb-16">
       <button id="trueBtn" class="big-btn bg-green-600 hover:bg-green-500 hidden">
         TRUE
       </button>
@@ -75,48 +81,49 @@
       </button>
     </div>
 
-    <h2 id="answerDisplay" class="text-6xl font-extrabold mt-10 hidden"></h2>
+    <h2 id="answerDisplay" class="text-5xl md:text-6xl font-extrabold mt-10 hidden"></h2>
 
-    <button id="nextBtn" class="big-btn bg-blue-600 hover:bg-blue-500 mt-12">
+    <button id="nextBtn" class="big-btn pf-blue hover:pf-blue mt-12">
       Next Question
     </button>
   </div>
 
-  <!-- ✅ QUESTION EDITOR MODAL -->
   <div id="modalBg" class="modal-bg">
     <div class="modal">
       <div class="flex justify-between items-center mb-6">
-        <h2 class="text-3xl font-bold">Question Editor</h2>
-        <button id="closeEditor" class="px-4 py-1 bg-gray-300 rounded-xl font-bold">Close</button>
+        <h2 class="text-3xl font-bold text-blue-800">Question Editor</h2>
+        <button id="closeEditor" class="px-4 py-1 bg-gray-300 rounded-xl font-bold hover:bg-gray-400">Close</button>
       </div>
 
-      <label class="font-bold">Question</label>
-      <input id="inputQuestion" class="w-full border p-3 rounded-xl mb-4"
+      <label class="font-bold text-gray-700">Question</label>
+      <input id="inputQuestion" class="w-full border p-3 rounded-xl mb-4 text-lg"
              placeholder="Type your true/false question…">
 
-      <label class="font-bold">Category</label>
-      <select id="inputCategory" class="w-full border p-3 rounded-xl mb-4"></select>
+      <label class="font-bold text-gray-700">Category</label>
+      <select id="inputCategory" class="w-full border p-3 rounded-xl mb-4 text-lg"></select>
 
       <input id="newCategoryInput"
-             class="w-full border p-3 rounded-xl mb-4 hidden"
+             class="w-full border p-3 rounded-xl mb-4 text-lg hidden"
              placeholder="Enter new category…">
 
-      <label class="font-bold">Correct Answer</label>
-      <select id="inputAnswer" class="w-full border p-3 rounded-xl mb-6">
+      <label class="font-bold text-gray-700">Correct Answer</label>
+      <select id="inputAnswer" class="w-full border p-3 rounded-xl mb-6 text-lg">
         <option value="TRUE">TRUE</option>
         <option value="FALSE">FALSE</option>
       </select>
 
-      <button id="saveBtn" class="bg-green-600 text-white font-bold px-6 py-3 rounded-xl">
+      <button id="saveBtn" class="bg-green-600 text-white font-bold px-6 py-3 rounded-xl hover:bg-green-500">
         Save Question
       </button>
 
-      <h3 class="text-xl font-bold mt-8 mb-2">Your Saved Questions</h3>
+      <h3 class="text-xl font-bold mt-8 mb-2 text-blue-700">Your Saved Questions</h3>
       <ul id="savedList" class="space-y-2 text-lg"></ul>
     </div>
   </div>
 
   <script>
+    // This part remains unchanged as the functionality is great!
+
     // DEFAULT CATEGORIES
     let categories = JSON.parse(localStorage.getItem("tfCategories") || "[]");
     if (categories.length === 0) {
@@ -137,8 +144,9 @@
     function renderCategoryButtons() {
       categoryButtons.innerHTML = "";
       categories.forEach(cat => {
+        // Updated category button class to match the site's primary button style
         const btn = document.createElement("button");
-        btn.className = "bg-blue-700 hover:bg-blue-600 text-white text-3xl font-bold py-6 rounded-2xl";
+        btn.className = "pf-blue hover:pf-blue text-white text-2xl md:text-3xl font-bold py-6 rounded-2xl transition-all duration-100 ease-in-out transform hover:scale-[1.01]";
         btn.textContent = cat;
         btn.onclick = () => startCategory(cat);
         categoryButtons.appendChild(btn);
@@ -222,10 +230,10 @@
       questions.forEach((q, i) => {
         const li = document.createElement("li");
         li.innerHTML = `
-          <div class="flex justify-between bg-gray-100 p-3 rounded-xl">
-            <div><strong>${q.question}</strong> — ${q.answer} <em>(${q.category})</em></div>
+          <div class="flex justify-between bg-gray-100 p-3 rounded-xl items-center">
+            <div class="flex-1"><strong>${q.question}</strong> — <span class="text-${q.answer === 'TRUE' ? 'green' : 'red'}-600 font-semibold">${q.answer}</span> <em class="text-gray-500">(${q.category})</em></div>
             <button onclick="deleteQuestion(${i})"
-            class="bg-red-500 text-white px-3 py-1 rounded-lg">Delete</button>
+            class="bg-red-500 text-white px-3 py-1 rounded-lg hover:bg-red-600 ml-4 whitespace-nowrap">Delete</button>
           </div>`;
         list.appendChild(li);
       });
@@ -250,9 +258,12 @@
       document.getElementById("categoryTitle").textContent = cat;
     }
 
+    // Attach deleteQuestion to window so it's globally accessible from the list
+    window.deleteQuestion = deleteQuestion; 
+
     document.getElementById("nextBtn").onclick = () => {
       if (filtered.length === 0) {
-        alert("No questions in this category yet!");
+        alert("No questions in this category yet! Add some using the Question Editor.");
         return;
       }
 
@@ -267,8 +278,12 @@
     function checkAnswer(choice) {
       let correct = current.answer === choice;
       document.getElementById("answerDisplay").textContent =
-        correct ? "✅ Correct!" : "❌ Wrong!";
+        correct ? "✅ Correct!" : `❌ Answer: ${current.answer}`;
       document.getElementById("answerDisplay").classList.remove("hidden");
+      
+      // Hide T/F buttons after showing answer
+      document.getElementById("trueBtn").classList.add("hidden");
+      document.getElementById("falseBtn").classList.add("hidden");
     }
 
     document.getElementById("trueBtn").onclick = () => checkAnswer("TRUE");
