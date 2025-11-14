@@ -3,46 +3,30 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Pop the Balloon — Word Guess | ProjectorFirst</title>
+  <title>Pictionary — ProjectorFirst</title>
   <script src="https://cdn.tailwindcss.com"></script>
 
   <style>
-    .pf-blue-bg { background: #1e3a8a; } /* Your deep blue */
-    .pf-blue-bg:hover { background: #1d4ed8; } /* Lighter blue on hover */
+    /* Custom Blue Color for Consistency */
+    .pf-blue-bg { background: #1e3a8a; } 
+    .pf-blue-bg:hover { background: #1d4ed8; } 
     .pf-blue-text { color: #1e3a8a; }
 
-    /* Custom style for the large word blocks */
-    .word-box-base {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        height: 100px;
-        width: 80px;
-        border-radius: 1rem; /* Consistent sharp corners */
-        border: 4px solid;
+    /* Drawing Board Styles */
+    svg { 
+        width: 100%; 
+        height: auto; 
+        display: block;
+        margin: 0 auto;
     }
-
-    /* Style for the current/hidden letters */
-    .word-box-hidden {
-        border-color: #1e3a8a; /* Dark blue border */
-        background-color: #f3f4f6; /* Light gray background for contrast */
-        color: #1e3a8a;
+    .unselectable { user-select: none; }
+    
+    /* Fullscreen Mode Optimization (Hides header/footer in fullscreen) */
+    :fullscreen .hide-on-fullscreen {
+        display: none !important;
     }
-
-    /* Style for the revealed letters */
-    .word-box-revealed {
-        border-color: #10b981; /* Green border */
-        background-color: #fff;
-        color: #1e3a8a;
-        font-size: 3.75rem; /* text-6xl for big projection */
-        font-weight: 900; /* font-extrabold */
-    }
-
-    /* Style for the used letters display */
-    .used-letter {
-        padding: 0 0.5rem;
-        color: #1e3a8a;
-        font-size: 4.5rem; 
+    :fullscreen {
+        background-color: white; /* Ensure full screen is white */
     }
   </style>
 
@@ -68,7 +52,7 @@
         const { data: member } = await memberstack.getCurrentMember();
         // Redirect if not logged in
         if (!member) {
-          window.location.replace("index.html");
+          window.location.replace("index.html"); // Redirect to home/login
           return;
         }
 
@@ -77,7 +61,7 @@
           member.planConnections.some(plan => plan.status === "ACTIVE" || plan.planId === "pln_trial30-gpte0tfl");
 
         if (!hasAccess) {
-          window.location.replace("checkout.html");
+          window.location.replace("checkout.html"); // Redirect if subscription lapsed
           return;
         }
       } catch (e) {
@@ -88,202 +72,386 @@
   </script>
 </head>
 
-<body class="bg-white text-gray-900 min-h-screen">
+<body class="bg-white text-gray-900 min-h-screen unselectable">
   
-  <div class="max-w-6xl mx-auto p-6">
-    <h1 class="text-4xl md:text-5xl font-extrabold text-blue-800 text-center mb-6">Pop the Balloon 🎈</h1>
+  <div class="w-full px-4 sm:px-6 lg:px-12 py-6 max-w-7xl mx-auto">
+    
+    <div class="flex flex-col sm:flex-row justify-between items-center mb-8 hide-on-fullscreen">
+        <a href="apps.html"
+           class="order-2 sm:order-1 pf-blue-bg text-white px-5 py-3 rounded-xl text-xl font-bold hover:pf-blue-bg transition duration-150 shadow-md">
+            ← Back to Apps
+        </a>
+        <h1 class="order-1 sm:order-2 text-4xl md:text-5xl font-extrabold pf-blue-text text-center mb-4 sm:mb-0">
+            Pictionary 🎨
+        </h1>
+        <div class="order-3 w-28 sm:w-auto"></div> </div>
 
-    <div class="flex justify-center mb-8">
-      <a href="apps.html"
-           class="pf-blue-bg inline-flex items-center gap-2 px-6 py-3 text-white rounded-xl font-extrabold text-xl shadow-lg hover:pf-blue-bg focus:outline-none focus:ring-4 focus:ring-blue-300 transition duration-150">
-        ← Back to Apps
-      </a>
+    <div class="flex justify-center gap-4 flex-wrap mb-8 hide-on-fullscreen">
+        
+      <button id="startBtn"
+              class="flex-1 min-w-[120px] px-6 py-4 bg-green-700 text-white rounded-xl text-xl font-bold hover:bg-green-600 transition duration-150 shadow-md">
+          Start
+      </button>
+
+      <button id="pauseBtn"
+              class="flex-1 min-w-[120px] px-6 py-4 bg-yellow-600 text-white rounded-xl text-xl font-bold hover:bg-yellow-500 transition duration-150 shadow-md" disabled>
+          Pause
+      </button>
+
+      <button id="nextBtn"
+              class="flex-1 min-w-[120px] px-6 py-4 pf-blue-bg text-white rounded-xl text-xl font-bold hover:pf-blue-bg transition duration-150 shadow-md">
+          Next
+      </button>
+
+      <button id="revealBtn"
+              class="flex-1 min-w-[120px] px-6 py-4 bg-purple-700 text-white rounded-xl text-xl font-bold hover:bg-purple-600 transition duration-150 shadow-md">
+          Show Answer
+      </button>
+      
+      <button id="fullscreenBtn"
+              class="flex-1 min-w-[120px] px-6 py-4 bg-gray-600 text-white rounded-xl text-xl font-bold hover:bg-gray-500 transition duration-150 shadow-md">
+          ⛶ Full Screen
+      </button>
     </div>
 
-    <div class="grid md:grid-cols-2 gap-6 md:gap-8 items-end mb-10 p-4 border-b-2 border-gray-200 max-w-2xl mx-auto">
-      <div>
-        <label for="theme" class="block text-xl font-bold pf-blue-text mb-2">Choose a Theme</label>
-        <select id="theme"
-                class="w-full text-xl p-4 border-4 border-blue-900 rounded-xl bg-gray-50 appearance-none focus:outline-none focus:ring-4 focus:ring-blue-300">
-          <option value="animals">Animals</option>
-          <option value="countries">Countries</option>
-          <option value="foods">Foods</option>
-        </select>
-      </div>
+    <div class="text-center mb-6">
+        <div id="prompt" class="text-4xl font-bold text-gray-600">
+            Click START to begin drawing!
+        </div>
+        <div id="answer" class="text-5xl font-extrabold pf-blue-text mt-3 opacity-0 transition-opacity duration-300">
+            [Answer will appear here]
+        </div>
+    </div>
 
-      <div>
-        <label class="block text-xl font-bold pf-blue-text mb-2">Start a New Round</label>
-        <button id="newBtn"
-                class="w-full pf-blue-bg hover:pf-blue-bg text-white text-xl py-4 px-6 rounded-xl font-extrabold transition duration-150 shadow-md">
-          New Word
-        </button>
-      </div>
-      </div>
+    <div id="drawing-container" class="bg-white border-8 pf-blue-bg rounded-2xl shadow-2xl p-4 md:p-6 w-full mx-auto" style="aspect-ratio: 4/3;">
+        <svg id="stage" viewBox="0 0 800 600" xmlns="http://www.w3.org/2000/svg"
+             aria-label="Animated drawing" role="img"></svg>
+    </div>
 
-    <div id="balloons"
-         class="flex items-center justify-center gap-4 mb-16 h-20"
-         aria-label="Remaining balloons"></div>
-
-    <div id="word"
-         class="flex flex-wrap items-center justify-center gap-3 md:gap-5 mb-16 min-h-28"
-         aria-label="Hidden word"></div>
-
-    <div id="status"
-         class="text-center text-3xl font-bold pf-blue-text mb-16 h-10"
-         aria-live="polite"></div>
-
-    <div class="text-center text-xl font-bold text-gray-700 mb-4">Used Letters</div>
-    <div id="usedLetters"
-         class="flex flex-wrap justify-center gap-x-6 gap-y-3 font-extrabold border-t-2 border-gray-200 pt-6">
+    <div id="status" class="text-center mt-4 text-xl font-semibold text-gray-700 hide-on-fullscreen">
+        Ready.
     </div>
   </div>
 
   <script>
-    // WORD BANKS (Kept unchanged)
-    const BANK = {
-      animals: ["ELEPHANT","KANGAROO","ALLIGATOR","PORCUPINE","CHAMELEON","ARMADILLO","RHINOCEROS","HIPPOPOTAMUS","FLAMINGO","WOLVERINE"],
-      countries: ["ARGENTINA","VENEZUELA","AUSTRALIA","NETHERLANDS","PHILIPPINES","SWITZERLAND","ZIMBABWE","KAZAKHSTAN","SINGAPORE","GUATEMALA"],
-      foods: ["SPAGHETTI","PINEAPPLE","CHOCOLATE","CROISSANT","BLUEBERRY","WATERMELON","LASAGNA","CANNELLONI","MARSHMALLOW","ARTICHOKE"],
+    // ---------- SETTINGS ----------
+    // Bold projector strokes + SLOW, fixed speed
+    const strokeStyle = {
+      stroke: '#1e3a8a', // Use PF Blue for stroke
+      'stroke-width': 18, // Extra bold stroke for projector
+      fill: 'none',
+      'stroke-linecap': 'round',
+      'stroke-linejoin': 'round'
+    };
+    const PX_PER_SEC = 25; // Super slow for senior viewing/guessing time
+
+    // ---------- HELPERS ----------
+    function E(tag, attrs = {}) {
+      const el = document.createElementNS('http://www.w3.org/2000/svg', tag);
+      for (const [k, v] of Object.entries(attrs)) el.setAttribute(k, v);
+      if (!attrs.stroke && tag !== 'g') {
+        for (const [k, v] of Object.entries(strokeStyle)) el.setAttribute(k, v);
+      }
+      return el;
+    }
+    function setDashForAnimate(el) {
+      const len = el.getTotalLength();
+      el.style.strokeDasharray = String(len);
+      el.style.strokeDashoffset = String(len);
+      return len;
+    }
+    function shuffle(a) {
+      for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+      }
+      return a;
+    }
+
+    // ---------- DRAWING LIBRARY ----------
+    // Simple, high-contrast outlines sized for 800x600 viewBox
+    const library = {
+      Apple: () => {
+        const g = [];
+        g.push(E('path', { d: 'M400 200 C340 160 260 210 260 300 C260 380 330 430 400 470 C470 430 540 380 540 300 C540 210 460 160 400 200 Z' }));
+        g.push(E('path', { d: 'M400 200 C400 160 410 140 430 120' }));
+        g.push(E('path', { d: 'M440 120 C500 110 520 160 460 170 C460 170 450 150 440 120 Z' }));
+        return g;
+      },
+      House: () => {
+        const g = [];
+        g.push(E('rect', { x: 260, y: 280, width: 280, height: 200, rx: 8, ry: 8 }));
+        g.push(E('polygon', { points: '240,280 400,170 560,280' }));
+        g.push(E('rect', { x: 370, y: 360, width: 60, height: 120, rx: 6 }));
+        g.push(E('rect', { x: 290, y: 320, width: 80, height: 60, rx: 6 }));
+        g.push(E('rect', { x: 430, y: 320, width: 80, height: 60, rx: 6 }));
+        return g;
+      },
+      Dog: () => {
+        const g = [];
+        g.push(E('ellipse', { cx: 320, cy: 300, rx: 70, ry: 55 }));
+        g.push(E('path', { d: 'M280 270 C250 250 250 310 280 290' }));
+        g.push(E('circle', { cx: 340, cy: 290, r: 8 }));
+        g.push(E('circle', { cx: 285, cy: 310, r: 8 }));
+        g.push(E('ellipse', { cx: 460, cy: 330, rx: 110, ry: 70 }));
+        g.push(E('path', { d: 'M560 330 C600 320 600 360 560 350' }));
+        g.push(E('line', { x1: 420, y1: 390, x2: 420, y2: 460 }));
+        g.push(E('line', { x1: 500, y1: 390, x2: 500, y2: 460 }));
+        return g;
+      },
+      Flower: () => {
+        const g = [];
+        g.push(E('line', { x1: 400, y1: 260, x2: 400, y2: 460 }));
+        g.push(E('path', { d: 'M400 340 C360 330 340 350 350 370 C360 350 380 350 400 350' }));
+        g.push(E('path', { d: 'M400 380 C440 370 460 390 450 410 C440 390 420 390 400 390' }));
+        g.push(E('circle', { cx: 400, cy: 220, r: 28 }));
+        g.push(E('circle', { cx: 400, cy: 180, r: 24 }));
+        g.push(E('circle', { cx: 440, cy: 200, r: 24 }));
+        g.push(E('circle', { cx: 360, cy: 200, r: 24 }));
+        g.push(E('circle', { cx: 380, cy: 245, r: 24 }));
+        g.push(E('circle', { cx: 420, cy: 245, r: 24 }));
+        return g;
+      },
+      Car: () => {
+        const g = [];
+        g.push(E('path', { d: 'M230 360 L250 320 C270 300 320 280 420 280 L520 280 C550 280 560 300 570 320 L590 360 Z' }));
+        g.push(E('line', { x1: 230, y1: 360, x2: 590, y2: 360 }));
+        g.push(E('rect', { x: 360, y: 295, width: 90, height: 40, rx: 6 }));
+        g.push(E('rect', { x: 460, y: 295, width: 70, height: 40, rx: 6 }));
+        g.push(E('circle', { cx: 300, cy: 360, r: 36 }));
+        g.push(E('circle', { cx: 520, cy: 360, r: 36 }));
+        return g;
+      },
+      Tree: () => {
+        const g = [];
+        g.push(E('rect', { x: 385, y: 340, width: 30, height: 130, rx: 4 }));
+        g.push(E('circle', { cx: 360, cy: 280, r: 65 }));
+        g.push(E('circle', { cx: 440, cy: 280, r: 65 }));
+        g.push(E('circle', { cx: 400, cy: 230, r: 70 }));
+        return g;
+      },
+      Fish: () => {
+        const g = [];
+        g.push(E('ellipse', { cx: 400, cy: 320, rx: 125, ry: 65 }));
+        g.push(E('polygon', { points: '525,320 590,290 590,350' }));
+        g.push(E('circle', { cx: 350, cy: 305, r: 8 }));
+        g.push(E('path', { d: 'M420 280 C410 260 460 260 450 285' }));
+        return g;
+      },
+      IceCream: () => {
+        const g = [];
+        // redrawn, cleaner cone + scoops
+        g.push(E('polygon', { points: '400,420 350,520 450,520' }));
+        g.push(E('circle', { cx: 380, cy: 380, r: 44 }));
+        g.push(E('circle', { cx: 420, cy: 380, r: 44 }));
+        g.push(E('circle', { cx: 400, cy: 345, r: 40 }));
+        g.push(E('path', { d: 'M420 420 C415 445 395 445 390 420' }));
+        return g;
+      },
+      Sun: () => {
+        const g = [];
+        g.push(E('circle', { cx: 400, cy: 300, r: 80 }));
+        [[400,190,400,110],[400,410,400,490],[290,300,210,300],[510,300,590,300],
+          [330,230,270,170],[470,230,530,170],[330,370,270,430],[470,370,530,430]]
+          .forEach(([x1,y1,x2,y2]) => g.push(E('line', { x1,y1,x2,y2 })));
+        return g;
+      },
+      Boat: () => {
+        const g = [];
+        g.push(E('path', { d: 'M250 380 C300 440 500 440 550 380 L250 380 Z' }));
+        g.push(E('line', { x1: 400, y1: 380, x2: 400, y2: 210 }));
+        g.push(E('polygon', { points: '400,210 520,300 400,300' }));
+        g.push(E('path', { d: 'M400 210 C420 220 430 205 455 210' }));
+        return g;
+      },
+      Book: () => {
+        const g = [];
+        g.push(E('path', { d: 'M220 240 C300 210 380 230 400 260 C420 230 500 210 580 240 L580 420 C500 390 420 410 400 440 C380 410 300 390 220 420 Z' }));
+        g.push(E('path', { d: 'M400 260 L400 440' }));
+        g.push(E('path', { d: 'M360 290 C330 280 290 285 250 300' }));
+        g.push(E('path', { d: 'M360 330 C330 320 290 325 250 340' }));
+        g.push(E('path', { d: 'M440 290 C470 280 510 285 550 300' }));
+        g.push(E('path', { d: 'M440 330 C470 320 510 325 550 340' }));
+        return g;
+      },
+
+      // ---- Custom Uploads ----
+      Key: () => {
+        const g = [];
+        // Approximated vectorization of your key outline (bold)
+        g.push(E('ellipse', { cx: 340, cy: 210, rx: 60, ry: 45 }));
+        g.push(E('ellipse', { cx: 320, cy: 230, rx: 45, ry: 35 }));
+        g.push(E('path', { d: 'M320 260 L320 470 L360 470 L360 440 L380 440 L380 410 L400 410 L400 380 L430 380 L430 330' }));
+        g.push(E('path', { d: 'M290 250 C270 220 360 190 380 240 C390 270 340 280 320 260 Z' }));
+        g.push(E('path', { d: 'M395 235 C445 260 480 220 520 250' }));
+        g.push(E('polygon', { points: '520,250 570,280 560,220' }));
+        return g;
+      },
+      Microwave: () => {
+        const g = [];
+        g.push(E('rect', { x: 220, y: 200, width: 360, height: 220, rx: 6 }));
+        g.push(E('rect', { x: 250, y: 230, width: 250, height: 170, rx: 4 }));
+        g.push(E('path', { d: 'M485 255 C500 255 500 375 485 375' }));
+        g.push(E('circle', { cx: 540, cy: 260, r: 18 }));
+        g.push(E('circle', { cx: 540, cy: 310, r: 14 }));
+        g.push(E('circle', { cx: 540, cy: 360, r: 18 }));
+        g.push(E('rect', { x: 260, y: 420, width: 40, height: 15, rx: 6 }));
+        g.push(E('rect', { x: 480, y: 420, width: 40, height: 15, rx: 6 }));
+        return g;
+      }
     };
 
-    const MAX_MISSES = 6;
-    let theme = "animals";
-    let word = "";
-    let revealed = [];
-    let used = new Set();
-    let misses = 0;
-    let finished = false;
+    // ---------- RUNTIME ----------
+    const itemNames = Object.keys(library);
+    let order = shuffle([...itemNames]);
+    let current = 0;
 
-    function pickWord() {
-      const list = BANK[theme];
-      return list[Math.floor(Math.random() * list.length)].toUpperCase();
+    const stage = document.getElementById('stage');
+    const prompt = document.getElementById('prompt');
+    const answer = document.getElementById('answer');
+    const status = document.getElementById('status');
+    const drawingContainer = document.getElementById('drawing-container');
+
+    const startBtn = document.getElementById('startBtn');
+    const pauseBtn = document.getElementById('pauseBtn');
+    const nextBtn  = document.getElementById('nextBtn');
+    const revealBtn= document.getElementById('revealBtn');
+    const fullscreenBtn = document.getElementById('fullscreenBtn');
+
+    let animQueue = [];    // [{el, len, remaining}]
+    let rafId = null;
+    let paused = false;
+    let isAnimating = false;
+
+    function loadDrawing(name) {
+      stage.innerHTML = '';
+      prompt.textContent = 'Now Drawing: ' + (current + 1) + ' of ' + order.length;
+      answer.textContent = name.toUpperCase();
+      answer.style.opacity = 0;
+      status.textContent = 'Press START to draw!';
+      animQueue = [];
+      isAnimating = false;
+      pauseBtn.disabled = true;
+      pauseBtn.textContent = 'Pause';
+
+      const strokes = library[name]();
+      const group = E('g', {});
+      stage.appendChild(group);
+
+      strokes.forEach(el => {
+        group.appendChild(el);
+        const len = setDashForAnimate(el);
+        animQueue.push({ el, len, remaining: len });
+      });
+
+      cancelAnimationFrame(rafId);
     }
 
-    function resetRound() {
-      word = pickWord();
-      revealed = Array.from(word, ch => (ch === " " || ch === "-" ? true : false));
-      used.clear();
-      misses = 0;
-      finished = false;
-      renderAll();
-      setStatus("Guess a letter to begin!");
-    }
-
-    function setStatus(msg, color = "pf-blue-text") {
-      const el = document.getElementById("status");
-      el.className = `text-center text-3xl font-bold ${color} mb-16 h-10`;
-      el.textContent = msg;
-    }
-
-    function renderBalloons() {
-      const wrap = document.getElementById("balloons");
-      wrap.innerHTML = "";
-      const remaining = MAX_MISSES - misses;
-      for (let i = 0; i < remaining; i++) {
-        wrap.innerHTML += `<span class="text-7xl transition-opacity duration-300">🎈</span>`;
+    function startAnimation() {
+      if (isAnimating) return;
+      if (!animQueue.length) {
+         status.textContent = 'All drawings done!';
+         return;
       }
-      for (let i = 0; i < misses; i++) {
-        wrap.innerHTML += `<span class="text-7xl transition-opacity duration-300">💥</span>`;
-      }
-    }
 
-    function renderWord() {
-      const wrap = document.getElementById("word");
-      wrap.innerHTML = "";
-      Array.from(word).forEach((ch, i) => {
-        const box = document.createElement("div");
-        if (ch === " ") {
-          box.className = "w-10 h-20"; // Space separator
-          box.textContent = "";
-        } else if (ch === "-") {
-          box.className = "text-5xl font-bold text-gray-700 pt-4"; // Hyphen
-          box.textContent = "-";
+      isAnimating = true;
+      pauseBtn.disabled = false;
+      let last = performance.now();
+
+      function step(now) {
+        if (paused) { rafId = requestAnimationFrame(step); return; }
+        
+        const dt = (now - last) / 1000;
+        last = now;
+        const advance = PX_PER_SEC * dt;
+
+        let finishedAllStrokes = true;
+        
+        // Find the current active stroke (the one with remaining > 0)
+        let activeStroke = animQueue.find(seg => seg.remaining > 0);
+
+        if (activeStroke) {
+            finishedAllStrokes = false;
+            activeStroke.remaining = Math.max(0, activeStroke.remaining - advance);
+            activeStroke.el.style.strokeDashoffset = String(activeStroke.remaining);
+            status.textContent = 'Drawing... (Guess the word!)';
         } else {
-          const shown = revealed[i];
-          box.className = "word-box-base transition duration-150 " +
-                            (shown ? "word-box-revealed" : "word-box-hidden");
-          
-          const textSpan = document.createElement("span");
-          // Increase size of the hidden placeholder for projection
-          textSpan.className = `leading-none ${shown ? "" : "text-5xl"}`; 
-          textSpan.textContent = shown ? ch : "_";
-          
-          box.appendChild(textSpan);
+            // Check if all are actually finished
+            finishedAllStrokes = animQueue.every(seg => seg.remaining <= 0);
         }
-        wrap.appendChild(box);
-      });
-    }
 
-    function renderUsedLetters() {
-      const wrap = document.getElementById("usedLetters");
-      wrap.innerHTML = "";
-      // Sort letters for clean display
-      [...used].sort().forEach(letter => { 
-        // Use a less pronounced color for used letters
-        const isCorrect = word.includes(letter);
-        const colorClass = isCorrect ? 'text-green-600' : 'text-red-600';
-        wrap.innerHTML += `<span class="used-letter ${colorClass}">${letter}</span>`;
-      });
-    }
-
-    function handleGuess(letter) {
-      if (finished || used.has(letter)) return;
-      
-      let correct = false;
-      const originalMisses = misses;
-
-      if (word.includes(letter)) {
-        for (let i = 0; i < word.length; i++) {
-          if (word[i] === letter) {
-            revealed[i] = true;
-            correct = true;
-          }
+        if (finishedAllStrokes) {
+          status.textContent = 'Done! Press SHOW ANSWER.';
+          isAnimating = false;
+          pauseBtn.disabled = true;
+          cancelAnimationFrame(rafId);
+          return;
         }
-      } else {
-        misses++;
+        rafId = requestAnimationFrame(step);
       }
-      used.add(letter);
-
-      if (correct) {
-        setStatus(`✅ Nice! The letter ${letter} is in the word.`, "text-green-700");
-      } else {
-        setStatus(`💥 Not there. Balloon popped! (${MAX_MISSES - misses} left)`, "text-red-700");
-      }
-
-      if (revealed.every((v) => v)) {
-        finished = true;
-        setStatus("🎉 You saved the balloons! Word solved!", "text-green-700");
-      } else if (misses >= MAX_MISSES) {
-        finished = true;
-        setStatus(`💥 All balloons popped! The word was ${word}.`, "text-red-700");
-      }
-
-      renderAll();
+      rafId = requestAnimationFrame(step);
     }
 
-    function renderAll() {
-      renderBalloons();
-      renderWord();
-      renderUsedLetters();
-    }
-
-    // Hook up
-    document.getElementById("theme").addEventListener("change", e => {
-      theme = e.target.value;
-      resetRound();
-    });
-    document.getElementById("newBtn").addEventListener("click", resetRound);
-
-    // Start
-    resetRound();
-
-    // Key listener for group play (Kept unchanged)
-    document.addEventListener("keydown", e => {
-      const letter = e.key.toUpperCase();
-      if (letter.length === 1 && letter >= "A" && letter <= "Z") {
-        handleGuess(letter);
+    // Controls
+    startBtn.addEventListener('click', () => {
+      // If already started and paused, resume. Otherwise, load new.
+      if (paused) {
+        paused = false;
+        pauseBtn.textContent = 'Pause';
+        startAnimation();
+      } else {
+        loadDrawing(order[current]);
+        startAnimation();
       }
     });
+    
+    pauseBtn.addEventListener('click', () => {
+      if (pauseBtn.disabled) return;
+      paused = !paused;
+      pauseBtn.textContent = paused ? 'Resume' : 'Pause';
+      if (!paused) startAnimation(); // Resume animation if unpausing
+    });
+    
+    nextBtn.addEventListener('click', () => {
+      current = (current + 1) % order.length;
+      loadDrawing(order[current]);
+      // Immediately start the next one
+      startAnimation(); 
+    });
+    
+    revealBtn.addEventListener('click', () => { 
+        answer.style.opacity = 1; 
+        status.textContent = 'ANSWER REVEALED!';
+    });
+
+    // Fullscreen
+    document.getElementById('fullscreenBtn').addEventListener('click', () => {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen();
+        fullscreenBtn.textContent = "Exit Full Screen";
+        // Maximize SVG within container in fullscreen mode
+        drawingContainer.style.maxWidth = '100vw'; 
+        drawingContainer.style.maxHeight = '100vh';
+      } else {
+        document.exitFullscreen();
+        fullscreenBtn.textContent = "⛶ Full Screen";
+        // Restore normal max-width on exit
+        drawingContainer.style.maxWidth = '';
+        drawingContainer.style.maxHeight = '';
+      }
+    });
+    
+    // Handle fullscreen exit via ESC key
+    document.addEventListener('fullscreenchange', () => {
+        if (!document.fullscreenElement) {
+            fullscreenBtn.textContent = "⛶ Full Screen";
+            drawingContainer.style.maxWidth = '';
+            drawingContainer.style.maxHeight = '';
+        }
+    });
+
+    // Init first drawing
+    loadDrawing(order[current]);
   </script>
 </body>
 </html>
