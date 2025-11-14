@@ -42,6 +42,7 @@
     .used-letter {
         padding: 0 0.5rem;
         color: #1e3a8a;
+        font-size: 4.5rem; 
     }
   </style>
 
@@ -90,7 +91,7 @@
 <body class="bg-white text-gray-900 min-h-screen">
   
   <div class="max-w-6xl mx-auto p-6">
-    <h1 class="text-4xl md:text-5xl font-extrabold text-blue-800 text-center mb-6">Pop the Balloon</h1>
+    <h1 class="text-4xl md:text-5xl font-extrabold text-blue-800 text-center mb-6">Pop the Balloon 🎈</h1>
 
     <div class="flex justify-center mb-8">
       <a href="apps.html"
@@ -99,9 +100,9 @@
       </a>
     </div>
 
-    <div class="grid md:grid-cols-3 gap-6 md:gap-8 items-end mb-10 p-4 border-b-2 border-gray-200">
+    <div class="grid md:grid-cols-2 gap-6 md:gap-8 items-end mb-10 p-4 border-b-2 border-gray-200 max-w-2xl mx-auto">
       <div>
-        <label for="theme" class="block text-lg font-semibold pf-blue-text mb-2">Choose a Theme</label>
+        <label for="theme" class="block text-xl font-bold pf-blue-text mb-2">Choose a Theme</label>
         <select id="theme"
                 class="w-full text-xl p-4 border-4 border-blue-900 rounded-xl bg-gray-50 appearance-none focus:outline-none focus:ring-4 focus:ring-blue-300">
           <option value="animals">Animals</option>
@@ -111,17 +112,13 @@
       </div>
 
       <div>
-        <label class="block text-lg font-semibold pf-blue-text mb-2">Start a New Round</label>
+        <label class="block text-xl font-bold pf-blue-text mb-2">Start a New Round</label>
         <button id="newBtn"
                 class="w-full pf-blue-bg hover:pf-blue-bg text-white text-xl py-4 px-6 rounded-xl font-extrabold transition duration-150 shadow-md">
           New Word
         </button>
       </div>
-
-      <div class="md:text-right text-gray-700 text-lg font-medium py-2">
-        **Guess letters** by shouting them out, or pressing keys. Wrong guesses pop balloons! 🎈
       </div>
-    </div>
 
     <div id="balloons"
          class="flex items-center justify-center gap-4 mb-16 h-20"
@@ -137,7 +134,7 @@
 
     <div class="text-center text-xl font-bold text-gray-700 mb-4">Used Letters</div>
     <div id="usedLetters"
-         class="flex flex-wrap justify-center gap-x-6 gap-y-3 text-5xl font-extrabold border-t-2 border-gray-200 pt-6">
+         class="flex flex-wrap justify-center gap-x-6 gap-y-3 font-extrabold border-t-2 border-gray-200 pt-6">
     </div>
   </div>
 
