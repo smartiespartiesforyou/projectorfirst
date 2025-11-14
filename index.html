@@ -17,7 +17,7 @@
   <meta property="og:url" content="https://projectorfirst.com/">
   <meta property="og:type" content="website">
 
-  <!-- ✅ Theme and Assets -->
+  <!-- Theme + Icons -->
   <meta name="theme-color" content="#1e3a8a" />
   <link rel="icon" href="logo.svg" type="image/svg+xml" />
   <link rel="manifest" href="manifest.json">
@@ -53,11 +53,11 @@
   </script>
 </head>
 
-
 <body data-ms-content="public" class="bg-white text-black">
+
   <a href="#main" class="skip-link">Skip to main content</a>
 
-  <!-- ✅ ✅ ✅ RESPONSIVE FREE TRIAL BANNER ✅ ✅ ✅ -->
+  <!-- ✅ FREE TRIAL BANNER -->
   <div class="w-full bg-blue-900 text-white text-center px-4 py-6 sm:py-10">
     <h2 class="text-2xl sm:text-4xl font-extrabold mb-2">
       Start Your 30-Day Free Trial — No Credit Card Needed
@@ -67,17 +67,19 @@
       Instant access to all ProjectorFirst games: Bingo, Move & Groove, Memory Match, Trivia, and more.
     </p>
 
-  <a data-ms-plan:add="pln_trial30-gpte0tfl"
-   class="inline-block bg-yellow-400 text-gray-900 font-bold text-xl sm:text-2xl px-6 py-3 rounded-xl shadow hover:bg-yellow-300">
-  Start Free Trial
-</a>
+    <!-- ⬇️⬇️ WORKING BUTTON WITH FALLBACK + MEMBERSTACK ATTRIBUTES ⬇️⬇️ -->
+    <a href="/signup"
+       data-ms-plan:add="pln_trial30-gpte0tfl"
+       class="inline-block bg-yellow-400 text-gray-900 font-bold text-xl sm:text-2xl px-6 py-3 rounded-xl shadow hover:bg-yellow-300">
+      Start Free Trial
+    </a>
   </div>
-  <!-- ✅ ✅ ✅ END RESPONSIVE BANNER ✅ ✅ ✅ -->
+  <!-- END BANNER -->
 
-
-<!-- Header -->
+<!-- HEADER -->
 <header class="bg-white border-b border-black/10 py-4 shadow-sm" role="banner">
   <div class="max-w-6xl mx-auto px-4 flex items-center justify-between">
+
     <!-- Logo -->
     <a href="index.html" class="flex items-center gap-3 focus:outline-none focus:ring-4 focus:ring-blue-400 rounded-xl">
       <img src="logo.svg" alt="ProjectorFirst logo" class="w-12 h-12"/>
@@ -87,86 +89,71 @@
     <!-- Navigation -->
     <nav class="space-x-2" aria-label="Primary">
 
-      <a href="index.html"
-         class="px-5 py-3 rounded-xl bg-blue-900 text-white text-xl font-bold focus:outline-none focus:ring-4 focus:ring-blue-400">
-        Home
-      </a>
-      <a href="apps.html"
-         class="px-5 py-3 rounded-xl bg-blue-900/90 text-white text-xl font-bold hover:bg-blue-800 transition focus:outline-none focus:ring-4 focus:ring-blue-400">
-        Apps
-      </a>
-      <a href="about.html"
-         class="px-5 py-3 rounded-xl bg-blue-900/90 text-white text-xl font-bold hover:bg-blue-800 transition focus:outline-none focus:ring-4 focus:ring-blue-400">
-        About
-      </a>
-      <a href="contact.html"
-         class="px-5 py-3 rounded-xl bg-blue-900/90 text-white text-xl font-bold hover:bg-blue-800 transition focus:outline-none focus:ring-4 focus:ring-blue-400">
-        Contact
-      </a>
+      <a href="index.html" class="px-5 py-3 rounded-xl bg-blue-900 text-white text-xl font-bold">Home</a>
+      <a href="apps.html" class="px-5 py-3 rounded-xl bg-blue-900/90 text-white text-xl font-bold hover:bg-blue-800">Apps</a>
+      <a href="about.html" class="px-5 py-3 rounded-xl bg-blue-900/90 text-white text-xl font-bold hover:bg-blue-800">About</a>
+      <a href="contact.html" class="px-5 py-3 rounded-xl bg-blue-900/90 text-white text-xl font-bold hover:bg-blue-800">Contact</a>
 
       <!-- Logged OUT -->
       <a href="#" data-ms-modal="signup" data-ms-content="!members"
-         class="px-5 py-3 rounded-xl bg-green-700 text-white text-xl font-bold hover:bg-green-600 transition focus:outline-none focus:ring-4 focus:ring-green-400">
-        Sign up
-      </a>
+         class="px-5 py-3 rounded-xl bg-green-700 text-white text-xl font-bold">Sign up</a>
+
       <a href="#" data-ms-modal="login" data-ms-content="!members"
-         class="px-5 py-3 rounded-xl bg-blue-900/90 text-white text-xl font-bold hover:bg-blue-800 transition focus:outline-none focus:ring-4 focus:ring-blue-400">
-        Log in
-      </a>
+         class="px-5 py-3 rounded-xl bg-blue-900/90 text-white text-xl font-bold">Log in</a>
 
       <!-- Logged IN -->
       <a href="#" data-ms-profile="true" data-ms-content="members"
-         class="px-5 py-3 rounded-xl bg-green-700 text-white text-xl font-bold hover:bg-green-600 transition focus:outline-none focus:ring-4 focus:ring-green-400">
-        My Account
-      </a>
+         class="px-5 py-3 rounded-xl bg-green-700 text-white text-xl font-bold">My Account</a>
+
       <a href="#" data-ms-action="logout" data-ms-content="members"
-         class="px-5 py-3 rounded-xl bg-gray-700 text-white text-xl font-bold hover:bg-gray-600 transition focus:outline-none focus:ring-4 focus:ring-gray-400">
-        Log out
-      </a>
+         class="px-5 py-3 rounded-xl bg-gray-700 text-white text-xl font-bold">Log out</a>
 
     </nav>
   </div>
 </header>
 
-  <!-- Main Content -->
-  <main id="main" class="max-w-6xl mx-auto px-4 py-14 text-center">
-    <h1 class="text-5xl sm:text-6xl font-extrabold mb-8 text-blue-900">
-      Welcome to ProjectorFirst
-    </h1>
-    <p class="max-w-3xl mx-auto mb-12 text-2xl">
-      Big, simple apps designed for projectors and TVs. Easy to read, high contrast, and one-click controls — built for seniors and care homes.
-    </p>
+<!-- MAIN -->
+<main id="main" class="max-w-6xl mx-auto px-4 py-14 text-center">
+  <h1 class="text-5xl sm:text-6xl font-extrabold mb-8 text-blue-900">
+    Welcome to ProjectorFirst
+  </h1>
+  <p class="max-w-3xl mx-auto mb-12 text-2xl">
+    Big, simple apps designed for projectors and TVs. Easy to read, high contrast, and one-click controls — built for seniors and care homes.
+  </p>
 
-    <!-- Features -->
-    <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 mb-12">
-      <div class="bg-white border-2 border-blue-900 rounded-2xl p-8 shadow-sm flex flex-col items-center justify-center text-center h-48">
-        <div class="text-3xl font-extrabold text-blue-900 mb-2">🔍 Readable</div>
-        <p>Large fonts and high contrast for easy viewing.</p>
-      </div>
-      <div class="bg-white border-2 border-blue-900 rounded-2xl p-8 shadow-sm flex flex-col items-center justify-center text-center h-48">
-        <div class="text-3xl font-extrabold text-blue-900 mb-2">🎯 Simple</div>
-        <p>One-click apps with no clutter or confusion.</p>
-      </div>
-      <div class="bg-white border-2 border-blue-900 rounded-2xl p-8 shadow-sm flex flex-col items-center justify-center text-center h-48">
-        <div class="text-3xl font-extrabold text-blue-900 mb-2">📺 Projector-Ready</div>
-        <p>Perfect for TVs, big screens, and group activities.</p>
-      </div>
+  <!-- FEATURES -->
+  <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 mb-12">
+    <div class="bg-white border-2 border-blue-900 rounded-2xl p-8 shadow-sm h-48 flex flex-col justify-center items-center">
+      <div class="text-3xl font-extrabold text-blue-900 mb-2">🔍 Readable</div>
+      <p>Large fonts and high contrast for easy viewing.</p>
     </div>
 
-    <!-- CTA Buttons -->
-    <div class="space-y-6">
-      <a href="apps.html"
-        class="inline-block px-10 py-5 rounded-xl bg-blue-900 text-white font-bold text-3xl hover:bg-blue-800 transition focus:outline-none focus:ring-4 focus:ring-blue-400">
-        🕹 Launch Apps
-      </a>
-
-      <a href="checkout.html"
-        class="inline-block px-10 py-5 rounded-xl bg-green-700 text-white font-bold text-3xl hover:bg-green-600 transition focus:outline-none focus:ring-4 focus:ring-green-400">
-        💳 Subscribe $9.99/month
-      </a>
+    <div class="bg-white border-2 border-blue-900 rounded-2xl p-8 shadow-sm h-48 flex flex-col justify-center items-center">
+      <div class="text-3xl font-extrabold text-blue-900 mb-2">🎯 Simple</div>
+      <p>One-click apps with no clutter or confusion.</p>
     </div>
-  </main>
 
+    <div class="bg-white border-2 border-blue-900 rounded-2xl p-8 shadow-sm h-48 flex flex-col justify-center items-center">
+      <div class="text-3xl font-extrabold text-blue-900 mb-2">📺 Projector-Ready</div>
+      <p>Perfect for TVs, big screens, and group activities.</p>
+    </div>
+  </div>
+
+  <!-- BOTTOM CTA -->
+  <div class="space-y-6">
+    <a href="apps.html"
+      class="inline-block px-10 py-5 rounded-xl bg-blue-900 text-white font-bold text-3xl">
+      🕹 Launch Apps
+    </a>
+
+    <a href="checkout.html"
+      class="inline-block px-10 py-5 rounded-xl bg-green-700 text-white font-bold text-3xl">
+      💳 Subscribe $9.99/month
+    </a>
+  </div>
+</main>
+
+<!-- FOOTER -->
 <footer class="bg-white border-t border-black/10 py-6 mt-12" role="contentinfo">
   <div class="max-w-6xl mx-auto px-4 text-center text-lg">
     © <span id="year"></span> ProjectorFirst • Big, Simple Apps for Nursing Homes & Senior Care
@@ -176,8 +163,9 @@
   </div>
 </footer>
 
-  <script>
-    document.getElementById('year').textContent = new Date().getFullYear();
-  </script>
+<script>
+  document.getElementById('year').textContent = new Date().getFullYear();
+</script>
+
 </body>
 </html>
