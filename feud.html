@@ -1,271 +1,596 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Resident Feud — ProjectorFirst</title>
-<script src="https://cdn.tailwindcss.com"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Resident Feud — ProjectorFirst</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      background: #ffffff;
+      color: #0b2a8a;
+      font-family: Arial, sans-serif;
+    }
 
-<style>
-  body {
-    background:white;
-    color:#0b2a8a;
-    font-family:Arial, sans-serif;
-  }
+    .board-card {
+      background: #ffffff;
+      border: 6px solid #1e3a8a;
+      border-radius: 20px;
+      padding: 30px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.1);
+    }
 
-  .board-card {
-    background:white;
-    border:6px solid #1e3a8a;
-    border-radius:20px;
-    padding:30px;
-    box-shadow:0 0 20px rgba(0,0,0,0.1);
-  }
+    /* Flip card container */
+    .slot {
+      perspective: 1000px;
+      cursor: pointer;
+      user-select: none;
+    }
 
-  .slot {
-    background:white;
-    border:6px solid #1e3a8a;
-    border-radius:20px;
-    padding:40px;
-    font-size:4rem;
-    font-weight:bold;
-    text-align:center;
-    cursor:pointer;
-    user-select:none;
-  }
+    .card-inner {
+      position: relative;
+      width: 100%;
+      height: 150px;
+      transform-style: preserve-3d;
+      transition: transform 0.45s ease;
+    }
 
-  .revealed {
-    background:#e6ffe6 !important;
-    border-color:#16a34a !important;
-    color:#0b2a8a !important;
-    font-size:2.6rem !important;
-  }
+    .slot.flipped .card-inner {
+      transform: rotateY(180deg);
+    }
 
-  .strikeX {
-    font-size:6rem;
-    font-weight:900;
-    color:red;
-    display:none;
-  }
+    .card-face {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 20px;
+      border: 6px solid #1e3a8a;
+      background: #ffffff;
+      backface-visibility: hidden;
+      text-align: center;
+      padding: 10px;
+    }
 
-  .team-btn {
-    padding:12px 24px;
-    border-radius:12px;
-    font-size:1.6rem;
-    font-weight:bold;
-    border:4px solid transparent;
-    cursor:pointer;
-  }
+    .card-front {
+      font-size: 4rem;
+      font-weight: 900;
+    }
 
-  .team-active {
-    border-color:gold !important;
-    background:#fffce1 !important;
-  }
-</style>
+    .card-back {
+      transform: rotateY(180deg);
+      font-size: 2.3rem;
+      font-weight: 700;
+      flex-direction: column;
+      line-height: 1.2;
+    }
+
+    .card-back span.points {
+      display: block;
+      font-size: 2rem;
+      margin-top: 8px;
+      color: #166534; /* dark green */
+    }
+
+    .strikeX {
+      font-size: 6rem;
+      font-weight: 900;
+      color: red;
+      display: none;
+    }
+
+    .team-btn {
+      padding: 10px 22px;
+      border-radius: 12px;
+      font-size: 1.4rem;
+      font-weight: bold;
+      border: 4px solid transparent;
+      cursor: pointer;
+    }
+
+    .team-active {
+      border-color: gold !important;
+      background: #fffce1 !important;
+    }
+
+    .question-bar {
+      font-size: 2.5rem;
+    }
+
+    .question-bar span.main-question {
+      display: block;
+      font-size: 3.2rem;
+      margin-top: 10px;
+    }
+
+    /* EDITOR PANEL */
+    .editor-panel {
+      position: fixed;
+      top: 0;
+      right: 0;
+      width: 360px;
+      height: 100vh;
+      background: #f9fafb;
+      border-left: 4px solid #1e3a8a;
+      box-shadow: -5px 0 12px rgba(0,0,0,0.15);
+      padding: 16px;
+      transform: translateX(100%);
+      transition: transform 0.3s ease;
+      z-index: 50;
+      font-size: 0.95rem;
+      overflow-y: auto;
+    }
+
+    .editor-panel.open {
+      transform: translateX(0);
+    }
+
+    .editor-label {
+      font-weight: 600;
+      margin-top: 10px;
+      margin-bottom: 4px;
+      font-size: 0.9rem;
+    }
+
+    .editor-input, .editor-number {
+      width: 100%;
+      border-radius: 8px;
+      border: 1px solid #cbd5f5;
+      padding: 6px 8px;
+      font-size: 0.9rem;
+    }
+
+    .editor-number {
+      max-width: 90px;
+    }
+
+    .editor-answer-row {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 4px;
+    }
+
+    .editor-small {
+      font-size: 0.8rem;
+      color: #4b5563;
+      margin-top: 4px;
+    }
+  </style>
 </head>
 
-<body class="p-10">
+<body class="p-6 sm:p-10">
 
-<!-- TOP CONTROLS -->
-<div class="flex justify-between items-center mb-10">
+  <!-- TOP CONTROLS -->
+  <div class="flex flex-wrap justify-between items-center gap-4 mb-8">
 
-  <!-- TEAM SELECT -->
-  <div class="flex gap-6">
-    <button id="btnA" class="team-btn bg-red-200" onclick="setTeam('A')">Team A</button>
-    <button id="btnB" class="team-btn bg-green-200" onclick="setTeam('B')">Team B</button>
-  </div>
-
-  <!-- STRIKE BUTTON -->
-  <button onclick="addStrike()" 
-          class="bg-red-600 text-white text-2xl px-8 py-4 rounded-xl shadow-lg">
-    STRIKE ❌
-  </button>
-
-  <!-- NEXT QUESTION -->
-  <button onclick="nextQuestion()" 
-          class="bg-yellow-400 text-2xl px-8 py-4 rounded-xl shadow-lg">
-    Next Question ➜
-  </button>
-</div>
-
-
-<!-- SCORES + BOARD -->
-<div class="flex justify-center items-start gap-10">
-
-  <!-- TEAM A SCORE -->
-  <div class="text-center bg-red-100 border-4 border-red-400 rounded-xl p-6 w-48">
-    <div class="text-2xl font-bold">TEAM A</div>
-    <div id="scoreA" class="text-5xl font-extrabold mt-3">0</div>
-  </div>
-
-  <!-- MAIN BOARD -->
-  <div class="board-card">
-
-    <div class="grid grid-cols-2 gap-6 w-[700px]">
-
-      <div class="slot" onclick="reveal(0)">1</div>
-      <div class="slot" onclick="reveal(1)">2</div>
-
-      <div class="slot" onclick="reveal(2)">3</div>
-      <div class="slot" onclick="reveal(3)">4</div>
-
-      <div class="slot" onclick="reveal(4)">5</div>
-      <div class="slot" onclick="reveal(5)">6</div>
-
+    <!-- TEAM SELECT -->
+    <div class="flex gap-4">
+      <button id="btnA" class="team-btn bg-red-200" onclick="setTeam('A')">Team A</button>
+      <button id="btnB" class="team-btn bg-green-200" onclick="setTeam('B')">Team B</button>
     </div>
 
-    <!-- STRIKES -->
-    <div class="flex justify-center gap-10 mt-10">
-      <div id="sx1" class="strikeX">X</div>
-      <div id="sx2" class="strikeX">X</div>
-      <div id="sx3" class="strikeX">X</div>
+    <!-- CENTER CONTROLS -->
+    <div class="flex gap-4">
+      <button onclick="addStrike()"
+              class="bg-red-600 text-white text-xl px-6 py-3 rounded-xl shadow-lg">
+        STRIKE ❌
+      </button>
+      <button onclick="nextQuestion()"
+              class="bg-yellow-400 text-xl px-6 py-3 rounded-xl shadow-lg">
+        Next Question ➜
+      </button>
+    </div>
+
+    <!-- EDIT QUESTIONS -->
+    <button onclick="toggleEditor()"
+            class="bg-blue-100 border border-blue-500 text-blue-900 text-lg px-4 py-2 rounded-lg">
+      Edit Questions ✏️
+    </button>
+  </div>
+
+  <!-- SCORES + BOARD -->
+  <div class="flex flex-wrap justify-center items-start gap-6">
+
+    <!-- TEAM A SCORE -->
+    <div class="text-center bg-red-100 border-4 border-red-400 rounded-xl p-4 w-40">
+      <div class="text-xl font-bold">TEAM A</div>
+      <div id="scoreA" class="text-4xl font-extrabold mt-2">0</div>
+    </div>
+
+    <!-- MAIN BOARD -->
+    <div class="board-card">
+      <div class="grid grid-cols-2 gap-5 w-[680px] max-w-full">
+
+        <!-- 6 flip slots -->
+        <div class="slot" onclick="reveal(0)">
+          <div class="card-inner">
+            <div class="card-face card-front">1</div>
+            <div class="card-face card-back">
+              <div>Answer 1</div>
+              <span class="points">+0</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="slot" onclick="reveal(1)">
+          <div class="card-inner">
+            <div class="card-face card-front">2</div>
+            <div class="card-face card-back">
+              <div>Answer 2</div>
+              <span class="points">+0</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="slot" onclick="reveal(2)">
+          <div class="card-inner">
+            <div class="card-face card-front">3</div>
+            <div class="card-face card-back">
+              <div>Answer 3</div>
+              <span class="points">+0</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="slot" onclick="reveal(3)">
+          <div class="card-inner">
+            <div class="card-face card-front">4</div>
+            <div class="card-face card-back">
+              <div>Answer 4</div>
+              <span class="points">+0</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="slot" onclick="reveal(4)">
+          <div class="card-inner">
+            <div class="card-face card-front">5</div>
+            <div class="card-face card-back">
+              <div>Answer 5</div>
+              <span class="points">+0</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="slot" onclick="reveal(5)">
+          <div class="card-inner">
+            <div class="card-face card-front">6</div>
+            <div class="card-face card-back">
+              <div>Answer 6</div>
+              <span class="points">+0</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- STRIKES -->
+      <div class="flex justify-center gap-8 mt-8">
+        <div id="sx1" class="strikeX">X</div>
+        <div id="sx2" class="strikeX">X</div>
+        <div id="sx3" class="strikeX">X</div>
+      </div>
+    </div>
+
+    <!-- TEAM B SCORE -->
+    <div class="text-center bg-green-100 border-4 border-green-400 rounded-xl p-4 w-40">
+      <div class="text-xl font-bold">TEAM B</div>
+      <div id="scoreB" class="text-4xl font-extrabold mt-2">0</div>
     </div>
 
   </div>
 
-  <!-- TEAM B SCORE -->
-  <div class="text-center bg-green-100 border-4 border-green-400 rounded-xl p-6 w-48">
-    <div class="text-2xl font-bold">TEAM B</div>
-    <div id="scoreB" class="text-5xl font-extrabold mt-3">0</div>
+  <!-- QUESTION DISPLAY -->
+  <div class="question-bar text-center bg-yellow-200 border-4 border-yellow-500 mt-10 p-6 rounded-xl">
+    <div class="font-bold">QUESTION:</div>
+    <span id="questionText" class="main-question">Loading question...</span>
   </div>
 
-</div>
+  <!-- BUZZER SOUND (YOU NEED A buzzer.mp3 FILE IN SAME FOLDER) -->
+  <audio id="buzzerSound" src="buzzer.mp3" preload="auto"></audio>
 
+  <!-- EDITOR PANEL -->
+  <div id="editorPanel" class="editor-panel">
+    <h2 class="text-xl font-bold mb-2">Edit / Add Questions</h2>
+    <p class="editor-small">New questions are added after the built-in ones and saved in this browser.</p>
 
-<!-- QUESTION DISPLAY -->
-<div class="text-center bg-yellow-200 border-4 border-yellow-500 text-3xl font-bold mt-12 p-6 rounded-xl">
-  <span id="questionText">Loading question...</span>
-</div>
+    <label class="editor-label" for="newQuestionText">Question Text</label>
+    <textarea id="newQuestionText" class="editor-input" rows="2"
+              placeholder="Type your survey question here..."></textarea>
 
+    <div class="mt-2 font-semibold">Answers (up to 6)</div>
+    <p class="editor-small">Leave blank rows empty if you don't need all 6.</p>
 
-<script>
-/* -----------------------------
-   QUESTION DATABASE
------------------------------- */
-const questions = [
-  {
-    question: "Name something people do first thing in the morning.",
-    answers: [
-      { text:"Brush Teeth", points:30 },
-      { text:"Use Bathroom", points:25 },
-      { text:"Make Coffee", points:20 },
-      { text:"Check Phone", points:15 },
-      { text:"Get Dressed", points:5 },
-      { text:"Eat Breakfast", points:5 }
-    ]
-  },
-  {
-    question: "Name a popular pet.",
-    answers: [
-      { text:"Dog", points:45 },
-      { text:"Cat", points:30 },
-      { text:"Fish", points:15 },
-      { text:"Bird", points:8 },
-      { text:"Hamster", points:2 },
-      { text:"Reptile", points:1 }
-    ]
-  }
-];
+    <div id="answersContainer">
+      <!-- 6 rows -->
+      <div class="editor-answer-row">
+        <input class="editor-input" id="ansText0" placeholder="Answer 1">
+        <input class="editor-number" id="ansPts0" type="number" min="0" placeholder="Pts">
+      </div>
+      <div class="editor-answer-row">
+        <input class="editor-input" id="ansText1" placeholder="Answer 2">
+        <input class="editor-number" id="ansPts1" type="number" min="0" placeholder="Pts">
+      </div>
+      <div class="editor-answer-row">
+        <input class="editor-input" id="ansText2" placeholder="Answer 3">
+        <input class="editor-number" id="ansPts2" type="number" min="0" placeholder="Pts">
+      </div>
+      <div class="editor-answer-row">
+        <input class="editor-input" id="ansText3" placeholder="Answer 4">
+        <input class="editor-number" id="ansPts3" type="number" min="0" placeholder="Pts">
+      </div>
+      <div class="editor-answer-row">
+        <input class="editor-input" id="ansText4" placeholder="Answer 5">
+        <input class="editor-number" id="ansPts4" type="number" min="0" placeholder="Pts">
+      </div>
+      <div class="editor-answer-row">
+        <input class="editor-input" id="ansText5" placeholder="Answer 6">
+        <input class="editor-number" id="ansPts5" type="number" min="0" placeholder="Pts">
+      </div>
+    </div>
 
-/* -----------------------------
-   GAME STATE
------------------------------- */
-let gameState = {
-  teamA:0,
-  teamB:0,
-  activeTeam:"A",
-  activeStrikes:0,
-  currentQuestionIndex:0,
-  revealed:[false,false,false,false,false,false]
-};
+    <button onclick="addCustomQuestion()"
+            class="mt-4 w-full bg-blue-600 text-white py-2 rounded-lg text-sm font-semibold">
+      ➕ Add Question
+    </button>
 
-/* -----------------------------
-   TEAM TOGGLE
------------------------------- */
-function setTeam(team){
-  gameState.activeTeam = team;
+    <button onclick="clearCustomQuestions()"
+            class="mt-2 w-full bg-red-100 text-red-700 border border-red-400 py-2 rounded-lg text-xs font-semibold">
+      Clear Custom Questions
+    </button>
 
-  document.getElementById("btnA").classList.remove("team-active");
-  document.getElementById("btnB").classList.remove("team-active");
+    <div class="mt-4 editor-small">
+      Custom questions are stored locally in your browser using localStorage.
+      They will not follow you to another computer.
+    </div>
+  </div>
 
-  if(team==="A") document.getElementById("btnA").classList.add("team-active");
-  if(team==="B") document.getElementById("btnB").classList.add("team-active");
-}
+  <script>
+    /* -----------------------------
+       DEFAULT QUESTION DATABASE
+    ------------------------------ */
+    const defaultQuestions = [
+      {
+        question: "Name something people do first thing in the morning.",
+        answers: [
+          { text:"Brush Teeth", points:30 },
+          { text:"Use Bathroom", points:25 },
+          { text:"Make Coffee", points:20 },
+          { text:"Check Phone", points:15 },
+          { text:"Get Dressed", points:5 },
+          { text:"Eat Breakfast", points:5 }
+        ]
+      },
+      {
+        question: "Name a popular pet.",
+        answers: [
+          { text:"Dog", points:45 },
+          { text:"Cat", points:30 },
+          { text:"Fish", points:15 },
+          { text:"Bird", points:8 },
+          { text:"Hamster", points:2 },
+          { text:"Reptile", points:1 }
+        ]
+      }
+    ];
 
-/* -----------------------------
-   LOAD QUESTION
------------------------------- */
-function loadQuestion(){
-  const q = questions[gameState.currentQuestionIndex];
-  document.getElementById("questionText").innerText = q.question;
+    let customQuestions = [];
+    let questions = [];
 
-  document.querySelectorAll(".slot").forEach((slot,i)=>{
-    slot.innerText = (i+1);
-    slot.classList.remove("revealed");
-  });
+    /* -----------------------------
+       GAME STATE
+    ------------------------------ */
+    let gameState = {
+      teamA: 0,
+      teamB: 0,
+      activeTeam: "A",
+      activeStrikes: 0,
+      currentQuestionIndex: 0,
+      revealed: [false,false,false,false,false,false]
+    };
 
-  gameState.revealed = [false,false,false,false,false,false];
-  gameState.activeStrikes = 0;
+    /* -----------------------------
+       INIT & LOCALSTORAGE
+    ------------------------------ */
+    function loadCustomQuestions() {
+      try {
+        const stored = localStorage.getItem("residentFeudCustomQuestions");
+        if (stored) {
+          customQuestions = JSON.parse(stored);
+        } else {
+          customQuestions = [];
+        }
+      } catch (e) {
+        customQuestions = [];
+      }
+      questions = defaultQuestions.concat(customQuestions);
+    }
 
-  document.getElementById("sx1").style.display="none";
-  document.getElementById("sx2").style.display="none";
-  document.getElementById("sx3").style.display="none";
-}
+    function saveCustomQuestions() {
+      localStorage.setItem("residentFeudCustomQuestions", JSON.stringify(customQuestions));
+      questions = defaultQuestions.concat(customQuestions);
+    }
 
-/* -----------------------------
-   REVEAL ANSWER
------------------------------- */
-function reveal(index){
-  if(gameState.revealed[index]) return;
+    /* -----------------------------
+       TEAM TOGGLE
+    ------------------------------ */
+    function setTeam(team) {
+      gameState.activeTeam = team;
 
-  const q = questions[gameState.currentQuestionIndex];
-  const ans = q.answers[index];
-  if(!ans) return;
+      document.getElementById("btnA").classList.remove("team-active");
+      document.getElementById("btnB").classList.remove("team-active");
 
-  const slot = document.querySelectorAll(".slot")[index];
-  slot.classList.add("revealed");
-  slot.innerHTML = `${ans.text}<br><span style="font-size:2rem;">+${ans.points}</span>`;
+      if (team === "A") document.getElementById("btnA").classList.add("team-active");
+      if (team === "B") document.getElementById("btnB").classList.add("team-active");
+    }
 
-  gameState.revealed[index] = true;
+    /* -----------------------------
+       LOAD QUESTION
+    ------------------------------ */
+    function loadQuestion() {
+      if (questions.length === 0) {
+        document.getElementById("questionText").innerText = "No questions available.";
+        return;
+      }
 
-  if(gameState.activeTeam === "A"){
-    gameState.teamA += ans.points;
-    document.getElementById("scoreA").innerText = gameState.teamA;
-  } else {
-    gameState.teamB += ans.points;
-    document.getElementById("scoreB").innerText = gameState.teamB;
-  }
-}
+      const q = questions[gameState.currentQuestionIndex];
+      document.getElementById("questionText").innerText = q.question;
 
-/* -----------------------------
-   STRIKES
------------------------------- */
-function addStrike(){
-  gameState.activeStrikes++;
+      const slots = document.querySelectorAll(".slot");
+      const backs = document.querySelectorAll(".card-back");
 
-  if(gameState.activeStrikes === 1) document.getElementById("sx1").style.display="block";
-  if(gameState.activeStrikes === 2) document.getElementById("sx2").style.display="block";
-  if(gameState.activeStrikes === 3){
-    document.getElementById("sx3").style.display="block";
-    alert("Three strikes! Round over.");
-  }
-}
+      slots.forEach((slot, i) => {
+        slot.classList.remove("flipped");
+        const front = slot.querySelector(".card-front");
+        const back = slot.querySelector(".card-back");
+        front.textContent = (i + 1);
 
-/* -----------------------------
-   NEXT QUESTION
------------------------------- */
-function nextQuestion(){
-  gameState.currentQuestionIndex++;
-  if(gameState.currentQuestionIndex >= questions.length) gameState.currentQuestionIndex = 0;
+        const ans = q.answers[i];
+        if (ans) {
+          back.innerHTML = `<div>${ans.text}</div><span class="points">+${ans.points}</span>`;
+        } else {
+          back.innerHTML = `<div></div><span class="points">+0</span>`;
+        }
+      });
 
-  loadQuestion();
-}
+      gameState.revealed = [false,false,false,false,false,false];
+      gameState.activeStrikes = 0;
 
-/* -----------------------------
-   INITIAL LOAD
------------------------------- */
-setTeam("A");
-loadQuestion();
-</script>
+      document.getElementById("sx1").style.display = "none";
+      document.getElementById("sx2").style.display = "none";
+      document.getElementById("sx3").style.display = "none";
+    }
+
+    /* -----------------------------
+       REVEAL ANSWER (FLIP)
+    ------------------------------ */
+    function reveal(index) {
+      if (questions.length === 0) return;
+
+      if (gameState.revealed[index]) return;
+
+      const q = questions[gameState.currentQuestionIndex];
+      const ans = q.answers[index];
+      if (!ans) return; // nothing in this slot
+
+      const slot = document.querySelectorAll(".slot")[index];
+      slot.classList.add("flipped");
+      gameState.revealed[index] = true;
+
+      // add points
+      if (gameState.activeTeam === "A") {
+        gameState.teamA += ans.points;
+        document.getElementById("scoreA").innerText = gameState.teamA;
+      } else {
+        gameState.teamB += ans.points;
+        document.getElementById("scoreB").innerText = gameState.teamB;
+      }
+    }
+
+    /* -----------------------------
+       STRIKES
+    ------------------------------ */
+    function addStrike() {
+      gameState.activeStrikes++;
+      const buzzer = document.getElementById("buzzerSound");
+
+      if (buzzer) {
+        buzzer.currentTime = 0;
+        buzzer.play().catch(() => {});
+      }
+
+      if (gameState.activeStrikes === 1) document.getElementById("sx1").style.display = "block";
+      if (gameState.activeStrikes === 2) document.getElementById("sx2").style.display = "block";
+      if (gameState.activeStrikes === 3) {
+        document.getElementById("sx3").style.display = "block";
+        alert("Three strikes! Round over.");
+      }
+    }
+
+    /* -----------------------------
+       NEXT QUESTION
+    ------------------------------ */
+    function nextQuestion() {
+      if (questions.length === 0) return;
+
+      gameState.currentQuestionIndex++;
+      if (gameState.currentQuestionIndex >= questions.length) {
+        gameState.currentQuestionIndex = 0;
+      }
+      loadQuestion();
+    }
+
+    /* -----------------------------
+       EDITOR PANEL TOGGLE
+    ------------------------------ */
+    function toggleEditor() {
+      const panel = document.getElementById("editorPanel");
+      panel.classList.toggle("open");
+    }
+
+    /* -----------------------------
+       ADD CUSTOM QUESTION
+    ------------------------------ */
+    function addCustomQuestion() {
+      const questionText = document.getElementById("newQuestionText").value.trim();
+      if (!questionText) {
+        alert("Please enter a question.");
+        return;
+      }
+
+      const answers = [];
+      for (let i = 0; i < 6; i++) {
+        const text = document.getElementById(`ansText${i}`).value.trim();
+        const ptsRaw = document.getElementById(`ansPts${i}`).value;
+        if (text !== "") {
+          const pts = ptsRaw === "" ? 0 : parseInt(ptsRaw, 10);
+          answers.push({ text, points: isNaN(pts) ? 0 : pts });
+        }
+      }
+
+      if (answers.length === 0) {
+        alert("Please enter at least one answer with points.");
+        return;
+      }
+
+      customQuestions.push({ question: questionText, answers });
+      saveCustomQuestions();
+
+      // Clear form
+      document.getElementById("newQuestionText").value = "";
+      for (let i = 0; i < 6; i++) {
+        document.getElementById(`ansText${i}`).value = "";
+        document.getElementById(`ansPts${i}`).value = "";
+      }
+
+      alert("Question added! It will appear in rotation after the built-in questions.");
+    }
+
+    /* -----------------------------
+       CLEAR CUSTOM QUESTIONS
+    ------------------------------ */
+    function clearCustomQuestions() {
+      if (!confirm("Are you sure you want to remove all custom questions?")) return;
+      customQuestions = [];
+      saveCustomQuestions();
+      alert("Custom questions cleared. Only default questions remain.");
+      // reset to first question
+      gameState.currentQuestionIndex = 0;
+      loadQuestion();
+    }
+
+    /* -----------------------------
+       INITIAL LOAD
+    ------------------------------ */
+    loadCustomQuestions();
+    setTeam("A");
+    gameState.teamA = 0;
+    gameState.teamB = 0;
+    document.getElementById("scoreA").innerText = 0;
+    document.getElementById("scoreB").innerText = 0;
+    loadQuestion();
+  </script>
 
 </body>
 </html>
