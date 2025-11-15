@@ -17,7 +17,7 @@
       border: 6px solid #1e3a8a;
       border-radius: 20px;
       padding: 30px;
-      box-shadow: 0 0 20px rgba(0,0,0,0.1);
+      box-shadow: 0 0 20px rgba(0,0,0,0.12);
     }
 
     /* Flip card container */
@@ -56,6 +56,7 @@
     .card-front {
       font-size: 4rem;
       font-weight: 900;
+      color: #0b2a8a;
     }
 
     .card-back {
@@ -64,34 +65,38 @@
       font-weight: 700;
       flex-direction: column;
       line-height: 1.2;
+      color: #0b2a8a;
     }
 
     .card-back span.points {
       display: block;
       font-size: 2rem;
       margin-top: 8px;
-      color: #166534; /* dark green */
+      color: #16a34a; /* bold green */
+      font-weight: 900;
     }
 
     .strikeX {
       font-size: 6rem;
       font-weight: 900;
-      color: red;
+      color: #dc2626;
       display: none;
     }
 
     .team-btn {
       padding: 10px 22px;
-      border-radius: 12px;
+      border-radius: 9999px;
       font-size: 1.4rem;
       font-weight: bold;
-      border: 4px solid transparent;
+      border: 3px solid #1e3a8a;
       cursor: pointer;
+      background: #ffffff;
+      color: #1e3a8a;
     }
 
     .team-active {
-      border-color: gold !important;
-      background: #fffce1 !important;
+      box-shadow: 0 0 0 3px #facc15;
+      background: #e0f2fe;
     }
 
     .question-bar {
@@ -111,15 +116,16 @@
       right: 0;
       width: 360px;
       height: 100vh;
-      background: #f9fafb;
+      background: #ffffff;
       border-left: 4px solid #1e3a8a;
-      box-shadow: -5px 0 12px rgba(0,0,0,0.15);
+      box-shadow: -5px 0 12px rgba(0,0,0,0.18);
       padding: 16px;
       transform: translateX(100%);
       transition: transform 0.3s ease;
       z-index: 50;
       font-size: 0.95rem;
       overflow-y: auto;
+      color: #0b2a8a;
     }
 
     .editor-panel.open {
@@ -136,7 +142,7 @@
     .editor-input, .editor-number {
       width: 100%;
       border-radius: 8px;
-      border: 1px solid #cbd5f5;
+      border: 2px solid #1e3a8a;
       padding: 6px 8px;
       font-size: 0.9rem;
     }
@@ -161,30 +167,38 @@
 
 <body class="p-6 sm:p-10">
 
+  <!-- BACK TO APPS BUTTON (CENTER TOP) -->
+  <div class="flex justify-center mb-6">
+    <a href="/apps"
+       class="bg-[#1e3a8a] text-white text-xl px-8 py-3 rounded-full shadow-lg hover:bg-[#0b2a8a] transition">
+      ⬅ Back to Apps
+    </a>
+  </div>
+
   <!-- TOP CONTROLS -->
   <div class="flex flex-wrap justify-between items-center gap-4 mb-8">
 
     <!-- TEAM SELECT -->
     <div class="flex gap-4">
-      <button id="btnA" class="team-btn bg-red-200" onclick="setTeam('A')">Team A</button>
-      <button id="btnB" class="team-btn bg-green-200" onclick="setTeam('B')">Team B</button>
+      <button id="btnA" class="team-btn" onclick="setTeam('A')">Team A</button>
+      <button id="btnB" class="team-btn" onclick="setTeam('B')">Team B</button>
     </div>
 
     <!-- CENTER CONTROLS -->
     <div class="flex gap-4">
       <button onclick="addStrike()"
-              class="bg-red-600 text-white text-xl px-6 py-3 rounded-xl shadow-lg">
+              class="bg-[#dc2626] text-white text-xl px-6 py-3 rounded-xl shadow-lg hover:bg-[#991b1b] transition">
         STRIKE ❌
       </button>
       <button onclick="nextQuestion()"
-              class="bg-yellow-400 text-xl px-6 py-3 rounded-xl shadow-lg">
+              class="bg-[#facc15] text-[#0b2a8a] text-xl px-6 py-3 rounded-xl shadow-lg border-2 border-[#1e3a8a] hover:bg-yellow-400 transition">
         Next Question ➜
       </button>
     </div>
 
     <!-- EDIT QUESTIONS -->
     <button onclick="toggleEditor()"
-            class="bg-blue-100 border border-blue-500 text-blue-900 text-lg px-4 py-2 rounded-lg">
+            class="bg-white border-2 border-[#1e3a8a] text-[#1e3a8a] text-lg px-4 py-2 rounded-lg shadow-sm hover:bg-[#e0f2fe] transition">
       Edit Questions ✏️
     </button>
   </div>
@@ -193,7 +207,7 @@
   <div class="flex flex-wrap justify-center items-start gap-6">
 
     <!-- TEAM A SCORE -->
-    <div class="text-center bg-red-100 border-4 border-red-400 rounded-xl p-4 w-40">
+    <div class="text-center rounded-xl p-4 w-44 bg-[#dc2626] border-4 border-[#991b1b] text-white">
       <div class="text-xl font-bold">TEAM A</div>
       <div id="scoreA" class="text-4xl font-extrabold mt-2">0</div>
     </div>
@@ -274,7 +288,7 @@
     </div>
 
     <!-- TEAM B SCORE -->
-    <div class="text-center bg-green-100 border-4 border-green-400 rounded-xl p-4 w-40">
+    <div class="text-center rounded-xl p-4 w-44 bg-[#16a34a] border-4 border-[#166534] text-white">
       <div class="text-xl font-bold">TEAM B</div>
       <div id="scoreB" class="text-4xl font-extrabold mt-2">0</div>
     </div>
@@ -282,12 +296,12 @@
   </div>
 
   <!-- QUESTION DISPLAY -->
-  <div class="question-bar text-center bg-yellow-200 border-4 border-yellow-500 mt-10 p-6 rounded-xl">
+  <div class="question-bar text-center bg-[#facc15] border-4 border-[#1e3a8a] mt-10 p-6 rounded-xl shadow-md">
     <div class="font-bold">QUESTION:</div>
     <span id="questionText" class="main-question">Loading question...</span>
   </div>
 
-  <!-- BUZZER SOUND (YOU NEED A buzzer.mp3 FILE IN SAME FOLDER) -->
+  <!-- BUZZER SOUND (put buzzer.mp3 in same folder if you want sound) -->
   <audio id="buzzerSound" src="buzzer.mp3" preload="auto"></audio>
 
   <!-- EDITOR PANEL -->
@@ -331,12 +345,12 @@
     </div>
 
     <button onclick="addCustomQuestion()"
-            class="mt-4 w-full bg-blue-600 text-white py-2 rounded-lg text-sm font-semibold">
+            class="mt-4 w-full bg-[#1e3a8a] text-white py-2 rounded-lg text-sm font-semibold hover:bg-[#0b2a8a] transition">
       ➕ Add Question
     </button>
 
     <button onclick="clearCustomQuestions()"
-            class="mt-2 w-full bg-red-100 text-red-700 border border-red-400 py-2 rounded-lg text-xs font-semibold">
+            class="mt-2 w-full bg-white text-[#dc2626] border border-[#dc2626] py-2 rounded-lg text-xs font-semibold hover:bg-red-50 transition">
       Clear Custom Questions
     </button>
 
@@ -438,7 +452,6 @@
       document.getElementById("questionText").innerText = q.question;
 
       const slots = document.querySelectorAll(".slot");
-      const backs = document.querySelectorAll(".card-back");
 
       slots.forEach((slot, i) => {
         slot.classList.remove("flipped");
@@ -467,7 +480,6 @@
     ------------------------------ */
     function reveal(index) {
       if (questions.length === 0) return;
-
       if (gameState.revealed[index]) return;
 
       const q = questions[gameState.currentQuestionIndex];
@@ -575,7 +587,6 @@
       customQuestions = [];
       saveCustomQuestions();
       alert("Custom questions cleared. Only default questions remain.");
-      // reset to first question
       gameState.currentQuestionIndex = 0;
       loadQuestion();
     }
