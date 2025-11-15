@@ -1,486 +1,114 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
+<meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Resident Feud — ProjectorFirst</title>
 <script src="https://cdn.tailwindcss.com"></script>
+
 <style>
-  /* ProjectorFirst Theme Colors */
-  :root {
-    --pf-dark-blue: #0b2a8a;
-    --pf-mid-blue: #1e3a8a;
-    --pf-yellow: #facc15;
-    --pf-green: #16a34a;
-    --pf-red: #dc2626;
-    --pf-white: #ffffff;
-  }
-  body { 
-    background:var(--pf-dark-blue); 
-    color:var(--pf-white); 
-    font-family: Arial, sans-serif; 
-  }
-  /* Card styling, including the white/blue borders seen in your image */
-  .card { 
-    background:var(--pf-mid-blue); /* Blue background for answer card */
-    color:var(--pf-white); 
-    border:6px solid var(--pf-white); /* White inner border */
-    outline: 6px solid var(--pf-dark-blue); /* Dark blue outer border */
-    border-radius:20px; 
-    overflow: hidden;
-  }
-  
-  /* Accessibility Focus Styles */
-  .answer-card { 
-    cursor: pointer; 
-    user-select: none; 
-    transition: all 0.15s ease-in-out;
-    box-shadow: 0 8px 15px rgba(0,0,0,0.4);
-    height: 100%; /* Ensure uniform height in the grid */
-  }
-  .answer-revealed { 
-    background:#ecfdf5 !important; /* Light background for contrast */
-    border-color:var(--pf-green) !important; 
-    color: var(--pf-dark-blue) !important;
-  }
-  
-  /* Hidden vs Revealed */
-  .answer-text-wrap { display: none; padding: 1.5rem; }
-  .answer-revealed .answer-text-wrap { display: flex; }
-  .answer-revealed .answer-placeholder { display: none; }
-  .answer-placeholder {
-    text-align: center; 
-    font-size: 4rem; /* Massive number text */
-    font-weight: 800; 
-    color: var(--pf-white); 
-    padding: 1.5rem 0;
-    background: var(--pf-mid-blue);
-    border-radius: 12px;
-  }
+  body {
+    background: #0b2a8a;
+    color: white;
+    font-family: Arial, sans-serif;
+  }
 
-  /* Score Boxes - EXTREMELY large and contrasting */
-  .score-box {
-    font-size: 8rem; 
-    line-height: 1;
-    font-weight: 900; 
-    color: var(--pf-white); 
-    padding: 1.5rem;
-    border-radius: 20px;
-    box-shadow: 0 0 20px rgba(0,0,0,0.4);
-    min-width: 150px; 
-    min-height: 150px; 
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  
-  /* Strikes */
-  #strikes { display: flex; justify-content: center; gap: 20px; margin: 20px 0 10px; height: 100px; }
-  .strike-mark { 
-    font-size: 6rem; 
-    line-height: 1;
-    font-weight: 900; 
-    color: var(--pf-red); 
-    opacity: 0.1; 
-    transition: opacity 0.3s;
-  }
-  .strike-mark.active { opacity: 1; }
+  .answer-box {
+    background: linear-gradient(#4aa3ff, #0066cc);
+    border: 5px solid #1e3a8a;
+    border-radius: 10px;
+    color: white;
+    padding: 15px;
+    font-size: 2rem;
+    text-align: center;
+    user-select: none;
+    cursor: pointer;
+  }
 
-  /* Overlay and Drawer styles (retained) */
-  .overlayX { position: fixed; inset: 0; display:none; align-items:center; justify-content:center; background: rgba(220, 38, 38, 0.40); z-index: 50; }
-  .overlayX .bigX { font-size: 30vw; line-height: 1; font-weight: 900; color:#ff0000; text-shadow: 0 0 50px rgba(0,0,0,0.8); }
-  #drawer { position: fixed; top:0; right:-520px; width:520px; height:100vh; z-index:60; background:var(--pf-white); color:var(--pf-dark-blue); border-left:8px solid var(--pf-mid-blue); box-shadow: -10px 0 30px rgba(0,0,0,0.25); transition:right .25s ease; overflow:auto; }
-  #drawer.open { right:0; }
-  .big-btn { font-size:32px; padding:18px 28px; font-weight:800; border-radius:16px; }
-  .team-toggle { outline: 6px solid transparent; transition: outline-color 0.1s; }
-  .team-toggle.active { outline-color: var(--pf-yellow); }
+  .revealed {
+    background: #e6ffe6 !important;
+    color: #0b2a8a !important;
+    border-color: #16a34a !important;
+    font-weight: bold;
+  }
 
-  /* New Layout Fix: Ensure content fills the vertical space and is centered */
-  .main-board-container {
-    display: flex;
-    flex-direction: column;
-    height: 100%; /* Take full height of the parent grid cell */
-    justify-content: space-between; /* Distribute space between elements */
-  }
+  .strike {
+    font-size: 5rem;
+    font-weight: 900;
+    color: red;
+    display: none;
+  }
 </style>
 </head>
-<body>
 
-<div class="flex flex-wrap items-center justify-between gap-4 p-6">
-  <a href="#" class="bg-blue-900 hover:bg-blue-800 px-6 py-3 rounded-xl text-white font-bold text-xl">← Apps</a>
+<body class="flex flex-col items-center pt-8">
 
-    <div class="flex items-center gap-4">
-    <span class="text-2xl font-bold">Award points to:</span>
-    <button id="team1Btn" class="team-toggle bg-white text-blue-900 font-extrabold text-3xl rounded-xl px-6 py-3">Team A</button>
-    <button id="team2Btn" class="team-toggle bg-white text-blue-900 font-extrabold text-3xl rounded-xl px-6 py-3">Team B</button>
-  </div>
+<!-- TOP SECTION -->
+<div class="w-full max-w-5xl flex justify-between px-8 mb-6">
+  <div class="text-left text-xl">
+    <div>RESIDENTS<br>TEAM A</div>
+    <div class="mt-4">SCORE: <span id="scoreA">0</span></div>
+  </div>
 
-  <div class="flex items-center gap-3">
-    <button id="openEditor" class="bg-purple-700 hover:bg-purple-600 px-6 py-3 rounded-xl text-white font-bold text-xl">Question Editor</button>
-    <button id="nextQ" class="bg-green-600 hover:bg-green-500 px-6 py-3 rounded-xl text-white font-bold text-xl">Next Question</button>
-  </div>
+  <div class="text-right text-xl">
+    <div>RESIDENTS<br>TEAM B</div>
+    <div class="mt-4">SCORE: <span id="scoreB">0</span></div>
+  </div>
 </div>
 
-<div class="max-w-7xl mx-auto px-6" style="height: calc(100vh - 120px);">
-  <div class="grid grid-cols-5 gap-4 md:gap-8 items-start h-full">
-    
-        <div class="col-span-1 flex flex-col items-center justify-center pt-10">
-      <div class="text-3xl font-extrabold text-white mb-2">TEAM A</div>
-      <div id="score1" class="score-box bg-red-700 w-full text-center">0</div>
-    </div>
+<!-- ANSWER BOARD -->
+<div class="bg-black p-6 rounded-xl shadow-2xl">
+  <div class="grid grid-cols-2 gap-4 w-[600px]">
 
-        <div class="col-span-3 flex flex-col items-center main-board-container">
-      
-            <div id="questionBox" class="card p-8 text-center bg-yellow-400 !border-yellow-600 w-full !text-blue-900">
-        <div class="text-4xl sm:text-6xl font-extrabold">Press “Next Question” to start</div>
-      </div>
+    <div class="answer-box" onclick="reveal(this, 'Wake up')">1</div>
+    <div class="answer-box" onclick="reveal(this, 'Brush Teeth')">4</div>
 
-            <div id="answersGrid" class="grid grid-cols-2 gap-4 w-full flex-grow my-4">
-                <div class="card answer-card h-full"><div class="answer-placeholder"></div></div>
-        <div class="card answer-card h-full"><div class="answer-placeholder"></div></div>
-        <div class="card answer-card h-full"><div class="answer-placeholder"></div></div>
-        <div class="card answer-card h-full"><div class="answer-placeholder"></div></div>
-        <div class="card answer-card h-full"><div class="answer-placeholder"></div></div>
-        <div class="card answer-card h-full"><div class="answer-placeholder"></div></div>
-        <div class="card answer-card h-full"><div class="answer-placeholder"></div></div>
-        <div class="card answer-card h-full"><div class="answer-placeholder"></div></div>
-      </div>
+    <div class="answer-box" onclick="reveal(this, 'Eat Breakfast')">2</div>
+    <div class="answer-box" onclick="reveal(this, 'Take Medicine')">5</div>
 
-            <div class="flex flex-col items-center w-full mt-6">
-        <div id="strikes" class="flex">
-          <div id="strike1" class="strike-mark">X</div>
-          <div id="strike2" class="strike-mark">X</div>
-          <div id="strike3" class="strike-mark">X</div>
-        </div>
-        <button id="strikeBtn" class="big-btn bg-red-600 hover:bg-red-500 text-white mt-4">❌ Strike</button>
-      </div>
-    </div>
+    <div class="answer-box" onclick="reveal(this, 'Get Dressed')">3</div>
+    <div class="answer-box" onclick="reveal(this, 'Use Restroom')">6</div>
 
-        <div class="col-span-1 flex flex-col items-center justify-center pt-10">
-      <div class="text-3xl font-extrabold text-white mb-2">TEAM B</div>
-      <div id="score2" class="score-box bg-green-700 w-full text-center">0</div>
-      </div>
+  </div>
 
-  </div>
+  <!-- STRIKES -->
+  <div class="flex justify-center gap-10 mt-6">
+    <div id="x1" class="strike">X</div>
+    <div id="x2" class="strike">X</div>
+    <div id="x3" class="strike">X</div>
+  </div>
 </div>
 
-<div id="overlayX" class="overlayX"><div class="bigX">X</div></div>
-
-<div id="drawer">
-  <div class="p-6">
-    <div class="flex items-center justify-between mb-4">
-      <h2 class="text-3xl font-extrabold">Question Editor</h2>
-      <button id="closeEditor" class="bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded-xl font-bold text-blue-900">Close</button>
-      <button id="deleteAll" class="bg-red-600 text-white px-4 py-2 rounded-xl font-bold">Delete All Qs</button>
-    </div>
-
-    <label class="font-bold">Question</label>
-    <textarea id="qInput" class="w-full border-2 border-blue-900 rounded-xl p-3 mb-4" rows="2" placeholder="e.g., Name something you bring to a picnic."></textarea>
-
-    <div class="flex items-center justify-between mb-2">
-      <div class="font-bold">Answers (click “+ Add Answer” to add rows)</div>
-      <button id="addAns" class="bg-blue-900 text-white px-4 py-2 rounded-xl font-bold">+ Add Answer</button>
-    </div>
-
-    <div id="ansList" class="space-y-3 mb-6"></div>
-
-    <button id="saveQ" class="bg-green-600 hover:bg-green-500 text-white font-bold px-6 py-3 rounded-xl">Save Question</button>
-
-    <div id="refreshReminder" 
-         class="mt-4 p-3 bg-yellow-200 text-yellow-900 font-bold text-xl rounded-xl hidden">
-      ✅ Questions Saved! Refresh the page to load new questions.
-    </div>
-
-    <hr class="my-6 border-blue-200">
-
-    <h3 class="text-2xl font-extrabold mb-2">Saved Questions</h3>
-    <div id="savedWrap" class="space-y-2"></div>
-  </div>
+<!-- QUESTION -->
+<div class="text-2xl mt-10 tracking-wide">
+  QUESTION:<br>
+  <span class="text-4xl font-bold block mt-2">WHAT DOES A PERSON DO EVERY MORNING?</span>
 </div>
+
+<!-- WRONG BUTTON -->
+<button onclick="wrongAnswer()"
+        class="mt-8 bg-red-600 px-6 py-3 text-white text-2xl rounded-lg shadow-lg hover:bg-red-700">
+  WRONG ANSWER
+</button>
 
 <script>
-/* ------------------ Audio (WebAudio tones) ------------------ */
-const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-function playTone(freq=880, dur=0.15, type='sine', vol=0.2) {
-  const o = audioCtx.createOscillator();
-  const g = audioCtx.createGain();
-  o.type = type; o.frequency.value = freq;
-  g.gain.value = vol;
-  o.connect(g).connect(audioCtx.destination);
-  o.start();
-  setTimeout(()=>{ o.stop(); }, dur*1000);
-}
-function ding() { playTone(1200, 0.10, 'sine', 0.25); setTimeout(()=>playTone(1500,0.10,'sine',0.25), 110); }
-function buzz() { playTone(200, 0.25, 'square', 0.3); setTimeout(()=>playTone(160, 0.25,'square',0.3), 260); }
-function fanfare() {
-  ding();
-  setTimeout(() => playTone(1800, 0.2, 'triangle', 0.3), 250);
-  setTimeout(() => playTone(2200, 0.2, 'triangle', 0.3), 500);
-}
+  function reveal(el, answer) {
+    if (!el.classList.contains("revealed")) {
+      el.textContent = answer;
+      el.classList.add("revealed");
+    }
+  }
 
-/* ------------------ State ------------------ */
-let questions = JSON.parse(localStorage.getItem('feudQuestions') || '[]');
-let lastIndex = -1;
-let current = null; // Current question object
-let strikes = 0;
+  let strikeCount = 0;
 
-const defaultIfEmpty = [
-  {
-    q: "Name something you bring to a picnic.",
-    answers: [
-      { text: "Food", points: 35 },
-      { text: "Blanket", points: 20 },
-      { text: "Drinks", points: 18 },
-      { text: "Utensils/Napkins", points: 12 },
-      { text: "Games", points: 8 },
-      { text: "Sunscreen", points: 7 }
-    ]
-  },
-  {
-    q: "Name something people do first thing in the morning.",
-    answers: [
-      { text: "Brush Teeth", points: 30 },
-      { text: "Use Bathroom", points: 20 },
-      { text: "Make Coffee", points: 18 },
-      { text: "Shower", points: 12 },
-      { text: "Check Phone", points: 10 },
-      { text: "Get Dressed", points: 10 }
-    ]
-  }
-];
-if (questions.length === 0) { questions = defaultIfEmpty; localStorage.setItem('feudQuestions', JSON.stringify(questions)); }
+  function wrongAnswer() {
+    strikeCount++;
 
-/* ------------------ UI refs ------------------ */
-const answersGrid = document.getElementById('answersGrid');
-const questionBox = document.getElementById('questionBox');
-const score1El = document.getElementById('score1');
-const score2El = document.getElementById('score2');
-const overlayX = document.getElementById('overlayX');
-
-const team1Btn = document.getElementById('team1Btn');
-const team2Btn = document.getElementById('team2Btn');
-const strikeMarks = [
-  document.getElementById('strike1'),
-  document.getElementById('strike2'),
-  document.getElementById('strike3')
-];
-
-
-let activeTeam = null; // '1' or '2' or null
-let totalScore1 = 0, totalScore2 = 0;
-
-/* ------------------ Score & Strike Updates ------------------ */
-function updateScores() {
-  score1El.textContent = String(totalScore1);
-  score2El.textContent = String(totalScore2);
-}
-
-function updateStrikes() {
-  strikeMarks.forEach((el, i) => {
-    el.classList.toggle('active', i < strikes);
-  });
-  if (strikes === 3) {
-    // Prompt the activity director to choose a team to award any remaining points manually.
-    questionBox.innerHTML = `<div class="text-4xl sm:text-6xl font-extrabold text-red-700">3 STRIKES! Choose a team to award the points.</div>`;
-    fanfare();
-  }
-}
-
-/* ------------------ Team toggle ------------------ */
-function setActiveTeam(t) {
-  activeTeam = t;
-  team1Btn.classList.toggle('active', t === '1');
-  team2Btn.classList.toggle('active', t === '2');
-}
-team1Btn.addEventListener('click', ()=> setActiveTeam(activeTeam === '1' ? null : '1'));
-team2Btn.addEventListener('click', ()=> setActiveTeam(activeTeam === '2' ? null : '2'));
-
-/* ------------------ Render Question ------------------ */
-function pickRandomIndex() {
-  if (questions.length === 1) return 0;
-  let i;
-  do { i = Math.floor(Math.random() * questions.length); } while (i === lastIndex);
-  lastIndex = i;
-  return i;
-}
-
-function renderQuestion(qObj) {
-  current = JSON.parse(JSON.stringify(qObj)); // clone for safety
-  strikes = 0;
-  updateStrikes();
-  setActiveTeam(null);
-  overlayX.style.display = 'none';
-
-  // question - MAX FONT SIZE
-  questionBox.innerHTML = `<div class="text-4xl sm:text-6xl font-extrabold text-blue-900">${escapeHtml(current.q)}</div>`;
-
-  // answers
-  answersGrid.innerHTML = '';
-  current.answers
-    .filter(a => a.text && !isNaN(+a.points))
-    .sort((a, b) => b.points - a.points) // Sort answers by points (highest first)
-    .slice(0, 8) // up to 8 slots
-    .forEach((a, idx) => {
-      const card = document.createElement('button');
-      card.className = 'card answer-card'; 
-      card.dataset.revealed = '0';
-      card.dataset.points = String(+a.points);
-
-      card.innerHTML = `
-                <div class="answer-text-wrap items-center justify-between gap-4">
-          <div class="text-4xl sm:text-5xl font-extrabold uppercase">${escapeHtml(a.text)}</div>
-          <div class="text-4xl sm:text-5xl font-black text-green-700 w-1/4 text-right">+ ${+a.points}</div>
-        </div>
-                <div class="answer-placeholder">
-          ${idx + 1}
-        </div>
-      `;
-
-      card.addEventListener('click', () => {
-        if (card.dataset.revealed === '1') return;
-
-        // reveal
-        card.dataset.revealed = '1';
-        card.classList.add('answer-revealed');
-        
-        const pts = +card.dataset.points;
-        
-        // Award points ONLY if a team is active
-        if (activeTeam === '1') { 
-          totalScore1 += pts; 
-        } else if (activeTeam === '2') { 
-          totalScore2 += pts; 
-        } 
-        
-        updateScores();
-        ding();
-      });
-
-      answersGrid.appendChild(card);
-    });
-}
-
-/* ------------------ Strike ------------------ */
-document.getElementById('strikeBtn').addEventListener('click', () => {
-  if (strikes < 3) {
-    strikes++;
-    updateStrikes();
-    overlayX.style.display = 'flex';
-    buzz();
-    setTimeout(()=> overlayX.style.display = 'none', 1500); 
-  } else {
-    alert("Maximum strikes reached for this round!");
-  }
-});
-
-/* ------------------ Next Question ------------------ */
-document.getElementById('nextQ').addEventListener('click', () => {
-  const idx = pickRandomIndex();
-  renderQuestion(questions[idx]);
-});
-
-/* ------------------ Editor Drawer (Logic remains the same) ------------------ */
-const drawer = document.getElementById('drawer');
-document.getElementById('openEditor').addEventListener('click', () => {
-  drawer.classList.add('open');
-  rebuildSaved(); 
-});
-document.getElementById('closeEditor').addEventListener('click', () => drawer.classList.remove('open'));
-
-const ansList = document.getElementById('ansList');
-document.getElementById('addAns').addEventListener('click', addAnswerRow);
-
-function addAnswerRow(textVal = '', pointsVal = '') {
-  const row = document.createElement('div');
-  row.className = 'grid grid-cols-12 gap-3 items-center';
-  row.innerHTML = `
-    <div class="col-span-7">
-      <input class="w-full border-2 border-blue-900 rounded-xl p-2" placeholder="Answer text" value="${escapeAttr(textVal)}">
-    </div>
-    <div class="col-span-3">
-      <input class="w-full border-2 border-blue-900 rounded-xl p-2" type="number" min="0" placeholder="Points" value="${escapeAttr(pointsVal)}">
-    </div>
-    <div class="col-span-2">
-      <button class="w-full bg-red-600 text-white px-3 py-2 rounded-xl">Delete</button>
-    </div>
-  `;
-  const delBtn = row.querySelector('button');
-  delBtn.addEventListener('click', () => row.remove());
-  ansList.appendChild(row);
-}
-
-// seed two rows initially
-addAnswerRow(); addAnswerRow();
-
-document.getElementById('saveQ').addEventListener('click', () => {
-  const q = (document.getElementById('qInput').value || '').trim();
-  if (!q) { alert('Enter a question.'); return; }
-
-  const rows = [...ansList.children];
-  const answers = rows.map(r => {
-    const [txtEl, ptsEl] = r.querySelectorAll('input');
-    return { text: txtEl.value.trim(), points: Number(ptsEl.value) };
-  }).filter(a => a.text && !isNaN(a.points) && a.points >= 0); 
-
-  if (answers.length === 0) { alert('Add at least one answer with points.'); return; }
-
-  questions.push({ q, answers });
-  localStorage.setItem('feudQuestions', JSON.stringify(questions));
-
-  document.getElementById('qInput').value = '';
-  ansList.innerHTML = '';
-  addAnswerRow(); addAnswerRow();
-  rebuildSaved();
-
-  const notice = document.getElementById('refreshReminder');
-  if (notice) notice.classList.remove('hidden');
-});
-
-document.getElementById('deleteAll').addEventListener('click', () => {
-  if (confirm('Are you sure you want to delete ALL saved questions? This cannot be undone.')) {
-    localStorage.removeItem('feudQuestions');
-    questions = defaultIfEmpty;
-    localStorage.setItem('feudQuestions', JSON.stringify(questions));
-    rebuildSaved();
-    alert("All questions deleted. Default questions have been reloaded. Please refresh the page to see changes.");
-  }
-});
-
-function rebuildSaved() {
-  const wrap = document.getElementById('savedWrap');
-  wrap.innerHTML = '';
-  questions.forEach((item, i) => {
-    const div = document.createElement('div');
-    div.className = 'border-2 border-blue-200 rounded-xl p-3';
-    const sortedAnswers = item.answers.sort((a, b) => b.points - a.points);
-    const list = sortedAnswers.map(a => `<li>${escapeHtml(a.text)} — <strong>${a.points}</strong></li>`).join('');
-
-    div.innerHTML = `
-      <div class="flex items-start justify-between gap-4">
-        <div>
-          <div class="font-extrabold mb-2">${escapeHtml(item.q)}</div>
-          <ul class="list-disc list-inside text-sm">${list}</ul>
-        </div>
-        <button class="bg-red-600 text-white px-3 py-1 rounded-lg h-10">Delete</button>
-      </div>
-    `;
-    const btn = div.querySelector('button');
-    btn.addEventListener('click', () => {
-      questions.splice(i,1);
-      localStorage.setItem('feudQuestions', JSON.stringify(questions));
-      rebuildSaved();
-    });
-    wrap.appendChild(div);
-  });
-}
-rebuildSaved();
-
-/* ------------------ Helpers ------------------ */
-function escapeHtml(s){ return s.replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
-function escapeAttr(s){ return String(s).replace(/"/g, '&quot;'); }
-
-// Initial render
-updateScores();
+    if (strikeCount === 1) document.getElementById("x1").style.display = "block";
+    if (strikeCount === 2) document.getElementById("x2").style.display = "block";
+    if (strikeCount === 3) document.getElementById("x3").style.display = "block";
+  }
 </script>
+
 </body>
 </html>
