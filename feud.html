@@ -1,115 +1,270 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Resident Feud — ProjectorFirst</title>
 <script src="https://cdn.tailwindcss.com"></script>
 
 <style>
   body {
-    background:#0b2a8a;
-    color:white;
-    font-family: Arial, sans-serif;
+    background:white;
+    color:#0b2a8a;
+    font-family:Arial, sans-serif;
   }
 
-  .tile {
-    background:#1e40af;
+  .board-card {
+    background:white;
     border:6px solid #1e3a8a;
     border-radius:20px;
-    padding:22px;
-    font-size:2.8rem;
+    padding:30px;
+    box-shadow:0 0 20px rgba(0,0,0,0.1);
+  }
+
+  .slot {
+    background:white;
+    border:6px solid #1e3a8a;
+    border-radius:20px;
+    padding:40px;
+    font-size:4rem;
     font-weight:bold;
     text-align:center;
     cursor:pointer;
     user-select:none;
   }
 
-  .tile.revealed {
+  .revealed {
     background:#e6ffe6 !important;
-    color:#0b2a8a !important;
     border-color:#16a34a !important;
-    font-weight:900 !important;
+    color:#0b2a8a !important;
+    font-size:2.6rem !important;
   }
 
   .strikeX {
-    font-size:8rem;
+    font-size:6rem;
     font-weight:900;
-    color:#ff0000;
+    color:red;
     display:none;
+  }
+
+  .team-btn {
+    padding:12px 24px;
+    border-radius:12px;
+    font-size:1.6rem;
+    font-weight:bold;
+    border:4px solid transparent;
+    cursor:pointer;
+  }
+
+  .team-active {
+    border-color:gold !important;
+    background:#fffce1 !important;
   }
 </style>
 </head>
 
-<body class="flex flex-col items-center pt-10">
+<body class="p-10">
 
-<!-- TEAM SCORES -->
-<div class="w-full max-w-7xl flex justify-between text-3xl font-bold px-10 mb-10">
-  <div>
-    RESIDENTS TEAM A<br>
-    <span class="text-2xl">SCORE: <span id="scoreA">0</span></span>
+<!-- TOP CONTROLS -->
+<div class="flex justify-between items-center mb-10">
+
+  <!-- TEAM SELECT -->
+  <div class="flex gap-6">
+    <button id="btnA" class="team-btn bg-red-200" onclick="setTeam('A')">Team A</button>
+    <button id="btnB" class="team-btn bg-green-200" onclick="setTeam('B')">Team B</button>
   </div>
 
-  <div class="text-right">
-    RESIDENTS TEAM B<br>
-    <span class="text-2xl">SCORE: <span id="scoreB">0</span></span>
-  </div>
+  <!-- STRIKE BUTTON -->
+  <button onclick="addStrike()" 
+          class="bg-red-600 text-white text-2xl px-8 py-4 rounded-xl shadow-lg">
+    STRIKE ❌
+  </button>
+
+  <!-- NEXT QUESTION -->
+  <button onclick="nextQuestion()" 
+          class="bg-yellow-400 text-2xl px-8 py-4 rounded-xl shadow-lg">
+    Next Question ➜
+  </button>
 </div>
 
-<!-- BOARD WRAPPER -->
-<div class="bg-white rounded-2xl p-10 shadow-2xl border-8 border-[#1e3a8a]">
 
-  <!-- FEUD GRID -->
-  <div class="grid grid-cols-2 gap-6 w-[850px]">
+<!-- SCORES + BOARD -->
+<div class="flex justify-center items-start gap-10">
 
-    <div class="tile" onclick="reveal(this,'Wake Up')">1</div>
-    <div class="tile" onclick="reveal(this,'Brush Teeth')">4</div>
+  <!-- TEAM A SCORE -->
+  <div class="text-center bg-red-100 border-4 border-red-400 rounded-xl p-6 w-48">
+    <div class="text-2xl font-bold">TEAM A</div>
+    <div id="scoreA" class="text-5xl font-extrabold mt-3">0</div>
+  </div>
 
-    <div class="tile" onclick="reveal(this,'Eat Breakfast')">2</div>
-    <div class="tile" onclick="reveal(this,'Take Medicine')">5</div>
+  <!-- MAIN BOARD -->
+  <div class="board-card">
 
-    <div class="tile" onclick="reveal(this,'Get Dressed')">3</div>
-    <div class="tile" onclick="reveal(this,'Use Restroom')">6</div>
+    <div class="grid grid-cols-2 gap-6 w-[700px]">
+
+      <div class="slot" onclick="reveal(0)">1</div>
+      <div class="slot" onclick="reveal(1)">2</div>
+
+      <div class="slot" onclick="reveal(2)">3</div>
+      <div class="slot" onclick="reveal(3)">4</div>
+
+      <div class="slot" onclick="reveal(4)">5</div>
+      <div class="slot" onclick="reveal(5)">6</div>
+
+    </div>
+
+    <!-- STRIKES -->
+    <div class="flex justify-center gap-10 mt-10">
+      <div id="sx1" class="strikeX">X</div>
+      <div id="sx2" class="strikeX">X</div>
+      <div id="sx3" class="strikeX">X</div>
+    </div>
 
   </div>
 
-  <!-- STRIKES -->
-  <div class="flex justify-center gap-16 mt-10">
-    <div id="x1" class="strikeX">X</div>
-    <div id="x2" class="strikeX">X</div>
-    <div id="x3" class="strikeX">X</div>
+  <!-- TEAM B SCORE -->
+  <div class="text-center bg-green-100 border-4 border-green-400 rounded-xl p-6 w-48">
+    <div class="text-2xl font-bold">TEAM B</div>
+    <div id="scoreB" class="text-5xl font-extrabold mt-3">0</div>
   </div>
 
 </div>
 
-<!-- QUESTION -->
-<div class="text-center mt-14 tracking-wide">
-  <div class="text-3xl font-bold">QUESTION:</div>
-  <div class="text-6xl font-extrabold mt-4">WHAT DOES A PERSON DO EVERY MORNING?</div>
+
+<!-- QUESTION DISPLAY -->
+<div class="text-center bg-yellow-200 border-4 border-yellow-500 text-3xl font-bold mt-12 p-6 rounded-xl">
+  <span id="questionText">Loading question...</span>
 </div>
 
-<!-- WRONG BUTTON -->
-<button onclick="wrongAnswer()"
-        class="mt-10 bg-red-600 text-white text-4xl px-14 py-5 rounded-2xl shadow-xl hover:bg-red-700 transition">
-  WRONG
-</button>
 
 <script>
-  function reveal(el, answer) {
-    if (!el.classList.contains("revealed")) {
-      el.textContent = answer;
-      el.classList.add("revealed");
-    }
+/* -----------------------------
+   QUESTION DATABASE
+------------------------------ */
+const questions = [
+  {
+    question: "Name something people do first thing in the morning.",
+    answers: [
+      { text:"Brush Teeth", points:30 },
+      { text:"Use Bathroom", points:25 },
+      { text:"Make Coffee", points:20 },
+      { text:"Check Phone", points:15 },
+      { text:"Get Dressed", points:5 },
+      { text:"Eat Breakfast", points:5 }
+    ]
+  },
+  {
+    question: "Name a popular pet.",
+    answers: [
+      { text:"Dog", points:45 },
+      { text:"Cat", points:30 },
+      { text:"Fish", points:15 },
+      { text:"Bird", points:8 },
+      { text:"Hamster", points:2 },
+      { text:"Reptile", points:1 }
+    ]
   }
+];
 
-  let strikes = 0;
+/* -----------------------------
+   GAME STATE
+------------------------------ */
+let gameState = {
+  teamA:0,
+  teamB:0,
+  activeTeam:"A",
+  activeStrikes:0,
+  currentQuestionIndex:0,
+  revealed:[false,false,false,false,false,false]
+};
 
-  function wrongAnswer() {
-    strikes++;
-    if (strikes === 1) document.getElementById("x1").style.display = "block";
-    if (strikes === 2) document.getElementById("x2").style.display = "block";
-    if (strikes === 3) document.getElementById("x3").style.display = "block";
+/* -----------------------------
+   TEAM TOGGLE
+------------------------------ */
+function setTeam(team){
+  gameState.activeTeam = team;
+
+  document.getElementById("btnA").classList.remove("team-active");
+  document.getElementById("btnB").classList.remove("team-active");
+
+  if(team==="A") document.getElementById("btnA").classList.add("team-active");
+  if(team==="B") document.getElementById("btnB").classList.add("team-active");
+}
+
+/* -----------------------------
+   LOAD QUESTION
+------------------------------ */
+function loadQuestion(){
+  const q = questions[gameState.currentQuestionIndex];
+  document.getElementById("questionText").innerText = q.question;
+
+  document.querySelectorAll(".slot").forEach((slot,i)=>{
+    slot.innerText = (i+1);
+    slot.classList.remove("revealed");
+  });
+
+  gameState.revealed = [false,false,false,false,false,false];
+  gameState.activeStrikes = 0;
+
+  document.getElementById("sx1").style.display="none";
+  document.getElementById("sx2").style.display="none";
+  document.getElementById("sx3").style.display="none";
+}
+
+/* -----------------------------
+   REVEAL ANSWER
+------------------------------ */
+function reveal(index){
+  if(gameState.revealed[index]) return;
+
+  const q = questions[gameState.currentQuestionIndex];
+  const ans = q.answers[index];
+  if(!ans) return;
+
+  const slot = document.querySelectorAll(".slot")[index];
+  slot.classList.add("revealed");
+  slot.innerHTML = `${ans.text}<br><span style="font-size:2rem;">+${ans.points}</span>`;
+
+  gameState.revealed[index] = true;
+
+  if(gameState.activeTeam === "A"){
+    gameState.teamA += ans.points;
+    document.getElementById("scoreA").innerText = gameState.teamA;
+  } else {
+    gameState.teamB += ans.points;
+    document.getElementById("scoreB").innerText = gameState.teamB;
   }
+}
+
+/* -----------------------------
+   STRIKES
+------------------------------ */
+function addStrike(){
+  gameState.activeStrikes++;
+
+  if(gameState.activeStrikes === 1) document.getElementById("sx1").style.display="block";
+  if(gameState.activeStrikes === 2) document.getElementById("sx2").style.display="block";
+  if(gameState.activeStrikes === 3){
+    document.getElementById("sx3").style.display="block";
+    alert("Three strikes! Round over.");
+  }
+}
+
+/* -----------------------------
+   NEXT QUESTION
+------------------------------ */
+function nextQuestion(){
+  gameState.currentQuestionIndex++;
+  if(gameState.currentQuestionIndex >= questions.length) gameState.currentQuestionIndex = 0;
+
+  loadQuestion();
+}
+
+/* -----------------------------
+   INITIAL LOAD
+------------------------------ */
+setTeam("A");
+loadQuestion();
 </script>
 
 </body>
