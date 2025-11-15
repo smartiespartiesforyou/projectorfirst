@@ -456,4 +456,31 @@ function rebuildSaved() {
     const list = sortedAnswers.map(a => `<li>${escapeHtml(a.text)} — <strong>${a.points}</strong></li>`).join('');
 
     div.innerHTML = `
-      <div class="flex items-start justify-between gap-
+      <div class="flex items-start justify-between gap-4">
+        <div>
+          <div class="font-extrabold mb-2">${escapeHtml(item.q)}</div>
+          <ul class="list-disc list-inside text-sm">${list}</ul>
+        </div>
+        <button class="bg-red-600 text-white px-3 py-1 rounded-lg h-10">Delete</button>
+      </div>
+    `;
+    const btn = div.querySelector('button');
+    btn.addEventListener('click', () => {
+      questions.splice(i,1);
+      localStorage.setItem('feudQuestions', JSON.stringify(questions));
+      rebuildSaved();
+    });
+    wrap.appendChild(div);
+  });
+}
+rebuildSaved();
+
+/* ------------------ Helpers ------------------ */
+function escapeHtml(s){ return s.replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+function escapeAttr(s){ return String(s).replace(/"/g, '&quot;'); }
+
+// Initial render
+updateScores();
+</script>
+</body>
+</html>
