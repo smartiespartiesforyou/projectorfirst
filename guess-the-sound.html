@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Guess the Sound — ProjectorFirst</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      background:#ffffff;
+      color:#0b2a8a;
+      font-family:Arial, sans-serif;
+    }
+    .big-card {
+      background:#000000;
+      color:#ffffff;
+      border-radius:1.5rem;
+      box-shadow:0 0 25px rgba(0,0,0,0.35);
+    }
+  </style>
+</head>
+<body class="p-6 sm:p-10 flex flex-col items-center gap-6">
+
+  <!-- BACK TO APPS -->
+  <div class="w-full flex justify-center">
+    <a href="/apps"
+       class="bg-[#1e3a8a] text-white text-xl px-8 py-3 rounded-full shadow-lg hover:bg-[#0b2a8a] transition">
+      ⬅ Back to Apps
+    </a>
+  </div>
+
+  <!-- TITLE -->
+  <h1 class="mt-4 text-3xl sm:text-4xl font-extrabold tracking-wide text-[#0b2a8a] text-center">
+    Guess the Sound
+  </h1>
+  <p class="text-lg text-center text-gray-700 max-w-2xl">
+    Press play, listen carefully, and let residents guess what they hear. Then reveal the answer on the big screen.
+  </p>
+
+  <!-- MAIN CARD -->
+  <div class="w-full max-w-4xl mt-6">
+    <div class="big-card px-6 sm:px-10 py-12 text-center">
+      <span id="promptText"
+            class="block font-extrabold text-3xl sm:text-5xl leading-tight tracking-wide">
+        LISTEN AND GUESS THE SOUND
+      </span>
+      <span id="categoryText"
+            class="block mt-6 text-lg sm:text-2xl text-gray-300">
+        (Press PLAY to hear it.)
+      </span>
+    </div>
+  </div>
+
+  <!-- CONTROLS -->
+  <div class="mt-8 flex flex-wrap justify-center gap-4 sm:gap-6">
+
+    <button id="playBtn"
+            onclick="playSound()"
+            class="bg-[#1e3a8a] text-white text-2xl px-8 py-4 rounded-2xl shadow-lg hover:bg-[#0b2a8a] transition">
+      ▶ PLAY SOUND
+    </button>
+
+    <button id="revealBtn"
+            onclick="revealAnswer()"
+            class="bg-gray-400 text-white text-2xl px-8 py-4 rounded-2xl shadow-lg cursor-not-allowed"
+            disabled>
+      👁 REVEAL ANSWER
+    </button>
+
+    <button id="nextBtn"
+            onclick="nextSound()"
+            class="bg-[#facc15] border-2 border-[#1e3a8a] text-[#0b2a8a] text-2xl px-8 py-4 rounded-2xl shadow-lg hover:bg-yellow-400 transition">
+      ➜ NEXT SOUND
+    </button>
+  </div>
+
+  <!-- FOOTNOTE / HELP -->
+  <p class="mt-4 text-sm text-gray-500 max-w-3xl text-center">
+    Tip: Let residents guess first, then press <strong>Reveal Answer</strong> so they can see it in big print.
+  </p>
+
+  <!-- AUDIO ELEMENT -->
+  <audio id="soundPlayer" preload="auto"></audio>
+
+  <script>
+    /*
+      IMPORTANT:
+      Put your sound files in the same folder as this HTML.
+      Then rename the "file" values below to match, for example:
+      sounds/train-whistle.mp3, sounds/dog-bark.mp3, etc.
+    */
+
+    const sounds = [
+      // Everyday
+      { label:"TRAIN WHISTLE",        file:"train-whistle.mp3",       category:"EVERYDAY" },
+      { label:"PHONE RINGING (OLD ROTARY)", file:"rotary-phone.mp3",  category:"RETRO" },
+      { label:"TYPEWRITER",           file:"typewriter.mp3",          category:"RETRO" },
+      { label:"CHURCH BELL",          file:"church-bell.mp3",         category:"EVERYDAY" },
+      { label:"LAWNMOWER",            file:"lawnmower.mp3",           category:"EVERYDAY" },
+      { label:"VACUUM CLEANER",       file:"vacuum.mp3",              category:"EVERYDAY" },
+      { label:"HAIR DRYER",           file:"hair-dryer.mp3",          category:"EVERYDAY" },
+      { label:"FRYING BACON",         file:"frying-bacon.mp3",        category:"EVERYDAY" },
+      { label:"DOOR KNOCKING",        file:"door-knock.mp3",          category:"EVERYDAY" },
+      { label:"DOORBELL",             file:"doorbell.mp3",            category:"EVERYDAY" },
+
+      // Animals
+      { label:"DOG BARKING",          file:"dog-bark.mp3",            category:"ANIMAL" },
+      { label:"CAT MEOWING",          file:"cat-meow.mp3",            category:"ANIMAL" },
+      { label:"COW MOOING",           file:"cow-moo.mp3",             category:"ANIMAL" },
+      { label:"HORSE NEIGHING",       file:"horse-neigh.mp3",         category:"ANIMAL" },
+      { label:"ROOSTER CROWING",      file:"rooster-crow.mp3",        category:"ANIMAL" },
+      { label:"BIRDSONG",             file:"birds-chirping.mp3",      category:"ANIMAL" },
+
+      // Nature / ambient
+      { label:"THUNDERSTORM",         file:"thunderstorm.mp3",        category:"EVERYDAY" },
+      { label:"RAIN FALLING",         file:"rain.mp3",                category:"EVERYDAY" },
+      { label:"OCEAN WAVES",          file:"ocean-waves.mp3",         category:"EVERYDAY" },
+
+      // Extra fun
+      { label:"BABY LAUGHING",        file:"baby-laugh.mp3",          category:"EVERYDAY" }
+    ];
+
+    let currentIndex = 0;
+    let hasPlayed = false;
+
+    const soundPlayer  = document.getElementById("soundPlayer");
+    const promptText   = document.getElementById("promptText");
+    const categoryText = document.getElementById("categoryText");
+    const revealBtn    = document.getElementById("revealBtn");
+    const playBtn      = document.getElementById("playBtn");
+
+    function loadSound(index) {
+      const s = sounds[index];
+      if (!s) return;
+
+      soundPlayer.src = s.file;
+      hasPlayed = false;
+
+      promptText.textContent  = "LISTEN AND GUESS THE SOUND";
+      categoryText.textContent = "(Press PLAY to hear it.)";
+
+      revealBtn.disabled = true;
+      revealBtn.classList.add("cursor-not-allowed", "bg-gray-400");
+      revealBtn.classList.remove("bg-[#1e3a8a]", "hover:bg-[#0b2a8a]");
+
+      playBtn.focus();
+    }
+
+    function playSound() {
+      const s = sounds[currentIndex];
+      if (!s) return;
+
+      soundPlayer.currentTime = 0;
+      soundPlayer.play().catch(() => {});
+
+      hasPlayed = true;
+
+      // As soon as they’ve played it once, allow reveal
+      revealBtn.disabled = false;
+      revealBtn.classList.remove("cursor-not-allowed", "bg-gray-400");
+      revealBtn.classList.add("bg-[#1e3a8a]", "hover:bg-[#0b2a8a]");
+    }
+
+    function revealAnswer() {
+      const s = sounds[currentIndex];
+      if (!s) return;
+
+      promptText.textContent = s.label;              // BIG ANSWER TEXT
+      categoryText.textContent = `CATEGORY: ${s.category}`;
+    }
+
+    function nextSound() {
+      // simple next; you can change to random if you want
+      currentIndex++;
+      if (currentIndex >= sounds.length) {
+        currentIndex = 0;
+      }
+      loadSound(currentIndex);
+    }
+
+    // INITIAL LOAD
+    loadSound(currentIndex);
+  </script>
+</body>
+</html>
