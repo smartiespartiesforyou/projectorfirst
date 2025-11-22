@@ -87,11 +87,15 @@
     </button>
   </div>
 
+  <!-- 🎵 Dice Roll Sound -->
+  <audio id="diceSound" src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_0b3f8b75e9.mp3?filename=dice-roll-1.mp3" preload="auto"></audio>
+
 <script>
   const die1 = document.getElementById("die1");
   const die2 = document.getElementById("die2");
   const rollBtn = document.getElementById("rollBtn");
   const fsBtn = document.getElementById("fsBtn");
+  const sound = document.getElementById("diceSound");
 
   const pipLayout = {
     1: [5],
@@ -115,10 +119,27 @@
   }
 
   function rollDice() {
-    const n1 = Math.floor(Math.random() * 6) + 1;
-    const n2 = Math.floor(Math.random() * 6) + 1;
-    drawDie(die1, n1);
-    drawDie(die2, n2);
+    // Play sound and "shake" dice several times
+    sound.currentTime = 0;
+    sound.play();
+
+    let shakeCount = 6;
+    const shakeInterval = setInterval(() => {
+      const n1 = Math.floor(Math.random() * 6) + 1;
+      const n2 = Math.floor(Math.random() * 6) + 1;
+      drawDie(die1, n1);
+      drawDie(die2, n2);
+      shakeCount--;
+
+      if (shakeCount === 0) {
+        clearInterval(shakeInterval);
+        // Final roll
+        const final1 = Math.floor(Math.random() * 6) + 1;
+        const final2 = Math.floor(Math.random() * 6) + 1;
+        drawDie(die1, final1);
+        drawDie(die2, final2);
+      }
+    }, 200); // Adjust 200ms for faster/slower shake
   }
 
   rollBtn.addEventListener("click", rollDice);
@@ -138,6 +159,7 @@
     }
   });
 
+  // Initialize dice on load
   rollDice();
 </script>
 </body>
