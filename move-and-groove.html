@@ -3,186 +3,120 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>💃 Move & Groove — ProjectorFirst</title>
+  <title>✏️ Movement Editor — ProjectorFirst</title>
   <script src="https://cdn.tailwindcss.com"></script>
-
-  <style>
-    body {
-      background: #fff;
-      color: #111;
-      font-family: ui-sans-serif, system-ui, -apple-system, sans-serif;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: flex-start;
-      min-height: 100vh;
-      padding: 1rem;
-    }
-    h1 {
-      font-size: 3rem;
-      font-weight: 800;
-      color: #1e3a8a;
-      margin-bottom: 1rem;
-    }
-    .display-box {
-      background: #000;
-      color: #fff;
-      font-size: clamp(2.5rem, 6vw, 4rem);
-      font-weight: 700;
-      padding: 2rem;
-      border-radius: 1.25rem;
-      margin-top: 1rem;
-      box-shadow: 0 0 20px rgba(0,0,0,0.3);
-      min-height: 250px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-    }
-    .btn {
-      font-size: 1.75rem;
-      font-weight: bold;
-      padding: 1.25rem 2.5rem;
-      border-radius: 1rem;
-      cursor: pointer;
-      transition: transform 0.1s;
-    }
-    .btn:hover { transform: scale(1.05); }
-    .btn-primary { background: #1e3a8a; color: white; }
-  </style>
 </head>
+<body class="bg-white text-black font-sans p-6 max-w-4xl mx-auto">
+  <header class="text-center mb-8">
+    <h1 class="text-4xl font-extrabold text-blue-900 mb-2">✏️ Movement Editor</h1>
+    <p class="text-lg text-gray-700">Add, edit, or remove movements for each category. Changes save automatically.</p>
+    <a href="movement.html" class="inline-block mt-4 px-5 py-3 bg-blue-900 text-white rounded-xl font-bold text-xl hover:bg-blue-800">⬅ Back to Move & Groove</a>
+  </header>
 
-<body>
-  <main class="w-full max-w-5xl text-center">
-    <div class="mb-4">
-      <a href="apps.html" class="btn btn-primary">⬅ Back to Apps</a>
-    </div>
+  <!-- Category Selector -->
+  <div class="mb-6">
+    <label class="block text-xl font-semibold text-blue-900 mb-2">Select or Create a Category</label>
+    <input id="newCategory" type="text" placeholder="e.g. Chair Yoga" class="w-full p-3 border-2 border-blue-900 rounded-2xl mb-3"/>
+    <button id="addCategory" class="bg-green-600 text-white font-bold py-2 px-4 rounded-xl hover:bg-green-500">Add Category</button>
 
-    <h1>💃 Move & Groove</h1>
+    <select id="categorySelect" class="w-full mt-4 text-2xl p-3 border-2 border-blue-900 rounded-2xl">
+    </select>
+  </div>
 
-    <!-- ✅ Dropdown -->
-    <div class="mb-6 text-left">
-      <label for="theme" class="block text-xl font-semibold text-blue-900 mb-2">Choose Theme</label>
-      <select id="theme" class="w-full text-2xl p-3 border-2 border-blue-900 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-400">
-        <option value="classic">Classic Moves</option>
-        <option value="holiday">Holiday Fun</option>
-        <option value="silly">Silly Moves</option>
-        <option value="stretch">Gentle Stretch</option>
-      </select>
-    </div>
+  <!-- Add Move -->
+  <div class="mb-6">
+    <label class="block text-xl font-semibold text-blue-900 mb-2">Add a New Move</label>
+    <input id="newMove" type="text" placeholder="Enter movement instruction..." class="w-full p-3 border-2 border-blue-900 rounded-2xl mb-3"/>
+    <button id="addMove" class="bg-blue-900 text-white font-bold py-2 px-4 rounded-xl hover:bg-blue-800">Add Move</button>
+  </div>
 
-    <!-- ✅ Display Area -->
-    <div id="display" class="display-box">Press “Start Grooving” to begin!</div>
-
-    <div class="flex justify-center gap-4 mt-6">
-      <button id="rollBtn" class="btn btn-primary">💃 Start Grooving</button>
-    </div>
-  </main>
+  <!-- Move List -->
+  <div class="bg-blue-50 border-2 border-blue-900 rounded-2xl p-6">
+    <h2 class="text-2xl font-extrabold text-blue-900 mb-4">Current Moves</h2>
+    <ul id="moveList" class="list-disc list-inside text-lg text-gray-800"></ul>
+  </div>
 
   <script>
-    const MOVES = {
-     classic: [
-  "Clap your hands 5 times!",
-  "Raise both arms high!",
-  "Tap your feet on the floor!",
-  "Roll your shoulders back!",
-  "Big smile for 5 seconds!",
-  "Touch your knees and reach for the sky!",
-  "Wave your hands in the air!",
-  "March in place for 10 seconds!",
-  "Stretch your arms out wide!",
-  "Turn your head left and right!",
-  "Wiggle your fingers!",
-  "Shrug your shoulders up and down!",
-  "Pat your head and rub your tummy!",
-  "Pretend to throw a ball!",
-  "Give yourself a big hug!",
-  "Twist gently side to side!",
-  "Lift one knee and then the other!",
-  "Point to the ceiling and then to the floor!",
-  "Make a silly face!",
-  "Take a deep breath and exhale slowly!"
-],
-     holiday: [
-  "Wave like Santa! 🎅",
-  "Shake like a jingle bell! 🔔",
-  "Fly like a reindeer! 🦌",
-  "Wrap an imaginary gift! 🎁",
-  "Ring an invisible bell! 🛎️",
-  "Stretch like a Christmas tree! 🎄",
-  "March like a toy soldier! 🪖",
-  "Slide on the ice like a penguin! 🐧",
-  "Twirl like a snowflake! ❄️",
-  "Pretend to sip hot cocoa! ☕",
-  "Throw a snowball in slow motion! ⛄",
-  "Wave your candy cane wand! 🍭",
-  "Bow like you're opening presents! 🎁",
-  "Tiptoe like you’re sneaking a peek at gifts! 🎅",
-  "Hug yourself like a warm blanket! 🧣",
-  "Dance like an elf! 🧝‍♀️",
-  "Pretend to hang ornaments! 🎀",
-  "Blow a big kiss to the North Pole! 💋",
-  "Shiver like you’re in the snow! 🥶",
-  "Cheer ‘Merry Christmas!’ with both arms high! 🎉"
-],
-     silly: [
-  "Make your silliest face! 🤪",
-  "Pretend to swim! 🏊",
-  "Flap your wings like a bird! 🐦",
-  "March in place! 🥁",
-  "Spin your wrists like helicopter blades! 🚁",
-  "Wiggle your fingers like magic sparkles! ✨",
-  "Pretend you’re walking on the moon! 🌕",
-  "Bounce like a kangaroo! 🦘",
-  "Tiptoe like a sneaky cat! 🐱",
-  "Quack like a duck and flap your arms! 🦆",
-  "Shake your whole body like jelly! 🍇",
-  "Pretend to juggle invisible balls! 🤹",
-  "Move in slow motion like a robot! 🤖",
-  "Hop like a bunny! 🐰",
-  "Pretend to lasso a cow! 🤠",
-  "Roar like a lion! 🦁",
-  "Pretend to be a wiggly worm! 🪱",
-  "Spin around like a top! 🌀",
-  "Make your funniest dance move! 💃",
-  "Pretend you’re stuck in invisible glue! 😆"
-],
-      stretch: [
-  "Take a deep breath in... and out... 🌬️",
-  "Stretch both arms wide! 🤲",
-  "Tilt your head side to side. 👂",
-  "Reach down toward your toes. 🦶",
-  "Circle your wrists slowly. 🔄",
-  "Roll your neck gently. 💆",
-  "Lift your shoulders up to your ears... and relax them down. 🧘",
-  "Reach one arm across your chest, then switch. ↔️",
-  "Stretch your fingers out as wide as you can! ✋",
-  "Interlace your fingers and push your palms forward. 🙌",
-  "Gently twist your torso side to side. 🔁",
-  "Lift your arms above your head and reach for the sky! ☁️",
-  "Roll your ankles in small circles. 🦶",
-  "Touch your opposite shoulder with your hand, then switch. 🤗",
-  "Sit tall and take another deep breath in... and out... 🌿",
-  "Gently look up, then down, to stretch your neck. 👀",
-  "Shrug your shoulders up and down three times. 💪",
-  "Open and close your hands like blooming flowers. 🌸",
-  "Stretch your legs out in front of you if you can. 🪑",
-  "Finish with one more deep breath... and a big smile. 😊"
-],
+    // Load saved data or initialize defaults
+    const storedMoves = JSON.parse(localStorage.getItem('movementData')) || {
+      classic: ["Clap your hands!", "Raise both arms!", "March in place!"],
+      stretch: ["Take a deep breath.", "Reach for the sky.", "Twist side to side."]
     };
 
-    const display = document.getElementById("display");
-    const themeSel = document.getElementById("theme");
-    const rollBtn = document.getElementById("rollBtn");
+    const categorySelect = document.getElementById('categorySelect');
+    const moveList = document.getElementById('moveList');
+    const newCategory = document.getElementById('newCategory');
+    const addCategory = document.getElementById('addCategory');
+    const newMove = document.getElementById('newMove');
+    const addMove = document.getElementById('addMove');
 
-    function rollMove() {
-      const theme = themeSel.value;
-      const moves = MOVES[theme];
-      const roll = Math.floor(Math.random() * moves.length);
-      display.textContent = moves[roll];
+    // Populate categories
+    function loadCategories() {
+      categorySelect.innerHTML = '';
+      for (const cat in storedMoves) {
+        const opt = document.createElement('option');
+        opt.value = cat;
+        opt.textContent = cat.charAt(0).toUpperCase() + cat.slice(1);
+        categorySelect.appendChild(opt);
+      }
+      loadMoves();
     }
 
-    rollBtn.addEventListener("click", rollMove);
+    // Show moves
+    function loadMoves() {
+      const category = categorySelect.value;
+      moveList.innerHTML = '';
+      storedMoves[category].forEach((move, index) => {
+        const li = document.createElement('li');
+        li.className = 'flex justify-between items-center mb-2';
+        li.innerHTML = `
+          <span>${move}</span>
+          <button class="text-red-600 font-bold hover:text-red-800" onclick="deleteMove('${category}', ${index})">Delete</button>
+        `;
+        moveList.appendChild(li);
+      });
+    }
+
+    // Add category
+    addCategory.addEventListener('click', () => {
+      const name = newCategory.value.trim().toLowerCase();
+      if (name && !storedMoves[name]) {
+        storedMoves[name] = [];
+        newCategory.value = '';
+        saveData();
+        loadCategories();
+        categorySelect.value = name;
+        loadMoves();
+      }
+    });
+
+    // Add move
+    addMove.addEventListener('click', () => {
+      const category = categorySelect.value;
+      const move = newMove.value.trim();
+      if (move) {
+        storedMoves[category].push(move);
+        newMove.value = '';
+        saveData();
+        loadMoves();
+      }
+    });
+
+    // Delete move
+    window.deleteMove = function(category, index) {
+      storedMoves[category].splice(index, 1);
+      saveData();
+      loadMoves();
+    };
+
+    // Save to localStorage
+    function saveData() {
+      localStorage.setItem('movementData', JSON.stringify(storedMoves));
+    }
+
+    // Load initial data
+    loadCategories();
+    categorySelect.addEventListener('change', loadMoves);
   </script>
 </body>
 </html>
