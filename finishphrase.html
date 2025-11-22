@@ -5,144 +5,213 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>💬 Finish the Phrase — ProjectorFirst</title>
   <script src="https://cdn.tailwindcss.com"></script>
-
   <style>
-    body {
-      background: #fff;
-      color: #111;
-      font-family: ui-sans-serif, system-ui, -apple-system, sans-serif;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: flex-start;
-      min-height: 100vh;
-      padding: 1rem;
-    }
-    h1 {
-      font-size: 3rem;
-      font-weight: 800;
-      color: #1e3a8a;
-      margin-bottom: 1rem;
-    }
-    .display-box {
-      background: #000;
-      color: #fff;
-      font-size: clamp(2rem, 6vw, 3.5rem);
-      font-weight: 700;
-      padding: 2rem;
-      border-radius: 1.25rem;
-      margin-top: 1rem;
-      box-shadow: 0 0 20px rgba(0,0,0,0.3);
-      min-height: 200px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      flex-direction: column;
-      gap: 1rem;
-    }
-    .btn {
-      font-size: 1.75rem;
-      font-weight: bold;
-      padding: 1.25rem 2.5rem;
-      border-radius: 1rem;
-      cursor: pointer;
-      transition: transform 0.1s;
-    }
-    .btn:hover { transform: scale(1.05); }
-    .btn-primary { background: #1e3a8a; color: white; }
+    body { background:#fff; color:#111; font-family:Arial,sans-serif; }
+    .modal-bg { background:rgba(0,0,0,0.55); position:fixed; inset:0; display:none; justify-content:center; align-items:center; z-index:50; }
+    .modal { background:white; color:black; border-radius:20px; padding:30px; width:90%; max-width:700px; box-shadow:0 10px 25px rgba(0,0,0,0.3); }
+    .big-btn { font-size:40px; padding:25px 60px; border-radius:1rem; font-weight:800; color:white; transition:background-color .1s ease; }
+    .pf-blue { background:#1e3a8a; } .pf-blue:hover { background:#1d4ed8; }
   </style>
 </head>
 
-<body>
-  <main class="w-full max-w-5xl text-center">
-    <div class="mb-4">
-      <a href="apps.html" class="btn btn-primary">⬅ Back to Apps</a>
+<body class="min-h-screen">
+
+  <!-- Top bar -->
+  <div class="max-w-6xl mx-auto flex justify-between items-center p-6 border-b border-gray-200">
+    <a href="apps.html" class="pf-blue text-white text-xl font-bold px-5 py-3 rounded-xl">← Back to Apps</a>
+    <button id="openEditor" class="bg-purple-700 text-white text-xl font-bold px-6 py-3 rounded-xl hover:bg-purple-600">Phrase Editor 📝</button>
+  </div>
+
+  <!-- Category Screen -->
+  <div id="categoryScreen" class="text-center mt-10 px-6 max-w-6xl mx-auto">
+    <h1 class="text-4xl md:text-6xl font-extrabold text-blue-800 mb-10">Choose a Subject</h1>
+    <div id="categoryButtons" class="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-4xl mx-auto"></div>
+  </div>
+
+  <!-- Game Screen -->
+  <div id="gameScreen" class="text-center mt-16 px-4 hidden max-w-6xl mx-auto">
+    <h1 id="categoryTitle" class="text-4xl md:text-6xl font-extrabold text-blue-800 mb-10">Subject</h1>
+
+    <div id="phraseDisplay"
+         class="bg-black text-white rounded-2xl px-6 py-12 text-3xl md:text-5xl font-bold max-w-4xl mx-auto shadow-lg">
+      Press “Show Phrase” to begin!
     </div>
 
-    <h1>💬 Finish the Phrase</h1>
+    <button id="nextPhraseBtn" class="big-btn pf-blue mt-12">Show Phrase</button>
 
-    <!-- ✅ Category Dropdown -->
-    <div class="mb-6 text-left">
-      <label for="theme" class="block text-xl font-semibold text-blue-900 mb-2">Choose Theme</label>
-      <select id="theme" class="w-full text-2xl p-3 border-2 border-blue-900 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-400">
-        <option value="sayings">Common Sayings</option>
-        <option value="holiday">Holiday Phrases</option>
-        <option value="funny">Funny Endings</option>
-      </select>
+    <div class="mt-8">
+      <button id="backToSubjects"
+              class="px-6 py-3 bg-gray-300 text-gray-800 font-bold rounded-xl hover:bg-gray-200 text-xl">
+        ⬅ Back to Subjects
+      </button>
     </div>
+  </div>
 
-    <!-- ✅ Display Area -->
-    <div id="display" class="display-box">Press “Show Phrase” to begin!</div>
+  <!-- Modal: Phrase Editor -->
+  <div id="modalBg" class="modal-bg">
+    <div class="modal">
+      <div class="flex justify-between items-center mb-6">
+        <h2 class="text-3xl font-bold text-blue-800">Phrase Editor</h2>
+        <button id="closeEditor" class="px-4 py-1 bg-gray-300 rounded-xl font-bold hover:bg-gray-400">Close</button>
+      </div>
 
-    <div class="flex justify-center gap-4 mt-6">
-      <button id="rollBtn" class="btn btn-primary">💬 Show Phrase</button>
+      <p class="text-gray-700 mb-4">
+        Add, edit, or remove phrases for each subject. Changes save automatically on this device.
+      </p>
+
+      <label class="font-bold text-gray-700">Prompt</label>
+      <input id="inputPrompt" class="w-full border p-3 rounded-xl mb-4 text-lg" placeholder="Type the beginning of a phrase…">
+
+      <label class="font-bold text-gray-700">Answer</label>
+      <input id="inputAnswer" class="w-full border p-3 rounded-xl mb-4 text-lg" placeholder="Type the phrase ending…">
+
+      <label class="font-bold text-gray-700">Subject</label>
+      <select id="inputCategory" class="w-full border p-3 rounded-xl mb-4 text-lg"></select>
+
+      <input id="newCategoryInput" class="w-full border p-3 rounded-xl mb-4 text-lg hidden" placeholder="Enter new subject name…">
+
+      <button id="savePhraseBtn" class="bg-green-600 text-white font-bold px-6 py-3 rounded-xl hover:bg-green-500">Save Phrase</button>
+
+      <h3 class="text-xl font-bold mt-8 mb-2 text-blue-700">Your Saved Phrases</h3>
+      <ul id="savedList" class="space-y-2 text-lg max-h-60 overflow-y-auto"></ul>
     </div>
-  </main>
+  </div>
 
   <script>
-    const PHRASES = {
+    // Default data
+    const DEFAULT_PHRASES = {
       sayings: [
-        { prompt: "A penny saved is...", answer: "a penny earned!" },
-        { prompt: "You can’t judge a book by...", answer: "its cover." },
-        { prompt: "Don’t count your chickens before...", answer: "they hatch." },
-        { prompt: "The grass is always greener on...", answer: "the other side." },
-        { prompt: "When it rains, it...", answer: "pours." },
-        { prompt: "Better late than...", answer: "never." },
-        { prompt: "Practice makes...", answer: "perfect." },
-        { prompt: "Don’t bite the hand that...", answer: "feeds you." },
-        { prompt: "Where there’s smoke, there’s...", answer: "fire." },
-        { prompt: "Two heads are better than...", answer: "one." }
+        { prompt:"A penny saved is...", answer:"a penny earned!" },
+        { prompt:"You can’t judge a book by...", answer:"its cover." },
+        { prompt:"Don’t count your chickens before...", answer:"they hatch." },
+        { prompt:"The grass is always greener on...", answer:"the other side." },
+        { prompt:"When it rains, it...", answer:"pours." }
       ],
       holiday: [
-        { prompt: "All I want for Christmas is...", answer: "you! 🎄" },
-        { prompt: "Twas the night before...", answer: "Christmas." },
-        { prompt: "Deck the halls with...", answer: "boughs of holly!" },
-        { prompt: "Rudolph the red-nosed...", answer: "reindeer! 🦌" },
-        { prompt: "Let it snow, let it...", answer: "snow, let it snow!" },
-        { prompt: "Jingle all the...", answer: "way!" },
-        { prompt: "Frosty the...", answer: "Snowman! ⛄" },
-        { prompt: "Joy to the...", answer: "world!" },
-        { prompt: "Peace on earth and...", answer: "goodwill to men." },
-        { prompt: "Silent night, holy...", answer: "night." }
+        { prompt:"All I want for Christmas is...", answer:"you! 🎄" },
+        { prompt:"Twas the night before...", answer:"Christmas." },
+        { prompt:"Deck the halls with...", answer:"boughs of holly!" },
+        { prompt:"Rudolph the red-nosed...", answer:"reindeer! 🦌" },
+        { prompt:"Let it snow, let it...", answer:"snow, let it snow!" }
       ],
       funny: [
-        { prompt: "I came, I saw, I...", answer: "made it awkward." },
-        { prompt: "If at first you don’t succeed...", answer: "order pizza and try again." },
-        { prompt: "Why did the chicken cross the road...", answer: "to avoid another staff meeting!" },
-        { prompt: "A balanced diet means...", answer: "a cookie in each hand." },
-        { prompt: "Never trust a person who...", answer: "doesn’t like dogs." },
-        { prompt: "Behind every great man is...", answer: "a woman rolling her eyes." },
-        { prompt: "To err is human, to blame...", answer: "the computer." },
-        { prompt: "When life gives you lemons...", answer: "ask for salt and tequila!" },
-        { prompt: "You can lead a horse to water, but...", answer: "you can’t make it text you back." },
-        { prompt: "I’m not lazy, I’m just...", answer: "on energy-saving mode." }
+        { prompt:"I came, I saw, I...", answer:"made it awkward." },
+        { prompt:"If at first you don’t succeed...", answer:"order pizza and try again." },
+        { prompt:"A balanced diet means...", answer:"a cookie in each hand." },
+        { prompt:"Never trust a person who...", answer:"doesn’t like dogs." },
+        { prompt:"When life gives you lemons...", answer:"ask for salt and tequila!" }
       ]
     };
 
-    const display = document.getElementById("display");
-    const themeSel = document.getElementById("theme");
-    const rollBtn = document.getElementById("rollBtn");
+    // Load from storage or defaults
+    let phraseItems = JSON.parse(localStorage.getItem("fpItems") || "[]");
+    let phraseCategories = JSON.parse(localStorage.getItem("fpCategories") || "[]");
 
-    function showPhrase() {
-      const theme = themeSel.value;
-      const list = PHRASES[theme];
-      const random = Math.floor(Math.random() * list.length);
-      const chosen = list[random];
+    if (phraseItems.length === 0 || phraseCategories.length === 0) {
+      phraseItems = [];
+      phraseCategories = Object.keys(DEFAULT_PHRASES);
+      phraseCategories.forEach(cat=>{
+        DEFAULT_PHRASES[cat].forEach(p=>phraseItems.push({prompt:p.prompt,answer:p.answer,category:cat}));
+      });
+      localStorage.setItem("fpItems",JSON.stringify(phraseItems));
+      localStorage.setItem("fpCategories",JSON.stringify(phraseCategories));
+    }
 
-      display.innerHTML = `
-        <div>
-          <p>${chosen.prompt}</p>
-          <button id="showAnswer" class="btn btn-primary mt-6">Show Answer</button>
-        </div>
-      `;
+    // DOM
+    const categoryButtons=document.getElementById("categoryButtons");
+    const categoryScreen=document.getElementById("categoryScreen");
+    const gameScreen=document.getElementById("gameScreen");
+    const categoryTitle=document.getElementById("categoryTitle");
+    const phraseDisplay=document.getElementById("phraseDisplay");
+    const nextPhraseBtn=document.getElementById("nextPhraseBtn");
+    const backToSubjects=document.getElementById("backToSubjects");
+    const modalBg=document.getElementById("modalBg");
+    const openEditor=document.getElementById("openEditor");
+    const closeEditor=document.getElementById("closeEditor");
+    const inputPrompt=document.getElementById("inputPrompt");
+    const inputAnswer=document.getElementById("inputAnswer");
+    const inputCategory=document.getElementById("inputCategory");
+    const newCategoryInput=document.getElementById("newCategoryInput");
+    const savePhraseBtn=document.getElementById("savePhraseBtn");
+    const savedList=document.getElementById("savedList");
 
-      document.getElementById("showAnswer").addEventListener("click", () => {
-        display.innerHTML = `<p>${chosen.prompt} <strong>${chosen.answer}</strong></p>`;
+    function renderCategoryButtons(){
+      categoryButtons.innerHTML="";
+      phraseCategories.forEach(cat=>{
+        const label=cat.charAt(0).toUpperCase()+cat.slice(1);
+        const btn=document.createElement("button");
+        btn.className="pf-blue text-white text-2xl md:text-3xl font-bold py-6 rounded-2xl transition transform hover:scale-[1.01]";
+        btn.textContent=label;
+        btn.onclick=()=>startCategory(cat);
+        categoryButtons.appendChild(btn);
+      });
+    }
+    renderCategoryButtons();
+
+    let currentCategory=null;
+    let currentFiltered=[];
+
+    function startCategory(cat){
+      currentCategory=cat;
+      currentFiltered=phraseItems.filter(p=>p.category===cat);
+      if(currentFiltered.length===0){alert("No phrases in this subject yet! Add some in the Phrase Editor.");return;}
+      categoryTitle.textContent=cat.charAt(0).toUpperCase()+cat.slice(1);
+      categoryScreen.classList.add("hidden");
+      gameScreen.classList.remove("hidden");
+      showRandomPhrase();
+    }
+
+    function showRandomPhrase(){
+      if(currentFiltered.length===0){phraseDisplay.textContent="No phrases in this subject yet!";return;}
+      const pick=currentFiltered[Math.floor(Math.random()*currentFiltered.length)];
+      phraseDisplay.innerHTML=`<div><p>${pick.prompt}</p>
+        <button id="showAnswer" class="pf-blue text-white font-bold px-5 py-3 rounded-xl mt-6">Show Answer</button></div>`;
+      document.getElementById("showAnswer").onclick=()=>{phraseDisplay.innerHTML=`<p>${pick.prompt} <strong>${pick.answer}</strong></p>`};
+    }
+
+    nextPhraseBtn.onclick=showRandomPhrase;
+    backToSubjects.onclick=()=>{gameScreen.classList.add("hidden");categoryScreen.classList.remove("hidden");phraseDisplay.textContent="Press “Show Phrase” to begin!";};
+
+    // EDITOR
+    function updateCategoryDropdown(){
+      inputCategory.innerHTML="";
+      phraseCategories.forEach(cat=>{
+        const opt=document.createElement("option");
+        opt.value=cat;
+        opt.textContent=cat.charAt(0).toUpperCase()+cat.slice(1);
+        inputCategory.appendChild(opt);
+      });
+      const addNew=document.createElement("option");
+      addNew.value="__NEW__";addNew.textContent="+ Add New Subject";inputCategory.appendChild(addNew);
+    }
+    updateCategoryDropdown();
+
+    inputCategory.onchange=()=>{if(inputCategory.value==="__NEW__"){newCategoryInput.classList.remove("hidden");}else{newCategoryInput.classList.add("hidden");}};
+    openEditor.onclick=()=>{modalBg.style.display="flex";updateSavedList();};
+    closeEditor.onclick=()=>{modalBg.style.display="none";newCategoryInput.value="";newCategoryInput.classList.add("hidden");};
+    function saveData(){localStorage.setItem("fpItems",JSON.stringify(phraseItems));localStorage.setItem("fpCategories",JSON.stringify(phraseCategories));}
+
+    savePhraseBtn.onclick=()=>{
+      const prompt=inputPrompt.value.trim();const answer=inputAnswer.value.trim();let cat=inputCategory.value;
+      if(!prompt||!answer){alert("Please enter both prompt and answer.");return;}
+      if(cat==="__NEW__"){cat=newCategoryInput.value.trim().toLowerCase();if(!cat){alert("Enter a subject name.");return;}if(!phraseCategories.includes(cat)){phraseCategories.push(cat);}updateCategoryDropdown();renderCategoryButtons();}
+      phraseItems.push({prompt,answer,category:cat});saveData();inputPrompt.value="";inputAnswer.value="";newCategoryInput.value="";newCategoryInput.classList.add("hidden");inputCategory.value=cat;updateSavedList();if(currentCategory===cat){currentFiltered=phraseItems.filter(p=>p.category===cat);}
+    };
+
+    function updateSavedList(){
+      savedList.innerHTML="";
+      phraseItems.forEach((p,i)=>{
+        const li=document.createElement("li");
+        li.innerHTML=`<div class="flex justify-between bg-gray-100 p-3 rounded-xl items-center">
+        <div class="flex-1"><strong>${p.prompt}</strong> <span class="text-gray-500">(${p.answer})</span> <em class="text-gray-400">(${p.category})</em></div>
+        <button class="bg-red-500 text-white px-3 py-1 rounded-lg hover:bg-red-600 ml-4" onclick="deletePhrase(${i})">Delete</button></div>`;
+        savedList.appendChild(li);
       });
     }
 
-    rollBtn.addEventListener("click", showPhrase);
+    function deletePhrase(i){const removed=phraseItems.splice(i,1)[0];saveData();updateSavedList();if(removed&&removed.category===currentCategory){currentFiltered=phraseItems.filter(p=>p.category===currentCategory);}}
+    window.deletePhrase=deletePhrase;
   </script>
+
 </body>
 </html>
