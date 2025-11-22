@@ -8,14 +8,14 @@
 </script>
 
 <script>
-let memberPlanId = "pln_30-day-free-trial-bz190lee"; // Your Free Trial Plan ID
-let expiredRedirect = "/free-trial-expired"; // The page you just updated
+let memberPlanId = "pln_trial30-gpte0tfl"; // <-- **CORRECTED PLAN ID for 'Trial30'**
+let expiredRedirect = "/free-trial-expired"; // The page you successfully updated
 
 document.addEventListener("DOMContentLoaded", async function() {
   const memberstack = window.$memberstackDom;
   const member = await memberstack.getMemberJSON();
   
-  // Check if the member has the Free Trial plan
+  // Check if the member has the Trial30 plan
   const planConnections = member.planConnections || [];
   let hasPlan = planConnections.some(planConnection => planConnection.planId === memberPlanId);
 
@@ -25,7 +25,7 @@ document.addEventListener("DOMContentLoaded", async function() {
     let currentDate = new Date();
 
     if (currentDate > oneTimeDate) {
-      // 🚨 Trial has expired! Remove the free plan and redirect
+      // 🚨 Trial has expired! Remove the plan and redirect
       memberstack.removePlan({ planId: memberPlanId })
         .then(() => {
           window.location.href = expiredRedirect;
