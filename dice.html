@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Dice Roller — ProjectorFirst</title>
+<title>🎲 Dice Roller — ProjectorFirst</title>
 <script src="https://cdn.tailwindcss.com"></script>
 
 <style>
@@ -15,37 +15,43 @@
     color: #000;
   }
 
+  h1 {
+    font-size: 4rem;
+    font-weight: 800;
+    color: #1e3a8a;
+    margin-top: 20px;
+  }
+
   .dice-area {
     display: flex;
     justify-content: center;
-    gap: 40px;
-    margin-top: 40px;
-    margin-bottom: 40px;
+    gap: 80px;
+    margin-top: 60px;
+    margin-bottom: 60px;
   }
 
   .die {
-    width: 300px;
-    height: 300px;
+    width: 400px;
+    height: 400px;
     background: #fff;
-    border: 10px solid #000;
-    border-radius: 20px;
+    border: 12px solid #000;
+    border-radius: 30px;
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     grid-template-rows: repeat(3, 1fr);
-    padding: 20px;
-    box-shadow: 0 10px 0 rgba(0,0,0,0.2);
+    padding: 30px;
+    box-shadow: 0 15px 0 rgba(0,0,0,0.25);
   }
 
   .pip {
-    width: 45px;
-    height: 45px;
+    width: 60px;
+    height: 60px;
     background: #000;
     border-radius: 50%;
     justify-self: center;
     align-self: center;
   }
 
-  /* Bounce animation */
   .bounce {
     animation: bounce 0.3s ease;
   }
@@ -59,7 +65,12 @@
 </head>
 
 <body>
-  <h1 class="text-5xl font-extrabold text-blue-900">🎲 Dice Roller</h1>
+  <!-- Header -->
+  <div class="max-w-6xl mx-auto flex justify-between items-center p-6 border-b border-gray-200">
+    <a href="apps.html" class="bg-blue-900 text-white text-xl font-bold px-5 py-3 rounded-xl hover:bg-blue-800">← Back to Apps</a>
+  </div>
+
+  <h1>🎲 Dice Roller</h1>
 
   <div class="dice-area">
     <div id="die1" class="die"></div>
@@ -67,13 +78,11 @@
   </div>
 
   <div class="flex justify-center gap-6 mt-10">
-    <button id="rollBtn"
-      class="px-10 py-5 bg-blue-900 text-white rounded-2xl text-3xl font-bold shadow hover:bg-blue-800">
+    <button id="rollBtn" class="px-12 py-6 bg-blue-900 text-white rounded-2xl text-4xl font-bold shadow hover:bg-blue-800">
       ROLL 🎲
     </button>
 
-    <button id="fsBtn"
-      class="px-10 py-5 bg-green-700 text-white rounded-2xl text-3xl font-bold shadow hover:bg-green-600">
+    <button id="fsBtn" class="px-12 py-6 bg-green-700 text-white rounded-2xl text-4xl font-bold shadow hover:bg-green-600">
       FULLSCREEN ⛶
     </button>
   </div>
@@ -84,7 +93,6 @@
   const rollBtn = document.getElementById("rollBtn");
   const fsBtn = document.getElementById("fsBtn");
 
-  // Pip layouts for numbers 1–6
   const pipLayout = {
     1: [5],
     2: [1, 9],
@@ -97,16 +105,11 @@
   function drawDie(dieEl, number) {
     dieEl.innerHTML = "";
     dieEl.classList.add("bounce");
-
     setTimeout(() => dieEl.classList.remove("bounce"), 300);
 
     for (let i = 1; i <= 9; i++) {
       const spot = document.createElement("div");
-
-      if (pipLayout[number].includes(i)) {
-        spot.className = "pip";
-      }
-
+      if (pipLayout[number].includes(i)) spot.className = "pip";
       dieEl.appendChild(spot);
     }
   }
@@ -120,7 +123,6 @@
 
   rollBtn.addEventListener("click", rollDice);
 
-  // Spacebar to roll
   document.addEventListener("keydown", (e) => {
     if (e.code === "Space") {
       e.preventDefault();
@@ -128,7 +130,6 @@
     }
   });
 
-  // Fullscreen
   fsBtn.addEventListener("click", () => {
     if (!document.fullscreenElement) {
       document.documentElement.requestFullscreen();
@@ -137,7 +138,6 @@
     }
   });
 
-  // Init
   rollDice();
 </script>
 </body>
