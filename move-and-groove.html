@@ -119,100 +119,163 @@
   </div>
 
   <script>
-    // =========================
-    // DEFAULT DATA (your moves)
-    // =========================
+  // Load stored data or defaults
+  let movesData = JSON.parse(localStorage.getItem("moveData")) || {
+    Classic: [
+      "Clap your hands 5 times!",
+      "Raise both arms high!",
+      "March in place for 10 seconds!"
+    ],
+    Stretch: [
+      "Take a deep breath in... and out.",
+      "Reach both arms overhead!",
+      "Twist gently side to side."
+    ],
+  };
 
-    const DEFAULT_DATA = {
-      classic: [
-        "Clap your hands 5 times!",
-        "Raise both arms high!",
-        "Tap your feet on the floor!",
-        "Roll your shoulders back!",
-        "Big smile for 5 seconds!",
-        "Touch your knees and reach for the sky!",
-        "Wave your hands in the air!",
-        "March in place for 10 seconds!",
-        "Stretch your arms out wide!",
-        "Turn your head left and right!",
-        "Wiggle your fingers!",
-        "Shrug your shoulders up and down!",
-        "Pat your head and rub your tummy!",
-        "Pretend to throw a ball!",
-        "Give yourself a big hug!",
-        "Twist gently side to side!",
-        "Lift one knee and then the other!",
-        "Point to the ceiling and then to the floor!",
-        "Make a silly face!",
-        "Take a deep breath and exhale slowly!"
-      ],
-      holiday: [
-        "Wave like Santa! 🎅",
-        "Shake like a jingle bell! 🔔",
-        "Fly like a reindeer! 🦌",
-        "Wrap an imaginary gift! 🎁",
-        "Ring an invisible bell! 🛎️",
-        "Stretch like a Christmas tree! 🎄",
-        "March like a toy soldier! 🪖",
-        "Slide on the ice like a penguin! 🐧",
-        "Twirl like a snowflake! ❄️",
-        "Pretend to sip hot cocoa! ☕",
-        "Throw a snowball in slow motion! ⛄",
-        "Wave your candy cane wand! 🍭",
-        "Bow like you're opening presents! 🎁",
-        "Tiptoe like you’re sneaking a peek at gifts! 🎅",
-        "Hug yourself like a warm blanket! 🧣",
-        "Dance like an elf! 🧝‍♀️",
-        "Pretend to hang ornaments! 🎀",
-        "Blow a big kiss to the North Pole! 💋",
-        "Shiver like you’re in the snow! 🥶",
-        "Cheer ‘Merry Christmas!’ with both arms high! 🎉"
-      ],
-      silly: [
-        "Make your silliest face! 🤪",
-        "Pretend to swim! 🏊",
-        "Flap your wings like a bird! 🐦",
-        "March in place! 🥁",
-        "Spin your wrists like helicopter blades! 🚁",
-        "Wiggle your fingers like magic sparkles! ✨",
-        "Pretend you’re walking on the moon! 🌕",
-        "Bounce like a kangaroo! 🦘",
-        "Tiptoe like a sneaky cat! 🐱",
-        "Quack like a duck and flap your arms! 🦆",
-        "Shake your whole body like jelly! 🍇",
-        "Pretend to juggle invisible balls! 🤹",
-        "Move in slow motion like a robot! 🤖",
-        "Hop like a bunny! 🐰",
-        "Pretend to lasso a cow! 🤠",
-        "Roar like a lion! 🦁",
-        "Pretend to be a wiggly worm! 🪱",
-        "Spin around like a top! 🌀",
-        "Make your funniest dance move! 💃",
-        "Pretend you’re stuck in invisible glue! 😆"
-      ],
-      stretch: [
-        "Take a deep breath in... and out... 🌬️",
-        "Stretch both arms wide! 🤲",
-        "Tilt your head side to side. 👂",
-        "Reach down toward your toes. 🦶",
-        "Circle your wrists slowly. 🔄",
-        "Roll your neck gently. 💆",
-        "Lift your shoulders up to your ears... and relax them down. 🧘",
-        "Reach one arm across your chest, then switch. ↔️",
-        "Stretch your fingers out as wide as you can! ✋",
-        "Interlace your fingers and push your palms forward. 🙌",
-        "Gently twist your torso side to side. 🔁",
-        "Lift your arms above your head and reach for the sky! ☁️",
-        "Roll your ankles in small circles. 🦶",
-        "Touch your opposite shoulder with your hand, then switch. 🤗",
-        "Sit tall and take another deep breath in... and out... 🌿",
-        "Gently look up, then down, to stretch your neck. 👀",
-        "Shrug your shoulders up and down three times. 💪",
-        "Open and close your hands like blooming flowers. 🌸",
-        "Stretch your legs out in front of you if you can. 🪑",
-        "Finish with one more deep breath... and a big smile. 😊"
-      ]
-    };
+  const display = document.getElementById("display");
+  const themeSel = document.getElementById("theme");
+  const rollBtn = document.getElementById("rollBtn");
+
+  // Pick a random move
+  function rollMove() {
+    const category = themeSel.value;
+    const currentMoves = movesData[category] || [];
+    if (currentMoves.length === 0) {
+      display.textContent = "No moves yet in this category! Open the editor to add some.";
+      return;
+    }
+
+    const random = Math.floor(Math.random() * currentMoves.length);
+    display.textContent = currentMoves[random];
+  }
+
+  rollBtn.addEventListener("click", rollMove);
+
+  // --- Movement Editor Modal ---
+  const modalBg = document.createElement("div");
+  modalBg.className = "fixed inset-0 bg-black/60 hidden justify-center items-center z-50";
+  modalBg.innerHTML = `
+    <div class="bg-white text-black rounded-2xl shadow-2xl p-8 max-w-2xl w-11/12 max-h-[85vh] overflow-y-auto">
+      <div class="flex justify-between items-center mb-6">
+        <h2 class="text-3xl font-bold text-blue-900">📝 Movement Editor</h2>
+        <button id="closeEditor" class="bg-gray-300 px-4 py-2 rounded-xl font-bold hover:bg-gray-400">Close</button>
+      </div>
+
+      <label class="block text-lg font-semibold text-blue-900 mb-2">Select or Create Category</label>
+      <select id="catSelect" class="w-full border-2 border-blue-900 rounded-2xl p-3 text-xl mb-3"></select>
+      <input id="newCat" type="text" placeholder="Enter new category..." class="w-full border-2 border-blue-900 rounded-2xl p-3 text-xl mb-4 hidden"/>
+
+      <label class="block text-lg font-semibold text-blue-900 mb-2">Add a New Move</label>
+      <input id="newMove" type="text" placeholder="Enter a move..." class="w-full border-2 border-blue-900 rounded-2xl p-3 text-xl mb-3"/>
+      <button id="addMove" class="bg-blue-900 text-white px-6 py-3 rounded-xl font-bold hover:bg-blue-800 mb-6">Add Move</button>
+
+      <h3 class="text-2xl font-bold text-blue-800 mb-3">Saved Moves</h3>
+      <ul id="moveList" class="space-y-2 max-h-[300px] overflow-y-auto"></ul>
+    </div>
+  `;
+  document.body.appendChild(modalBg);
+
+  const catSelect = modalBg.querySelector("#catSelect");
+  const newCat = modalBg.querySelector("#newCat");
+  const moveList = modalBg.querySelector("#moveList");
+  const addMoveBtn = modalBg.querySelector("#addMove");
+  const newMoveInput = modalBg.querySelector("#newMove");
+
+  function loadCategories() {
+    catSelect.innerHTML = "";
+    Object.keys(movesData).forEach(cat => {
+      const opt = document.createElement("option");
+      opt.value = cat;
+      opt.textContent = cat;
+      catSelect.appendChild(opt);
+    });
+    const addNew = document.createElement("option");
+    addNew.value = "__NEW__";
+    addNew.textContent = "+ Add New Category";
+    catSelect.appendChild(addNew);
+    loadMoves();
+  }
+
+  catSelect.addEventListener("change", () => {
+    if (catSelect.value === "__NEW__") {
+      newCat.classList.remove("hidden");
+      moveList.innerHTML = "";
+    } else {
+      newCat.classList.add("hidden");
+      loadMoves();
+    }
+  });
+
+  function loadMoves() {
+    const category = catSelect.value;
+    moveList.innerHTML = "";
+
+    const list = movesData[category] || [];
+    if (list.length === 0) {
+      moveList.innerHTML = `<p class='text-gray-500 italic'>No moves yet in this category.</p>`;
+      return;
+    }
+
+    list.forEach((move, index) => {
+      const li = document.createElement("li");
+      li.innerHTML = `
+        <div class="flex justify-between bg-gray-100 p-3 rounded-xl items-center">
+          <span class="text-lg">${move}</span>
+          <button class="bg-red-500 text-white px-3 py-1 rounded-lg hover:bg-red-600"
+            onclick="deleteMove('${category}', ${index})">Delete</button>
+        </div>
+      `;
+      moveList.appendChild(li);
+    });
+  }
+
+  addMoveBtn.addEventListener("click", () => {
+    let category = catSelect.value;
+    const moveText = newMoveInput.value.trim();
+
+    if (!moveText) return alert("Enter a move first!");
+
+    if (category === "__NEW__") {
+      category = newCat.value.trim();
+      if (!category) return alert("Enter a category name first!");
+      movesData[category] = [];
+      localStorage.setItem("moveData", JSON.stringify(movesData));
+      loadCategories();
+      catSelect.value = category;
+    }
+
+    movesData[category].push(moveText);
+    localStorage.setItem("moveData", JSON.stringify(movesData));
+    newMoveInput.value = "";
+    loadMoves();
+  });
+
+  window.deleteMove = function (category, index) {
+    movesData[category].splice(index, 1);
+    localStorage.setItem("moveData", JSON.stringify(movesData));
+    loadMoves();
+  };
+
+  // Save data utility
+  function saveData() {
+    localStorage.setItem("moveData", JSON.stringify(movesData));
+  }
+
+  // Add editor button
+  const editBtn = document.createElement("button");
+  editBtn.textContent = "📝 Open Editor";
+  editBtn.className = "bg-purple-700 text-white font-bold px-6 py-3 rounded-xl mt-6 hover:bg-purple-600";
+  editBtn.onclick = () => {
+    modalBg.classList.remove("hidden");
+    loadCategories();
+  };
+  document.querySelector("main").appendChild(editBtn);
+
+  modalBg.querySelector("#closeEditor").onclick = () => {
+    modalBg.classList.add("hidden");
+  };
+</script>
 
     // =========================
     // LOCAL STORAGE SETUP
