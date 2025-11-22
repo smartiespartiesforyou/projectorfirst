@@ -3,120 +3,433 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>✏️ Movement Editor — ProjectorFirst</title>
+  <title>💃 Move & Groove — ProjectorFirst</title>
   <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    body {
+      background: #fff; /* White background like Trivia */
+      color: #111;
+      font-family: Arial, sans-serif;
+    }
+    .modal-bg {
+      background: rgba(0,0,0,0.55);
+      position: fixed;
+      inset: 0;
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 50;
+    }
+    .modal {
+      background: white;
+      color: black;
+      border-radius: 20px;
+      padding: 30px;
+      width: 90%;
+      max-width: 700px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+    }
+    .big-btn {
+      font-size: 40px;
+      padding: 25px 60px;
+      border-radius: 1rem;
+      font-weight: 800;
+      color: white;
+      transition: background-color .1s ease;
+    }
+    .pf-blue { background: #1e3a8a; }
+    .pf-blue:hover { background: #1d4ed8; }
+  </style>
 </head>
-<body class="bg-white text-black font-sans p-6 max-w-4xl mx-auto">
-  <header class="text-center mb-8">
-    <h1 class="text-4xl font-extrabold text-blue-900 mb-2">✏️ Movement Editor</h1>
-    <p class="text-lg text-gray-700">Add, edit, or remove movements for each category. Changes save automatically.</p>
-    <a href="movement.html" class="inline-block mt-4 px-5 py-3 bg-blue-900 text-white rounded-xl font-bold text-xl hover:bg-blue-800">⬅ Back to Move & Groove</a>
-  </header>
 
-  <!-- Category Selector -->
-  <div class="mb-6">
-    <label class="block text-xl font-semibold text-blue-900 mb-2">Select or Create a Category</label>
-    <input id="newCategory" type="text" placeholder="e.g. Chair Yoga" class="w-full p-3 border-2 border-blue-900 rounded-2xl mb-3"/>
-    <button id="addCategory" class="bg-green-600 text-white font-bold py-2 px-4 rounded-xl hover:bg-green-500">Add Category</button>
+<body class="min-h-screen">
 
-    <select id="categorySelect" class="w-full mt-4 text-2xl p-3 border-2 border-blue-900 rounded-2xl">
-    </select>
+  <!-- Top bar -->
+  <div class="max-w-6xl mx-auto flex justify-between items-center p-6 border-b border-gray-200">
+    <a href="apps.html" class="pf-blue text-white text-xl font-bold px-5 py-3 rounded-xl">
+      ← Back to Apps
+    </a>
+
+    <button id="openEditor" class="bg-purple-700 text-white text-xl font-bold px-6 py-3 rounded-xl hover:bg-purple-600">
+      Movement Editor 📝
+    </button>
   </div>
 
-  <!-- Add Move -->
-  <div class="mb-6">
-    <label class="block text-xl font-semibold text-blue-900 mb-2">Add a New Move</label>
-    <input id="newMove" type="text" placeholder="Enter movement instruction..." class="w-full p-3 border-2 border-blue-900 rounded-2xl mb-3"/>
-    <button id="addMove" class="bg-blue-900 text-white font-bold py-2 px-4 rounded-xl hover:bg-blue-800">Add Move</button>
+  <!-- Category Screen -->
+  <div id="categoryScreen" class="text-center mt-10 px-6 max-w-6xl mx-auto">
+    <h1 class="text-4xl md:text-6xl font-extrabold text-blue-800 mb-10">Choose a Movement Theme</h1>
+
+    <div id="categoryButtons" class="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-4xl mx-auto"></div>
   </div>
 
-  <!-- Move List -->
-  <div class="bg-blue-50 border-2 border-blue-900 rounded-2xl p-6">
-    <h2 class="text-2xl font-extrabold text-blue-900 mb-4">Current Moves</h2>
-    <ul id="moveList" class="list-disc list-inside text-lg text-gray-800"></ul>
+  <!-- Game Screen -->
+  <div id="gameScreen" class="text-center mt-16 px-4 hidden max-w-6xl mx-auto">
+    <h1 id="categoryTitle" class="text-4xl md:text-6xl font-extrabold text-blue-800 mb-10">
+      Theme
+    </h1>
+
+    <div id="moveDisplay"
+         class="bg-black text-white rounded-2xl px-6 py-12 text-3xl md:text-5xl font-bold max-w-4xl mx-auto shadow-lg">
+      Press “Next Move” to begin!
+    </div>
+
+    <button id="nextMoveBtn" class="big-btn pf-blue mt-12">
+      Next Move
+    </button>
+
+    <div class="mt-8">
+      <button id="backToThemes"
+              class="px-6 py-3 bg-gray-300 text-gray-800 font-bold rounded-xl hover:bg-gray-200 text-xl">
+        ⬅ Back to Themes
+      </button>
+    </div>
+  </div>
+
+  <!-- Modal: Movement Editor -->
+  <div id="modalBg" class="modal-bg">
+    <div class="modal">
+      <div class="flex justify-between items-center mb-6">
+        <h2 class="text-3xl font-bold text-blue-800">Movement Editor</h2>
+        <button id="closeEditor" class="px-4 py-1 bg-gray-300 rounded-xl font-bold hover:bg-gray-400">Close</button>
+      </div>
+
+      <p class="text-gray-700 mb-4">
+        Add, edit, or remove moves for each theme. Changes are saved on this device for your Activity Director station.
+      </p>
+
+      <label class="font-bold text-gray-700">Movement Instruction</label>
+      <input id="inputMove" class="w-full border p-3 rounded-xl mb-4 text-lg"
+             placeholder="Type a movement instruction…">
+
+      <label class="font-bold text-gray-700">Theme</label>
+      <select id="inputCategory" class="w-full border p-3 rounded-xl mb-4 text-lg"></select>
+
+      <input id="newCategoryInput"
+             class="w-full border p-3 rounded-xl mb-4 text-lg hidden"
+             placeholder="Enter new theme name…">
+
+      <button id="saveMoveBtn" class="bg-green-600 text-white font-bold px-6 py-3 rounded-xl hover:bg-green-500">
+        Save Move
+      </button>
+
+      <h3 class="text-xl font-bold mt-8 mb-2 text-blue-700">Your Saved Moves</h3>
+      <ul id="savedList" class="space-y-2 text-lg max-h-60 overflow-y-auto"></ul>
+    </div>
   </div>
 
   <script>
-    // Load saved data or initialize defaults
-    const storedMoves = JSON.parse(localStorage.getItem('movementData')) || {
-      classic: ["Clap your hands!", "Raise both arms!", "March in place!"],
-      stretch: ["Take a deep breath.", "Reach for the sky.", "Twist side to side."]
+    // =========================
+    // DEFAULT DATA (your moves)
+    // =========================
+
+    const DEFAULT_DATA = {
+      classic: [
+        "Clap your hands 5 times!",
+        "Raise both arms high!",
+        "Tap your feet on the floor!",
+        "Roll your shoulders back!",
+        "Big smile for 5 seconds!",
+        "Touch your knees and reach for the sky!",
+        "Wave your hands in the air!",
+        "March in place for 10 seconds!",
+        "Stretch your arms out wide!",
+        "Turn your head left and right!",
+        "Wiggle your fingers!",
+        "Shrug your shoulders up and down!",
+        "Pat your head and rub your tummy!",
+        "Pretend to throw a ball!",
+        "Give yourself a big hug!",
+        "Twist gently side to side!",
+        "Lift one knee and then the other!",
+        "Point to the ceiling and then to the floor!",
+        "Make a silly face!",
+        "Take a deep breath and exhale slowly!"
+      ],
+      holiday: [
+        "Wave like Santa! 🎅",
+        "Shake like a jingle bell! 🔔",
+        "Fly like a reindeer! 🦌",
+        "Wrap an imaginary gift! 🎁",
+        "Ring an invisible bell! 🛎️",
+        "Stretch like a Christmas tree! 🎄",
+        "March like a toy soldier! 🪖",
+        "Slide on the ice like a penguin! 🐧",
+        "Twirl like a snowflake! ❄️",
+        "Pretend to sip hot cocoa! ☕",
+        "Throw a snowball in slow motion! ⛄",
+        "Wave your candy cane wand! 🍭",
+        "Bow like you're opening presents! 🎁",
+        "Tiptoe like you’re sneaking a peek at gifts! 🎅",
+        "Hug yourself like a warm blanket! 🧣",
+        "Dance like an elf! 🧝‍♀️",
+        "Pretend to hang ornaments! 🎀",
+        "Blow a big kiss to the North Pole! 💋",
+        "Shiver like you’re in the snow! 🥶",
+        "Cheer ‘Merry Christmas!’ with both arms high! 🎉"
+      ],
+      silly: [
+        "Make your silliest face! 🤪",
+        "Pretend to swim! 🏊",
+        "Flap your wings like a bird! 🐦",
+        "March in place! 🥁",
+        "Spin your wrists like helicopter blades! 🚁",
+        "Wiggle your fingers like magic sparkles! ✨",
+        "Pretend you’re walking on the moon! 🌕",
+        "Bounce like a kangaroo! 🦘",
+        "Tiptoe like a sneaky cat! 🐱",
+        "Quack like a duck and flap your arms! 🦆",
+        "Shake your whole body like jelly! 🍇",
+        "Pretend to juggle invisible balls! 🤹",
+        "Move in slow motion like a robot! 🤖",
+        "Hop like a bunny! 🐰",
+        "Pretend to lasso a cow! 🤠",
+        "Roar like a lion! 🦁",
+        "Pretend to be a wiggly worm! 🪱",
+        "Spin around like a top! 🌀",
+        "Make your funniest dance move! 💃",
+        "Pretend you’re stuck in invisible glue! 😆"
+      ],
+      stretch: [
+        "Take a deep breath in... and out... 🌬️",
+        "Stretch both arms wide! 🤲",
+        "Tilt your head side to side. 👂",
+        "Reach down toward your toes. 🦶",
+        "Circle your wrists slowly. 🔄",
+        "Roll your neck gently. 💆",
+        "Lift your shoulders up to your ears... and relax them down. 🧘",
+        "Reach one arm across your chest, then switch. ↔️",
+        "Stretch your fingers out as wide as you can! ✋",
+        "Interlace your fingers and push your palms forward. 🙌",
+        "Gently twist your torso side to side. 🔁",
+        "Lift your arms above your head and reach for the sky! ☁️",
+        "Roll your ankles in small circles. 🦶",
+        "Touch your opposite shoulder with your hand, then switch. 🤗",
+        "Sit tall and take another deep breath in... and out... 🌿",
+        "Gently look up, then down, to stretch your neck. 👀",
+        "Shrug your shoulders up and down three times. 💪",
+        "Open and close your hands like blooming flowers. 🌸",
+        "Stretch your legs out in front of you if you can. 🪑",
+        "Finish with one more deep breath... and a big smile. 😊"
+      ]
     };
 
-    const categorySelect = document.getElementById('categorySelect');
-    const moveList = document.getElementById('moveList');
-    const newCategory = document.getElementById('newCategory');
-    const addCategory = document.getElementById('addCategory');
-    const newMove = document.getElementById('newMove');
-    const addMove = document.getElementById('addMove');
+    // =========================
+    // LOCAL STORAGE SETUP
+    // =========================
 
-    // Populate categories
-    function loadCategories() {
-      categorySelect.innerHTML = '';
-      for (const cat in storedMoves) {
-        const opt = document.createElement('option');
-        opt.value = cat;
-        opt.textContent = cat.charAt(0).toUpperCase() + cat.slice(1);
-        categorySelect.appendChild(opt);
-      }
-      loadMoves();
+    // We store movements as an array of objects:
+    // { text: "Clap your hands 5 times!", category: "classic" }
+
+    let moveItems = JSON.parse(localStorage.getItem("mvItems") || "[]");
+    let moveCategories = JSON.parse(localStorage.getItem("mvCategories") || "[]");
+
+    // Initialize defaults if empty
+    if (moveItems.length === 0 || moveCategories.length === 0) {
+      moveItems = [];
+      moveCategories = Object.keys(DEFAULT_DATA);
+
+      moveCategories.forEach(cat => {
+        DEFAULT_DATA[cat].forEach(text => {
+          moveItems.push({ text, category: cat });
+        });
+      });
+
+      localStorage.setItem("mvItems", JSON.stringify(moveItems));
+      localStorage.setItem("mvCategories", JSON.stringify(moveCategories));
     }
 
-    // Show moves
-    function loadMoves() {
-      const category = categorySelect.value;
-      moveList.innerHTML = '';
-      storedMoves[category].forEach((move, index) => {
-        const li = document.createElement('li');
-        li.className = 'flex justify-between items-center mb-2';
-        li.innerHTML = `
-          <span>${move}</span>
-          <button class="text-red-600 font-bold hover:text-red-800" onclick="deleteMove('${category}', ${index})">Delete</button>
-        `;
-        moveList.appendChild(li);
+    // =========================
+    // DOM REFERENCES
+    // =========================
+
+    const categoryButtons = document.getElementById("categoryButtons");
+    const categoryScreen = document.getElementById("categoryScreen");
+    const gameScreen = document.getElementById("gameScreen");
+    const categoryTitle = document.getElementById("categoryTitle");
+    const moveDisplay = document.getElementById("moveDisplay");
+    const nextMoveBtn = document.getElementById("nextMoveBtn");
+    const backToThemes = document.getElementById("backToThemes");
+
+    const modalBg = document.getElementById("modalBg");
+    const openEditor = document.getElementById("openEditor");
+    const closeEditor = document.getElementById("closeEditor");
+
+    const inputMove = document.getElementById("inputMove");
+    const inputCategory = document.getElementById("inputCategory");
+    const newCategoryInput = document.getElementById("newCategoryInput");
+    const saveMoveBtn = document.getElementById("saveMoveBtn");
+    const savedList = document.getElementById("savedList");
+
+    // =========================
+    // CATEGORY BUTTONS
+    // =========================
+
+    function renderCategoryButtons() {
+      categoryButtons.innerHTML = "";
+      moveCategories.forEach(cat => {
+        const label = cat.charAt(0).toUpperCase() + cat.slice(1);
+        const btn = document.createElement("button");
+        btn.className = "pf-blue text-white text-2xl md:text-3xl font-bold py-6 rounded-2xl transition-all duration-100 ease-in-out transform hover:scale-[1.01]";
+        btn.textContent = label;
+        btn.onclick = () => startCategory(cat);
+        categoryButtons.appendChild(btn);
       });
     }
 
-    // Add category
-    addCategory.addEventListener('click', () => {
-      const name = newCategory.value.trim().toLowerCase();
-      if (name && !storedMoves[name]) {
-        storedMoves[name] = [];
-        newCategory.value = '';
-        saveData();
-        loadCategories();
-        categorySelect.value = name;
-        loadMoves();
+    renderCategoryButtons();
+
+    // =========================
+    // GAME LOGIC
+    // =========================
+
+    let currentCategory = null;
+    let currentFiltered = [];
+
+    function startCategory(cat) {
+      currentCategory = cat;
+      currentFiltered = moveItems.filter(m => m.category === cat);
+
+      if (currentFiltered.length === 0) {
+        alert("No moves in this theme yet! Add some using the Movement Editor.");
+        return;
       }
-    });
 
-    // Add move
-    addMove.addEventListener('click', () => {
-      const category = categorySelect.value;
-      const move = newMove.value.trim();
-      if (move) {
-        storedMoves[category].push(move);
-        newMove.value = '';
-        saveData();
-        loadMoves();
-      }
-    });
-
-    // Delete move
-    window.deleteMove = function(category, index) {
-      storedMoves[category].splice(index, 1);
-      saveData();
-      loadMoves();
-    };
-
-    // Save to localStorage
-    function saveData() {
-      localStorage.setItem('movementData', JSON.stringify(storedMoves));
+      categoryTitle.textContent = cat.charAt(0).toUpperCase() + cat.slice(1);
+      categoryScreen.classList.add("hidden");
+      gameScreen.classList.remove("hidden");
+      showRandomMove();
     }
 
-    // Load initial data
-    loadCategories();
-    categorySelect.addEventListener('change', loadMoves);
+    function showRandomMove() {
+      if (currentFiltered.length === 0) {
+        moveDisplay.textContent = "No moves in this theme yet! Add some using the Movement Editor.";
+        return;
+      }
+      const pick = currentFiltered[Math.floor(Math.random() * currentFiltered.length)];
+      moveDisplay.textContent = pick.text;
+    }
+
+    nextMoveBtn.onclick = showRandomMove;
+
+    backToThemes.onclick = () => {
+      gameScreen.classList.add("hidden");
+      categoryScreen.classList.remove("hidden");
+      moveDisplay.textContent = "Press “Next Move” to begin!";
+    };
+
+    // =========================
+    // EDITOR LOGIC
+    // =========================
+
+    function updateCategoryDropdown() {
+      inputCategory.innerHTML = "";
+      moveCategories.forEach(cat => {
+        const opt = document.createElement("option");
+        opt.value = cat;
+        opt.textContent = cat.charAt(0).toUpperCase() + cat.slice(1);
+        inputCategory.appendChild(opt);
+      });
+      const addNew = document.createElement("option");
+      addNew.value = "__NEW__";
+      addNew.textContent = "+ Add New Theme";
+      inputCategory.appendChild(addNew);
+    }
+
+    updateCategoryDropdown();
+
+    inputCategory.onchange = () => {
+      if (inputCategory.value === "__NEW__") {
+        newCategoryInput.classList.remove("hidden");
+      } else {
+        newCategoryInput.classList.add("hidden");
+      }
+    };
+
+    openEditor.onclick = () => {
+      modalBg.style.display = "flex";
+      updateSavedList();
+    };
+
+    closeEditor.onclick = () => {
+      modalBg.style.display = "none";
+      newCategoryInput.value = "";
+      newCategoryInput.classList.add("hidden");
+    };
+
+    function saveData() {
+      localStorage.setItem("mvItems", JSON.stringify(moveItems));
+      localStorage.setItem("mvCategories", JSON.stringify(moveCategories));
+    }
+
+    saveMoveBtn.onclick = () => {
+      const text = inputMove.value.trim();
+      let cat = inputCategory.value;
+
+      if (!text) {
+        alert("Please enter a movement instruction.");
+        return;
+      }
+
+      if (cat === "__NEW__") {
+        cat = newCategoryInput.value.trim().toLowerCase();
+        if (!cat) {
+          alert("Enter a theme name.");
+          return;
+        }
+        if (!moveCategories.includes(cat)) {
+          moveCategories.push(cat);
+        }
+        updateCategoryDropdown();
+        renderCategoryButtons();
+      }
+
+      moveItems.push({ text, category: cat });
+      saveData();
+
+      inputMove.value = "";
+      newCategoryInput.value = "";
+      newCategoryInput.classList.add("hidden");
+      inputCategory.value = cat;
+
+      updateSavedList();
+
+      if (currentCategory === cat) {
+        currentFiltered = moveItems.filter(m => m.category === cat);
+      }
+    };
+
+    function updateSavedList() {
+      savedList.innerHTML = "";
+      moveItems.forEach((m, i) => {
+        const li = document.createElement("li");
+        li.innerHTML = `
+          <div class="flex justify-between bg-gray-100 p-3 rounded-xl items-center">
+            <div class="flex-1">
+              <strong>${m.text}</strong>
+              <em class="text-gray-500">(${m.category})</em>
+            </div>
+            <button class="bg-red-500 text-white px-3 py-1 rounded-lg hover:bg-red-600 ml-4 whitespace-nowrap"
+                    onclick="deleteMove(${i})">Delete</button>
+          </div>
+        `;
+        savedList.appendChild(li);
+      });
+    }
+
+    function deleteMove(i) {
+      const removed = moveItems.splice(i, 1)[0];
+      saveData();
+      updateSavedList();
+
+      if (removed && removed.category === currentCategory) {
+        currentFiltered = moveItems.filter(m => m.category === currentCategory);
+      }
+    }
+
+    // expose delete function
+    window.deleteMove = deleteMove;
   </script>
+
 </body>
 </html>
