@@ -143,6 +143,10 @@
       }
     }, 200);
   }
+// Unlock audio on first tap for iPhones / Android
+document.body.addEventListener("touchstart", () => {
+  sound.play().then(() => sound.pause());
+}, { once: true });
 
   rollBtn.addEventListener("click", rollDice);
 
