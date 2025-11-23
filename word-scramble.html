@@ -1,102 +1,207 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Word Scramble — ProjectorFirst</title>
-  <script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
-
-  <!-- ✅ Memberstack Loader -->
-  <script data-memberstack-app="app_cmgnwpg8y00x10suih4pua785"
-          src="https://static.memberstack.com/scripts/v2/memberstack.js"
-          type="text/javascript"></script>
-
-  <!-- ✅ Protect this page -->
-  <script>
-    document.addEventListener("DOMContentLoaded", async () => {
-      try {
-        const member = await window.$memberstackDom.getCurrentMember();
-        if (!member.data) {
-          window.location.href = "/subscribe.html";
-        }
-      } catch {
-        window.location.href = "/subscribe.html";
-      }
-    });
-  </script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Word Scrambler — ProjectorFirst</title>
+  <script src="https://cdn.tailwindcss.com"></script>
 
   <style>
-    /* ✅ Ensures huge text always works in Tailwind CDN */
-    .text-giant { font-size: 10rem; line-height: 1; }
+    body {
+      background: #fff;
+      color: #111;
+      font-family: Arial, sans-serif;
+    }
+    .modal-bg {
+      background: rgba(0,0,0,0.55);
+      position: fixed;
+      inset: 0;
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 50;
+    }
+    .modal {
+      background: white;
+      color: black;
+      border-radius: 20px;
+      padding: 30px;
+      width: 90%;
+      max-width: 700px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+    }
+    .big-btn {
+      font-size: 40px;
+      padding: 25px 60px;
+      border-radius: 1rem;
+      font-weight: 800;
+      color: white;
+      transition: background-color .1s ease;
+    }
+    .pf-blue { background: #1e3a8a; }
+    .pf-blue:hover { background: #1d4ed8; }
   </style>
 </head>
 
-<body class="bg-white text-gray-900 min-h-screen">
+<body class="min-h-screen">
 
-  <div class="max-w-5xl mx-auto p-6 text-center">
-    <!-- Title -->
-    <h1 class="text-6xl font-extrabold mb-4 text-blue-900">Word Scramble</h1>
+  <!-- Header -->
+  <div class="max-w-6xl mx-auto flex justify-between items-center p-6 border-b border-gray-200">
+    <a href="apps.html" class="pf-blue text-white text-xl font-bold px-5 py-3 rounded-xl hover:pf-blue">← Back to Apps</a>
+    <button id="openEditor" class="bg-purple-700 text-white text-xl font-bold px-6 py-3 rounded-xl hover:bg-purple-600">
+      Word Editor 📝
+    </button>
+  </div>
 
-    <!-- Back Button -->
-    <div class="flex justify-center mb-6">
-      <a href="apps.html"
-         class="inline-flex items-center gap-2 px-6 py-3 bg-blue-900 text-white rounded-xl font-extrabold text-xl shadow hover:bg-blue-800">
-        ← Back to Apps
-      </a>
+  <!-- Category Screen -->
+  <div id="categoryScreen" class="text-center mt-10 px-6 max-w-6xl mx-auto">
+    <h1 class="text-4xl md:text-6xl font-extrabold text-blue-800 mb-10">Choose a Category</h1>
+    <div id="categoryButtons" class="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-4xl mx-auto"></div>
+  </div>
+
+  <!-- Game Screen -->
+  <div id="gameScreen" class="text-center mt-16 px-4 hidden max-w-6xl mx-auto">
+    <h1 class="text-4xl md:text-6xl font-extrabold text-blue-800 mb-10" id="categoryTitle">Category</h1>
+
+    <div id="scramble" class="text-7xl md:text-8xl font-black text-blue-900 tracking-widest my-10">Press “New Word”</div>
+    <div id="answer" class="text-5xl md:text-6xl font-black text-green-700 mt-8 hidden"></div>
+
+    <div class="flex justify-center gap-6 mt-10 flex-wrap">
+      <button id="newWordBtn" class="big-btn pf-blue hover:pf-blue">New Word</button>
+      <button id="revealBtn" class="big-btn bg-green-700 hover:bg-green-600">Reveal Answer</button>
+      <button id="backBtn" class="big-btn bg-gray-600 hover:bg-gray-500">⬅ Back</button>
     </div>
+  </div>
 
-    <!-- Controls -->
-    <div class="flex flex-col items-center gap-4 mb-10">
-      <div class="flex flex-wrap gap-4 justify-center">
-
-        <button id="newWordBtn"
-                class="bg-blue-600 hover:bg-blue-800 text-white text-2xl py-3 px-8 rounded-2xl shadow">
-          New Word
-        </button>
-
-        <button id="revealBtn"
-                class="bg-white border-4 border-blue-900 text-blue-900 text-2xl py-3 px-8 rounded-2xl shadow hover:bg-gray-100">
-          Reveal Answer
-        </button>
-
-        <div class="flex items-center gap-3">
-          <label class="text-xl font-bold text-blue-900">Theme:</label>
-
-          <select id="themeSelect"
-                  class="border-2 border-blue-600 rounded-xl px-3 py-2 text-xl font-semibold text-blue-900">
-            <option value="animals">🐶 Animals</option>
-            <option value="food">🍔 Food</option>
-            <option value="holidays">🎄 Holidays</option>
-            <option value="easy">🙂 Easy Words</option>
-          </select>
-        </div>
-
+  <!-- Editor Modal -->
+  <div id="modalBg" class="modal-bg">
+    <div class="modal">
+      <div class="flex justify-between items-center mb-6">
+        <h2 class="text-3xl font-bold text-blue-800">Word Editor</h2>
+        <button id="closeEditor" class="px-4 py-1 bg-gray-300 rounded-xl font-bold hover:bg-gray-400">Close</button>
       </div>
-    </div>
 
-    <!-- ✅ Scrambled Word (GIANT) -->
-    <div id="scramble"
-         class="text-giant font-black text-blue-900 tracking-widest my-10">
-      Loading...
-    </div>
+      <label class="font-bold text-gray-700">Word</label>
+      <input id="inputWord" class="w-full border p-3 rounded-xl mb-4 text-lg" placeholder="Enter a word…">
 
-    <!-- ✅ Answer -->
-    <div id="answer"
-         class="text-7xl font-black text-green-700 mt-14 hidden tracking-widest">
+      <label class="font-bold text-gray-700">Category</label>
+      <select id="inputCategory" class="w-full border p-3 rounded-xl mb-4 text-lg"></select>
+
+      <input id="newCategoryInput"
+             class="w-full border p-3 rounded-xl mb-4 text-lg hidden"
+             placeholder="Enter new category…">
+
+      <button id="saveBtn" class="bg-green-600 text-white font-bold px-6 py-3 rounded-xl hover:bg-green-500">Save Word</button>
+
+      <h3 class="text-xl font-bold mt-8 mb-2 text-blue-700">Your Saved Words</h3>
+      <ul id="savedList" class="space-y-2 text-lg max-h-[250px] overflow-y-auto"></ul>
     </div>
   </div>
 
   <script>
-    // ✅ Word banks
-    const wordBanks = {
-      animals: ["DOG","CAT","HORSE","BIRD","FISH","BEAR","LION","TIGER","MOUSE","SHEEP","COW","PIG"],
-      food: ["PIZZA","BREAD","APPLE","CAKE","SOUP","RICE","GRAPE","FRIES","BURGER","COOKIE","MILK","CORN"],
-      holidays: ["SANTA","TREE","TURKEY","GHOST","CANDY","RABBIT","FIREWORK","GIFT","LIGHTS","SNOW"],
-      easy: ["SUN","MOON","CAR","BED","MAP","BOOK","CHAIR","BALL","SHOE","HAND","DOOR","CAKE"]
+    // Load existing data or defaults
+    let categories = JSON.parse(localStorage.getItem("scrambleCategories") || "[]");
+    let words = JSON.parse(localStorage.getItem("scrambleWords") || "[]");
+
+    if (categories.length === 0) {
+      categories = ["Animals", "Food", "Holidays", "Easy"];
+      localStorage.setItem("scrambleCategories", JSON.stringify(categories));
+    }
+
+    const modalBg = document.getElementById("modalBg");
+    const categoryButtons = document.getElementById("categoryButtons");
+    const inputCategory = document.getElementById("inputCategory");
+    const newCategoryInput = document.getElementById("newCategoryInput");
+
+    function renderCategoryButtons() {
+      categoryButtons.innerHTML = "";
+      categories.forEach(cat => {
+        const btn = document.createElement("button");
+        btn.className = "pf-blue hover:pf-blue text-white text-2xl md:text-3xl font-bold py-6 rounded-2xl transition-all transform hover:scale-[1.01]";
+        btn.textContent = cat;
+        btn.onclick = () => startCategory(cat);
+        categoryButtons.appendChild(btn);
+      });
+    }
+
+    function updateCategoryDropdown() {
+      inputCategory.innerHTML = "";
+      categories.forEach(cat => {
+        const opt = document.createElement("option");
+        opt.value = cat;
+        opt.textContent = cat;
+        inputCategory.appendChild(opt);
+      });
+
+      const addNew = document.createElement("option");
+      addNew.value = "__NEW__";
+      addNew.textContent = "+ Add New Category";
+      inputCategory.appendChild(addNew);
+    }
+
+    inputCategory.onchange = () => {
+      if (inputCategory.value === "__NEW__") newCategoryInput.classList.remove("hidden");
+      else newCategoryInput.classList.add("hidden");
     };
 
-    let currentTheme = "animals";
-    let currentWord = "";
+    document.getElementById("openEditor").onclick = () => {
+      modalBg.style.display = "flex";
+      updateSavedList();
+    };
+
+    document.getElementById("closeEditor").onclick = () => {
+      modalBg.style.display = "none";
+      newCategoryInput.value = "";
+      newCategoryInput.classList.add("hidden");
+    };
+
+    document.getElementById("saveBtn").onclick = () => {
+      const w = document.getElementById("inputWord").value.trim().toUpperCase();
+      let cat = inputCategory.value;
+
+      if (!w) return alert("Please enter a word.");
+      if (cat === "__NEW__") {
+        cat = newCategoryInput.value.trim();
+        if (!cat) return alert("Enter a category name.");
+        categories.push(cat);
+        localStorage.setItem("scrambleCategories", JSON.stringify(categories));
+        renderCategoryButtons();
+        updateCategoryDropdown();
+      }
+
+      words.push({ word: w, category: cat });
+      localStorage.setItem("scrambleWords", JSON.stringify(words));
+      document.getElementById("inputWord").value = "";
+      newCategoryInput.value = "";
+      newCategoryInput.classList.add("hidden");
+      inputCategory.value = cat;
+      updateSavedList();
+    };
+
+    function updateSavedList() {
+      const list = document.getElementById("savedList");
+      list.innerHTML = "";
+      words.forEach((w, i) => {
+        const li = document.createElement("li");
+        li.innerHTML = `
+          <div class="flex justify-between bg-gray-100 p-3 rounded-xl items-center">
+            <div class="flex-1"><strong>${w.word}</strong> <em class="text-gray-500">(${w.category})</em></div>
+            <button onclick="deleteWord(${i})" class="bg-red-500 text-white px-3 py-1 rounded-lg hover:bg-red-600 ml-4">Delete</button>
+          </div>`;
+        list.appendChild(li);
+      });
+    }
+
+    function deleteWord(i) {
+      words.splice(i, 1);
+      localStorage.setItem("scrambleWords", JSON.stringify(words));
+      updateSavedList();
+    }
+    window.deleteWord = deleteWord;
+
+    // Game Logic
+    const scrambleEl = document.getElementById("scramble");
+    const answerEl = document.getElementById("answer");
 
     function shuffleWord(word) {
       const arr = word.split("");
@@ -107,28 +212,45 @@
       return arr.join("");
     }
 
-    function newWord() {
-      const list = wordBanks[currentTheme];
-      const rand = list[Math.floor(Math.random() * list.length)];
-      currentWord = rand;
+    let filtered = [];
+    let currentWord = "";
 
-      document.getElementById("scramble").textContent = shuffleWord(rand);
-      document.getElementById("answer").classList.add("hidden");
-      document.getElementById("answer").textContent = rand;
+    function startCategory(cat) {
+      filtered = words.filter(w => w.category === cat);
+      document.getElementById("categoryScreen").classList.add("hidden");
+      document.getElementById("gameScreen").classList.remove("hidden");
+      document.getElementById("categoryTitle").textContent = cat;
+      newWord();
+    }
+
+    function newWord() {
+      if (filtered.length === 0) {
+        scrambleEl.textContent = "No words yet in this category!";
+        answerEl.classList.add("hidden");
+        return;
+      }
+      const randomWord = filtered[Math.floor(Math.random() * filtered.length)].word;
+      currentWord = randomWord;
+      scrambleEl.textContent = shuffleWord(randomWord);
+      answerEl.textContent = randomWord;
+      answerEl.classList.add("hidden");
     }
 
     function revealAnswer() {
-      document.getElementById("answer").classList.remove("hidden");
+      answerEl.classList.remove("hidden");
     }
 
-    document.getElementById("newWordBtn").addEventListener("click", newWord);
-    document.getElementById("revealBtn").addEventListener("click", revealAnswer);
-    document.getElementById("themeSelect").addEventListener("change", e => {
-      currentTheme = e.target.value;
-      newWord();
-    });
+    function backToCategories() {
+      document.getElementById("gameScreen").classList.add("hidden");
+      document.getElementById("categoryScreen").classList.remove("hidden");
+    }
 
-    newWord();
+    document.getElementById("newWordBtn").onclick = newWord;
+    document.getElementById("revealBtn").onclick = revealAnswer;
+    document.getElementById("backBtn").onclick = backToCategories;
+
+    renderCategoryButtons();
+    updateCategoryDropdown();
   </script>
 
 </body>
