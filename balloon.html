@@ -3,56 +3,86 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Pop the Balloon — Word Guess | ProjectorFirst</title>
+  <title>Pop the Balloon — ProjectorFirst</title>
   <script src="https://cdn.tailwindcss.com"></script>
 
   <style>
-    .pf-blue-bg { background: #1e3a8a; } /* Your deep blue */
-    .pf-blue-bg:hover { background: #1d4ed8; } /* Lighter blue on hover */
+    body {
+      background: #fff;
+      color: #111;
+      font-family: Arial, sans-serif;
+    }
+    .pf-blue { background: #1e3a8a; }
+    .pf-blue:hover { background: #1d4ed8; }
     .pf-blue-text { color: #1e3a8a; }
 
-    /* Custom style for the large word blocks */
+    .modal-bg {
+      background: rgba(0,0,0,0.55);
+      position: fixed;
+      inset: 0;
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 50;
+    }
+    .modal {
+      background: white;
+      color: black;
+      border-radius: 20px;
+      padding: 30px;
+      width: 90%;
+      max-width: 700px;
+      max-height: 85vh;
+      overflow-y: auto;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+    }
+
+    .big-btn {
+      font-size: 32px;
+      padding: 20px 40px;
+      border-radius: 1rem;
+      font-weight: 800;
+      color: white;
+      transition: background-color .1s ease, transform .1s ease;
+    }
+    .big-btn:hover { transform: scale(1.03); }
+
+    /* Letter boxes for the word */
     .word-box-base {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        height: 100px;
-        width: 80px;
-        border-radius: 1rem; /* Consistent sharp corners */
-        border: 4px solid;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 110px;
+      width: 90px;
+      border-radius: 1rem;
+      border: 4px solid;
     }
-
-    /* Style for the current/hidden letters */
     .word-box-hidden {
-        border-color: #1e3a8a; /* Dark blue border */
-        background-color: #f3f4f6; /* Light gray background for contrast */
-        color: #1e3a8a;
+      border-color: #1e3a8a;
+      background-color: #f3f4f6;
+      color: #1e3a8a;
     }
-
-    /* Style for the revealed letters */
     .word-box-revealed {
-        border-color: #10b981; /* Green border */
-        background-color: #fff;
-        color: #1e3a8a;
-        font-size: 3.75rem; /* text-6xl for big projection */
-        font-weight: 900; /* font-extrabold */
+      border-color: #10b981;
+      background-color: #fff;
+      color: #1e3a8a;
+      font-size: 3.5rem;
+      font-weight: 900;
     }
-
-    /* Style for the used letters display */
     .used-letter {
-        padding: 0 0.5rem;
-        color: #1e3a8a;
-        font-size: 4.5rem; 
+      padding: 0 0.5rem;
+      font-size: 3.5rem;
     }
   </style>
 
+  <!-- Memberstack Loader -->
   <script data-memberstack-app="app_cmgnwpg8y00x10suih4pua785"
           src="https://static.memberstack.com/scripts/v2/memberstack.js"
           type="text/javascript"></script>
 
+  <!-- Protect this page -->
   <script>
     document.addEventListener("DOMContentLoaded", async () => {
-      // Safest wait for Memberstack to ensure it's loaded
       const waitForMemberstack = () =>
         new Promise((resolve) => {
           const check = () => {
@@ -66,15 +96,15 @@
 
       try {
         const { data: member } = await memberstack.getCurrentMember();
-        // Redirect if not logged in
         if (!member) {
           window.location.replace("index.html");
           return;
         }
 
-        // Check for active plan (or trial plan if applicable)
         const hasAccess = Array.isArray(member.planConnections) &&
-          member.planConnections.some(plan => plan.status === "ACTIVE" || plan.planId === "pln_trial30-gpte0tfl");
+          member.planConnections.some(
+            plan => plan.status === "ACTIVE" || plan.planId === "pln_trial30-gpte0tfl"
+          );
 
         if (!hasAccess) {
           window.location.replace("checkout.html");
@@ -89,168 +119,307 @@
 </head>
 
 <body class="bg-white text-gray-900 min-h-screen">
-  
-  <div class="max-w-6xl mx-auto p-6">
-    <h1 class="text-4xl md:text-5xl font-extrabold text-blue-800 text-center mb-6">Pop the Balloon 🎈</h1>
 
-    <div class="flex justify-center mb-8">
-      <a href="apps.html"
-           class="pf-blue-bg inline-flex items-center gap-2 px-6 py-3 text-white rounded-xl font-extrabold text-xl shadow-lg hover:pf-blue-bg focus:outline-none focus:ring-4 focus:ring-blue-300 transition duration-150">
-        ← Back to Apps
-      </a>
+  <!-- Header: Back + Editor -->
+  <div class="max-w-6xl mx-auto flex justify-between items-center p-6 border-b border-gray-200">
+    <a href="apps.html"
+       class="pf-blue text-white text-xl font-bold px-5 py-3 rounded-xl hover:pf-blue">
+      ← Back to Apps
+    </a>
+
+    <button id="openEditor"
+            class="bg-purple-700 text-white text-xl font-bold px-6 py-3 rounded-xl hover:bg-purple-600">
+      Word Editor 📝
+    </button>
+  </div>
+
+  <!-- Category Screen -->
+  <div id="categoryScreen" class="text-center mt-10 px-6 max-w-6xl mx-auto">
+    <h1 class="text-4xl md:text-6xl font-extrabold text-blue-800 mb-10">
+      Pop the Balloon 🎈
+    </h1>
+    <p class="text-xl text-gray-700 mb-6">
+      Choose a category. Residents guess letters; wrong guesses pop balloons!
+    </p>
+
+    <div id="categoryButtons"
+         class="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-4xl mx-auto">
+    </div>
+  </div>
+
+  <!-- Game Screen -->
+  <div id="gameScreen" class="text-center mt-10 px-4 hidden max-w-6xl mx-auto">
+    <h2 id="categoryTitle" class="text-3xl md:text-5xl font-extrabold text-blue-800 mb-6">
+      Category
+    </h2>
+
+    <!-- Balloons row -->
+    <div id="balloons"
+         class="flex items-center justify-center gap-4 mb-10 h-24"
+         aria-label="Remaining balloons">
     </div>
 
-    <div class="grid md:grid-cols-2 gap-6 md:gap-8 items-end mb-10 p-4 border-b-2 border-gray-200 max-w-2xl mx-auto">
-      <div>
-        <label for="theme" class="block text-xl font-bold pf-blue-text mb-2">Choose a Theme</label>
-        <select id="theme"
-                class="w-full text-xl p-4 border-4 border-blue-900 rounded-xl bg-gray-50 appearance-none focus:outline-none focus:ring-4 focus:ring-blue-300">
-          <option value="animals">Animals</option>
-          <option value="countries">Countries</option>
-          <option value="foods">Foods</option>
-        </select>
-      </div>
+    <!-- Word display -->
+    <div id="word"
+         class="flex flex-wrap items-center justify-center gap-3 md:gap-5 mb-10 min-h-28"
+         aria-label="Hidden word">
+    </div>
 
-      <div>
-        <label class="block text-xl font-bold pf-blue-text mb-2">Start a New Round</label>
-        <button id="newBtn"
-                class="w-full pf-blue-bg hover:pf-blue-bg text-white text-xl py-4 px-6 rounded-xl font-extrabold transition duration-150 shadow-md">
-          New Word
+    <!-- Status text -->
+    <div id="status"
+         class="text-center text-3xl font-bold pf-blue-text mb-10 h-10"
+         aria-live="polite">
+    </div>
+
+    <!-- Used letters -->
+    <div class="text-center text-xl font-bold text-gray-700 mb-4">
+      Used Letters
+    </div>
+    <div id="usedLetters"
+         class="flex flex-wrap justify-center gap-x-6 gap-y-3 font-extrabold border-t-2 border-gray-200 pt-6 mb-10">
+    </div>
+
+    <div class="flex justify-center gap-4 flex-wrap mb-10">
+      <button id="newWordBtn" class="big-btn pf-blue hover:pf-blue">
+        New Word
+      </button>
+      <button id="revealBtn" class="big-btn bg-green-700 hover:bg-green-600">
+        Reveal Answer
+      </button>
+      <button id="backBtn" class="big-btn bg-gray-600 hover:bg-gray-500">
+        ⬅ Back
+      </button>
+    </div>
+  </div>
+
+  <!-- Editor Modal -->
+  <div id="modalBg" class="modal-bg">
+    <div class="modal">
+      <div class="flex justify-between items-center mb-6">
+        <h2 class="text-3xl font-bold text-blue-800">Word Editor</h2>
+        <button id="closeEditor"
+                class="px-4 py-1 bg-gray-300 rounded-xl font-bold hover:bg-gray-400">
+          Close
         </button>
       </div>
-      </div>
 
-    <div id="balloons"
-         class="flex items-center justify-center gap-4 mb-16 h-20"
-         aria-label="Remaining balloons"></div>
+      <label class="font-bold text-gray-700">Word (letters only)</label>
+      <input id="inputWord"
+             class="w-full border p-3 rounded-xl mb-4 text-lg"
+             placeholder="Enter a word… (e.g., ELEPHANT)">
 
-    <div id="word"
-         class="flex flex-wrap items-center justify-center gap-3 md:gap-5 mb-16 min-h-28"
-         aria-label="Hidden word"></div>
+      <label class="font-bold text-gray-700">Category</label>
+      <select id="inputCategory"
+              class="w-full border p-3 rounded-xl mb-4 text-lg">
+      </select>
 
-    <div id="status"
-         class="text-center text-3xl font-bold pf-blue-text mb-16 h-10"
-         aria-live="polite"></div>
+      <input id="newCategoryInput"
+             class="w-full border p-3 rounded-xl mb-4 text-lg hidden"
+             placeholder="Enter new category… (e.g., Animals - Hard)">
 
-    <div class="text-center text-xl font-bold text-gray-700 mb-4">Used Letters</div>
-    <div id="usedLetters"
-         class="flex flex-wrap justify-center gap-x-6 gap-y-3 font-extrabold border-t-2 border-gray-200 pt-6">
+      <button id="saveBtn"
+              class="bg-green-600 text-white font-bold px-6 py-3 rounded-xl hover:bg-green-500">
+        Save Word
+      </button>
+
+      <h3 class="text-xl font-bold mt-8 mb-2 text-blue-700">Your Saved Words</h3>
+      <ul id="savedList" class="space-y-2 text-lg max-h-[250px] overflow-y-auto"></ul>
     </div>
   </div>
 
   <script>
-    // WORD BANKS (Kept unchanged)
-    const BANK = {
-      animals: ["ELEPHANT","KANGAROO","ALLIGATOR","PORCUPINE","CHAMELEON","ARMADILLO","RHINOCEROS","HIPPOPOTAMUS","FLAMINGO","WOLVERINE"],
-      countries: ["ARGENTINA","VENEZUELA","AUSTRALIA","NETHERLANDS","PHILIPPINES","SWITZERLAND","ZIMBABWE","KAZAKHSTAN","SINGAPORE","GUATEMALA"],
-      foods: ["SPAGHETTI","PINEAPPLE","CHOCOLATE","CROISSANT","BLUEBERRY","WATERMELON","LASAGNA","CANNELLONI","MARSHMALLOW","ARTICHOKE"],
-    };
+    // =========================
+    // DATA: CATEGORIES + WORDS
+    // =========================
+
+    let categories = JSON.parse(localStorage.getItem("balloonCategories") || "[]");
+    let words = JSON.parse(localStorage.getItem("balloonWords") || "[]");
+
+    if (categories.length === 0) {
+      categories = ["Animals", "Countries", "Foods"];
+      localStorage.setItem("balloonCategories", JSON.stringify(categories));
+    }
+
+    if (words.length === 0) {
+      const DEFAULT_BANK = {
+        Animals: ["ELEPHANT","KANGAROO","ALLIGATOR","PORCUPINE","CHAMELEON","ARMADILLO","RHINOCEROS","HIPPOPOTAMUS","FLAMINGO","WOLVERINE"],
+        Countries: ["ARGENTINA","VENEZUELA","AUSTRALIA","NETHERLANDS","PHILIPPINES","SWITZERLAND","ZIMBABWE","KAZAKHSTAN","SINGAPORE","GUATEMALA"],
+        Foods: ["SPAGHETTI","PINEAPPLE","CHOCOLATE","CROISSANT","BLUEBERRY","WATERMELON","LASAGNA","CANNELLONI","MARSHMALLOW","ARTICHOKE"],
+      };
+      words = [];
+      Object.keys(DEFAULT_BANK).forEach(cat => {
+        DEFAULT_BANK[cat].forEach(w => {
+          words.push({ word: w.toUpperCase(), category: cat });
+        });
+      });
+      localStorage.setItem("balloonWords", JSON.stringify(words));
+    }
+
+    // =========================
+    // DOM ELEMENTS
+    // =========================
+
+    const categoryScreen = document.getElementById("categoryScreen");
+    const gameScreen = document.getElementById("gameScreen");
+    const categoryButtons = document.getElementById("categoryButtons");
+    const categoryTitle = document.getElementById("categoryTitle");
+    const balloonsEl = document.getElementById("balloons");
+    const wordEl = document.getElementById("word");
+    const statusEl = document.getElementById("status");
+    const usedLettersEl = document.getElementById("usedLetters");
+
+    const newWordBtn = document.getElementById("newWordBtn");
+    const revealBtn = document.getElementById("revealBtn");
+    const backBtn = document.getElementById("backBtn");
+
+    const modalBg = document.getElementById("modalBg");
+    const openEditor = document.getElementById("openEditor");
+    const closeEditor = document.getElementById("closeEditor");
+    const inputWord = document.getElementById("inputWord");
+    const inputCategory = document.getElementById("inputCategory");
+    const newCategoryInput = document.getElementById("newCategoryInput");
+    const saveBtn = document.getElementById("saveBtn");
+    const savedList = document.getElementById("savedList");
+
+    // =========================
+    // GAME STATE
+    // =========================
 
     const MAX_MISSES = 6;
-    let theme = "animals";
+    let currentCategory = null;
+    let filteredWords = [];
     let word = "";
     let revealed = [];
     let used = new Set();
     let misses = 0;
     let finished = false;
 
-    function pickWord() {
-      const list = BANK[theme];
-      return list[Math.floor(Math.random() * list.length)].toUpperCase();
+    // =========================
+    // RENDER HELPERS
+    // =========================
+
+    function setStatus(msg, colorClass = "pf-blue-text") {
+      statusEl.className = `text-center text-3xl font-bold ${colorClass} mb-10 h-10`;
+      statusEl.textContent = msg;
     }
 
-    function resetRound() {
-      word = pickWord();
-      revealed = Array.from(word, ch => (ch === " " || ch === "-" ? true : false));
-      used.clear();
-      misses = 0;
-      finished = false;
-      renderAll();
-      setStatus("Guess a letter to begin!");
-    }
-
-    function setStatus(msg, color = "pf-blue-text") {
-      const el = document.getElementById("status");
-      el.className = `text-center text-3xl font-bold ${color} mb-16 h-10`;
-      el.textContent = msg;
+    function renderCategories() {
+      categoryButtons.innerHTML = "";
+      categories.forEach(cat => {
+        const btn = document.createElement("button");
+        btn.className =
+          "pf-blue hover:pf-blue text-white text-2xl md:text-3xl font-bold py-6 rounded-2xl transition-all transform hover:scale-[1.01]";
+        btn.textContent = cat;
+        btn.onclick = () => startCategory(cat);
+        categoryButtons.appendChild(btn);
+      });
     }
 
     function renderBalloons() {
-      const wrap = document.getElementById("balloons");
-      wrap.innerHTML = "";
+      balloonsEl.innerHTML = "";
       const remaining = MAX_MISSES - misses;
       for (let i = 0; i < remaining; i++) {
-        wrap.innerHTML += `<span class="text-7xl transition-opacity duration-300">🎈</span>`;
+        balloonsEl.innerHTML += `<span class="text-7xl md:text-8xl transition-opacity duration-300">🎈</span>`;
       }
       for (let i = 0; i < misses; i++) {
-        wrap.innerHTML += `<span class="text-7xl transition-opacity duration-300">💥</span>`;
+        balloonsEl.innerHTML += `<span class="text-7xl md:text-8xl transition-opacity duration-300">💥</span>`;
       }
     }
 
     function renderWord() {
-      const wrap = document.getElementById("word");
-      wrap.innerHTML = "";
+      wordEl.innerHTML = "";
       Array.from(word).forEach((ch, i) => {
         const box = document.createElement("div");
         if (ch === " ") {
-          box.className = "w-10 h-20"; // Space separator
-          box.textContent = "";
+          box.className = "w-10 h-20";
         } else if (ch === "-") {
-          box.className = "text-5xl font-bold text-gray-700 pt-4"; // Hyphen
+          box.className = "text-5xl font-bold text-gray-700 pt-4";
           box.textContent = "-";
         } else {
           const shown = revealed[i];
-          box.className = "word-box-base transition duration-150 " +
-                            (shown ? "word-box-revealed" : "word-box-hidden");
-          
-          const textSpan = document.createElement("span");
-          // Increase size of the hidden placeholder for projection
-          textSpan.className = `leading-none ${shown ? "" : "text-5xl"}`; 
-          textSpan.textContent = shown ? ch : "_";
-          
-          box.appendChild(textSpan);
+          box.className =
+            "word-box-base transition duration-150 " +
+            (shown ? "word-box-revealed" : "word-box-hidden");
+
+          const span = document.createElement("span");
+          span.className = shown ? "leading-none" : "leading-none text-5xl";
+          span.textContent = shown ? ch : "_";
+          box.appendChild(span);
         }
-        wrap.appendChild(box);
+        wordEl.appendChild(box);
       });
     }
 
     function renderUsedLetters() {
-      const wrap = document.getElementById("usedLetters");
-      wrap.innerHTML = "";
-      // Sort letters for clean display
-      [...used].sort().forEach(letter => { 
-        // Use a less pronounced color for used letters
+      usedLettersEl.innerHTML = "";
+      [...used].sort().forEach(letter => {
         const isCorrect = word.includes(letter);
-        const colorClass = isCorrect ? 'text-green-600' : 'text-red-600';
-        wrap.innerHTML += `<span class="used-letter ${colorClass}">${letter}</span>`;
+        const colorClass = isCorrect ? "text-green-600" : "text-red-600";
+        usedLettersEl.innerHTML += `<span class="used-letter ${colorClass}">${letter}</span>`;
       });
+    }
+
+    function renderAll() {
+      renderBalloons();
+      renderWord();
+      renderUsedLetters();
+    }
+
+    // =========================
+    // GAME LOGIC
+    // =========================
+
+    function startCategory(cat) {
+      currentCategory = cat;
+      filteredWords = words.filter(w => w.category === cat);
+      categoryTitle.textContent = cat;
+
+      if (filteredWords.length === 0) {
+        alert("No words in this category yet. Add some using the Word Editor.");
+        return;
+      }
+
+      categoryScreen.classList.add("hidden");
+      gameScreen.classList.remove("hidden");
+      newRound();
+    }
+
+    function pickRandomWord() {
+      const rand = filteredWords[Math.floor(Math.random() * filteredWords.length)];
+      return rand.word.toUpperCase();
+    }
+
+    function newRound() {
+      word = pickRandomWord();
+      revealed = Array.from(word, ch => (ch === " " || ch === "-" ? true : false));
+      used.clear();
+      misses = 0;
+      finished = false;
+      setStatus("Guess a letter to begin!");
+      renderAll();
     }
 
     function handleGuess(letter) {
       if (finished || used.has(letter)) return;
-      
       let correct = false;
-      const originalMisses = misses;
 
       if (word.includes(letter)) {
         for (let i = 0; i < word.length; i++) {
-          if (word[i] === letter) {
-            revealed[i] = true;
-            correct = true;
-          }
+          if (word[i] === letter) revealed[i] = true;
         }
+        correct = true;
       } else {
         misses++;
       }
       used.add(letter);
 
       if (correct) {
-        setStatus(`✅ Nice! The letter ${letter} is in the word.`, "text-green-700");
+        setStatus(`✅ ${letter} is in the word.`, "text-green-700");
       } else {
         setStatus(`💥 Not there. Balloon popped! (${MAX_MISSES - misses} left)`, "text-red-700");
       }
 
-      if (revealed.every((v) => v)) {
+      if (revealed.every(v => v)) {
         finished = true;
         setStatus("🎉 You saved the balloons! Word solved!", "text-green-700");
       } else if (misses >= MAX_MISSES) {
@@ -261,29 +430,144 @@
       renderAll();
     }
 
-    function renderAll() {
-      renderBalloons();
-      renderWord();
-      renderUsedLetters();
+    function revealAnswer() {
+      if (!word) return;
+      revealed = Array.from(word, () => true);
+      finished = true;
+      setStatus(`Answer: ${word}`, "text-green-700");
+      renderAll();
     }
 
-    // Hook up
-    document.getElementById("theme").addEventListener("change", e => {
-      theme = e.target.value;
-      resetRound();
-    });
-    document.getElementById("newBtn").addEventListener("click", resetRound);
+    function backToCategories() {
+      gameScreen.classList.add("hidden");
+      categoryScreen.classList.remove("hidden");
+      setStatus("");
+    }
 
-    // Start
-    resetRound();
-
-    // Key listener for group play (Kept unchanged)
+    // Keyboard guesses
     document.addEventListener("keydown", e => {
       const letter = e.key.toUpperCase();
       if (letter.length === 1 && letter >= "A" && letter <= "Z") {
         handleGuess(letter);
       }
     });
+
+    newWordBtn.onclick = newRound;
+    revealBtn.onclick = revealAnswer;
+    backBtn.onclick = backToCategories;
+
+    // =========================
+    // EDITOR LOGIC
+    // =========================
+
+    function updateCategoryDropdown() {
+      inputCategory.innerHTML = "";
+      categories.forEach(cat => {
+        const opt = document.createElement("option");
+        opt.value = cat;
+        opt.textContent = cat;
+        inputCategory.appendChild(opt);
+      });
+      const addNew = document.createElement("option");
+      addNew.value = "__NEW__";
+      addNew.textContent = "+ Add New Category";
+      inputCategory.appendChild(addNew);
+    }
+
+    inputCategory.onchange = () => {
+      if (inputCategory.value === "__NEW__") {
+        newCategoryInput.classList.remove("hidden");
+      } else {
+        newCategoryInput.classList.add("hidden");
+      }
+    };
+
+    function updateSavedList() {
+      savedList.innerHTML = "";
+      words.forEach((w, i) => {
+        const li = document.createElement("li");
+        li.innerHTML = `
+          <div class="flex justify-between bg-gray-100 p-3 rounded-xl items-center">
+            <div class="flex-1">
+              <strong>${w.word}</strong>
+              <em class="text-gray-500">(${w.category})</em>
+            </div>
+            <button onclick="deleteWord(${i})"
+                    class="bg-red-500 text-white px-3 py-1 rounded-lg hover:bg-red-600 ml-4 whitespace-nowrap">
+              Delete
+            </button>
+          </div>`;
+        savedList.appendChild(li);
+      });
+    }
+
+    function saveWordsToStorage() {
+      localStorage.setItem("balloonWords", JSON.stringify(words));
+    }
+
+    function saveCategoriesToStorage() {
+      localStorage.setItem("balloonCategories", JSON.stringify(categories));
+    }
+
+    function deleteWord(index) {
+      words.splice(index, 1);
+      saveWordsToStorage();
+      updateSavedList();
+    }
+    window.deleteWord = deleteWord;
+
+    openEditor.onclick = () => {
+      modalBg.style.display = "flex";
+      updateCategoryDropdown();
+      updateSavedList();
+    };
+
+    closeEditor.onclick = () => {
+      modalBg.style.display = "none";
+      inputWord.value = "";
+      newCategoryInput.value = "";
+      newCategoryInput.classList.add("hidden");
+    };
+
+    saveBtn.onclick = () => {
+      let w = inputWord.value.trim();
+      let cat = inputCategory.value;
+
+      if (!w) {
+        alert("Please enter a word.");
+        return;
+      }
+      w = w.toUpperCase().replace(/[^A-Z\- ]/g, ""); // keep letters, space, dash
+
+      if (!w) {
+        alert("Word must contain letters.");
+        return;
+      }
+
+      if (cat === "__NEW__") {
+        cat = newCategoryInput.value.trim();
+        if (!cat) {
+          alert("Enter a category name.");
+          return;
+        }
+        categories.push(cat);
+        saveCategoriesToStorage();
+        renderCategories();
+      }
+
+      words.push({ word: w, category: cat });
+      saveWordsToStorage();
+      inputWord.value = "";
+      newCategoryInput.value = "";
+      newCategoryInput.classList.add("hidden");
+      inputCategory.value = cat;
+      updateCategoryDropdown();
+      updateSavedList();
+    };
+
+    // Init
+    renderCategories();
+    updateCategoryDropdown();
   </script>
 </body>
 </html>
