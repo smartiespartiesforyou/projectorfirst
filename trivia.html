@@ -302,18 +302,18 @@
     };
 
     function checkAnswer(choice) {
-      const correct = current.answer === choice;
-      document.getElementById("answerDisplay").textContent =
-        correct ? "✅ Correct!" : `❌ Answer: ${current.answer}`;
-      document.getElementById("answerDisplay").classList.remove("hidden");
-      document.getElementById("trueBtn").classList.add("hidden");
-      document.getElementById("falseBtn").classList.add("hidden      document.getElementById("trueBtn").classList.add("hidden");
-      document.getElementById("falseBtn").classList.add("hidden");
-    }
+    function checkAnswer(choice) {
+  const correct = current.answer === choice;
+  document.getElementById("answerDisplay").textContent =
+    correct ? "✅ Correct!" : `❌ Answer: ${current.answer}`;
+  document.getElementById("answerDisplay").classList.remove("hidden");
+  document.getElementById("trueBtn").classList.add("hidden");
+  document.getElementById("falseBtn").classList.add("hidden");
+}
 
-    document.getElementById("trueBtn").onclick = () => checkAnswer("TRUE");
-    document.getElementById("falseBtn").onclick = () => checkAnswer("FALSE");
-  </script>
+document.getElementById("trueBtn").onclick = () => checkAnswer("TRUE");
+document.getElementById("falseBtn").onclick = () => checkAnswer("FALSE");
+
 
 </body>
 </html>
