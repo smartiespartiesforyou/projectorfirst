@@ -7,10 +7,9 @@
   <script src="https://cdn.tailwindcss.com"></script>
 
   <style>
-    /* 🎨 PROJECTORFIRST STYLE UPDATE: White Background, Dark Text */
     body {
-      background: #fff; /* White background */
-      color: #111; /* Dark text */
+      background: #fff;
+      color: #111;
       font-family: Arial, sans-serif;
     }
     .modal-bg {
@@ -29,31 +28,24 @@
       padding: 30px;
       width: 90%;
       max-width: 700px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.3); /* Add subtle shadow */
+      box-shadow: 0 10px 25px rgba(0,0,0,0.3);
     }
-    /* 🎨 PROJECTORFIRST STYLE UPDATE: Use 1rem border-radius from the site style */
     .big-btn {
       font-size: 40px;
       padding: 25px 60px;
-      border-radius: 1rem; /* Consistent large border-radius */
+      border-radius: 1rem;
       font-weight: 800;
-      color: white; /* Ensure text is white */
+      color: white;
       transition: background-color .1s ease;
     }
-    
-    /* Utility class for the main ProjectorFirst blue accent color */
-    .pf-blue { background: #1e3a8a; } 
+    .pf-blue { background: #1e3a8a; }
     .pf-blue:hover { background: #1d4ed8; }
   </style>
 </head>
 
 <body class="min-h-screen">
-
   <div class="max-w-6xl mx-auto flex justify-between items-center p-6 border-b border-gray-200">
-    <a href="apps.html" class="pf-blue text-white text-xl font-bold px-5 py-3 rounded-xl hover:pf-blue">
-      ← Back to Apps
-    </a>
-
+    <a href="apps.html" class="pf-blue text-white text-xl font-bold px-5 py-3 rounded-xl">← Back to Apps</a>
     <button id="openEditor" class="bg-purple-700 text-white text-xl font-bold px-6 py-3 rounded-xl hover:bg-purple-600">
       Question Editor 📝
     </button>
@@ -61,31 +53,21 @@
 
   <div id="categoryScreen" class="text-center mt-10 px-6 max-w-6xl mx-auto">
     <h1 class="text-4xl md:text-6xl font-extrabold text-blue-800 mb-10">Choose a Category</h1>
-
     <div id="categoryButtons" class="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-4xl mx-auto"></div>
   </div>
 
   <div id="gameScreen" class="text-center mt-16 px-4 hidden max-w-6xl mx-auto">
     <h1 class="text-4xl md:text-6xl font-extrabold text-blue-800 mb-10" id="categoryTitle">Category</h1>
-
-    <h2 id="questionDisplay" class="text-3xl md:text-5xl font-bold mb-16">
-      Press “Next Question”
-    </h2>
+    <h2 id="questionDisplay" class="text-3xl md:text-5xl font-bold mb-16">Press “Next Question”</h2>
 
     <div class="flex justify-center gap-6 md:gap-10 mb-16">
-      <button id="trueBtn" class="big-btn bg-green-600 hover:bg-green-500 hidden">
-        TRUE
-      </button>
-      <button id="falseBtn" class="big-btn bg-red-600 hover:bg-red-500 hidden">
-        FALSE
-      </button>
+      <button id="trueBtn" class="big-btn bg-green-600 hover:bg-green-500 hidden">TRUE</button>
+      <button id="falseBtn" class="big-btn bg-red-600 hover:bg-red-500 hidden">FALSE</button>
     </div>
 
     <h2 id="answerDisplay" class="text-5xl md:text-6xl font-extrabold mt-10 hidden"></h2>
 
-    <button id="nextBtn" class="big-btn pf-blue hover:pf-blue mt-12">
-      Next Question
-    </button>
+    <button id="nextBtn" class="big-btn pf-blue hover:pf-blue mt-12">Next Question</button>
   </div>
 
   <div id="modalBg" class="modal-bg">
@@ -96,15 +78,12 @@
       </div>
 
       <label class="font-bold text-gray-700">Question</label>
-      <input id="inputQuestion" class="w-full border p-3 rounded-xl mb-4 text-lg"
-             placeholder="Type your true/false question…">
+      <input id="inputQuestion" class="w-full border p-3 rounded-xl mb-4 text-lg" placeholder="Type your true/false question…">
 
       <label class="font-bold text-gray-700">Category</label>
       <select id="inputCategory" class="w-full border p-3 rounded-xl mb-4 text-lg"></select>
 
-      <input id="newCategoryInput"
-             class="w-full border p-3 rounded-xl mb-4 text-lg hidden"
-             placeholder="Enter new category…">
+      <input id="newCategoryInput" class="w-full border p-3 rounded-xl mb-4 text-lg hidden" placeholder="Enter new category…">
 
       <label class="font-bold text-gray-700">Correct Answer</label>
       <select id="inputAnswer" class="w-full border p-3 rounded-xl mb-6 text-lg">
@@ -112,9 +91,7 @@
         <option value="FALSE">FALSE</option>
       </select>
 
-      <button id="saveBtn" class="bg-green-600 text-white font-bold px-6 py-3 rounded-xl hover:bg-green-500">
-        Save Question
-      </button>
+      <button id="saveBtn" class="bg-green-600 text-white font-bold px-6 py-3 rounded-xl hover:bg-green-500">Save Question</button>
 
       <h3 class="text-xl font-bold mt-8 mb-2 text-blue-700">Your Saved Questions</h3>
       <ul id="savedList" class="space-y-2 text-lg"></ul>
@@ -122,185 +99,212 @@
   </div>
 
   <script>
-  // Default categories
-  let categories = JSON.parse(localStorage.getItem("tfCategories") || "[]");
-  if (categories.length === 0) {
-    categories = ["Bible", "Animals", "History", "Food", "Fun Facts"];
-    localStorage.setItem("tfCategories", JSON.stringify(categories));
-  }
-
-  // Stored questions
-  let questions = JSON.parse(localStorage.getItem("tfQuestions") || "[]");
-
-  const modalBg = document.getElementById("modalBg");
-  const categoryButtons = document.getElementById("categoryButtons");
-  const inputCategory = document.getElementById("inputCategory");
-  const newCategoryInput = document.getElementById("newCategoryInput");
-  const savedList = document.getElementById("savedList");
-
-  function renderCategoryButtons() {
-    categoryButtons.innerHTML = "";
-    categories.forEach(cat => {
-      const btn = document.createElement("button");
-      btn.className = "pf-blue text-white text-2xl md:text-3xl font-bold py-6 rounded-2xl transition-all hover:scale-[1.02]";
-      btn.textContent = cat;
-      btn.onclick = () => startCategory(cat);
-      categoryButtons.appendChild(btn);
-    });
-  }
-
-  renderCategoryButtons();
-
-  function updateCategoryDropdown() {
-    inputCategory.innerHTML = "";
-    categories.forEach(cat => {
-      const opt = document.createElement("option");
-      opt.value = cat;
-      opt.textContent = cat;
-      inputCategory.appendChild(opt);
-    });
-
-    const addNew = document.createElement("option");
-    addNew.value = "__NEW__";
-    addNew.textContent = "+ Add New Category";
-    inputCategory.appendChild(addNew);
-  }
-
-  updateCategoryDropdown();
-
-  inputCategory.onchange = () => {
-    if (inputCategory.value === "__NEW__") {
-      newCategoryInput.classList.remove("hidden");
-    } else {
-      newCategoryInput.classList.add("hidden");
-      updateSavedList(); // Refresh questions when switching categories
-    }
-  };
-
-  // Open Editor
-  document.getElementById("openEditor").onclick = () => {
-    modalBg.style.display = "flex";
-    updateSavedList();
-  };
-
-  // Close Editor
-  document.getElementById("closeEditor").onclick = () => {
-    modalBg.style.display = "none";
-    newCategoryInput.value = "";
-    newCategoryInput.classList.add("hidden");
-  };
-
-  // Save Question
-  document.getElementById("saveBtn").onclick = () => {
-    const q = document.getElementById("inputQuestion").value.trim();
-    let cat = inputCategory.value;
-    const a = document.getElementById("inputAnswer").value;
-
-    if (!q) return alert("Please enter a question.");
-
-    if (cat === "__NEW__") {
-      cat = newCategoryInput.value.trim();
-      if (!cat) return alert("Enter a category name.");
-      categories.push(cat);
+    // Default categories
+    let categories = JSON.parse(localStorage.getItem("tfCategories") || "[]");
+    if (categories.length === 0) {
+      categories = ["Bible", "Animals", "History", "Food", "Fun Facts"];
       localStorage.setItem("tfCategories", JSON.stringify(categories));
-      renderCategoryButtons();
-      updateCategoryDropdown();
     }
 
-    questions.push({ question: q, answer: a, category: cat });
-    localStorage.setItem("tfQuestions", JSON.stringify(questions));
+    // Stored questions
+    let questions = JSON.parse(localStorage.getItem("tfQuestions") || "[]");
 
-    document.getElementById("inputQuestion").value = "";
-    newCategoryInput.value = "";
-    newCategoryInput.classList.add("hidden");
-    inputCategory.value = cat;
+    if (questions.length === 0) {
+      questions = [
+        // Bible Questions
+        { question: "The Bible has 66 books.", answer: "TRUE", category: "Bible" },
+        { question: "Moses built the ark.", answer: "FALSE", category: "Bible" },
+        { question: "David killed Goliath with a stone.", answer: "TRUE", category: "Bible" },
+        { question: "Jonah was swallowed by a whale.", answer: "TRUE", category: "Bible" },
+        { question: "Noah’s Ark rested on Mount Sinai.", answer: "FALSE", category: "Bible" },
+        { question: "Jesus turned water into wine.", answer: "TRUE", category: "Bible" },
+        { question: "Adam and Eve lived in the Garden of Eden.", answer: "TRUE", category: "Bible" },
+        { question: "The Ten Commandments were given to Abraham.", answer: "FALSE", category: "Bible" },
+        { question: "Paul’s name was originally Saul.", answer: "TRUE", category: "Bible" },
+        { question: "Ruth was Naomi’s daughter.", answer: "FALSE", category: "Bible" },
+        { question: "The serpent tempted Eve to eat the forbidden fruit.", answer: "TRUE", category: "Bible" },
+        { question: "There were three wise men at Jesus’ birth.", answer: "FALSE", category: "Bible" },
+        { question: "Jesus fed 5,000 people with five loaves and two fish.", answer: "TRUE", category: "Bible" },
+        { question: "The book of Psalms is in the New Testament.", answer: "FALSE", category: "Bible" },
+        { question: "Mary Magdalene was the first to see Jesus after His resurrection.", answer: "TRUE", category: "Bible" },
+        { question: "Joseph’s brothers sold him into slavery.", answer: "TRUE", category: "Bible" },
+        { question: "The Red Sea was parted by Elijah.", answer: "FALSE", category: "Bible" },
+        { question: "Solomon was known for his great wisdom.", answer: "TRUE", category: "Bible" },
+        { question: "The Bible begins with the words 'In the beginning God created...'", answer: "TRUE", category: "Bible" },
+        { question: "The Book of Revelation is the first book of the Bible.", answer: "FALSE", category: "Bible" },
+        { question: "Jesus was baptized in the Jordan River.", answer: "TRUE", category: "Bible" },
+        { question: "Peter denied Jesus three times.", answer: "TRUE", category: "Bible" },
+        { question: "The Tower of Babel was built to reach heaven.", answer: "TRUE", category: "Bible" },
+        { question: "Daniel was thrown into a den of lions.", answer: "TRUE", category: "Bible" },
+        { question: "Samson lost his strength when his hair was cut.", answer: "TRUE", category: "Bible" },
+        { question: "The Prodigal Son’s father rejected him when he returned.", answer: "FALSE", category: "Bible" },
+        { question: "Jesus rode into Jerusalem on a horse.", answer: "FALSE", category: "Bible" },
+        { question: "Abraham and Sarah had a son named Isaac.", answer: "TRUE", category: "Bible" },
+        { question: "The first miracle Jesus performed was healing a blind man.", answer: "FALSE", category: "Bible" },
+        { question: "Jesus was born in Bethlehem.", answer: "TRUE", category: "Bible" },
 
-    updateSavedList();
-  };
-
-  function updateSavedList() {
-    const cat = inputCategory.value;
-    savedList.innerHTML = "";
-
-    // Filter only selected category
-    const filtered = questions.filter(q => q.category === cat);
-
-    if (filtered.length === 0) {
-      savedList.innerHTML = `<p class="text-gray-500 italic">No questions yet for this category.</p>`;
-      return;
-    }
-
-    filtered.forEach((q, i) => {
-      const li = document.createElement("li");
-      li.innerHTML = `
-        <div class="flex justify-between bg-gray-100 p-3 rounded-xl items-center">
-          <div class="flex-1"><strong>${q.question}</strong> — 
-            <span class="text-${q.answer === 'TRUE' ? 'green' : 'red'}-600 font-semibold">${q.answer}</span> 
-            <em class="text-gray-500">(${q.category})</em>
-          </div>
-          <button onclick="deleteQuestion('${q.category}', ${i})"
-            class="bg-red-500 text-white px-3 py-1 rounded-lg hover:bg-red-600 ml-4 whitespace-nowrap">
-            Delete
-          </button>
-        </div>`;
-      savedList.appendChild(li);
-    });
-
-    // Make the list scrollable if it’s long
-    savedList.style.maxHeight = "300px";
-    savedList.style.overflowY = "auto";
-    savedList.style.paddingRight = "10px";
-  }
-
-  function deleteQuestion(cat, index) {
-    const idx = questions.findIndex(q => q.category === cat && questions.indexOf(q) === index);
-    if (idx !== -1) {
-      questions.splice(idx, 1);
+        // Animal Questions
+        { question: "A group of lions is called a pride.", answer: "TRUE", category: "Animals" },
+        { question: "Bats are blind.", answer: "FALSE", category: "Animals" },
+        { question: "Dolphins sleep with one eye open.", answer: "TRUE", category: "Animals" },
+        { question: "A snail can sleep for three years.", answer: "TRUE", category: "Animals" },
+        { question: "All snakes lay eggs.", answer: "FALSE", category: "Animals" },
+        { question: "An ostrich’s eye is bigger than its brain.", answer: "TRUE", category: "Animals" },
+        { question: "Kangaroos can walk backward.", answer: "FALSE", category: "Animals" },
+        { question: "Elephants are the only mammals that can’t jump.", answer: "TRUE", category: "Animals" },
+        { question: "A shrimp’s heart is in its head.", answer: "TRUE", category: "Animals" },
+        { question: "Cows have four stomachs.", answer: "TRUE", category: "Animals" },
+        { question: "Alligators can live in saltwater.", answer: "FALSE", category: "Animals" },
+        { question: "A newborn kangaroo is smaller than a cherry.", answer: "TRUE", category: "Animals" },
+        { question: "Penguins can fly.", answer: "FALSE", category: "Animals" },
+        { question: "Flamingos are naturally pink.", answer: "FALSE", category: "Animals" },
+        { question: "A cat has 32 muscles in each ear.", answer: "TRUE", category: "Animals" },
+        { question: "Sharks are mammals.", answer: "FALSE", category: "Animals" },
+        { question: "A baby goat is called a kid.", answer: "TRUE", category: "Animals" },
+        { question: "Octopuses have three hearts.", answer: "TRUE", category: "Animals" },
+        { question: "Sloths are excellent swimmers.", answer: "TRUE", category: "Animals" },
+        { question: "A chameleon changes color to match any background perfectly.", answer: "FALSE", category: "Animals" },
+        { question: "Bees communicate by dancing.", answer: "TRUE", category: "Animals" },
+        { question: "Polar bears’ fur is white.", answer: "FALSE", category: "Animals" },
+        { question: "A crocodile cannot stick out its tongue.", answer: "TRUE", category: "Animals" },
+        { question: "Giraffes make no sounds.", answer: "FALSE", category: "Animals" },
+        { question: "A cheetah can run up to 70 miles per hour.", answer: "TRUE", category: "Animals" },
+        { question: "Owls can turn their heads in a full circle.", answer: "FALSE", category: "Animals" },
+        { question: "Ducks have waterproof feathers.", answer: "TRUE", category: "Animals" },
+        { question: "A blue whale is the largest animal on Earth.", answer: "TRUE", category: "Animals" },
+        { question: "All frogs are green.", answer: "FALSE", category: "Animals" },
+        { question: "A tarantula can live for more than 20 years.", answer: "TRUE", category: "Animals" }
+      ];
       localStorage.setItem("tfQuestions", JSON.stringify(questions));
+    }
+
+    const modalBg = document.getElementById("modalBg");
+    const categoryButtons = document.getElementById("categoryButtons");
+    const inputCategory = document.getElementById("inputCategory");
+    const newCategoryInput = document.getElementById("newCategoryInput");
+    const savedList = document.getElementById("savedList");
+
+    function renderCategoryButtons() {
+      categoryButtons.innerHTML = "";
+      categories.forEach(cat => {
+        const btn = document.createElement("button");
+        btn.className = "pf-blue text-white text-2xl md:text-3xl font-bold py-6 rounded-2xl transition-all hover:scale-[1.02]";
+        btn.textContent = cat;
+        btn.onclick = () => startCategory(cat);
+        categoryButtons.appendChild(btn);
+      });
+    }
+    renderCategoryButtons();
+
+    function updateCategoryDropdown() {
+      inputCategory.innerHTML = "";
+      categories.forEach(cat => {
+        const opt = document.createElement("option");
+        opt.value = cat;
+        opt.textContent = cat;
+        inputCategory.appendChild(opt);
+      });
+
+      const addNew = document.createElement("option");
+      addNew.value = "__NEW__";
+      addNew.textContent = "+ Add New Category";
+      inputCategory.appendChild(addNew);
+    }
+    updateCategoryDropdown();
+
+    inputCategory.onchange = () => {
+      if (inputCategory.value === "__NEW__") newCategoryInput.classList.remove("hidden");
+      else newCategoryInput.classList.add("hidden");
       updateSavedList();
+    };
+
+    document.getElementById("openEditor").onclick = () => { modalBg.style.display = "flex"; updateSavedList(); };
+    document.getElementById("closeEditor").onclick = () => { modalBg.style.display = "none"; newCategoryInput.value = ""; newCategoryInput.classList.add("hidden"); };
+
+    document.getElementById("saveBtn").onclick = () => {
+      const q = document.getElementById("inputQuestion").value.trim();
+      let cat = inputCategory.value;
+      const a = document.getElementById("inputAnswer").value;
+      if (!q) return alert("Please enter a question.");
+      if (cat === "__NEW__") {
+        cat = newCategoryInput.value.trim();
+        if (!cat) return alert("Enter a category name.");
+        categories.push(cat);
+        localStorage.setItem("tfCategories", JSON.stringify(categories));
+        renderCategoryButtons();
+        updateCategoryDropdown();
+      }
+      questions.push({ question: q, answer: a, category: cat });
+      localStorage.setItem("tfQuestions", JSON.stringify(questions));
+      document.getElementById("inputQuestion").value = "";
+      newCategoryInput.value = "";
+      newCategoryInput.classList.add("hidden");
+      inputCategory.value = cat;
+      updateSavedList();
+    };
+
+    function updateSavedList() {
+      const cat = inputCategory.value;
+      savedList.innerHTML = "";
+      const filtered = questions.filter(q => q.category === cat);
+      if (filtered.length === 0) {
+        savedList.innerHTML = `<p class="text-gray-500 italic">No questions yet for this category.</p>`;
+        return;
+      }
+      filtered.forEach((q, i) => {
+        const li = document.createElement("li");
+        li.innerHTML = `
+          <div class="flex justify-between bg-gray-100 p-3 rounded-xl items-center">
+            <div class="flex-1"><strong>${q.question}</strong> —
+              <span class="text-${q.answer === 'TRUE' ? 'green' : 'red'}-600 font-semibold">${q.answer}</span>
+              <em class="text-gray-500">(${q.category})</em>
+            </div>
+            <button onclick="deleteQuestion('${q.category}', ${i})"
+              class="bg-red-500 text-white px-3 py-1 rounded-lg hover:bg-red-600 ml-4 whitespace-nowrap">Delete</button>
+          </div>`;
+        savedList.appendChild(li);
+      });
+      savedList.style.maxHeight = "300px";
+      savedList.style.overflowY = "auto";
+      savedList.style.paddingRight = "10px";
     }
-  }
 
-  window.deleteQuestion = deleteQuestion;
+    function deleteQuestion(cat, index) {
+      const idx = questions.findIndex(q => q.category === cat && questions.indexOf(q) === index);
+      if (idx !== -1) {
+        questions.splice(idx, 1);
+        localStorage.setItem("tfQuestions", JSON.stringify(questions));
+        updateSavedList();
+      }
+    }
+    window.deleteQuestion = deleteQuestion;
 
-  // Game logic
-  let current = null;
-  let filtered = [];
+    let current = null;
+    let filtered = [];
 
-  function startCategory(cat) {
-    filtered = questions.filter(q => q.category === cat);
-
-    document.getElementById("categoryScreen").classList.add("hidden");
-    document.getElementById("gameScreen").classList.remove("hidden");
-    document.getElementById("categoryTitle").textContent = cat;
-  }
-
-  document.getElementById("nextBtn").onclick = () => {
-    if (filtered.length === 0) {
-      alert("No questions in this category yet! Add some using the Question Editor.");
-      return;
+    function startCategory(cat) {
+      filtered = questions.filter(q => q.category === cat);
+      document.getElementById("categoryScreen").classList.add("hidden");
+      document.getElementById("gameScreen").classList.remove("hidden");
+      document.getElementById("categoryTitle").textContent = cat;
     }
 
-    current = filtered[Math.floor(Math.random() * filtered.length)];
-    document.getElementById("questionDisplay").textContent = current.question;
-    document.getElementById("answerDisplay").classList.add("hidden");
-    document.getElementById("trueBtn").classList.remove("hidden");
-    document.getElementById("falseBtn").classList.remove("hidden");
-  };
+    document.getElementById("nextBtn").onclick = () => {
+      if (filtered.length === 0) {
+        alert("No questions in this category yet! Add some using the Question Editor.");
+        return;
+      }
+      current = filtered[Math.floor(Math.random() * filtered.length)];
+      document.getElementById("questionDisplay").textContent = current.question;
+      document.getElementById("answerDisplay").classList.add("hidden");
+      document.getElementById("trueBtn").classList.remove("hidden");
+      document.getElementById("falseBtn").classList.remove("hidden");
+    };
 
-  function checkAnswer(choice) {
-    const correct = current.answer === choice;
-    document.getElementById("answerDisplay").textContent =
-      correct ? "✅ Correct!" : `❌ Answer: ${current.answer}`;
-    document.getElementById("answerDisplay").classList.remove("hidden");
-    document.getElementById("trueBtn").classList.add("hidden");
-    document.getElementById("falseBtn").classList.add("hidden");
-  }
-
-  document.getElementById("trueBtn").onclick = () => checkAnswer("TRUE");
-  document.getElementById("falseBtn").onclick = () => checkAnswer("FALSE");
-</script>
-
-
-</body>
-</html>
+    function checkAnswer(choice) {
+      const correct = current.answer === choice;
+      document.getElementById("answerDisplay").textContent =
+        correct ? "✅ Correct!" : `❌ Answer: ${current.answer}`;
+      document.getElementById("answerDisplay").classList.remove("hidden");
+      document.getElementById("trueBtn").classList.add("hidden");
+      document.getElementById("falseBtn").classList.add("hidden
