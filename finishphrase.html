@@ -79,8 +79,8 @@
   </div>
 
   <script>
-    // Default data
- const DEFAULT_PHRASES = {
+   // Default data
+const DEFAULT_PHRASES = {
   sayings: [
     { prompt:"A penny saved is...", answer:"a penny earned!" },
     { prompt:"You can’t judge a book by...", answer:"its cover." },
@@ -135,27 +135,6 @@
     { prompt:"When life gives you lemons...", answer:"ask for salt and tequila!" }
   ]
 };
-
-],
-
-    
-    ],
-      holiday: [
-        { prompt:"All I want for Christmas is...", answer:"you! 🎄" },
-        { prompt:"Twas the night before...", answer:"Christmas." },
-        { prompt:"Deck the halls with...", answer:"boughs of holly!" },
-        { prompt:"Rudolph the red-nosed...", answer:"reindeer! 🦌" },
-        { prompt:"Let it snow, let it...", answer:"snow, let it snow!" }    
-           
-    ],
-      funny: [
-        { prompt:"I came, I saw, I...", answer:"made it awkward." },
-        { prompt:"If at first you don’t succeed...", answer:"order pizza and try again." },
-        { prompt:"A balanced diet means...", answer:"a cookie in each hand." },
-        { prompt:"Never trust a person who...", answer:"doesn’t like dogs." },
-        { prompt:"When life gives you lemons...", answer:"ask for salt and tequila!" }
-      ]
-    };
 
     // Load from storage or defaults
     let phraseItems = JSON.parse(localStorage.getItem("fpItems") || "[]");
