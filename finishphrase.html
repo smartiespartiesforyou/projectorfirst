@@ -288,18 +288,30 @@ mergeDefaultsIfNeeded();
     const savePhraseBtn = document.getElementById("savePhraseBtn");
     const savedList = document.getElementById("savedList");
 
-    function renderCategoryButtons(){
-      categoryButtons.innerHTML = "";
-      phraseCategories.forEach(cat => {
-        const label = cat.charAt(0).toUpperCase() + cat.slice(1);
-        const btn = document.createElement("button");
-        btn.className = "pf-blue text-white text-2xl md:text-3xl font-bold py-6 rounded-2xl transition transform hover:scale-[1.01]";
-        btn.textContent = label;
-        btn.onclick = () => startCategory(cat);
-        categoryButtons.appendChild(btn);
-      });
-    }
-    renderCategoryButtons();
+    const CATEGORY_LABELS = {
+  sayings: "Sayings",
+  holiday: "Christmas",
+  funny: "Funny",
+  halloween: "Halloween 🎃",
+  easter: "Easter"
+};
+function renderCategoryButtons(){
+  categoryButtons.innerHTML = "";
+  phraseCategories.forEach(cat => {
+    const key = String(cat).toLowerCase();
+    const label = CATEGORY_LABELS[key] || key.charAt(0).toUpperCase() + key.slice(1);
+
+    const btn = document.createElement("button");
+    btn.className = "pf-blue text-white text-2xl md:text-3xl font-bold py-6 rounded-2xl transition transform hover:scale-[1.01]";
+    btn.textContent = label;
+    btn.onclick = () => startCategory(key);
+
+    categoryButtons.appendChild(btn);
+  });
+}
+
+renderCategoryButtons();
+
 
     // ---------- GAME LOGIC (one button toggle + NO REPEATS UNTIL END) ----------
 let currentCategory = null;
