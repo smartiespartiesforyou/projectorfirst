@@ -34,10 +34,11 @@
 
     <div id="phraseDisplay"
          class="bg-black text-white rounded-2xl px-6 py-12 text-3xl md:text-5xl font-bold max-w-4xl mx-auto shadow-lg">
-      Press “Show Phrase” to begin!
+      Press the button to begin!
     </div>
 
-    <button id="nextPhraseBtn" class="big-btn pf-blue mt-12">Show Phrase</button>
+    <!-- ONE BUTTON ONLY (toggles Show Answer / Next Phrase) -->
+    <button id="nextPhraseBtn" class="big-btn pf-blue mt-12">Show Answer</button>
 
     <div class="mt-8">
       <button id="backToSubjects"
@@ -110,107 +111,212 @@
     if (phraseItems.length === 0 || phraseCategories.length === 0) {
       phraseItems = [];
       phraseCategories = Object.keys(DEFAULT_PHRASES);
-      phraseCategories.forEach(cat=>{
-        DEFAULT_PHRASES[cat].forEach(p=>phraseItems.push({prompt:p.prompt,answer:p.answer,category:cat}));
+      phraseCategories.forEach(cat => {
+        DEFAULT_PHRASES[cat].forEach(p => phraseItems.push({ prompt:p.prompt, answer:p.answer, category:cat }));
       });
-      localStorage.setItem("fpItems",JSON.stringify(phraseItems));
-      localStorage.setItem("fpCategories",JSON.stringify(phraseCategories));
+      localStorage.setItem("fpItems", JSON.stringify(phraseItems));
+      localStorage.setItem("fpCategories", JSON.stringify(phraseCategories));
     }
 
     // DOM
-    const categoryButtons=document.getElementById("categoryButtons");
-    const categoryScreen=document.getElementById("categoryScreen");
-    const gameScreen=document.getElementById("gameScreen");
-    const categoryTitle=document.getElementById("categoryTitle");
-    const phraseDisplay=document.getElementById("phraseDisplay");
-    const nextPhraseBtn=document.getElementById("nextPhraseBtn");
-    const backToSubjects=document.getElementById("backToSubjects");
-    const modalBg=document.getElementById("modalBg");
-    const openEditor=document.getElementById("openEditor");
-    const closeEditor=document.getElementById("closeEditor");
-    const inputPrompt=document.getElementById("inputPrompt");
-    const inputAnswer=document.getElementById("inputAnswer");
-    const inputCategory=document.getElementById("inputCategory");
-    const newCategoryInput=document.getElementById("newCategoryInput");
-    const savePhraseBtn=document.getElementById("savePhraseBtn");
-    const savedList=document.getElementById("savedList");
+    const categoryButtons = document.getElementById("categoryButtons");
+    const categoryScreen = document.getElementById("categoryScreen");
+    const gameScreen = document.getElementById("gameScreen");
+    const categoryTitle = document.getElementById("categoryTitle");
+    const phraseDisplay = document.getElementById("phraseDisplay");
+    const nextPhraseBtn = document.getElementById("nextPhraseBtn");
+    const backToSubjects = document.getElementById("backToSubjects");
+    const modalBg = document.getElementById("modalBg");
+    const openEditor = document.getElementById("openEditor");
+    const closeEditor = document.getElementById("closeEditor");
+    const inputPrompt = document.getElementById("inputPrompt");
+    const inputAnswer = document.getElementById("inputAnswer");
+    const inputCategory = document.getElementById("inputCategory");
+    const newCategoryInput = document.getElementById("newCategoryInput");
+    const savePhraseBtn = document.getElementById("savePhraseBtn");
+    const savedList = document.getElementById("savedList");
 
     function renderCategoryButtons(){
-      categoryButtons.innerHTML="";
-      phraseCategories.forEach(cat=>{
-        const label=cat.charAt(0).toUpperCase()+cat.slice(1);
-        const btn=document.createElement("button");
-        btn.className="pf-blue text-white text-2xl md:text-3xl font-bold py-6 rounded-2xl transition transform hover:scale-[1.01]";
-        btn.textContent=label;
-        btn.onclick=()=>startCategory(cat);
+      categoryButtons.innerHTML = "";
+      phraseCategories.forEach(cat => {
+        const label = cat.charAt(0).toUpperCase() + cat.slice(1);
+        const btn = document.createElement("button");
+        btn.className = "pf-blue text-white text-2xl md:text-3xl font-bold py-6 rounded-2xl transition transform hover:scale-[1.01]";
+        btn.textContent = label;
+        btn.onclick = () => startCategory(cat);
         categoryButtons.appendChild(btn);
       });
     }
     renderCategoryButtons();
 
-    let currentCategory=null;
-    let currentFiltered=[];
+    // ---------- GAME LOGIC (one button toggle) ----------
+    let currentCategory = null;
+    let currentFiltered = [];
+    let currentPick = null;
+    let showingAnswer = false;
 
     function startCategory(cat){
-      currentCategory=cat;
-      currentFiltered=phraseItems.filter(p=>p.category===cat);
-      if(currentFiltered.length===0){alert("No phrases in this subject yet! Add some in the Phrase Editor.");return;}
-      categoryTitle.textContent=cat.charAt(0).toUpperCase()+cat.slice(1);
+      currentCategory = cat;
+      currentFiltered = phraseItems.filter(p => p.category === cat);
+
+      if (currentFiltered.length === 0) {
+        alert("No phrases in this subject yet! Add some in the Phrase Editor.");
+        return;
+      }
+
+      categoryTitle.textContent = cat.charAt(0).toUpperCase() + cat.slice(1);
       categoryScreen.classList.add("hidden");
       gameScreen.classList.remove("hidden");
-      showRandomPhrase();
+
+      loadNewPhrase();
     }
 
-    function showRandomPhrase(){
-      if(currentFiltered.length===0){phraseDisplay.textContent="No phrases in this subject yet!";return;}
-      const pick=currentFiltered[Math.floor(Math.random()*currentFiltered.length)];
-      phraseDisplay.innerHTML=`<div><p>${pick.prompt}</p>
-        <button id="showAnswer" class="pf-blue text-white font-bold px-5 py-3 rounded-xl mt-6">Show Answer</button></div>`;
-      document.getElementById("showAnswer").onclick=()=>{phraseDisplay.innerHTML=`<p>${pick.prompt} <strong>${pick.answer}</strong></p>`};
+    function loadNewPhrase(){
+      if (currentFiltered.length === 0) {
+        phraseDisplay.textContent = "No phrases in this subject yet!";
+        nextPhraseBtn.textContent = "Show Answer";
+        currentPick = null;
+        showingAnswer = false;
+        return;
+      }
+
+      currentPick = currentFiltered[Math.floor(Math.random() * currentFiltered.length)];
+      showingAnswer = false;
+
+      phraseDisplay.innerHTML = `<p>${currentPick.prompt}</p>`;
+      nextPhraseBtn.textContent = "Show Answer";
     }
 
-    nextPhraseBtn.onclick=showRandomPhrase;
-    backToSubjects.onclick=()=>{gameScreen.classList.add("hidden");categoryScreen.classList.remove("hidden");phraseDisplay.textContent="Press “Show Phrase” to begin!";};
+    function revealAnswer(){
+      if (!currentPick) return;
+      phraseDisplay.innerHTML = `<p>${currentPick.prompt} <strong>${currentPick.answer}</strong></p>`;
+      showingAnswer = true;
+      nextPhraseBtn.textContent = "Next Phrase";
+    }
 
-    // EDITOR
+    nextPhraseBtn.onclick = () => {
+      if (!currentPick) return;
+      if (!showingAnswer) revealAnswer();
+      else loadNewPhrase();
+    };
+
+    backToSubjects.onclick = () => {
+      gameScreen.classList.add("hidden");
+      categoryScreen.classList.remove("hidden");
+      phraseDisplay.textContent = "Press the button to begin!";
+      nextPhraseBtn.textContent = "Show Answer";
+      currentPick = null;
+      showingAnswer = false;
+    };
+
+    // ---------- EDITOR ----------
     function updateCategoryDropdown(){
-      inputCategory.innerHTML="";
-      phraseCategories.forEach(cat=>{
-        const opt=document.createElement("option");
-        opt.value=cat;
-        opt.textContent=cat.charAt(0).toUpperCase()+cat.slice(1);
+      inputCategory.innerHTML = "";
+      phraseCategories.forEach(cat => {
+        const opt = document.createElement("option");
+        opt.value = cat;
+        opt.textContent = cat.charAt(0).toUpperCase() + cat.slice(1);
         inputCategory.appendChild(opt);
       });
-      const addNew=document.createElement("option");
-      addNew.value="__NEW__";addNew.textContent="+ Add New Subject";inputCategory.appendChild(addNew);
+      const addNew = document.createElement("option");
+      addNew.value = "__NEW__";
+      addNew.textContent = "+ Add New Subject";
+      inputCategory.appendChild(addNew);
     }
     updateCategoryDropdown();
 
-    inputCategory.onchange=()=>{if(inputCategory.value==="__NEW__"){newCategoryInput.classList.remove("hidden");}else{newCategoryInput.classList.add("hidden");}};
-    openEditor.onclick=()=>{modalBg.style.display="flex";updateSavedList();};
-    closeEditor.onclick=()=>{modalBg.style.display="none";newCategoryInput.value="";newCategoryInput.classList.add("hidden");};
-    function saveData(){localStorage.setItem("fpItems",JSON.stringify(phraseItems));localStorage.setItem("fpCategories",JSON.stringify(phraseCategories));}
+    inputCategory.onchange = () => {
+      if (inputCategory.value === "__NEW__") newCategoryInput.classList.remove("hidden");
+      else newCategoryInput.classList.add("hidden");
+    };
 
-    savePhraseBtn.onclick=()=>{
-      const prompt=inputPrompt.value.trim();const answer=inputAnswer.value.trim();let cat=inputCategory.value;
-      if(!prompt||!answer){alert("Please enter both prompt and answer.");return;}
-      if(cat==="__NEW__"){cat=newCategoryInput.value.trim().toLowerCase();if(!cat){alert("Enter a subject name.");return;}if(!phraseCategories.includes(cat)){phraseCategories.push(cat);}updateCategoryDropdown();renderCategoryButtons();}
-      phraseItems.push({prompt,answer,category:cat});saveData();inputPrompt.value="";inputAnswer.value="";newCategoryInput.value="";newCategoryInput.classList.add("hidden");inputCategory.value=cat;updateSavedList();if(currentCategory===cat){currentFiltered=phraseItems.filter(p=>p.category===cat);}
+    openEditor.onclick = () => {
+      modalBg.style.display = "flex";
+      updateSavedList();
+    };
+
+    closeEditor.onclick = () => {
+      modalBg.style.display = "none";
+      newCategoryInput.value = "";
+      newCategoryInput.classList.add("hidden");
+    };
+
+    function saveData(){
+      localStorage.setItem("fpItems", JSON.stringify(phraseItems));
+      localStorage.setItem("fpCategories", JSON.stringify(phraseCategories));
+    }
+
+    savePhraseBtn.onclick = () => {
+      const prompt = inputPrompt.value.trim();
+      const answer = inputAnswer.value.trim();
+      let cat = inputCategory.value;
+
+      if (!prompt || !answer) {
+        alert("Please enter both prompt and answer.");
+        return;
+      }
+
+      if (cat === "__NEW__") {
+        cat = newCategoryInput.value.trim().toLowerCase();
+        if (!cat) { alert("Enter a subject name."); return; }
+        if (!phraseCategories.includes(cat)) phraseCategories.push(cat);
+        updateCategoryDropdown();
+        renderCategoryButtons();
+      }
+
+      phraseItems.push({ prompt, answer, category: cat });
+      saveData();
+
+      inputPrompt.value = "";
+      inputAnswer.value = "";
+      newCategoryInput.value = "";
+      newCategoryInput.classList.add("hidden");
+      inputCategory.value = cat;
+
+      updateSavedList();
+
+      // If currently playing that category, keep it in sync
+      if (currentCategory === cat) {
+        currentFiltered = phraseItems.filter(p => p.category === cat);
+      }
     };
 
     function updateSavedList(){
-      savedList.innerHTML="";
-      phraseItems.forEach((p,i)=>{
-        const li=document.createElement("li");
-        li.innerHTML=`<div class="flex justify-between bg-gray-100 p-3 rounded-xl items-center">
-        <div class="flex-1"><strong>${p.prompt}</strong> <span class="text-gray-500">(${p.answer})</span> <em class="text-gray-400">(${p.category})</em></div>
-        <button class="bg-red-500 text-white px-3 py-1 rounded-lg hover:bg-red-600 ml-4" onclick="deletePhrase(${i})">Delete</button></div>`;
+      savedList.innerHTML = "";
+      phraseItems.forEach((p, i) => {
+        const li = document.createElement("li");
+        li.innerHTML = `
+          <div class="flex justify-between bg-gray-100 p-3 rounded-xl items-center">
+            <div class="flex-1">
+              <strong>${p.prompt}</strong>
+              <span class="text-gray-500">(${p.answer})</span>
+              <em class="text-gray-400">(${p.category})</em>
+            </div>
+            <button class="bg-red-500 text-white px-3 py-1 rounded-lg hover:bg-red-600 ml-4" onclick="deletePhrase(${i})">Delete</button>
+          </div>
+        `;
         savedList.appendChild(li);
       });
     }
 
-    function deletePhrase(i){const removed=phraseItems.splice(i,1)[0];saveData();updateSavedList();if(removed&&removed.category===currentCategory){currentFiltered=phraseItems.filter(p=>p.category===currentCategory);}}
-    window.deletePhrase=deletePhrase;
+    function deletePhrase(i){
+      const removed = phraseItems.splice(i, 1)[0];
+      saveData();
+      updateSavedList();
+
+      if (removed && removed.category === currentCategory) {
+        currentFiltered = phraseItems.filter(p => p.category === currentCategory);
+
+        // If you deleted down to zero while in-game, reflect it
+        if (currentFiltered.length === 0) {
+          phraseDisplay.textContent = "No phrases in this subject yet!";
+          nextPhraseBtn.textContent = "Show Answer";
+          currentPick = null;
+          showingAnswer = false;
+        }
+      }
+    }
+    window.deletePhrase = deletePhrase;
   </script>
 
 </body>
