@@ -172,18 +172,72 @@ const DEFAULT_PHRASES = {
 };
 
     // Load from storage or defaults
-    let phraseItems = JSON.parse(localStorage.getItem("fpItems") || "[]");
-    let phraseCategories = JSON.parse(localStorage.getItem("fpCategories") || "[]");
+  // ---------- DATA LOADING (versioned defaults + safe merge) ----------
 
-    if (phraseItems.length === 0 || phraseCategories.length === 0) {
-      phraseItems = [];
-      phraseCategories = Object.keys(DEFAULT_PHRASES);
-      phraseCategories.forEach(cat => {
-        DEFAULT_PHRASES[cat].forEach(p => phraseItems.push({ prompt:p.prompt, answer:p.answer, category:cat }));
-      });
-      localStorage.setItem("fpItems", JSON.stringify(phraseItems));
-      localStorage.setItem("fpCategories", JSON.stringify(phraseCategories));
+// Bump this number anytime you add/edit DEFAULT_PHRASES in GitHub
+const DEFAULTS_VERSION = 3;
+
+// Load saved data
+let phraseItems = JSON.parse(localStorage.getItem("fpItems") || "[]");
+let phraseCategories = JSON.parse(localStorage.getItem("fpCategories") || "[]");
+
+// What defaults version did this browser last apply?
+let appliedDefaultsVersion = parseInt(localStorage.getItem("fpDefaultsVersion") || "0", 10);
+
+// Turn DEFAULT_PHRASES into a flat list of {prompt, answer, category}
+function flattenDefaults(defaultObj) {
+  const out = [];
+  Object.keys(defaultObj).forEach(cat => {
+    (defaultObj[cat] || []).forEach(p => {
+      out.push({ prompt: p.prompt, answer: p.answer, category: cat });
+    });
+  });
+  return out;
+}
+
+// A stable key so we can dedupe when merging
+function phraseKey(p) {
+  return `${(p.category || "").trim().toLowerCase()}||${(p.prompt || "").trim()}||${(p.answer || "").trim()}`;
+}
+
+function saveAll() {
+  localStorage.setItem("fpItems", JSON.stringify(phraseItems));
+  localStorage.setItem("fpCategories", JSON.stringify(phraseCategories));
+  localStorage.setItem("fpDefaultsVersion", String(DEFAULTS_VERSION));
+}
+
+// Merge new defaults into existing local data (without wiping user additions)
+function mergeDefaultsIfNeeded() {
+  const needsInit = phraseItems.length === 0 || phraseCategories.length === 0;
+  const needsUpdate = appliedDefaultsVersion < DEFAULTS_VERSION;
+
+  if (!needsInit && !needsUpdate) return;
+
+  const defaultsFlat = flattenDefaults(DEFAULT_PHRASES);
+
+  // Ensure categories include all default categories
+  const defaultCats = Object.keys(DEFAULT_PHRASES);
+  const catSet = new Set((phraseCategories || []).map(c => String(c).toLowerCase()));
+  defaultCats.forEach(c => catSet.add(String(c).toLowerCase()));
+  phraseCategories = Array.from(catSet);
+
+  // Merge phrases (dedupe by key)
+  const existingKeys = new Set((phraseItems || []).map(phraseKey));
+  defaultsFlat.forEach(p => {
+    const k = phraseKey(p);
+    if (!existingKeys.has(k)) {
+      phraseItems.push(p);
+      existingKeys.add(k);
     }
+  });
+
+  saveAll();
+}
+
+// Run the merge once on load
+mergeDefaultsIfNeeded();
+
+
 
     // DOM
     const categoryButtons = document.getElementById("categoryButtons");
