@@ -160,6 +160,72 @@
         { question: "Abraham and Sarah had a son named Isaac.", answer: "TRUE", category: "Bible" },
         { question: "The first miracle Jesus performed was healing a blind man.", answer: "FALSE", category: "Bible" },
         { question: "Jesus was born in Bethlehem.", answer: "TRUE", category: "Bible" },
+// History Questions
+{ question: "The Great Wall of China was built entirely in a single dynasty.", answer: "FALSE", category: "History" },
+{ question: "The Roman Empire fell in 476 AD.", answer: "TRUE", category: "History" },
+{ question: "Cleopatra was of Egyptian ethnicity.", answer: "FALSE", category: "History" },
+{ question: "The printing press is commonly credited to Johannes Gutenberg.", answer: "TRUE", category: "History" },
+{ question: "The Titanic sank in 1912.", answer: "TRUE", category: "History" },
+{ question: "World War I began in 1939.", answer: "FALSE", category: "History" },
+{ question: "World War II ended in 1945.", answer: "TRUE", category: "History" },
+{ question: "The United States declared independence in 1776.", answer: "TRUE", category: "History" },
+{ question: "The French Revolution began in 1789.", answer: "TRUE", category: "History" },
+{ question: "The Cold War was a direct war fought mainly between the U.S. and the USSR.", answer: "FALSE", category: "History" },
+
+{ question: "The first man on the moon was Neil Armstrong.", answer: "TRUE", category: "History" },
+{ question: "The Berlin Wall fell in 1989.", answer: "TRUE", category: "History" },
+{ question: "The Renaissance began in Italy.", answer: "TRUE", category: "History" },
+{ question: "The Black Death occurred in the 1300s.", answer: "TRUE", category: "History" },
+{ question: "The Magna Carta was signed in 1215.", answer: "TRUE", category: "History" },
+
+{ question: "Joan of Arc was a French military leader.", answer: "TRUE", category: "History" },
+{ question: "The Spanish Armada successfully invaded England in 1588.", answer: "FALSE", category: "History" },
+{ question: "The first Olympic Games were held in ancient Greece.", answer: "TRUE", category: "History" },
+{ question: "Julius Caesar was the first emperor of Rome.", answer: "FALSE", category: "History" },
+{ question: "The Roman Republic came before the Roman Empire.", answer: "TRUE", category: "History" },
+
+{ question: "Vikings reached North America before Columbus.", answer: "TRUE", category: "History" },
+{ question: "Christopher Columbus reached the Americas in 1492.", answer: "TRUE", category: "History" },
+{ question: "The American Civil War ended in 1865.", answer: "TRUE", category: "History" },
+{ question: "Abraham Lincoln was assassinated in 1863.", answer: "FALSE", category: "History" },
+{ question: "The first U.S. president was George Washington.", answer: "TRUE", category: "History" },
+
+{ question: "The Louisiana Purchase happened in 1803.", answer: "TRUE", category: "History" },
+{ question: "The Declaration of Independence was written after the U.S. Constitution.", answer: "FALSE", category: "History" },
+{ question: "The first permanent English settlement in North America was Jamestown.", answer: "TRUE", category: "History" },
+{ question: "The Emancipation Proclamation freed all enslaved people immediately everywhere in the U.S.", answer: "FALSE", category: "History" },
+
+{ question: "The first transcontinental railroad in the U.S. was completed in 1869.", answer: "TRUE", category: "History" },
+{ question: "The Wright brothers are credited with the first successful powered flight.", answer: "TRUE", category: "History" },
+{ question: "The Great Depression began with the stock market crash of 1929.", answer: "TRUE", category: "History" },
+{ question: "The New Deal was associated with President Franklin D. Roosevelt.", answer: "TRUE", category: "History" },
+{ question: "The United Nations was founded after World War I.", answer: "FALSE", category: "History" },
+
+{ question: "The League of Nations was created after World War I.", answer: "TRUE", category: "History" },
+{ question: "The first World’s Fair was held in the United States.", answer: "FALSE", category: "History" },
+{ question: "The first World’s Fair was held in London in 1851.", answer: "TRUE", category: "History" },
+
+{ question: "Mahatma Gandhi was a key leader in India’s independence movement.", answer: "TRUE", category: "History" },
+{ question: "Nelson Mandela was imprisoned for 27 years.", answer: "TRUE", category: "History" },
+{ question: "The Soviet Union dissolved in 1991.", answer: "TRUE", category: "History" },
+{ question: "The first successful vaccine was for smallpox.", answer: "TRUE", category: "History" },
+
+{ question: "The Internet was first developed as a U.S. defense research project (ARPANET).", answer: "TRUE", category: "History" },
+{ question: "The first modern computer was invented in the 1800s and widely used then.", answer: "FALSE", category: "History" },
+
+{ question: "The ancient Egyptians used hieroglyphics.", answer: "TRUE", category: "History" },
+{ question: "The pyramids of Giza were built in ancient Greece.", answer: "FALSE", category: "History" },
+{ question: "The first emperor of China was Qin Shi Huang.", answer: "TRUE", category: "History" },
+{ question: "The Silk Road connected Asia and Europe through trade routes.", answer: "TRUE", category: "History" },
+
+{ question: "The Maya civilization was located in parts of modern-day Mexico and Central America.", answer: "TRUE", category: "History" },
+{ question: "The Inca Empire was centered in the Andes region of South America.", answer: "TRUE", category: "History" },
+{ question: "The Aztec Empire was centered in what is now Mexico.", answer: "TRUE", category: "History" },
+
+{ question: "The Protestant Reformation began in the 1500s.", answer: "TRUE", category: "History" },
+{ question: "Martin Luther posted his Ninety-Five Theses in 1517.", answer: "TRUE", category: "History" },
+{ question: "The Industrial Revolution began in the United States.", answer: "FALSE", category: "History" },
+{ question: "The Industrial Revolution began in Great Britain.", answer: "TRUE", category: "History" }
 
         // Animal Questions
         { question: "A group of lions is called a pride.", answer: "TRUE", category: "Animals" },
@@ -209,7 +275,7 @@
 
     const btn = document.createElement("button");
     btn.className = "pf-blue text-white text-2xl md:text-3xl font-bold py-6 rounded-2xl transition-all hover:scale-[1.02]";
-    btn.textContent = label;
+    btn.textContent = CATEGORY_LABELS[cat] || cat;
     btn.onclick = () => startCategory(cat);
 
     categoryButtons.appendChild(btn);
