@@ -68,6 +68,13 @@
     <h2 id="answerDisplay" class="text-5xl md:text-6xl font-extrabold mt-10 hidden"></h2>
 
     <button id="nextBtn" class="big-btn pf-blue hover:pf-blue mt-12">Next Question</button>
+<div class="mt-8">
+  <button id="backToCategories"
+          class="px-6 py-3 bg-gray-300 text-gray-800 font-bold rounded-xl hover:bg-gray-200 text-xl">
+    ⬅ Back to Categories
+  </button>
+</div>
+
   </div>
 
   <div id="modalBg" class="modal-bg">
@@ -282,12 +289,21 @@
     let current = null;
     let filtered = [];
 
-    function startCategory(cat) {
-      filtered = questions.filter(q => q.category === cat);
-      document.getElementById("categoryScreen").classList.add("hidden");
-      document.getElementById("gameScreen").classList.remove("hidden");
-      document.getElementById("categoryTitle").textContent = cat;
-    }
+function startCategory(cat) {
+  filtered = questions.filter(q => q.category === cat);
+
+  document.getElementById("categoryScreen").classList.add("hidden");
+  document.getElementById("gameScreen").classList.remove("hidden");
+  document.getElementById("categoryTitle").textContent = cat;
+
+  // reset game state when switching categories
+  document.getElementById("questionDisplay").textContent = 'Press “Next Question”';
+  document.getElementById("answerDisplay").classList.add("hidden");
+  document.getElementById("trueBtn").classList.add("hidden");
+  document.getElementById("falseBtn").classList.add("hidden");
+
+  current = null;
+}
 
     document.getElementById("nextBtn").onclick = () => {
       if (filtered.length === 0) {
@@ -309,6 +325,19 @@
   document.getElementById("trueBtn").classList.add("hidden");
   document.getElementById("falseBtn").classList.add("hidden");
 }
+document.getElementById("backToCategories").onclick = () => {
+  document.getElementById("gameScreen").classList.add("hidden");
+  document.getElementById("categoryScreen").classList.remove("hidden");
+
+  // reset game state
+  document.getElementById("questionDisplay").textContent = 'Press “Next Question”';
+  document.getElementById("answerDisplay").classList.add("hidden");
+  document.getElementById("trueBtn").classList.add("hidden");
+  document.getElementById("falseBtn").classList.add("hidden");
+
+  current = null;
+  filtered = [];
+};
 
 document.getElementById("trueBtn").onclick = () => checkAnswer("TRUE");
 document.getElementById("falseBtn").onclick = () => checkAnswer("FALSE");
@@ -317,8 +346,4 @@ document.getElementById("falseBtn").onclick = () => checkAnswer("FALSE");
 </body>
 </html>
 
-
-
-</body>
-</html>
 
