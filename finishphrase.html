@@ -149,65 +149,91 @@
     }
     renderCategoryButtons();
 
-    // ---------- GAME LOGIC (one button toggle) ----------
-    let currentCategory = null;
-    let currentFiltered = [];
-    let currentPick = null;
-    let showingAnswer = false;
+    // ---------- GAME LOGIC (one button toggle + NO REPEATS UNTIL END) ----------
+let currentCategory = null;
+let currentFiltered = [];
+let deck = [];          // shuffled list of phrase objects
+let deckIndex = 0;      // position in deck
+let currentPick = null;
+let showingAnswer = false;
 
-    function startCategory(cat){
-      currentCategory = cat;
-      currentFiltered = phraseItems.filter(p => p.category === cat);
+function shuffleArray(arr){
+  // Fisher–Yates shuffle (reliable)
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
 
-      if (currentFiltered.length === 0) {
-        alert("No phrases in this subject yet! Add some in the Phrase Editor.");
-        return;
-      }
+function buildDeck(){
+  deck = shuffleArray([...currentFiltered]); // copy then shuffle
+  deckIndex = 0;
+}
 
-      categoryTitle.textContent = cat.charAt(0).toUpperCase() + cat.slice(1);
-      categoryScreen.classList.add("hidden");
-      gameScreen.classList.remove("hidden");
+function startCategory(cat){
+  currentCategory = cat;
+  currentFiltered = phraseItems.filter(p => p.category === cat);
 
-      loadNewPhrase();
-    }
+  if (currentFiltered.length === 0) {
+    alert("No phrases in this subject yet! Add some in the Phrase Editor.");
+    return;
+  }
 
-    function loadNewPhrase(){
-      if (currentFiltered.length === 0) {
-        phraseDisplay.textContent = "No phrases in this subject yet!";
-        nextPhraseBtn.textContent = "Show Answer";
-        currentPick = null;
-        showingAnswer = false;
-        return;
-      }
+  categoryTitle.textContent = cat.charAt(0).toUpperCase() + cat.slice(1);
+  categoryScreen.classList.add("hidden");
+  gameScreen.classList.remove("hidden");
 
-      currentPick = currentFiltered[Math.floor(Math.random() * currentFiltered.length)];
-      showingAnswer = false;
+  buildDeck();
+  loadNewPhrase();
+}
 
-      phraseDisplay.innerHTML = `<p>${currentPick.prompt}</p>`;
-      nextPhraseBtn.textContent = "Show Answer";
-    }
+function loadNewPhrase(){
+  if (currentFiltered.length === 0) {
+    phraseDisplay.textContent = "No phrases in this subject yet!";
+    nextPhraseBtn.textContent = "Show Answer";
+    currentPick = null;
+    showingAnswer = false;
+    return;
+  }
 
-    function revealAnswer(){
-      if (!currentPick) return;
-      phraseDisplay.innerHTML = `<p>${currentPick.prompt} <strong>${currentPick.answer}</strong></p>`;
-      showingAnswer = true;
-      nextPhraseBtn.textContent = "Next Phrase";
-    }
+  // If we reached the end, reshuffle and start over
+  if (deckIndex >= deck.length) {
+    buildDeck();
+  }
 
-    nextPhraseBtn.onclick = () => {
-      if (!currentPick) return;
-      if (!showingAnswer) revealAnswer();
-      else loadNewPhrase();
-    };
+  currentPick = deck[deckIndex];
+  deckIndex += 1;
 
-    backToSubjects.onclick = () => {
-      gameScreen.classList.add("hidden");
-      categoryScreen.classList.remove("hidden");
-      phraseDisplay.textContent = "Press the button to begin!";
-      nextPhraseBtn.textContent = "Show Answer";
-      currentPick = null;
-      showingAnswer = false;
-    };
+  showingAnswer = false;
+  phraseDisplay.innerHTML = `<p>${currentPick.prompt}</p>`;
+  nextPhraseBtn.textContent = "Show Answer";
+}
+
+function revealAnswer(){
+  if (!currentPick) return;
+  phraseDisplay.innerHTML = `<p>${currentPick.prompt} <strong>${currentPick.answer}</strong></p>`;
+  showingAnswer = true;
+  nextPhraseBtn.textContent = "Next Phrase";
+}
+
+nextPhraseBtn.onclick = () => {
+  if (!currentPick) return;
+  if (!showingAnswer) revealAnswer();
+  else loadNewPhrase();
+};
+
+backToSubjects.onclick = () => {
+  gameScreen.classList.add("hidden");
+  categoryScreen.classList.remove("hidden");
+  phraseDisplay.textContent = "Press the button to begin!";
+  nextPhraseBtn.textContent = "Show Answer";
+  currentPick = null;
+  showingAnswer = false;
+  deck = [];
+  deckIndex = 0;
+};
+
 
     // ---------- EDITOR ----------
     function updateCategoryDropdown(){
