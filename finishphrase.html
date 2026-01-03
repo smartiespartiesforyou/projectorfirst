@@ -175,7 +175,9 @@ const DEFAULT_PHRASES = {
   // ---------- DATA LOADING (versioned defaults + safe merge) ----------
 
 // Bump this number anytime you add/edit DEFAULT_PHRASES in GitHub
-const DEFAULTS_VERSION = 3;
+// Auto-version defaults based on their content
+const DEFAULTS_VERSION = JSON.stringify(DEFAULT_PHRASES).length;
+
 
 // Load saved data
 let phraseItems = JSON.parse(localStorage.getItem("fpItems") || "[]");
