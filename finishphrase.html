@@ -197,7 +197,43 @@ const DEFAULT_PHRASES = {
   { prompt:"I don’t make mistakes — I create learning...", answer:"experiences." },
   { prompt:"My favorite exercise is a cross between a lunge and a...", answer:"nap." },
  { prompt:"I finally learned the secret to happiness, but I forgot to write it...", answer:"down." }
-]
+],
+    newyear: [
+    { prompt:"Out with the old, in with the...", answer:"new." },
+    { prompt:"New year, new...", answer:"me." },
+    { prompt:"Tomorrow is the first blank page of a 365-page...", answer:"book." },
+    { prompt:"Cheers to a new year and another chance to get it...", answer:"right." },
+    { prompt:"A new year brings new...", answer:"beginnings." },
+
+    { prompt:"Ring out the old, ring in the...", answer:"new." },
+    { prompt:"This year, be somebody who makes...", answer:"progress." },
+    { prompt:"Every end marks a new...", answer:"beginning." },
+    { prompt:"Write it on your heart that every day is the best day in the...", answer:"year." },
+    { prompt:"The future belongs to those who believe in the beauty of their...", answer:"dreams." },
+
+    { prompt:"May all your troubles last as long as your New Year’s...", answer:"resolutions." },
+    { prompt:"A year from now, you may wish you had started...", answer:"today." },
+    { prompt:"New Year’s Day is every man’s...", answer:"birthday." },
+    { prompt:"Don’t count the days, make the days...", answer:"count." },
+    { prompt:"Each year’s regrets are envelopes in which messages of hope are found for the New...", answer:"Year." },
+
+    { prompt:"The beginning is the most important part of the...", answer:"work." },
+    { prompt:"Hope smiles from the threshold of the year to come, whispering...", answer:"‘It will be happier.’" },
+    { prompt:"The best way to predict the future is to...", answer:"create it." },
+    { prompt:"Celebrate what you want to see more of in the coming...", answer:"year." },
+    { prompt:"Every year you make a resolution to change yourself. This year, make a resolution to be...", answer:"yourself." },
+
+    { prompt:"A New Year is like a blank book, and the pen is in your...", answer:"hands." },
+    { prompt:"Let our New Year’s resolution be this: we will be there for one...", answer:"another." },
+    { prompt:"Life’s not about expecting, hoping and wishing, it’s about doing, being and...", answer:"becoming." },
+    { prompt:"You don’t have to see the whole staircase, just take the first...", answer:"step." },
+    { prompt:"The secret of getting ahead is getting...", answer:"started." },
+    { prompt:"This is the beginning of anything you...", answer:"want." },
+    { prompt:"A fresh start is the best kind of...", answer:"start." },
+    { prompt:"New Year, same great...", answer:"you." }
+  ]
+};
+
 };
 
     // Load from storage or defaults
@@ -293,7 +329,9 @@ mergeDefaultsIfNeeded();
   holiday: "Christmas",
   funny: "Funny",
   halloween: "Halloween 🎃",
-  easter: "Easter"
+  easter: "Easter",
+      newyear: "New Year 🎉",
+
 };
 function renderCategoryButtons(){
   categoryButtons.innerHTML = "";
