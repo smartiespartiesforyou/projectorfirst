@@ -127,7 +127,9 @@ categories = [
   "Valentines Day",
   "St Patricks Day",
   "Mardi Gras",
-  "Easter"
+  "Easter",
+  "July 4th",
+  "Memorial Day"
 ];
     localStorage.setItem("tfCategories", JSON.stringify(categories));
   }
@@ -147,13 +149,15 @@ const CATEGORY_LABELS = {
   "Valentines Day": "Valentine’s Day ❤️",
   "St Patricks Day": "St. Patrick’s Day ☘️",
   "Mardi Gras": "Mardi Gras 🎭",
-  Easter: "Easter 🐣"
+  Easter: "Easter 🐣",
+  "July 4th": "July 4th 🇺🇸",
+  "Memorial Day": "Memorial Day 🕊️"
 };
 
   // 🚨 IMPORTANT:
   // If you add/remove/rename a DEFAULT category OR add built-in starter questions,
   // bump this version (v5 -> v6 -> v7 ...)
-  const TF_DATA_VERSION = "2026-01-04-v11";
+  const TF_DATA_VERSION = "2026-01-04-v12";
   const savedVersion = localStorage.getItem("tfDataVersion");
 
   if (savedVersion !== TF_DATA_VERSION) {
@@ -369,6 +373,91 @@ let questions = JSON.parse(localStorage.getItem("tfQuestions") || "[]");
 { question: "The holiday encourages expressing appreciation for others.", answer: "TRUE", category: "Valentines Day" },
 { question: "Valentine’s Day has been celebrated for hundreds of years.", answer: "TRUE", category: "Valentines Day" },
 { question: "Kindness and affection are common themes of Valentine’s Day.", answer: "TRUE", category: "Valentines Day" },
+        // July 4th Questions
+{ question: "July 4th celebrates the signing of the Declaration of Independence.", answer: "TRUE", category: "July 4th" },
+{ question: "The Declaration of Independence was signed in 1776.", answer: "TRUE", category: "July 4th" },
+{ question: "July 4th is also called Independence Day.", answer: "TRUE", category: "July 4th" },
+{ question: "Independence Day is celebrated only in the United States.", answer: "TRUE", category: "July 4th" },
+{ question: "The Declaration of Independence was signed in Philadelphia.", answer: "TRUE", category: "July 4th" },
+
+{ question: "George Washington wrote the Declaration of Independence.", answer: "FALSE", category: "July 4th" },
+{ question: "Thomas Jefferson was the main author of the Declaration of Independence.", answer: "TRUE", category: "July 4th" },
+{ question: "The Liberty Bell is associated with Independence Day.", answer: "TRUE", category: "July 4th" },
+{ question: "The Declaration of Independence declared freedom from France.", answer: "FALSE", category: "July 4th" },
+{ question: "Fireworks are a common July 4th tradition.", answer: "TRUE", category: "July 4th" },
+
+{ question: "The American flag has red, white, and blue colors.", answer: "TRUE", category: "July 4th" },
+{ question: "The original American flag had 13 stars.", answer: "TRUE", category: "July 4th" },
+{ question: "July 4th always falls on a Monday.", answer: "FALSE", category: "July 4th" },
+{ question: "Parades are a popular July 4th activity.", answer: "TRUE", category: "July 4th" },
+{ question: "The Statue of Liberty is a symbol of American independence.", answer: "TRUE", category: "July 4th" },
+
+{ question: "Hot dogs are commonly eaten on July 4th.", answer: "TRUE", category: "July 4th" },
+{ question: "Independence Day marks the end of the Civil War.", answer: "FALSE", category: "July 4th" },
+{ question: "The Declaration of Independence was approved by the Continental Congress.", answer: "TRUE", category: "July 4th" },
+{ question: "Church bells rang after independence was declared.", answer: "TRUE", category: "July 4th" },
+{ question: "July 4th has been celebrated since the 1700s.", answer: "TRUE", category: "July 4th" },
+
+{ question: "Independence Day celebrates freedom and democracy.", answer: "TRUE", category: "July 4th" },
+{ question: "The White House is traditionally decorated with patriotic colors on July 4th.", answer: "TRUE", category: "July 4th" },
+{ question: "July 4th celebrations often include music.", answer: "TRUE", category: "July 4th" },
+{ question: "Independence Day is a federal holiday.", answer: "TRUE", category: "July 4th" },
+{ question: "The American Revolution ended on July 4th, 1776.", answer: "FALSE", category: "July 4th" },
+
+{ question: "Picnics are a common way to celebrate July 4th.", answer: "TRUE", category: "July 4th" },
+{ question: "Independence Day celebrates the adoption of the Constitution.", answer: "FALSE", category: "July 4th" },
+{ question: "The Declaration of Independence includes the phrase 'Life, Liberty, and the pursuit of Happiness.'", answer: "TRUE", category: "July 4th" },
+{ question: "Independence Day celebrations often include family gatherings.", answer: "TRUE", category: "July 4th" },
+{ question: "July 4th is associated with patriotic pride.", answer: "TRUE", category: "July 4th" },
+
+{ question: "Independence Day is celebrated with fireworks at night.", answer: "TRUE", category: "July 4th" },
+{ question: "The Declaration of Independence was signed by all colonists.", answer: "FALSE", category: "July 4th" },
+{ question: "July 4th honors the founding ideals of the United States.", answer: "TRUE", category: "July 4th" },
+{ question: "Independence Day has been celebrated for over 200 years.", answer: "TRUE", category: "July 4th" },
+{ question: "July 4th celebrations are meant to be solemn and silent.", answer: "FALSE", category: "July 4th" },
+// Memorial Day Questions
+{ question: "Memorial Day honors soldiers who died while serving in the U.S. military.", answer: "TRUE", category: "Memorial Day" },
+{ question: "Memorial Day is celebrated on the last Monday in May.", answer: "TRUE", category: "Memorial Day" },
+{ question: "Memorial Day was originally called Decoration Day.", answer: "TRUE", category: "Memorial Day" },
+{ question: "Memorial Day honors all living veterans.", answer: "FALSE", category: "Memorial Day" },
+{ question: "Memorial Day is a federal holiday.", answer: "TRUE", category: "Memorial Day" },
+
+{ question: "Memorial Day marks the unofficial start of summer.", answer: "TRUE", category: "Memorial Day" },
+{ question: "Graves are often decorated with flags on Memorial Day.", answer: "TRUE", category: "Memorial Day" },
+{ question: "Memorial Day began after the Civil War.", answer: "TRUE", category: "Memorial Day" },
+{ question: "Memorial Day always falls on May 30th.", answer: "FALSE", category: "Memorial Day" },
+{ question: "Many communities hold parades on Memorial Day.", answer: "TRUE", category: "Memorial Day" },
+
+{ question: "The National Moment of Remembrance occurs at 3:00 p.m. local time.", answer: "TRUE", category: "Memorial Day" },
+{ question: "Memorial Day honors those who died in service to the country.", answer: "TRUE", category: "Memorial Day" },
+{ question: "Memorial Day was established in the 1700s.", answer: "FALSE", category: "Memorial Day" },
+{ question: "Cemeteries are commonly visited on Memorial Day.", answer: "TRUE", category: "Memorial Day" },
+{ question: "Memorial Day is the same as Veterans Day.", answer: "FALSE", category: "Memorial Day" },
+
+{ question: "Veterans Day honors those who served in the military.", answer: "TRUE", category: "Memorial Day" },
+{ question: "Memorial Day focuses on remembrance and respect.", answer: "TRUE", category: "Memorial Day" },
+{ question: "Many people wear red, white, and blue on Memorial Day.", answer: "TRUE", category: "Memorial Day" },
+{ question: "Memorial Day honors soldiers from all U.S. wars.", answer: "TRUE", category: "Memorial Day" },
+{ question: "Memorial Day celebrations are typically loud and festive.", answer: "FALSE", category: "Memorial Day" },
+
+{ question: "Memorial Day encourages reflection and gratitude.", answer: "TRUE", category: "Memorial Day" },
+{ question: "The American flag is often flown at half-staff on Memorial Day.", answer: "TRUE", category: "Memorial Day" },
+{ question: "Memorial Day has been observed for over 100 years.", answer: "TRUE", category: "Memorial Day" },
+{ question: "Memorial Day honors only soldiers from World War II.", answer: "FALSE", category: "Memorial Day" },
+{ question: "Families often gather on Memorial Day.", answer: "TRUE", category: "Memorial Day" },
+
+{ question: "Memorial Day began as a way to honor fallen Civil War soldiers.", answer: "TRUE", category: "Memorial Day" },
+{ question: "Memorial Day is observed in every U.S. state.", answer: "TRUE", category: "Memorial Day" },
+{ question: "Memorial Day is meant to celebrate victory in war.", answer: "FALSE", category: "Memorial Day" },
+{ question: "Memorial Day recognizes sacrifice made for freedom.", answer: "TRUE", category: "Memorial Day" },
+{ question: "Military ceremonies are common on Memorial Day.", answer: "TRUE", category: "Memorial Day" },
+
+{ question: "Memorial Day is observed with moments of silence.", answer: "TRUE", category: "Memorial Day" },
+{ question: "Memorial Day honors those who are currently serving.", answer: "FALSE", category: "Memorial Day" },
+{ question: "Memorial Day encourages remembering fallen heroes.", answer: "TRUE", category: "Memorial Day" },
+{ question: "Memorial Day traditions include honoring military families.", answer: "TRUE", category: "Memorial Day" },
+{ question: "Memorial Day has deep historical significance in the U.S.", answer: "TRUE", category: "Memorial Day" },
+       
         
         // Old TV Shows Questions
 { question: "‘I Love Lucy’ starred Lucille Ball.", answer: "TRUE", category: "Old TV Shows" },
