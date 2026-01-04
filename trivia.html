@@ -136,6 +136,10 @@
   };
 
     // Stored questions
+// 🚨 IMPORTANT
+// If you add, remove, or rename a DEFAULT category,
+// or add built-in starter questions,
+// you MUST bump the TF_DATA_VERSION number below.
 const TF_DATA_VERSION = "2026-01-04-v4";
 
 const savedVersion = localStorage.getItem("tfDataVersion");
@@ -146,6 +150,7 @@ if (savedVersion !== TF_DATA_VERSION) {
   localStorage.setItem("tfDataVersion", TF_DATA_VERSION);
   location.reload();
 }
+
 
 // IMPORTANT: you were missing this line 👇
 let questions = JSON.parse(localStorage.getItem("tfQuestions") || "[]");
