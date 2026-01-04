@@ -125,7 +125,15 @@
 };
 
     // Stored questions
-    let questions = JSON.parse(localStorage.getItem("tfQuestions") || "[]");
+    const TF_DATA_VERSION = "2026-01-04-v1";
+const savedVersion = localStorage.getItem("tfDataVersion");
+
+if (savedVersion !== TF_DATA_VERSION) {
+  localStorage.removeItem("tfQuestions");
+  localStorage.removeItem("tfCategories");
+  localStorage.setItem("tfDataVersion", TF_DATA_VERSION);
+  location.reload();
+}
 
     if (questions.length === 0) {
       questions = [
