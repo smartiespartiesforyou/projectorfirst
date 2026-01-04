@@ -113,7 +113,7 @@
   // Default categories
   let categories = JSON.parse(localStorage.getItem("tfCategories") || "[]");
   if (categories.length === 0) {
-  categories = [
+ categories = [
   "Bible",
   "Animals",
   "History",
@@ -124,13 +124,15 @@
   "New Orleans",
   "New Years",
   "Old TV Shows",
-  "Valentines Day"
+  "Valentines Day",
+  "St Patricks Day"
 ];
+
     localStorage.setItem("tfCategories", JSON.stringify(categories));
   }
 
   // Category button labels (what shows on-screen)
- const CATEGORY_LABELS = {
+const CATEGORY_LABELS = {
   Bible: "Bible 📖",
   Animals: "Animals 🐾",
   History: "History 🏛️",
@@ -141,13 +143,15 @@
   "New Orleans": "New Orleans ⚜️",
   "New Years": "New Years 🎉",
   "Old TV Shows": "Old TV Shows 📺",
-  "Valentines Day": "Valentine’s Day ❤️"
+  "Valentines Day": "Valentine’s Day ❤️",
+  "St Patricks Day": "St. Patrick’s Day ☘️"
 };
+
 
   // 🚨 IMPORTANT:
   // If you add/remove/rename a DEFAULT category OR add built-in starter questions,
   // bump this version (v5 -> v6 -> v7 ...)
-  const TF_DATA_VERSION = "2026-01-04-v8";
+  const TF_DATA_VERSION = "2026-01-04-v9";
   const savedVersion = localStorage.getItem("tfDataVersion");
 
   if (savedVersion !== TF_DATA_VERSION) {
@@ -192,6 +196,49 @@ let questions = JSON.parse(localStorage.getItem("tfQuestions") || "[]");
         { question: "Abraham and Sarah had a son named Isaac.", answer: "TRUE", category: "Bible" },
         { question: "The first miracle Jesus performed was healing a blind man.", answer: "FALSE", category: "Bible" },
         { question: "Jesus was born in Bethlehem.", answer: "TRUE", category: "Bible" },
+       // St Patricks Day Questions
+{ question: "St. Patrick’s Day is celebrated on March 17.", answer: "TRUE", category: "St Patricks Day" },
+{ question: "St. Patrick was born in Ireland.", answer: "FALSE", category: "St Patricks Day" },
+{ question: "St. Patrick is the patron saint of Ireland.", answer: "TRUE", category: "St Patricks Day" },
+{ question: "St. Patrick’s Day is a religious and cultural holiday.", answer: "TRUE", category: "St Patricks Day" },
+{ question: "Green is commonly associated with St. Patrick’s Day.", answer: "TRUE", category: "St Patricks Day" },
+
+{ question: "People often wear green on St. Patrick’s Day.", answer: "TRUE", category: "St Patricks Day" },
+{ question: "Shamrocks are a symbol of St. Patrick’s Day.", answer: "TRUE", category: "St Patricks Day" },
+{ question: "A shamrock has four leaves.", answer: "FALSE", category: "St Patricks Day" },
+{ question: "St. Patrick used the shamrock to explain the Holy Trinity.", answer: "TRUE", category: "St Patricks Day" },
+{ question: "St. Patrick’s Day always falls on a weekend.", answer: "FALSE", category: "St Patricks Day" },
+
+{ question: "Leprechauns are part of Irish folklore.", answer: "TRUE", category: "St Patricks Day" },
+{ question: "Leprechauns are considered giants.", answer: "FALSE", category: "St Patricks Day" },
+{ question: "St. Patrick’s Day is celebrated outside of Ireland.", answer: "TRUE", category: "St Patricks Day" },
+{ question: "Chicago dyes its river green for St. Patrick’s Day.", answer: "TRUE", category: "St Patricks Day" },
+{ question: "Corned beef and cabbage is associated with St. Patrick’s Day in the U.S.", answer: "TRUE", category: "St Patricks Day" },
+
+{ question: "Corned beef and cabbage originated in Ireland as a national dish.", answer: "FALSE", category: "St Patricks Day" },
+{ question: "St. Patrick is said to have driven snakes out of Ireland.", answer: "TRUE", category: "St Patricks Day" },
+{ question: "There are snakes native to Ireland today.", answer: "FALSE", category: "St Patricks Day" },
+{ question: "St. Patrick’s Day parades are common.", answer: "TRUE", category: "St Patricks Day" },
+{ question: "The first St. Patrick’s Day parade was held in Ireland.", answer: "FALSE", category: "St Patricks Day" },
+
+{ question: "The first St. Patrick’s Day parade was held in the United States.", answer: "TRUE", category: "St Patricks Day" },
+{ question: "Green beer is sometimes served on St. Patrick’s Day.", answer: "TRUE", category: "St Patricks Day" },
+{ question: "St. Patrick’s Day is only celebrated by Irish people.", answer: "FALSE", category: "St Patricks Day" },
+{ question: "The color originally associated with St. Patrick was blue.", answer: "TRUE", category: "St Patricks Day" },
+{ question: "St. Patrick lived during the Middle Ages.", answer: "TRUE", category: "St Patricks Day" },
+
+{ question: "St. Patrick was a bishop.", answer: "TRUE", category: "St Patricks Day" },
+{ question: "St. Patrick’s Day celebrates Irish heritage.", answer: "TRUE", category: "St Patricks Day" },
+{ question: "All St. Patrick’s Day traditions are religious.", answer: "FALSE", category: "St Patricks Day" },
+{ question: "Irish music is often played during St. Patrick’s Day celebrations.", answer: "TRUE", category: "St Patricks Day" },
+{ question: "St. Patrick’s Day is a public holiday in Ireland.", answer: "TRUE", category: "St Patricks Day" },
+
+{ question: "Pinching someone for not wearing green is a common tradition.", answer: "TRUE", category: "St Patricks Day" },
+{ question: "St. Patrick’s Day has themes of luck and blessings.", answer: "TRUE", category: "St Patricks Day" },
+{ question: "Rainbows and pots of gold are symbols linked to St. Patrick’s Day.", answer: "TRUE", category: "St Patricks Day" },
+{ question: "St. Patrick’s Day celebrates the end of winter.", answer: "FALSE", category: "St Patricks Day" },
+{ question: "St. Patrick’s Day is known for celebrating Irish culture worldwide.", answer: "TRUE", category: "St Patricks Day" },
+
         // Valentines Day Questions
 { question: "Valentine’s Day is celebrated on February 14.", answer: "TRUE", category: "Valentines Day" },
 { question: "Valentine’s Day is named after a saint.", answer: "TRUE", category: "Valentines Day" },
