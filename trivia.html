@@ -129,10 +129,9 @@ categories = [
   "Mardi Gras",
   "Easter",
   "July 4th",
-  "Memorial Day"
+  "Memorial Day",
   "Veterans Day",
-  "Halloween",
-
+  "Halloween"
 ];
     localStorage.setItem("tfCategories", JSON.stringify(categories));
   }
@@ -421,49 +420,7 @@ let questions = JSON.parse(localStorage.getItem("tfQuestions") || "[]");
 { question: "July 4th honors the founding ideals of the United States.", answer: "TRUE", category: "July 4th" },
 { question: "Independence Day has been celebrated for over 200 years.", answer: "TRUE", category: "July 4th" },
 { question: "July 4th celebrations are meant to be solemn and silent.", answer: "FALSE", category: "July 4th" },
-// Memorial Day Questions
-{ question: "Memorial Day honors soldiers who died while serving in the U.S. military.", answer: "TRUE", category: "Memorial Day" },
-{ question: "Memorial Day is celebrated on the last Monday in May.", answer: "TRUE", category: "Memorial Day" },
-{ question: "Memorial Day was originally called Decoration Day.", answer: "TRUE", category: "Memorial Day" },
-{ question: "Memorial Day honors all living veterans.", answer: "FALSE", category: "Memorial Day" },
-{ question: "Memorial Day is a federal holiday.", answer: "TRUE", category: "Memorial Day" },
-
-{ question: "Memorial Day marks the unofficial start of summer.", answer: "TRUE", category: "Memorial Day" },
-{ question: "Graves are often decorated with flags on Memorial Day.", answer: "TRUE", category: "Memorial Day" },
-{ question: "Memorial Day began after the Civil War.", answer: "TRUE", category: "Memorial Day" },
-{ question: "Memorial Day always falls on May 30th.", answer: "FALSE", category: "Memorial Day" },
-{ question: "Many communities hold parades on Memorial Day.", answer: "TRUE", category: "Memorial Day" },
-
-{ question: "The National Moment of Remembrance occurs at 3:00 p.m. local time.", answer: "TRUE", category: "Memorial Day" },
-{ question: "Memorial Day honors those who died in service to the country.", answer: "TRUE", category: "Memorial Day" },
-{ question: "Memorial Day was established in the 1700s.", answer: "FALSE", category: "Memorial Day" },
-{ question: "Cemeteries are commonly visited on Memorial Day.", answer: "TRUE", category: "Memorial Day" },
-{ question: "Memorial Day is the same as Veterans Day.", answer: "FALSE", category: "Memorial Day" },
-
-{ question: "Veterans Day honors those who served in the military.", answer: "TRUE", category: "Memorial Day" },
-{ question: "Memorial Day focuses on remembrance and respect.", answer: "TRUE", category: "Memorial Day" },
-{ question: "Many people wear red, white, and blue on Memorial Day.", answer: "TRUE", category: "Memorial Day" },
-{ question: "Memorial Day honors soldiers from all U.S. wars.", answer: "TRUE", category: "Memorial Day" },
-{ question: "Memorial Day celebrations are typically loud and festive.", answer: "FALSE", category: "Memorial Day" },
-
-{ question: "Memorial Day encourages reflection and gratitude.", answer: "TRUE", category: "Memorial Day" },
-{ question: "The American flag is often flown at half-staff on Memorial Day.", answer: "TRUE", category: "Memorial Day" },
-{ question: "Memorial Day has been observed for over 100 years.", answer: "TRUE", category: "Memorial Day" },
-{ question: "Memorial Day honors only soldiers from World War II.", answer: "FALSE", category: "Memorial Day" },
-{ question: "Families often gather on Memorial Day.", answer: "TRUE", category: "Memorial Day" },
-
-{ question: "Memorial Day began as a way to honor fallen Civil War soldiers.", answer: "TRUE", category: "Memorial Day" },
-{ question: "Memorial Day is observed in every U.S. state.", answer: "TRUE", category: "Memorial Day" },
-{ question: "Memorial Day is meant to celebrate victory in war.", answer: "FALSE", category: "Memorial Day" },
-{ question: "Memorial Day recognizes sacrifice made for freedom.", answer: "TRUE", category: "Memorial Day" },
-{ question: "Military ceremonies are common on Memorial Day.", answer: "TRUE", category: "Memorial Day" },
-
-{ question: "Memorial Day is observed with moments of silence.", answer: "TRUE", category: "Memorial Day" },
-{ question: "Memorial Day honors those who are currently serving.", answer: "FALSE", category: "Memorial Day" },
-{ question: "Memorial Day encourages remembering fallen heroes.", answer: "TRUE", category: "Memorial Day" },
-{ question: "Memorial Day traditions include honoring military families.", answer: "TRUE", category: "Memorial Day" },
-{ question: "Memorial Day has deep historical significance in the U.S.", answer: "TRUE", category: "Memorial Day" },
-      
+  
 // Veterans Day Questions
 { question: "Veterans Day honors people who served in the U.S. Armed Forces.", answer: "TRUE", category: "Veterans Day" },
 { question: "Veterans Day is observed on November 11 each year.", answer: "TRUE", category: "Veterans Day" },
@@ -500,7 +457,8 @@ let questions = JSON.parse(localStorage.getItem("tfQuestions") || "[]");
 { question: "Veterans Day focuses on military victories only.", answer: "FALSE", category: "Veterans Day" },
 { question: "Veterans Day recognizes sacrifices made by service members.", answer: "TRUE", category: "Veterans Day" },
 { question: "Veterans Day is observed nationwide in the U.S.", answer: "TRUE", category: "Veterans Day" },
-// Memorial Day Questions
+
+        // Memorial Day Questions
 { question: "Memorial Day honors U.S. military members who died in service.", answer: "TRUE", category: "Memorial Day" },
 { question: "Memorial Day is observed on the last Monday in May.", answer: "TRUE", category: "Memorial Day" },
 { question: "Memorial Day was originally known as Decoration Day.", answer: "TRUE", category: "Memorial Day" },
@@ -536,7 +494,6 @@ let questions = JSON.parse(localStorage.getItem("tfQuestions") || "[]");
 { question: "Wearing poppies is sometimes associated with remembrance.", answer: "TRUE", category: "Memorial Day" },
 { question: "Memorial Day encourages reflection and gratitude.", answer: "TRUE", category: "Memorial Day" },
 { question: "Memorial Day has been observed for over 100 years.", answer: "TRUE", category: "Memorial Day" },
-
         
   // Old TV Shows Questions
 { question: "‘I Love Lucy’ starred Lucille Ball.", answer: "TRUE", category: "Old TV Shows" },
