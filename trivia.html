@@ -113,7 +113,7 @@
   // Default categories
   let categories = JSON.parse(localStorage.getItem("tfCategories") || "[]");
   if (categories.length === 0) {
- categories = [
+categories = [
   "Bible",
   "Animals",
   "History",
@@ -126,9 +126,9 @@
   "Old TV Shows",
   "Valentines Day",
   "St Patricks Day",
-  "Mardi Gras"
+  "Mardi Gras",
+  "Easter"
 ];
-
     localStorage.setItem("tfCategories", JSON.stringify(categories));
   }
 
@@ -146,13 +146,14 @@ const CATEGORY_LABELS = {
   "Old TV Shows": "Old TV Shows 📺",
   "Valentines Day": "Valentine’s Day ❤️",
   "St Patricks Day": "St. Patrick’s Day ☘️",
-  "Mardi Gras": "Mardi Gras 🎭"
+  "Mardi Gras": "Mardi Gras 🎭",
+  Easter: "Easter 🐣"
 };
 
   // 🚨 IMPORTANT:
   // If you add/remove/rename a DEFAULT category OR add built-in starter questions,
   // bump this version (v5 -> v6 -> v7 ...)
-  const TF_DATA_VERSION = "2026-01-04-v10";
+  const TF_DATA_VERSION = "2026-01-04-v11";
   const savedVersion = localStorage.getItem("tfDataVersion");
 
   if (savedVersion !== TF_DATA_VERSION) {
@@ -197,7 +198,50 @@ let questions = JSON.parse(localStorage.getItem("tfQuestions") || "[]");
         { question: "Abraham and Sarah had a son named Isaac.", answer: "TRUE", category: "Bible" },
         { question: "The first miracle Jesus performed was healing a blind man.", answer: "FALSE", category: "Bible" },
         { question: "Jesus was born in Bethlehem.", answer: "TRUE", category: "Bible" },
-       // Mardi Gras Questions
+    // Easter Questions
+{ question: "Easter celebrates the resurrection of Jesus Christ.", answer: "TRUE", category: "Easter" },
+{ question: "Easter is celebrated on the same date every year.", answer: "FALSE", category: "Easter" },
+{ question: "Easter Sunday always falls on a Sunday.", answer: "TRUE", category: "Easter" },
+{ question: "Easter is considered the most important Christian holiday.", answer: "TRUE", category: "Easter" },
+{ question: "The word Easter appears many times in the Bible.", answer: "FALSE", category: "Easter" },
+
+{ question: "Easter follows the season of Lent.", answer: "TRUE", category: "Easter" },
+{ question: "Lent lasts for about 40 days.", answer: "TRUE", category: "Easter" },
+{ question: "Good Friday comes before Easter Sunday.", answer: "TRUE", category: "Easter" },
+{ question: "Good Friday celebrates the birth of Jesus.", answer: "FALSE", category: "Easter" },
+{ question: "Easter celebrates new life and hope.", answer: "TRUE", category: "Easter" },
+
+{ question: "Easter eggs are a symbol of new life.", answer: "TRUE", category: "Easter" },
+{ question: "Egg decorating is an Easter tradition.", answer: "TRUE", category: "Easter" },
+{ question: "Chocolate eggs are commonly associated with Easter.", answer: "TRUE", category: "Easter" },
+{ question: "The Easter Bunny is a religious figure.", answer: "FALSE", category: "Easter" },
+{ question: "Children often participate in Easter egg hunts.", answer: "TRUE", category: "Easter" },
+
+{ question: "Easter baskets are commonly given to children.", answer: "TRUE", category: "Easter" },
+{ question: "The Easter Bunny traditionally delivers eggs and candy.", answer: "TRUE", category: "Easter" },
+{ question: "Easter is only celebrated in the United States.", answer: "FALSE", category: "Easter" },
+{ question: "Many cultures celebrate Easter in different ways.", answer: "TRUE", category: "Easter" },
+{ question: "Easter has both religious and cultural traditions.", answer: "TRUE", category: "Easter" },
+
+{ question: "Sunrise services are sometimes held on Easter morning.", answer: "TRUE", category: "Easter" },
+{ question: "Easter marks the end of the church calendar year.", answer: "FALSE", category: "Easter" },
+{ question: "The Easter season lasts only one day.", answer: "FALSE", category: "Easter" },
+{ question: "White lilies are often associated with Easter.", answer: "TRUE", category: "Easter" },
+{ question: "Easter always occurs in the winter.", answer: "FALSE", category: "Easter" },
+
+{ question: "The date of Easter is based on the lunar calendar.", answer: "TRUE", category: "Easter" },
+{ question: "Easter can fall in March or April.", answer: "TRUE", category: "Easter" },
+{ question: "Palm Sunday occurs before Easter.", answer: "TRUE", category: "Easter" },
+{ question: "Palm Sunday celebrates Jesus entering Jerusalem.", answer: "TRUE", category: "Easter" },
+{ question: "Easter traditions often focus on family gatherings.", answer: "TRUE", category: "Easter" },
+
+{ question: "Easter eggs were originally made of plastic.", answer: "FALSE", category: "Easter" },
+{ question: "Easter encourages messages of forgiveness and renewal.", answer: "TRUE", category: "Easter" },
+{ question: "All Easter traditions are religious.", answer: "FALSE", category: "Easter" },
+{ question: "Easter is a time of celebration and joy.", answer: "TRUE", category: "Easter" },
+{ question: "Easter has been celebrated for many centuries.", answer: "TRUE", category: "Easter" },
+          
+        // Mardi Gras Questions
 { question: "Mardi Gras means 'Fat Tuesday' in French.", answer: "TRUE", category: "Mardi Gras" },
 { question: "Mardi Gras is always celebrated on the same date each year.", answer: "FALSE", category: "Mardi Gras" },
 { question: "Mardi Gras takes place before the season of Lent.", answer: "TRUE", category: "Mardi Gras" },
