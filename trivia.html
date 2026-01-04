@@ -112,28 +112,30 @@
 <script>
   // Default categories
   let categories = JSON.parse(localStorage.getItem("tfCategories") || "[]");
-  if (categories.length === 0) {
-    categories = [
-      "Bible",
-      "Animals",
-      "History",
-      "Food",
-      "Fun Facts",
-      "Music",
-      "Movies"
-    ];
-    localStorage.setItem("tfCategories", JSON.stringify(categories));
-  }
+if (categories.length === 0) {
+  categories = [
+    "Bible",
+    "Animals",
+    "History",
+    "Food",
+    "Fun Facts",
+    "Music",
+    "Movies",
+    "New Orleans"
+  ];
+  localStorage.setItem("tfCategories", JSON.stringify(categories));
+}
 
-  const CATEGORY_LABELS = {
-    Bible: "Bible 📖",
-    Animals: "Animals 🐾",
-    History: "History 🏛️",
-    Food: "Food 🍎",
-    "Fun Facts": "Fun Facts 🤯",
-    Music: "Music 🎵",
-    Movies: "Movies 🎬"
-  };
+ const CATEGORY_LABELS = {
+  Bible: "Bible 📖",
+  Animals: "Animals 🐾",
+  History: "History 🏛️",
+  Food: "Food 🍎",
+  "Fun Facts": "Fun Facts 🤯",
+  Music: "Music 🎵",
+  Movies: "Movies 🎬",
+  "New Orleans": "New Orleans ⚜️"
+};
 
     // Stored questions
 // 🚨 IMPORTANT
