@@ -140,8 +140,7 @@
 // If you add, remove, or rename a DEFAULT category,
 // or add built-in starter questions,
 // you MUST bump the TF_DATA_VERSION number below.
-const TF_DATA_VERSION = "2026-01-04-v4";
-
+const TF_DATA_VERSION = "2026-01-04-v5";
 const savedVersion = localStorage.getItem("tfDataVersion");
 
 if (savedVersion !== TF_DATA_VERSION) {
@@ -430,6 +429,48 @@ let questions = JSON.parse(localStorage.getItem("tfQuestions") || "[]");
 { question: "Chewing gum was originally made from tree sap.", answer: "TRUE", category: "Food" },
 { question: "Blueberries are naturally blue inside.", answer: "FALSE", category: "Food" },
 { question: "Dark chocolate generally contains less sugar than milk chocolate.", answer: "TRUE", category: "Food" },
+// New Orleans Questions
+{ question: "New Orleans was founded in 1718.", answer: "TRUE", category: "New Orleans" },
+{ question: "New Orleans was originally a Spanish colony.", answer: "FALSE", category: "New Orleans" },
+{ question: "The Mississippi River runs through New Orleans.", answer: "TRUE", category: "New Orleans" },
+{ question: "New Orleans is below sea level in many areas.", answer: "TRUE", category: "New Orleans" },
+{ question: "Bourbon Street is located in the French Quarter.", answer: "TRUE", category: "New Orleans" },
+
+{ question: "Mardi Gras always falls on the same date each year.", answer: "FALSE", category: "New Orleans" },
+{ question: "Purple, green, and gold are traditional Mardi Gras colors.", answer: "TRUE", category: "New Orleans" },
+{ question: "King Cake is traditionally eaten during Mardi Gras season.", answer: "TRUE", category: "New Orleans" },
+{ question: "Finding the baby in a King Cake is considered good luck.", answer: "TRUE", category: "New Orleans" },
+{ question: "Jazz music originated in New Orleans.", answer: "TRUE", category: "New Orleans" },
+
+{ question: "Louis Armstrong was born in New Orleans.", answer: "TRUE", category: "New Orleans" },
+{ question: "Second lines are a type of parade tradition in New Orleans.", answer: "TRUE", category: "New Orleans" },
+{ question: "New Orleans cemeteries often use above-ground tombs.", answer: "TRUE", category: "New Orleans" },
+{ question: "New Orleans is known as the 'Big Easy.'", answer: "TRUE", category: "New Orleans" },
+{ question: "The Superdome is home to the New Orleans Saints.", answer: "TRUE", category: "New Orleans" },
+
+{ question: "The New Orleans Saints have never won a Super Bowl.", answer: "FALSE", category: "New Orleans" },
+{ question: "Gumbo is a traditional New Orleans dish.", answer: "TRUE", category: "New Orleans" },
+{ question: "Jambalaya is a type of soup.", answer: "FALSE", category: "New Orleans" },
+{ question: "Beignets are a popular New Orleans dessert.", answer: "TRUE", category: "New Orleans" },
+{ question: "New Orleans has strong French, Spanish, and African influences.", answer: "TRUE", category: "New Orleans" },
+
+{ question: "The French Quarter is the oldest neighborhood in New Orleans.", answer: "TRUE", category: "New Orleans" },
+{ question: "Streetcars are still used for public transportation in New Orleans.", answer: "TRUE", category: "New Orleans" },
+{ question: "New Orleans is the capital of Louisiana.", answer: "FALSE", category: "New Orleans" },
+{ question: "Hurricanes have significantly shaped New Orleans history.", answer: "TRUE", category: "New Orleans" },
+{ question: "Hurricane Katrina struck New Orleans in 2005.", answer: "TRUE", category: "New Orleans" },
+
+{ question: "New Orleans was part of the Louisiana Purchase.", answer: "TRUE", category: "New Orleans" },
+{ question: "The city was named after the Duke of Orleans.", answer: "TRUE", category: "New Orleans" },
+{ question: "New Orleans cuisine is known for being bland.", answer: "FALSE", category: "New Orleans" },
+{ question: "The Garden District is known for historic homes.", answer: "TRUE", category: "New Orleans" },
+{ question: "New Orleans hosts the Jazz & Heritage Festival each year.", answer: "TRUE", category: "New Orleans" },
+
+{ question: "New Orleans is famous for its love of live music.", answer: "TRUE", category: "New Orleans" },
+{ question: "All New Orleans neighborhoods are above sea level.", answer: "FALSE", category: "New Orleans" },
+{ question: "New Orleans has a strong Catholic cultural influence.", answer: "TRUE", category: "New Orleans" },
+{ question: "Mardi Gras beads are traditionally thrown from floats.", answer: "TRUE", category: "New Orleans" },
+{ question: "New Orleans is known for celebrating life with music and food.", answer: "TRUE", category: "New Orleans" }
 
         // Animal Questions
         { question: "A group of lions is called a pride.", answer: "TRUE", category: "Animals" },
