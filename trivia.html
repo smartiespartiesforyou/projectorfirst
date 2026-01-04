@@ -114,34 +114,36 @@
   let categories = JSON.parse(localStorage.getItem("tfCategories") || "[]");
   if (categories.length === 0) {
     categories = [
-      "Bible",
-      "Animals",
-      "History",
-      "Food",
-      "Fun Facts",
-      "Music",
-      "Movies",
-      "New Orleans"
-    ];
+  "Bible",
+  "Animals",
+  "History",
+  "Food",
+  "Fun Facts",
+  "Music",
+  "Movies",
+  "New Orleans",
+  "New Years"
+];
     localStorage.setItem("tfCategories", JSON.stringify(categories));
   }
 
   // Category button labels (what shows on-screen)
   const CATEGORY_LABELS = {
-    Bible: "Bible 📖",
-    Animals: "Animals 🐾",
-    History: "History 🏛️",
-    Food: "Food 🍎",
-    "Fun Facts": "Fun Facts 🤯",
-    Music: "Music 🎵",
-    Movies: "Movies 🎬",
-    "New Orleans": "New Orleans ⚜️"
-  };
+  Bible: "Bible 📖",
+  Animals: "Animals 🐾",
+  History: "History 🏛️",
+  Food: "Food 🍎",
+  "Fun Facts": "Fun Facts 🤯",
+  Music: "Music 🎵",
+  Movies: "Movies 🎬",
+  "New Orleans": "New Orleans ⚜️",
+  "New Years": "New Years 🎉"
+};
 
   // 🚨 IMPORTANT:
   // If you add/remove/rename a DEFAULT category OR add built-in starter questions,
   // bump this version (v5 -> v6 -> v7 ...)
-  const TF_DATA_VERSION = "2026-01-04-v5";
+  const TF_DATA_VERSION = "2026-01-04-v6";
   const savedVersion = localStorage.getItem("tfDataVersion");
 
   if (savedVersion !== TF_DATA_VERSION) {
@@ -271,7 +273,48 @@ let questions = JSON.parse(localStorage.getItem("tfQuestions") || "[]");
 { question: "The drummer usually sets the rhythm in a band.", answer: "TRUE", category: "Music" },
 { question: "Music notes are named using the letters A through G.", answer: "TRUE", category: "Music" },
 { question: "The song 'Rock Around the Clock' helped popularize rock music.", answer: "TRUE", category: "Music" },
+// New Years Questions
+{ question: "New Year’s Day is celebrated on January 1.", answer: "TRUE", category: "New Years" },
+{ question: "The New Year always begins on a Monday.", answer: "FALSE", category: "New Years" },
+{ question: "People often make New Year’s resolutions.", answer: "TRUE", category: "New Years" },
+{ question: "The New Year ball drops in Times Square, New York City.", answer: "TRUE", category: "New Years" },
+{ question: "The New Year is celebrated at the same moment worldwide.", answer: "FALSE", category: "New Years" },
 
+{ question: "Fireworks are commonly used to celebrate the New Year.", answer: "TRUE", category: "New Years" },
+{ question: "The tradition of New Year’s resolutions began in ancient times.", answer: "TRUE", category: "New Years" },
+{ question: "The New Year always starts at midnight.", answer: "TRUE", category: "New Years" },
+{ question: "January was named after the Roman god Janus.", answer: "TRUE", category: "New Years" },
+{ question: "Janus was the god of war.", answer: "FALSE", category: "New Years" },
+
+{ question: "New Year’s Eve is celebrated on December 31.", answer: "TRUE", category: "New Years" },
+{ question: "Singing ‘Auld Lang Syne’ is a New Year’s tradition.", answer: "TRUE", category: "New Years" },
+{ question: "‘Auld Lang Syne’ originated in France.", answer: "FALSE", category: "New Years" },
+{ question: "Many cultures eat special foods for good luck on New Year’s.", answer: "TRUE", category: "New Years" },
+{ question: "Black-eyed peas are eaten for luck in parts of the U.S.", answer: "TRUE", category: "New Years" },
+
+{ question: "The Chinese New Year always falls on January 1.", answer: "FALSE", category: "New Years" },
+{ question: "Some countries celebrate New Year’s by cleaning their homes.", answer: "TRUE", category: "New Years" },
+{ question: "The New Year has always started in January throughout history.", answer: "FALSE", category: "New Years" },
+{ question: "The Gregorian calendar is used by most of the world today.", answer: "TRUE", category: "New Years" },
+{ question: "New Year’s celebrations often symbolize new beginnings.", answer: "TRUE", category: "New Years" },
+
+{ question: "Kissing at midnight on New Year’s Eve is a tradition.", answer: "TRUE", category: "New Years" },
+{ question: "The New Year was once celebrated in March.", answer: "TRUE", category: "New Years" },
+{ question: "Time zones affect when New Year’s is celebrated.", answer: "TRUE", category: "New Years" },
+{ question: "New Year’s Day is a public holiday in the United States.", answer: "TRUE", category: "New Years" },
+{ question: "Every culture celebrates New Year’s the same way.", answer: "FALSE", category: "New Years" },
+
+{ question: "The first New Year’s baby is often celebrated in the news.", answer: "TRUE", category: "New Years" },
+{ question: "Resolutions are legally binding promises.", answer: "FALSE", category: "New Years" },
+{ question: "Confetti is commonly thrown during New Year’s celebrations.", answer: "TRUE", category: "New Years" },
+{ question: "New Year’s marks the end of the calendar year.", answer: "TRUE", category: "New Years" },
+{ question: "People often reflect on the past year during New Year’s.", answer: "TRUE", category: "New Years" },
+
+{ question: "New Year’s celebrations always include alcohol.", answer: "FALSE", category: "New Years" },
+{ question: "The word ‘resolution’ can mean a firm decision.", answer: "TRUE", category: "New Years" },
+{ question: "Many people hope for better luck in the New Year.", answer: "TRUE", category: "New Years" },
+{ question: "New Year’s is only celebrated in Western countries.", answer: "FALSE", category: "New Years" },
+{ question: "New Year’s traditions often involve family and friends.", answer: "TRUE", category: "New Years" },
        
         // Fun Facts Questions
 { question: "Octopuses have three hearts.", answer: "TRUE", category: "Fun Facts" },
