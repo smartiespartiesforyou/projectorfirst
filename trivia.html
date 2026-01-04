@@ -113,7 +113,15 @@
   // Default categories
   let categories = JSON.parse(localStorage.getItem("tfCategories") || "[]");
   if (categories.length === 0) {
-    categories = ["Bible", "Animals", "History", "Food", "Fun Facts", "Music"];
+    categories = [
+      "Bible",
+      "Animals",
+      "History",
+      "Food",
+      "Fun Facts",
+      "Music",
+      "Movies"
+    ];
     localStorage.setItem("tfCategories", JSON.stringify(categories));
   }
 
@@ -123,7 +131,8 @@
     History: "History 🏛️",
     Food: "Food 🍎",
     "Fun Facts": "Fun Facts 🤯",
-    Music: "Music 🎵"
+    Music: "Music 🎵",
+    Movies: "Movies 🎬"
   };
 
     // Stored questions
@@ -172,6 +181,49 @@ let questions = JSON.parse(localStorage.getItem("tfQuestions") || "[]");
         { question: "Abraham and Sarah had a son named Isaac.", answer: "TRUE", category: "Bible" },
         { question: "The first miracle Jesus performed was healing a blind man.", answer: "FALSE", category: "Bible" },
         { question: "Jesus was born in Bethlehem.", answer: "TRUE", category: "Bible" },
+        // Movie Questions
+{ question: "The movie 'The Wizard of Oz' was released in 1939.", answer: "TRUE", category: "Movies" },
+{ question: "Dorothy’s shoes were silver in the original book 'The Wizard of Oz.'", answer: "TRUE", category: "Movies" },
+{ question: "Humphrey Bogart starred in the movie 'Casablanca.'", answer: "TRUE", category: "Movies" },
+{ question: "The movie 'Gone with the Wind' is set during the American Civil War.", answer: "TRUE", category: "Movies" },
+{ question: "Marilyn Monroe starred in the movie 'Some Like It Hot.'", answer: "TRUE", category: "Movies" },
+
+{ question: "The movie 'Jaws' is about a giant octopus.", answer: "FALSE", category: "Movies" },
+{ question: "The character James Bond is a secret agent.", answer: "TRUE", category: "Movies" },
+{ question: "The movie 'Titanic' is based on a real historical event.", answer: "TRUE", category: "Movies" },
+{ question: "The phrase 'Here’s looking at you, kid' comes from the movie 'Casablanca.'", answer: "TRUE", category: "Movies" },
+{ question: "Charlie Chaplin was famous for silent films.", answer: "TRUE", category: "Movies" },
+
+{ question: "The movie 'Snow White and the Seven Dwarfs' was Disney’s first full-length animated film.", answer: "TRUE", category: "Movies" },
+{ question: "The movie 'Star Wars' was released in the 1950s.", answer: "FALSE", category: "Movies" },
+{ question: "The movie 'Mary Poppins' combines live action and animation.", answer: "TRUE", category: "Movies" },
+{ question: "Alfred Hitchcock was known for directing comedies.", answer: "FALSE", category: "Movies" },
+{ question: "The movie 'Psycho' was directed by Alfred Hitchcock.", answer: "TRUE", category: "Movies" },
+
+{ question: "The Oscars are awards given for achievements in movies.", answer: "TRUE", category: "Movies" },
+{ question: "The movie 'Forrest Gump' includes scenes set during historical events.", answer: "TRUE", category: "Movies" },
+{ question: "The movie 'Rocky' is about a professional football player.", answer: "FALSE", category: "Movies" },
+{ question: "The character of Indiana Jones is an archaeologist.", answer: "TRUE", category: "Movies" },
+{ question: "The movie 'The Sound of Music' is set in Austria.", answer: "TRUE", category: "Movies" },
+
+{ question: "The movie 'E.T.' is about a friendly alien.", answer: "TRUE", category: "Movies" },
+{ question: "The movie 'Jurassic Park' features cloned dinosaurs.", answer: "TRUE", category: "Movies" },
+{ question: "The movie 'The Godfather' focuses on a crime family.", answer: "TRUE", category: "Movies" },
+{ question: "The movie 'Singin’ in the Rain' is a musical.", answer: "TRUE", category: "Movies" },
+{ question: "The movie 'The Ten Commandments' starred Charlton Heston.", answer: "TRUE", category: "Movies" },
+
+{ question: "The movie 'Ben-Hur' includes a famous chariot race.", answer: "TRUE", category: "Movies" },
+{ question: "The movie 'Back to the Future' involves time travel.", answer: "TRUE", category: "Movies" },
+{ question: "The movie 'Planet of the Apes' takes place on Mars.", answer: "FALSE", category: "Movies" },
+{ question: "The movie 'Grease' is set in the 1950s.", answer: "TRUE", category: "Movies" },
+{ question: "The character Darth Vader appears in the 'Star Wars' movies.", answer: "TRUE", category: "Movies" },
+
+{ question: "The movie 'It’s a Wonderful Life' is often shown during the Christmas season.", answer: "TRUE", category: "Movies" },
+{ question: "The movie 'King Kong' features a giant ape.", answer: "TRUE", category: "Movies" },
+{ question: "The movie 'The Silence of the Lambs' is a romantic comedy.", answer: "FALSE", category: "Movies" },
+{ question: "The movie 'Mrs. Doubtfire' stars Robin Williams.", answer: "TRUE", category: "Movies" },
+{ question: "The movie 'The Shawshank Redemption' is set mostly in a prison.", answer: "TRUE", category: "Movies" },
+
         // Music Questions
 { question: "Elvis Presley is known as the King of Rock and Roll.", answer: "TRUE", category: "Music" },
 { question: "The Beatles were an American band.", answer: "FALSE", category: "Music" },
