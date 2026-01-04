@@ -132,6 +132,8 @@ categories = [
   "Memorial Day",
   "Veterans Day",
   "Halloween"
+  "Thanksgiving",
+  "Christmas",
 ];
     localStorage.setItem("tfCategories", JSON.stringify(categories));
   }
@@ -152,10 +154,12 @@ const CATEGORY_LABELS = {
   "St Patricks Day": "St. Patrick’s Day ☘️",
   "Mardi Gras": "Mardi Gras 🎭",
   Easter: "Easter 🐣",
-  "July 4th": "July 4th 🇺🇸",
+  "July 4th": "July 4th 🎆",
   "Memorial Day": "Memorial Day 🕊️",
   "Veterans Day": "Veterans Day ⭐",
   Halloween: "Halloween 🎃",
+  Thanksgiving: "Thanksgiving 🦃",
+  Christmas: "Christmas 🎄",
   
 };
 
@@ -494,6 +498,97 @@ let questions = JSON.parse(localStorage.getItem("tfQuestions") || "[]");
 { question: "Wearing poppies is sometimes associated with remembrance.", answer: "TRUE", category: "Memorial Day" },
 { question: "Memorial Day encourages reflection and gratitude.", answer: "TRUE", category: "Memorial Day" },
 { question: "Memorial Day has been observed for over 100 years.", answer: "TRUE", category: "Memorial Day" },
+        // Halloween Questions
+{ question: "Halloween is celebrated on October 31.", answer: "TRUE", category: "Halloween" },
+{ question: "Halloween originated from the Celtic festival Samhain.", answer: "TRUE", category: "Halloween" },
+{ question: "Jack-o’-lanterns were originally made from turnips.", answer: "TRUE", category: "Halloween" },
+{ question: "Candy corn was originally called chicken feed.", answer: "TRUE", category: "Halloween" },
+{ question: "Black cats are commonly associated with Halloween.", answer: "TRUE", category: "Halloween" },
+
+{ question: "Halloween is always celebrated on the last Friday of October.", answer: "FALSE", category: "Halloween" },
+{ question: "Trick-or-treating became popular in the United States in the 1900s.", answer: "TRUE", category: "Halloween" },
+{ question: "Witches are said to fly on broomsticks.", answer: "TRUE", category: "Halloween" },
+{ question: "The color orange represents harvest and autumn.", answer: "TRUE", category: "Halloween" },
+{ question: "The color black symbolizes death and darkness.", answer: "TRUE", category: "Halloween" },
+
+{ question: "Halloween began as a Christian holiday.", answer: "FALSE", category: "Halloween" },
+{ question: "Bats are commonly linked to Halloween folklore.", answer: "TRUE", category: "Halloween" },
+{ question: "Ghosts are believed to appear more often on Halloween night.", answer: "TRUE", category: "Halloween" },
+{ question: "Halloween costumes were originally worn to scare away spirits.", answer: "TRUE", category: "Halloween" },
+{ question: "Candy apples are a traditional Halloween treat.", answer: "TRUE", category: "Halloween" },
+
+{ question: "Pumpkins are native to Europe.", answer: "FALSE", category: "Halloween" },
+{ question: "Haunted houses are popular attractions during Halloween.", answer: "TRUE", category: "Halloween" },
+{ question: "The word Halloween comes from 'All Hallows’ Eve.'", answer: "TRUE", category: "Halloween" },
+{ question: "Spiders are symbols often used in Halloween decorations.", answer: "TRUE", category: "Halloween" },
+{ question: "Halloween is celebrated worldwide on the same traditions.", answer: "FALSE", category: "Halloween" },
+
+{ question: "Skeletons represent death in Halloween imagery.", answer: "TRUE", category: "Halloween" },
+{ question: "The Great Pumpkin is a character from 'It’s the Great Pumpkin, Charlie Brown.'", answer: "TRUE", category: "Halloween" },
+{ question: "Halloween is more popular with children than adults.", answer: "FALSE", category: "Halloween" },
+{ question: "Fog machines are often used in Halloween decorations.", answer: "TRUE", category: "Halloween" },
+{ question: "Halloween is the biggest candy-selling holiday in the U.S.", answer: "TRUE", category: "Halloween" },
+// Thanksgiving Questions
+{ question: "Thanksgiving is celebrated on the fourth Thursday of November in the U.S.", answer: "TRUE", category: "Thanksgiving" },
+{ question: "The first Thanksgiving took place in 1621.", answer: "TRUE", category: "Thanksgiving" },
+{ question: "Pilgrims and Native Americans shared the first Thanksgiving meal.", answer: "TRUE", category: "Thanksgiving" },
+{ question: "Turkey is a traditional Thanksgiving food.", answer: "TRUE", category: "Thanksgiving" },
+{ question: "Thanksgiving is a federal holiday in the United States.", answer: "TRUE", category: "Thanksgiving" },
+
+{ question: "Thanksgiving is celebrated in every country worldwide.", answer: "FALSE", category: "Thanksgiving" },
+{ question: "Corn was likely served at the first Thanksgiving.", answer: "TRUE", category: "Thanksgiving" },
+{ question: "Pumpkin pie is a Thanksgiving dessert.", answer: "TRUE", category: "Thanksgiving" },
+{ question: "Thanksgiving always falls on the same date.", answer: "FALSE", category: "Thanksgiving" },
+{ question: "The Macy’s Thanksgiving Day Parade is held in New York City.", answer: "TRUE", category: "Thanksgiving" },
+
+{ question: "Thanksgiving was first proclaimed a national holiday by Abraham Lincoln.", answer: "TRUE", category: "Thanksgiving" },
+{ question: "Football games are commonly played on Thanksgiving.", answer: "TRUE", category: "Thanksgiving" },
+{ question: "Cranberries are traditionally served at Thanksgiving.", answer: "TRUE", category: "Thanksgiving" },
+{ question: "The first Thanksgiving lasted one day.", answer: "FALSE", category: "Thanksgiving" },
+{ question: "Stuffing is sometimes cooked inside the turkey.", answer: "TRUE", category: "Thanksgiving" },
+
+{ question: "Thanksgiving marks the start of the Christmas shopping season.", answer: "TRUE", category: "Thanksgiving" },
+{ question: "The Pilgrims sailed to America on the Mayflower.", answer: "TRUE", category: "Thanksgiving" },
+{ question: "Sweet potatoes are often served at Thanksgiving.", answer: "TRUE", category: "Thanksgiving" },
+{ question: "Thanksgiving originated in Canada.", answer: "FALSE", category: "Thanksgiving" },
+{ question: "Gratitude is a central theme of Thanksgiving.", answer: "TRUE", category: "Thanksgiving" },
+
+{ question: "Green bean casserole is a traditional dish.", answer: "TRUE", category: "Thanksgiving" },
+{ question: "Thanksgiving parades feature giant balloons.", answer: "TRUE", category: "Thanksgiving" },
+{ question: "Thanksgiving is always followed by Black Friday.", answer: "TRUE", category: "Thanksgiving" },
+{ question: "Turkey was the only meat eaten at the first Thanksgiving.", answer: "FALSE", category: "Thanksgiving" },
+{ question: "Thanksgiving encourages spending time with family.", answer: "TRUE", category: "Thanksgiving" },
+// Christmas Questions
+{ question: "Christmas is celebrated on December 25.", answer: "TRUE", category: "Christmas" },
+{ question: "Christmas celebrates the birth of Jesus Christ.", answer: "TRUE", category: "Christmas" },
+{ question: "Santa Claus is also known as Saint Nicholas.", answer: "TRUE", category: "Christmas" },
+{ question: "Christmas trees are commonly decorated with lights and ornaments.", answer: "TRUE", category: "Christmas" },
+{ question: "Reindeer are said to pull Santa’s sleigh.", answer: "TRUE", category: "Christmas" },
+
+{ question: "Christmas is celebrated only in Christian countries.", answer: "FALSE", category: "Christmas" },
+{ question: "The tradition of Christmas trees began in Germany.", answer: "TRUE", category: "Christmas" },
+{ question: "Eggnog is a traditional Christmas drink.", answer: "TRUE", category: "Christmas" },
+{ question: "Christmas always falls on a Sunday.", answer: "FALSE", category: "Christmas" },
+{ question: "Mistletoe is associated with Christmas traditions.", answer: "TRUE", category: "Christmas" },
+
+{ question: "The song 'Jingle Bells' was originally written for Christmas.", answer: "FALSE", category: "Christmas" },
+{ question: "Stockings are often hung by the fireplace at Christmas.", answer: "TRUE", category: "Christmas" },
+{ question: "Christmas carols are traditional holiday songs.", answer: "TRUE", category: "Christmas" },
+{ question: "Santa Claus wears red and white clothing.", answer: "TRUE", category: "Christmas" },
+{ question: "Christmas lights are often placed on houses.", answer: "TRUE", category: "Christmas" },
+
+{ question: "The Nativity scene represents the birth of Jesus.", answer: "TRUE", category: "Christmas" },
+{ question: "Christmas originated in the 1800s.", answer: "FALSE", category: "Christmas" },
+{ question: "Gift-giving is a Christmas tradition.", answer: "TRUE", category: "Christmas" },
+{ question: "The Grinch is a Christmas character.", answer: "TRUE", category: "Christmas" },
+{ question: "Candy canes are a popular Christmas treat.", answer: "TRUE", category: "Christmas" },
+
+{ question: "Christmas wreaths are often made from evergreen branches.", answer: "TRUE", category: "Christmas" },
+{ question: "The star is a symbol often placed on top of Christmas trees.", answer: "TRUE", category: "Christmas" },
+{ question: "Christmas is celebrated the same way in every country.", answer: "FALSE", category: "Christmas" },
+{ question: "The Twelve Days of Christmas end on January 6.", answer: "TRUE", category: "Christmas" },
+{ question: "Christmas is one of the most widely celebrated holidays worldwide.", answer: "TRUE", category: "Christmas" },
+    
         
   // Old TV Shows Questions
 { question: "‘I Love Lucy’ starred Lucille Ball.", answer: "TRUE", category: "Old TV Shows" },
