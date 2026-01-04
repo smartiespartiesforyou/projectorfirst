@@ -125,7 +125,7 @@
 };
 
     // Stored questions
-    const TF_DATA_VERSION = "2026-01-04-v1";
+const TF_DATA_VERSION = "2026-01-04-v1";
 const savedVersion = localStorage.getItem("tfDataVersion");
 
 if (savedVersion !== TF_DATA_VERSION) {
@@ -135,6 +135,8 @@ if (savedVersion !== TF_DATA_VERSION) {
   location.reload();
 }
 
+// IMPORTANT: you were missing this line 👇
+let questions = JSON.parse(localStorage.getItem("tfQuestions") || "[]");
     if (questions.length === 0) {
       questions = [
         // Bible Questions
