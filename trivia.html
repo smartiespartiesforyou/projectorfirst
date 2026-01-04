@@ -125,7 +125,8 @@
   "New Years",
   "Old TV Shows",
   "Valentines Day",
-  "St Patricks Day"
+  "St Patricks Day",
+  "Mardi Gras"
 ];
 
     localStorage.setItem("tfCategories", JSON.stringify(categories));
@@ -144,14 +145,14 @@ const CATEGORY_LABELS = {
   "New Years": "New Years 🎉",
   "Old TV Shows": "Old TV Shows 📺",
   "Valentines Day": "Valentine’s Day ❤️",
-  "St Patricks Day": "St. Patrick’s Day ☘️"
+  "St Patricks Day": "St. Patrick’s Day ☘️",
+  "Mardi Gras": "Mardi Gras 🎭"
 };
-
 
   // 🚨 IMPORTANT:
   // If you add/remove/rename a DEFAULT category OR add built-in starter questions,
   // bump this version (v5 -> v6 -> v7 ...)
-  const TF_DATA_VERSION = "2026-01-04-v9";
+  const TF_DATA_VERSION = "2026-01-04-v10";
   const savedVersion = localStorage.getItem("tfDataVersion");
 
   if (savedVersion !== TF_DATA_VERSION) {
@@ -196,7 +197,50 @@ let questions = JSON.parse(localStorage.getItem("tfQuestions") || "[]");
         { question: "Abraham and Sarah had a son named Isaac.", answer: "TRUE", category: "Bible" },
         { question: "The first miracle Jesus performed was healing a blind man.", answer: "FALSE", category: "Bible" },
         { question: "Jesus was born in Bethlehem.", answer: "TRUE", category: "Bible" },
-       // St Patricks Day Questions
+       // Mardi Gras Questions
+{ question: "Mardi Gras means 'Fat Tuesday' in French.", answer: "TRUE", category: "Mardi Gras" },
+{ question: "Mardi Gras is always celebrated on the same date each year.", answer: "FALSE", category: "Mardi Gras" },
+{ question: "Mardi Gras takes place before the season of Lent.", answer: "TRUE", category: "Mardi Gras" },
+{ question: "Mardi Gras is most closely associated with New Orleans in the U.S.", answer: "TRUE", category: "Mardi Gras" },
+{ question: "Purple, green, and gold are Mardi Gras colors.", answer: "TRUE", category: "Mardi Gras" },
+
+{ question: "Purple represents justice in Mardi Gras traditions.", answer: "TRUE", category: "Mardi Gras" },
+{ question: "Green represents faith in Mardi Gras traditions.", answer: "FALSE", category: "Mardi Gras" },
+{ question: "Gold represents power in Mardi Gras traditions.", answer: "FALSE", category: "Mardi Gras" },
+{ question: "Mardi Gras parades feature decorated floats.", answer: "TRUE", category: "Mardi Gras" },
+{ question: "Beads are commonly thrown during Mardi Gras parades.", answer: "TRUE", category: "Mardi Gras" },
+
+{ question: "King Cake is a traditional Mardi Gras dessert.", answer: "TRUE", category: "Mardi Gras" },
+{ question: "King Cake is only eaten on Mardi Gras Day.", answer: "FALSE", category: "Mardi Gras" },
+{ question: "A small plastic baby is hidden inside King Cake.", answer: "TRUE", category: "Mardi Gras" },
+{ question: "Finding the baby means you have good luck.", answer: "TRUE", category: "Mardi Gras" },
+{ question: "The person who finds the baby often buys the next King Cake.", answer: "TRUE", category: "Mardi Gras" },
+
+{ question: "Mardi Gras celebrations include masked balls.", answer: "TRUE", category: "Mardi Gras" },
+{ question: "Krewes organize Mardi Gras parades.", answer: "TRUE", category: "Mardi Gras" },
+{ question: "A Krewe is a type of parade float.", answer: "FALSE", category: "Mardi Gras" },
+{ question: "Some Mardi Gras traditions date back hundreds of years.", answer: "TRUE", category: "Mardi Gras" },
+{ question: "Mardi Gras originated in the United States.", answer: "FALSE", category: "Mardi Gras" },
+
+{ question: "Mardi Gras has roots in European traditions.", answer: "TRUE", category: "Mardi Gras" },
+{ question: "Masks are worn to represent equality during Mardi Gras.", answer: "TRUE", category: "Mardi Gras" },
+{ question: "Everyone must wear a costume to attend Mardi Gras.", answer: "FALSE", category: "Mardi Gras" },
+{ question: "Throws can include beads, cups, and toys.", answer: "TRUE", category: "Mardi Gras" },
+{ question: "The word 'krewe' is unique to Mardi Gras culture.", answer: "TRUE", category: "Mardi Gras" },
+
+{ question: "Zulu is one of the most famous Mardi Gras krewes.", answer: "TRUE", category: "Mardi Gras" },
+{ question: "Rex is a historic Mardi Gras krewe.", answer: "TRUE", category: "Mardi Gras" },
+{ question: "The Rex parade traditionally rolls on Mardi Gras Day.", answer: "TRUE", category: "Mardi Gras" },
+{ question: "Mardi Gras celebrations end at midnight.", answer: "TRUE", category: "Mardi Gras" },
+{ question: "Ash Wednesday comes after Mardi Gras.", answer: "TRUE", category: "Mardi Gras" },
+
+{ question: "Mardi Gras is celebrated only in Louisiana.", answer: "FALSE", category: "Mardi Gras" },
+{ question: "Mobile, Alabama also celebrates Mardi Gras.", answer: "TRUE", category: "Mardi Gras" },
+{ question: "Mardi Gras celebrates indulgence before Lent.", answer: "TRUE", category: "Mardi Gras" },
+{ question: "Music and dancing are common during Mardi Gras.", answer: "TRUE", category: "Mardi Gras" },
+{ question: "Mardi Gras is known for joy, tradition, and celebration.", answer: "TRUE", category: "Mardi Gras" },
+
+        // St Patricks Day Questions
 { question: "St. Patrick’s Day is celebrated on March 17.", answer: "TRUE", category: "St Patricks Day" },
 { question: "St. Patrick was born in Ireland.", answer: "FALSE", category: "St Patricks Day" },
 { question: "St. Patrick is the patron saint of Ireland.", answer: "TRUE", category: "St Patricks Day" },
