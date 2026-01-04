@@ -61,8 +61,8 @@
     <h2 id="questionDisplay" class="text-3xl md:text-5xl font-bold mb-16">Press “Next Question”</h2>
 
     <div class="flex justify-center gap-6 md:gap-10 mb-16">
-      <button id="trueBtn" class="big-btn bg-green-600 hover:bg-green-500 hidden">TRUE</button>
-      <button id="falseBtn" class="big-btn bg-red-600 hover:bg-red-500 hidden">FALSE</button>
+      <button id="trueBtn" updateSaved-btn bg-green-600 hover:bg-green-500 hidden">TRUE</button>
+      <button id="falseBtn" updateSaved-btn bg-red-600 hover:bg-red-500 hidden">FALSE</button>
     </div>
 
 <h2
@@ -71,15 +71,14 @@
 </h2>
 
 
-    <button id="nextBtn" class="big-btn pf-blue hover:pf-blue mt-12">Next Question</button>
+<button id="nextBtn" class="big-btn pf-blue mt-12">Next Question</button>
+
 <div class="mt-8">
   <button id="backToCategories"
           class="px-6 py-3 bg-gray-300 text-gray-800 font-bold rounded-xl hover:bg-gray-200 text-xl">
     ⬅ Back to Categories
   </button>
 </div>
-
-  </div>
 
   <div id="modalBg" class="modal-bg">
     <div class="modal">
@@ -131,7 +130,7 @@ categories = [
   "July 4th",
   "Memorial Day",
   "Veterans Day",
-  "Halloween"
+  "Halloween",
   "Thanksgiving",
   "Christmas",
 ];
@@ -1061,41 +1060,56 @@ let questions = JSON.parse(localStorage.getItem("tfQuestions") || "[]");
       updateSavedList();
     };
 
-    function updateSavedList() {
-      const cat = inputCategory.value;
-      savedList.innerHTML = "";
-      const filtered = questions.filter(q => q.category === cat);
-      if (filtered.length === 0) {
-        savedList.innerHTML = `<p class="text-gray-500 italic">No questions yet for this category.</p>`;
-        return;
-      }
-      filtered.forEach((q, i) => {
-        const li = document.createElement("li");
-        li.innerHTML = `
-          <div class="flex justify-between bg-gray-100 p-3 rounded-xl items-center">
-            <div class="flex-1"><strong>${q.question}</strong> —
-              <span class="text-${q.answer === 'TRUE' ? 'green' : 'red'}-600 font-semibold">${q.answer}</span>
-              <em class="text-gray-500">(${q.category})</em>
-            </div>
-            <button onclick="deleteQuestion('${q.category}', ${i})"
-              class="bg-red-500 text-white px-3 py-1 rounded-lg hover:bg-red-600 ml-4 whitespace-nowrap">Delete</button>
-          </div>`;
-        savedList.appendChild(li);
-      });
-      savedList.style.maxHeight = "300px";
-      savedList.style.overflowY = "auto";
-      savedList.style.paddingRight = "10px";
-    }
+   function updateSavedList() {
+  const cat = inputCategory.value;
 
-    function deleteQuestion(cat, index) {
-      const idx = questions.findIndex(q => q.category === cat && questions.indexOf(q) === index);
-      if (idx !== -1) {
-        questions.splice(idx, 1);
-        localStorage.setItem("tfQuestions", JSON.stringify(questions));
-        updateSavedList();
-      }
-    }
-    window.deleteQuestion = deleteQuestion;
+  savedList.innerHTML = "";
+
+  // If they're on "+ Add New Category", show nothing yet
+  if (cat === "__NEW__") {
+    savedList.innerHTML = `<p class="text-gray-500 italic">Select a category to view questions.</p>`;
+    return;
+  }
+
+  const filteredQs = questions
+    .map((q, idx) => ({ ...q, _idx: idx })) // keep original index
+    .filter(q => q.category === cat);
+
+  if (filteredQs.length === 0) {
+    savedList.innerHTML = `<p class="text-gray-500 italic">No questions yet for this category.</p>`;
+    return;
+  }
+
+  filteredQs.forEach((q) => {
+    const li = document.createElement("li");
+    li.innerHTML = `
+      <div class="flex justify-between bg-gray-100 p-3 rounded-xl items-center">
+        <div class="flex-1">
+          <strong>${q.question}</strong> —
+          <span class="text-${q.answer === 'TRUE' ? 'green' : 'red'}-600 font-semibold">${q.answer}</span>
+          <em class="text-gray-500">(${q.category})</em>
+        </div>
+        <button onclick="deleteQuestion(${q._idx})"
+          class="bg-red-500 text-white px-3 py-1 rounded-lg hover:bg-red-600 ml-4 whitespace-nowrap">
+          Delete
+        </button>
+      </div>`;
+    savedList.appendChild(li);
+  });
+
+  savedList.style.maxHeight = "300px";
+  savedList.style.overflowY = "auto";
+  savedList.style.paddingRight = "10px";
+}
+
+function deleteQuestion(index) {
+  if (index >= 0 && index < questions.length) {
+    questions.splice(index, 1);
+    localStorage.setItem("tfQuestions", JSON.stringify(questions));
+    updateSavedList();
+  }
+}
+window.deleteQuestion = deleteQuestion;
 
     let current = null;
     let filtered = [];
