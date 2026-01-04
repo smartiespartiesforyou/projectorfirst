@@ -123,7 +123,8 @@
   "Movies",
   "New Orleans",
   "New Years",
-  "Old TV Shows"
+  "Old TV Shows",
+  "Valentines Day"
 ];
     localStorage.setItem("tfCategories", JSON.stringify(categories));
   }
@@ -139,14 +140,14 @@
   Movies: "Movies 🎬",
   "New Orleans": "New Orleans ⚜️",
   "New Years": "New Years 🎉",
-  "Old TV Shows": "Old TV Shows 📺"
+  "Old TV Shows": "Old TV Shows 📺",
+  "Valentines Day": "Valentine’s Day ❤️"
 };
-
 
   // 🚨 IMPORTANT:
   // If you add/remove/rename a DEFAULT category OR add built-in starter questions,
   // bump this version (v5 -> v6 -> v7 ...)
-  const TF_DATA_VERSION = "2026-01-04-v7";
+  const TF_DATA_VERSION = "2026-01-04-v8";
   const savedVersion = localStorage.getItem("tfDataVersion");
 
   if (savedVersion !== TF_DATA_VERSION) {
@@ -191,6 +192,48 @@ let questions = JSON.parse(localStorage.getItem("tfQuestions") || "[]");
         { question: "Abraham and Sarah had a son named Isaac.", answer: "TRUE", category: "Bible" },
         { question: "The first miracle Jesus performed was healing a blind man.", answer: "FALSE", category: "Bible" },
         { question: "Jesus was born in Bethlehem.", answer: "TRUE", category: "Bible" },
+        // Valentines Day Questions
+{ question: "Valentine’s Day is celebrated on February 14.", answer: "TRUE", category: "Valentines Day" },
+{ question: "Valentine’s Day is named after a saint.", answer: "TRUE", category: "Valentines Day" },
+{ question: "Valentine’s Day began as a modern American holiday.", answer: "FALSE", category: "Valentines Day" },
+{ question: "The holiday is associated with love and romance.", answer: "TRUE", category: "Valentines Day" },
+{ question: "Valentine’s Day is celebrated worldwide.", answer: "TRUE", category: "Valentines Day" },
+
+{ question: "The heart is a common symbol of Valentine’s Day.", answer: "TRUE", category: "Valentines Day" },
+{ question: "Cupid is often associated with Valentine’s Day.", answer: "TRUE", category: "Valentines Day" },
+{ question: "Cupid is known as the god of war.", answer: "FALSE", category: "Valentines Day" },
+{ question: "Red and pink are common Valentine’s Day colors.", answer: "TRUE", category: "Valentines Day" },
+{ question: "Valentine’s Day cards are a popular tradition.", answer: "TRUE", category: "Valentines Day" },
+
+{ question: "The first Valentine’s cards were sent electronically.", answer: "FALSE", category: "Valentines Day" },
+{ question: "Candy hearts often have short messages printed on them.", answer: "TRUE", category: "Valentines Day" },
+{ question: "Chocolate is commonly given on Valentine’s Day.", answer: "TRUE", category: "Valentines Day" },
+{ question: "Valentine’s Day is only for married couples.", answer: "FALSE", category: "Valentines Day" },
+{ question: "People often give flowers on Valentine’s Day.", answer: "TRUE", category: "Valentines Day" },
+
+{ question: "Roses are a popular Valentine’s Day flower.", answer: "TRUE", category: "Valentines Day" },
+{ question: "White roses traditionally symbolize hatred.", answer: "FALSE", category: "Valentines Day" },
+{ question: "Valentine’s Day can celebrate friendships as well as romance.", answer: "TRUE", category: "Valentines Day" },
+{ question: "Children often exchange valentines at school.", answer: "TRUE", category: "Valentines Day" },
+{ question: "Valentine’s Day always falls on a weekend.", answer: "FALSE", category: "Valentines Day" },
+
+{ question: "The holiday has roots in ancient Roman traditions.", answer: "TRUE", category: "Valentines Day" },
+{ question: "Saint Valentine was a real historical figure.", answer: "TRUE", category: "Valentines Day" },
+{ question: "All Valentine’s traditions come from the same country.", answer: "FALSE", category: "Valentines Day" },
+{ question: "Valentine’s Day is sometimes called a Hallmark holiday.", answer: "TRUE", category: "Valentines Day" },
+{ question: "People often go out to dinner on Valentine’s Day.", answer: "TRUE", category: "Valentines Day" },
+
+{ question: "Valentine’s Day has nothing to do with affection.", answer: "FALSE", category: "Valentines Day" },
+{ question: "Love letters were exchanged long before modern Valentine’s cards.", answer: "TRUE", category: "Valentines Day" },
+{ question: "Pink hearts are commonly seen during Valentine’s Day.", answer: "TRUE", category: "Valentines Day" },
+{ question: "Valentine’s Day is celebrated only in the United States.", answer: "FALSE", category: "Valentines Day" },
+{ question: "Valentine’s Day traditions can vary by culture.", answer: "TRUE", category: "Valentines Day" },
+
+{ question: "Some people celebrate Valentine’s Day with family members.", answer: "TRUE", category: "Valentines Day" },
+{ question: "Valentine’s Day always includes gift-giving.", answer: "FALSE", category: "Valentines Day" },
+{ question: "The holiday encourages expressing appreciation for others.", answer: "TRUE", category: "Valentines Day" },
+{ question: "Valentine’s Day has been celebrated for hundreds of years.", answer: "TRUE", category: "Valentines Day" },
+{ question: "Kindness and affection are common themes of Valentine’s Day.", answer: "TRUE", category: "Valentines Day" },
         
         // Old TV Shows Questions
 { question: "‘I Love Lucy’ starred Lucille Ball.", answer: "TRUE", category: "Old TV Shows" },
