@@ -109,20 +109,24 @@
     </div>
   </div>
 
-  <script>
-    // Default categories
-    let categories = JSON.parse(localStorage.getItem("tfCategories") || "[]");
-    if (categories.length === 0) {
-      categories = ["Bible", "Animals", "History", "Food", "Fun Facts"];
-      localStorage.setItem("tfCategories", JSON.stringify(categories));
-    }
-    const CATEGORY_LABELS = {
-  Bible: "Bible 📖",
-  Animals: "Animals 🐾",
-  History: "History 🏛️",
-  Food: "Food 🍎",
-  "Fun Facts": "Fun Facts 🤯"
-};
+ <script>
+  // Default categories
+  let categories = JSON.parse(localStorage.getItem("tfCategories") || "[]");
+  if (categories.length === 0) {
+    categories = ["Bible", "Animals", "History", "Food", "Fun Facts", "Music"];
+    localStorage.setItem("tfCategories", JSON.stringify(categories));
+  }
+
+  const CATEGORY_LABELS = {
+    Bible: "Bible 📖",
+    Animals: "Animals 🐾",
+    History: "History 🏛️",
+    Food: "Food 🍎",
+    "Fun Facts": "Fun Facts 🤯",
+    Music: "Music 🎵"
+  };
+</script>
+
 
     // Stored questions
 const TF_DATA_VERSION = "2026-01-04-v3";
@@ -170,6 +174,49 @@ let questions = JSON.parse(localStorage.getItem("tfQuestions") || "[]");
         { question: "Abraham and Sarah had a son named Isaac.", answer: "TRUE", category: "Bible" },
         { question: "The first miracle Jesus performed was healing a blind man.", answer: "FALSE", category: "Bible" },
         { question: "Jesus was born in Bethlehem.", answer: "TRUE", category: "Bible" },
+        // Music Questions
+{ question: "Elvis Presley is known as the King of Rock and Roll.", answer: "TRUE", category: "Music" },
+{ question: "The Beatles were an American band.", answer: "FALSE", category: "Music" },
+{ question: "Johnny Cash was known for wearing black clothing on stage.", answer: "TRUE", category: "Music" },
+{ question: "Motown Records was founded in Detroit.", answer: "TRUE", category: "Music" },
+{ question: "Frank Sinatra was part of the Rat Pack.", answer: "TRUE", category: "Music" },
+
+{ question: "The song 'Jailhouse Rock' was recorded by Elvis Presley.", answer: "TRUE", category: "Music" },
+{ question: "The Beach Boys are known for songs about surfing.", answer: "TRUE", category: "Music" },
+{ question: "The Rolling Stones formed in the 1990s.", answer: "FALSE", category: "Music" },
+{ question: "Dolly Parton wrote the song 'Jolene.'", answer: "TRUE", category: "Music" },
+{ question: "Louis Armstrong was famous for playing the trumpet.", answer: "TRUE", category: "Music" },
+
+{ question: "The song 'Respect' was famously performed by Aretha Franklin.", answer: "TRUE", category: "Music" },
+{ question: "Elton John is known for wearing flashy costumes.", answer: "TRUE", category: "Music" },
+{ question: "The Beatles broke up in 1980.", answer: "FALSE", category: "Music" },
+{ question: "B.B. King was a famous blues guitarist.", answer: "TRUE", category: "Music" },
+{ question: "The Grand Ole Opry is associated with country music.", answer: "TRUE", category: "Music" },
+
+{ question: "The song 'My Way' is closely associated with Frank Sinatra.", answer: "TRUE", category: "Music" },
+{ question: "Michael Jackson was known as the King of Pop.", answer: "TRUE", category: "Music" },
+{ question: "The Supremes were part of the Motown record label.", answer: "TRUE", category: "Music" },
+{ question: "The piano has more keys than a standard guitar has strings.", answer: "TRUE", category: "Music" },
+{ question: "A symphony is usually written for a single instrument.", answer: "FALSE", category: "Music" },
+
+{ question: "The song 'Blue Suede Shoes' became popular in the 1950s.", answer: "TRUE", category: "Music" },
+{ question: "The violin is the largest instrument in the string family.", answer: "FALSE", category: "Music" },
+{ question: "The song 'Somewhere Over the Rainbow' was featured in The Wizard of Oz.", answer: "TRUE", category: "Music" },
+{ question: "A cappella music is sung without instruments.", answer: "TRUE", category: "Music" },
+{ question: "The Metronome is used to help keep musical time.", answer: "TRUE", category: "Music" },
+
+{ question: "The electric guitar was invented before the acoustic guitar.", answer: "FALSE", category: "Music" },
+{ question: "The song 'Ring of Fire' was recorded by Johnny Cash.", answer: "TRUE", category: "Music" },
+{ question: "Opera singers usually perform without microphones.", answer: "TRUE", category: "Music" },
+{ question: "The harmonica is also called a mouth organ.", answer: "TRUE", category: "Music" },
+{ question: "The song 'Happy Birthday' was written in the 2000s.", answer: "FALSE", category: "Music" },
+
+{ question: "A duet is a song performed by two people.", answer: "TRUE", category: "Music" },
+{ question: "Country music originated mainly in the southern United States.", answer: "TRUE", category: "Music" },
+{ question: "The drummer usually sets the rhythm in a band.", answer: "TRUE", category: "Music" },
+{ question: "Music notes are named using the letters A through G.", answer: "TRUE", category: "Music" },
+{ question: "The song 'Rock Around the Clock' helped popularize rock music.", answer: "TRUE", category: "Music" },
+
        
         // Fun Facts Questions
 { question: "Octopuses have three hearts.", answer: "TRUE", category: "Fun Facts" },
