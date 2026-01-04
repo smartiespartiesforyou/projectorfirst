@@ -112,45 +112,46 @@
 <script>
   // Default categories
   let categories = JSON.parse(localStorage.getItem("tfCategories") || "[]");
-if (categories.length === 0) {
-  categories = [
-    "Bible",
-    "Animals",
-    "History",
-    "Food",
-    "Fun Facts",
-    "Music",
-    "Movies",
-    "New Orleans"
-  ];
-  localStorage.setItem("tfCategories", JSON.stringify(categories));
-}
+  if (categories.length === 0) {
+    categories = [
+      "Bible",
+      "Animals",
+      "History",
+      "Food",
+      "Fun Facts",
+      "Music",
+      "Movies",
+      "New Orleans"
+    ];
+    localStorage.setItem("tfCategories", JSON.stringify(categories));
+  }
 
- const CATEGORY_LABELS = {
-  Bible: "Bible 📖",
-  Animals: "Animals 🐾",
-  History: "History 🏛️",
-  Food: "Food 🍎",
-  "Fun Facts": "Fun Facts 🤯",
-  Music: "Music 🎵",
-  Movies: "Movies 🎬",
-  "New Orleans": "New Orleans ⚜️"
-};
+  // Category button labels (what shows on-screen)
+  const CATEGORY_LABELS = {
+    Bible: "Bible 📖",
+    Animals: "Animals 🐾",
+    History: "History 🏛️",
+    Food: "Food 🍎",
+    "Fun Facts": "Fun Facts 🤯",
+    Music: "Music 🎵",
+    Movies: "Movies 🎬",
+    "New Orleans": "New Orleans ⚜️"
+  };
 
-    // Stored questions
-// 🚨 IMPORTANT
-// If you add, remove, or rename a DEFAULT category,
-// or add built-in starter questions,
-// you MUST bump the TF_DATA_VERSION number below.
-const TF_DATA_VERSION = "2026-01-04-v5";
-const savedVersion = localStorage.getItem("tfDataVersion");
+  // 🚨 IMPORTANT:
+  // If you add/remove/rename a DEFAULT category OR add built-in starter questions,
+  // bump this version (v5 -> v6 -> v7 ...)
+  const TF_DATA_VERSION = "2026-01-04-v5";
+  const savedVersion = localStorage.getItem("tfDataVersion");
 
-if (savedVersion !== TF_DATA_VERSION) {
-  localStorage.removeItem("tfQuestions");
-  localStorage.removeItem("tfCategories");
-  localStorage.setItem("tfDataVersion", TF_DATA_VERSION);
-  location.reload();
-}
+  if (savedVersion !== TF_DATA_VERSION) {
+    localStorage.removeItem("tfQuestions");
+    localStorage.removeItem("tfCategories");
+    localStorage.setItem("tfDataVersion", TF_DATA_VERSION);
+    location.reload();
+  }
+</script>
+
 
 
 // IMPORTANT: you were missing this line 👇
