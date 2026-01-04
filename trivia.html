@@ -113,7 +113,7 @@
   // Default categories
   let categories = JSON.parse(localStorage.getItem("tfCategories") || "[]");
   if (categories.length === 0) {
-    categories = [
+  categories = [
   "Bible",
   "Animals",
   "History",
@@ -122,13 +122,14 @@
   "Music",
   "Movies",
   "New Orleans",
-  "New Years"
+  "New Years",
+  "Old TV Shows"
 ];
     localStorage.setItem("tfCategories", JSON.stringify(categories));
   }
 
   // Category button labels (what shows on-screen)
-  const CATEGORY_LABELS = {
+ const CATEGORY_LABELS = {
   Bible: "Bible 📖",
   Animals: "Animals 🐾",
   History: "History 🏛️",
@@ -137,13 +138,15 @@
   Music: "Music 🎵",
   Movies: "Movies 🎬",
   "New Orleans": "New Orleans ⚜️",
-  "New Years": "New Years 🎉"
+  "New Years": "New Years 🎉",
+  "Old TV Shows": "Old TV Shows 📺"
 };
+
 
   // 🚨 IMPORTANT:
   // If you add/remove/rename a DEFAULT category OR add built-in starter questions,
   // bump this version (v5 -> v6 -> v7 ...)
-  const TF_DATA_VERSION = "2026-01-04-v6";
+  const TF_DATA_VERSION = "2026-01-04-v7";
   const savedVersion = localStorage.getItem("tfDataVersion");
 
   if (savedVersion !== TF_DATA_VERSION) {
@@ -188,6 +191,48 @@ let questions = JSON.parse(localStorage.getItem("tfQuestions") || "[]");
         { question: "Abraham and Sarah had a son named Isaac.", answer: "TRUE", category: "Bible" },
         { question: "The first miracle Jesus performed was healing a blind man.", answer: "FALSE", category: "Bible" },
         { question: "Jesus was born in Bethlehem.", answer: "TRUE", category: "Bible" },
+        
+        // Old TV Shows Questions
+{ question: "‘I Love Lucy’ starred Lucille Ball.", answer: "TRUE", category: "Old TV Shows" },
+{ question: "‘I Love Lucy’ first aired in the 1940s.", answer: "FALSE", category: "Old TV Shows" },
+{ question: "‘The Andy Griffith Show’ was set in the town of Mayberry.", answer: "TRUE", category: "Old TV Shows" },
+{ question: "Sheriff Andy Taylor was played by Andy Griffith.", answer: "TRUE", category: "Old TV Shows" },
+{ question: "‘The Andy Griffith Show’ was filmed in color from the beginning.", answer: "FALSE", category: "Old TV Shows" },
+
+{ question: "‘Leave It to Beaver’ focused on family life.", answer: "TRUE", category: "Old TV Shows" },
+{ question: "Beaver Cleaver was the father in ‘Leave It to Beaver.’", answer: "FALSE", category: "Old TV Shows" },
+{ question: "‘The Twilight Zone’ often told science fiction stories.", answer: "TRUE", category: "Old TV Shows" },
+{ question: "Rod Serling hosted ‘The Twilight Zone.’", answer: "TRUE", category: "Old TV Shows" },
+{ question: "‘The Twilight Zone’ was a comedy series.", answer: "FALSE", category: "Old TV Shows" },
+
+{ question: "‘Gunsmoke’ was a western television series.", answer: "TRUE", category: "Old TV Shows" },
+{ question: "‘Gunsmoke’ is one of the longest-running TV dramas.", answer: "TRUE", category: "Old TV Shows" },
+{ question: "‘Bonanza’ was set on a ranch called the Ponderosa.", answer: "TRUE", category: "Old TV Shows" },
+{ question: "‘Bonanza’ took place in New York City.", answer: "FALSE", category: "Old TV Shows" },
+{ question: "‘Rawhide’ helped make Clint Eastwood famous.", answer: "TRUE", category: "Old TV Shows" },
+
+{ question: "‘The Beverly Hillbillies’ was about a wealthy city family.", answer: "FALSE", category: "Old TV Shows" },
+{ question: "‘The Beverly Hillbillies’ featured a family who struck oil.", answer: "TRUE", category: "Old TV Shows" },
+{ question: "‘Gilligan’s Island’ was about people stranded on an island.", answer: "TRUE", category: "Old TV Shows" },
+{ question: "The castaways were rescued in the first season of ‘Gilligan’s Island.’", answer: "FALSE", category: "Old TV Shows" },
+{ question: "‘Gilligan’s Island’ originally aired in black and white.", answer: "FALSE", category: "Old TV Shows" },
+
+{ question: "‘Bewitched’ featured a woman with magical powers.", answer: "TRUE", category: "Old TV Shows" },
+{ question: "Samantha twitched her nose to do magic on ‘Bewitched.’", answer: "TRUE", category: "Old TV Shows" },
+{ question: "‘I Dream of Jeannie’ featured a genie living in a bottle.", answer: "TRUE", category: "Old TV Shows" },
+{ question: "Major Nelson was an astronaut on ‘I Dream of Jeannie.’", answer: "TRUE", category: "Old TV Shows" },
+{ question: "‘I Dream of Jeannie’ took place during the Civil War.", answer: "FALSE", category: "Old TV Shows" },
+
+{ question: "‘M*A*S*H’ was set during the Korean War.", answer: "TRUE", category: "Old TV Shows" },
+{ question: "‘M*A*S*H’ was a silent television show.", answer: "FALSE", category: "Old TV Shows" },
+{ question: "‘Happy Days’ featured a character named Fonzie.", answer: "TRUE", category: "Old TV Shows" },
+{ question: "‘Happy Days’ was set in the 1950s.", answer: "TRUE", category: "Old TV Shows" },
+{ question: "‘Happy Days’ focused on life in outer space.", answer: "FALSE", category: "Old TV Shows" },
+
+{ question: "‘The Dick Van Dyke Show’ was a comedy series.", answer: "TRUE", category: "Old TV Shows" },
+{ question: "Mary Tyler Moore appeared on ‘The Dick Van Dyke Show.’", answer: "TRUE", category: "Old TV Shows" },
+{ question: "‘The Mary Tyler Moore Show’ centered on a woman working in television.", answer: "TRUE", category: "Old TV Shows" },
+{ question: "‘The Mary Tyler Moore Show’ aired in the 1800s.", answer: "FALSE", category: "Old TV Shows" },
         // Movie Questions
 { question: "The movie 'The Wizard of Oz' was released in 1939.", answer: "TRUE", category: "Movies" },
 { question: "Dorothy’s shoes were silver in the original book 'The Wizard of Oz.'", answer: "TRUE", category: "Movies" },
@@ -273,6 +318,7 @@ let questions = JSON.parse(localStorage.getItem("tfQuestions") || "[]");
 { question: "The drummer usually sets the rhythm in a band.", answer: "TRUE", category: "Music" },
 { question: "Music notes are named using the letters A through G.", answer: "TRUE", category: "Music" },
 { question: "The song 'Rock Around the Clock' helped popularize rock music.", answer: "TRUE", category: "Music" },
+      
 // New Years Questions
 { question: "New Year’s Day is celebrated on January 1.", answer: "TRUE", category: "New Years" },
 { question: "The New Year always begins on a Monday.", answer: "FALSE", category: "New Years" },
