@@ -130,6 +130,9 @@ categories = [
   "Easter",
   "July 4th",
   "Memorial Day"
+  "Veterans Day",
+  "Halloween",
+
 ];
     localStorage.setItem("tfCategories", JSON.stringify(categories));
   }
@@ -151,13 +154,16 @@ const CATEGORY_LABELS = {
   "Mardi Gras": "Mardi Gras 🎭",
   Easter: "Easter 🐣",
   "July 4th": "July 4th 🇺🇸",
-  "Memorial Day": "Memorial Day 🕊️"
+  "Memorial Day": "Memorial Day 🕊️",
+  "Veterans Day": "Veterans Day ⭐",
+  Halloween: "Halloween 🎃",
+  
 };
 
   // 🚨 IMPORTANT:
   // If you add/remove/rename a DEFAULT category OR add built-in starter questions,
   // bump this version (v5 -> v6 -> v7 ...)
-  const TF_DATA_VERSION = "2026-01-04-v12";
+  const TF_DATA_VERSION = "2026-01-04-v13";
   const savedVersion = localStorage.getItem("tfDataVersion");
 
   if (savedVersion !== TF_DATA_VERSION) {
@@ -457,9 +463,82 @@ let questions = JSON.parse(localStorage.getItem("tfQuestions") || "[]");
 { question: "Memorial Day encourages remembering fallen heroes.", answer: "TRUE", category: "Memorial Day" },
 { question: "Memorial Day traditions include honoring military families.", answer: "TRUE", category: "Memorial Day" },
 { question: "Memorial Day has deep historical significance in the U.S.", answer: "TRUE", category: "Memorial Day" },
-       
+      
+// Veterans Day Questions
+{ question: "Veterans Day honors people who served in the U.S. Armed Forces.", answer: "TRUE", category: "Veterans Day" },
+{ question: "Veterans Day is observed on November 11 each year.", answer: "TRUE", category: "Veterans Day" },
+{ question: "Veterans Day was originally called Armistice Day.", answer: "TRUE", category: "Veterans Day" },
+{ question: "Armistice Day marks the end of World War I fighting.", answer: "TRUE", category: "Veterans Day" },
+{ question: "Veterans Day honors only soldiers who died in war.", answer: "FALSE", category: "Veterans Day" },
+
+{ question: "Veterans Day honors veterans from all branches of the military.", answer: "TRUE", category: "Veterans Day" },
+{ question: "Veterans Day is a U.S. federal holiday.", answer: "TRUE", category: "Veterans Day" },
+{ question: "Veterans Day is always celebrated on a Monday.", answer: "FALSE", category: "Veterans Day" },
+{ question: "Veterans Day recognizes both wartime and peacetime service.", answer: "TRUE", category: "Veterans Day" },
+{ question: "A moment of silence at 11:00 AM is sometimes observed on Veterans Day.", answer: "TRUE", category: "Veterans Day" },
+
+{ question: "Veterans Day began after World War II.", answer: "FALSE", category: "Veterans Day" },
+{ question: "Veterans Day is the same holiday as Memorial Day.", answer: "FALSE", category: "Veterans Day" },
+{ question: "Veterans Day honors living veterans.", answer: "TRUE", category: "Veterans Day" },
+{ question: "The U.S. flag is commonly displayed on Veterans Day.", answer: "TRUE", category: "Veterans Day" },
+{ question: "Veterans Day recognizes service members from all military branches.", answer: "TRUE", category: "Veterans Day" },
+
+{ question: "Veterans Day was officially renamed in 1954.", answer: "TRUE", category: "Veterans Day" },
+{ question: "Veterans Day is celebrated in many countries under different names.", answer: "TRUE", category: "Veterans Day" },
+{ question: "Veterans Day always falls on the second Tuesday of November.", answer: "FALSE", category: "Veterans Day" },
+{ question: "Parades and ceremonies are common on Veterans Day.", answer: "TRUE", category: "Veterans Day" },
+{ question: "Veterans Day encourages thanking veterans for their service.", answer: "TRUE", category: "Veterans Day" },
+
+{ question: "Veterans Day recognizes Army, Navy, Air Force, Marines, and Coast Guard veterans.", answer: "TRUE", category: "Veterans Day" },
+{ question: "Veterans Day honors only Army veterans.", answer: "FALSE", category: "Veterans Day" },
+{ question: "Veterans Day is meant to be a day of gratitude and recognition.", answer: "TRUE", category: "Veterans Day" },
+{ question: "Veterans Day is celebrated during the summer.", answer: "FALSE", category: "Veterans Day" },
+{ question: "Veterans Day honors people currently serving in the military.", answer: "TRUE", category: "Veterans Day" },
+
+{ question: "Veterans Day began in the 20th century.", answer: "TRUE", category: "Veterans Day" },
+{ question: "Veterans Day encourages respect for military service.", answer: "TRUE", category: "Veterans Day" },
+{ question: "Veterans Day focuses on military victories only.", answer: "FALSE", category: "Veterans Day" },
+{ question: "Veterans Day recognizes sacrifices made by service members.", answer: "TRUE", category: "Veterans Day" },
+{ question: "Veterans Day is observed nationwide in the U.S.", answer: "TRUE", category: "Veterans Day" },
+// Memorial Day Questions
+{ question: "Memorial Day honors U.S. military members who died in service.", answer: "TRUE", category: "Memorial Day" },
+{ question: "Memorial Day is observed on the last Monday in May.", answer: "TRUE", category: "Memorial Day" },
+{ question: "Memorial Day was originally known as Decoration Day.", answer: "TRUE", category: "Memorial Day" },
+{ question: "Decoration Day involved decorating graves of fallen soldiers.", answer: "TRUE", category: "Memorial Day" },
+{ question: "Memorial Day honors all living veterans.", answer: "FALSE", category: "Memorial Day" },
+
+{ question: "Memorial Day began after the Civil War.", answer: "TRUE", category: "Memorial Day" },
+{ question: "Memorial Day is a U.S. federal holiday.", answer: "TRUE", category: "Memorial Day" },
+{ question: "Memorial Day always falls on May 30.", answer: "FALSE", category: "Memorial Day" },
+{ question: "Memorial Day is a day of remembrance.", answer: "TRUE", category: "Memorial Day" },
+{ question: "American flags are often placed on graves on Memorial Day.", answer: "TRUE", category: "Memorial Day" },
+
+{ question: "Memorial Day honors soldiers who died during military service.", answer: "TRUE", category: "Memorial Day" },
+{ question: "Memorial Day is the same as Veterans Day.", answer: "FALSE", category: "Memorial Day" },
+{ question: "Many cemeteries hold ceremonies on Memorial Day.", answer: "TRUE", category: "Memorial Day" },
+{ question: "Memorial Day has roots in honoring Civil War soldiers.", answer: "TRUE", category: "Memorial Day" },
+{ question: "Memorial Day is meant to celebrate military victories.", answer: "FALSE", category: "Memorial Day" },
+
+{ question: "A National Moment of Remembrance occurs on Memorial Day.", answer: "TRUE", category: "Memorial Day" },
+{ question: "The National Moment of Remembrance takes place at 3:00 PM local time.", answer: "TRUE", category: "Memorial Day" },
+{ question: "Memorial Day is often marked by parades.", answer: "TRUE", category: "Memorial Day" },
+{ question: "Memorial Day is a solemn holiday.", answer: "TRUE", category: "Memorial Day" },
+{ question: "Memorial Day honors soldiers from all wars.", answer: "TRUE", category: "Memorial Day" },
+
+{ question: "Memorial Day recognizes only World War II soldiers.", answer: "FALSE", category: "Memorial Day" },
+{ question: "Memorial Day is commonly associated with honoring sacrifice.", answer: "TRUE", category: "Memorial Day" },
+{ question: "Memorial Day marks the unofficial start of summer.", answer: "TRUE", category: "Memorial Day" },
+{ question: "Memorial Day is primarily a party holiday.", answer: "FALSE", category: "Memorial Day" },
+{ question: "Many communities hold remembrance services on Memorial Day.", answer: "TRUE", category: "Memorial Day" },
+
+{ question: "Memorial Day is observed only in the United States.", answer: "TRUE", category: "Memorial Day" },
+{ question: "Memorial Day honors fallen members of the Armed Forces.", answer: "TRUE", category: "Memorial Day" },
+{ question: "Wearing poppies is sometimes associated with remembrance.", answer: "TRUE", category: "Memorial Day" },
+{ question: "Memorial Day encourages reflection and gratitude.", answer: "TRUE", category: "Memorial Day" },
+{ question: "Memorial Day has been observed for over 100 years.", answer: "TRUE", category: "Memorial Day" },
+
         
-        // Old TV Shows Questions
+  // Old TV Shows Questions
 { question: "‘I Love Lucy’ starred Lucille Ball.", answer: "TRUE", category: "Old TV Shows" },
 { question: "‘I Love Lucy’ first aired in the 1940s.", answer: "FALSE", category: "Old TV Shows" },
 { question: "‘The Andy Griffith Show’ was set in the town of Mayberry.", answer: "TRUE", category: "Old TV Shows" },
