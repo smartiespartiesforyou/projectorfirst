@@ -374,7 +374,7 @@ function startCategory(cat) {
 
   document.getElementById("categoryScreen").classList.add("hidden");
   document.getElementById("gameScreen").classList.remove("hidden");
-  document.getElementById("categoryTitle").textContent = cat;
+  document.getElementById("categoryTitle").textContent = CATEGORY_LABELS[cat] || cat;
 
   // reset game state when switching categories
   document.getElementById("questionDisplay").textContent = 'Press “Next Question”';
