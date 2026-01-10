@@ -44,6 +44,7 @@
 </head>
 
 <body class="min-h-screen">
+  <!-- Top bar -->
   <div class="max-w-6xl mx-auto flex justify-between items-center p-6 border-b border-gray-200">
     <a href="apps.html" class="pf-blue text-white text-xl font-bold px-5 py-3 rounded-xl">← Back to Apps</a>
     <button id="openEditor" class="bg-purple-700 text-white text-xl font-bold px-6 py-3 rounded-xl hover:bg-purple-600">
@@ -51,44 +52,60 @@
     </button>
   </div>
 
+  <!-- Category screen -->
   <div id="categoryScreen" class="text-center mt-10 px-6 max-w-6xl mx-auto">
     <h1 class="text-4xl md:text-6xl font-extrabold text-blue-800 mb-10">Choose a Category</h1>
     <div id="categoryButtons" class="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-4xl mx-auto"></div>
   </div>
 
+  <!-- Game screen -->
   <div id="gameScreen" class="text-center mt-16 px-4 hidden max-w-6xl mx-auto">
     <h1 class="text-4xl md:text-6xl font-extrabold text-blue-800 mb-10" id="categoryTitle">Category</h1>
     <h2 id="questionDisplay" class="text-3xl md:text-5xl font-bold mb-16">Press “Next Question”</h2>
 
- <div class="flex justify-center gap-6 md:gap-10 mb-16">
-  <button
-    id="trueBtn"
-    class="big-btn bg-green-600 hover:bg-green-500 hidden">
-    TRUE
-  </button>
+    <div class="flex justify-center gap-6 md:gap-10 mb-16">
+      <button
+        id="trueBtn"
+        class="big-btn bg-green-600 hover:bg-green-500 hidden">
+        TRUE
+      </button>
 
-  <button
-    id="falseBtn"
-    class="big-btn bg-red-600 hover:bg-red-500 hidden">
-    FALSE
-  </button>
-</div>
+      <button
+        id="falseBtn"
+        class="big-btn bg-red-600 hover:bg-red-500 hidden">
+        FALSE
+      </button>
+    </div>
 
-<h2
-  id="answerDisplay"
-  class="text-7xl md:text-8xl font-extrabold mt-16 mb-12 hidden">
-</h2>
+    <h2
+      id="answerDisplay"
+      class="text-7xl md:text-8xl font-extrabold mt-16 mb-8 hidden">
+    </h2>
 
+    <!-- NEW: Why button -->
+    <button
+      id="whyBtn"
+      class="px-8 py-4 bg-yellow-400 text-black font-extrabold text-2xl rounded-2xl shadow-md hover:bg-yellow-300 hidden">
+      Why?
+    </button>
 
-<button id="nextBtn" class="big-btn pf-blue mt-12">Next Question</button>
+    <!-- NEW: Explanation text (for Activity Director to read aloud) -->
+    <div
+      id="explanationDisplay"
+      class="mt-6 text-3xl md:text-4xl max-w-5xl mx-auto hidden">
+    </div>
 
-<div class="mt-8">
-  <button id="backToCategories"
-          class="px-6 py-3 bg-gray-300 text-gray-800 font-bold rounded-xl hover:bg-gray-200 text-xl">
-    ⬅ Back to Categories
-  </button>
-</div>
+    <button id="nextBtn" class="big-btn pf-blue mt-12">Next Question</button>
 
+    <div class="mt-8">
+      <button id="backToCategories"
+              class="px-6 py-3 bg-gray-300 text-gray-800 font-bold rounded-xl hover:bg-gray-200 text-xl">
+        ⬅ Back to Categories
+      </button>
+    </div>
+  </div>
+
+  <!-- Question Editor modal -->
   <div id="modalBg" class="modal-bg">
     <div class="modal">
       <div class="flex justify-between items-center mb-6">
@@ -110,6 +127,14 @@
         <option value="FALSE">FALSE</option>
       </select>
 
+      <!-- NEW: optional explanation -->
+      <label class="font-bold text-gray-700">Why? (optional)</label>
+      <textarea
+        id="inputExplanation"
+        class="w-full border p-3 rounded-xl mb-6 text-lg"
+        placeholder="Short reason this is true or false…">
+      </textarea>
+
       <button id="saveBtn" class="bg-green-600 text-white font-bold px-6 py-3 rounded-xl hover:bg-green-500">Save Question</button>
 
       <h3 class="text-xl font-bold mt-8 mb-2 text-blue-700">Your Saved Questions</h3>
@@ -121,59 +146,56 @@
   // Default categories
   let categories = JSON.parse(localStorage.getItem("tfCategories") || "[]");
   if (categories.length === 0) {
-categories = [
-  "Bible",
-  "Animals",
-  "History",
-  "Food",
-  "Fun Facts",
-  "Music",
-  "Movies",
-  "New Orleans",
-  "New Years",
-  "Old TV Shows",
-  "Valentines Day",
-  "St Patricks Day",
-  "Mardi Gras",
-  "Easter",
-  "July 4th",
-  "Memorial Day",
-  "Veterans Day",
-  "Halloween",
-  "Thanksgiving",
-  "Christmas",
-];
+    categories = [
+      "Bible",
+      "Animals",
+      "History",
+      "Food",
+      "Fun Facts",
+      "Music",
+      "Movies",
+      "New Orleans",
+      "New Years",
+      "Old TV Shows",
+      "Valentines Day",
+      "St Patricks Day",
+      "Mardi Gras",
+      "Easter",
+      "July 4th",
+      "Memorial Day",
+      "Veterans Day",
+      "Halloween",
+      "Thanksgiving",
+      "Christmas",
+    ];
     localStorage.setItem("tfCategories", JSON.stringify(categories));
   }
 
   // Category button labels (what shows on-screen)
-const CATEGORY_LABELS = {
-  Bible: "Bible 📖",
-  Animals: "Animals 🐾",
-  History: "History 🏛️",
-  Food: "Food 🍎",
-  "Fun Facts": "Fun Facts 🤯",
-  Music: "Music 🎵",
-  Movies: "Movies 🎬",
-  "New Orleans": "New Orleans ⚜️",
-  "New Years": "New Years 🎉",
-  "Old TV Shows": "Old TV Shows 📺",
-  "Valentines Day": "Valentine’s Day ❤️",
-  "St Patricks Day": "St. Patrick’s Day ☘️",
-  "Mardi Gras": "Mardi Gras 🎭",
-  Easter: "Easter 🐣",
-  "July 4th": "July 4th 🎆",
-  "Memorial Day": "Memorial Day 🕊️",
-  "Veterans Day": "Veterans Day ⭐",
-  Halloween: "Halloween 🎃",
-  Thanksgiving: "Thanksgiving 🦃",
-  Christmas: "Christmas 🎄",
-  
-};
+  const CATEGORY_LABELS = {
+    Bible: "Bible 📖",
+    Animals: "Animals 🐾",
+    History: "History 🏛️",
+    Food: "Food 🍎",
+    "Fun Facts": "Fun Facts 🤯",
+    Music: "Music 🎵",
+    Movies: "Movies 🎬",
+    "New Orleans": "New Orleans ⚜️",
+    "New Years": "New Years 🎉",
+    "Old TV Shows": "Old TV Shows 📺",
+    "Valentines Day": "Valentine’s Day ❤️",
+    "St Patricks Day": "St. Patrick’s Day ☘️",
+    "Mardi Gras": "Mardi Gras 🎭",
+    Easter: "Easter 🐣",
+    "July 4th": "July 4th 🎆",
+    "Memorial Day": "Memorial Day 🕊️",
+    "Veterans Day": "Veterans Day ⭐",
+    Halloween: "Halloween 🎃",
+    Thanksgiving: "Thanksgiving 🦃",
+    Christmas: "Christmas 🎄",
+  };
 
-  // 🚨 IMPORTANT:
-  // If you add/remove/rename a DEFAULT category OR add built-in starter questions,
-  // bump this version (v5 -> v6 -> v7 ...)
+  // Versioning: only bump this if you change built-in defaults
   const TF_DATA_VERSION = "2026-01-04-v15";
   const savedVersion = localStorage.getItem("tfDataVersion");
 
@@ -184,1000 +206,701 @@ const CATEGORY_LABELS = {
     location.reload();
   }
 
-// IMPORTANT: you were missing this line 👇
-let questions = JSON.parse(localStorage.getItem("tfQuestions") || "[]");
-    if (questions.length === 0) {
-      questions = [
-        // Bible Questions
-        { question: "The Bible has 66 books.", answer: "TRUE", category: "Bible" },
-        { question: "Moses built the ark.", answer: "FALSE", category: "Bible" },
-        { question: "David killed Goliath with a stone.", answer: "TRUE", category: "Bible" },
-        { question: "Jonah was swallowed by a whale.", answer: "TRUE", category: "Bible" },
-        { question: "Noah’s Ark rested on Mount Sinai.", answer: "FALSE", category: "Bible" },
-        { question: "Jesus turned water into wine.", answer: "TRUE", category: "Bible" },
-        { question: "Adam and Eve lived in the Garden of Eden.", answer: "TRUE", category: "Bible" },
-        { question: "The Ten Commandments were given to Abraham.", answer: "FALSE", category: "Bible" },
-        { question: "Paul’s name was originally Saul.", answer: "TRUE", category: "Bible" },
-        { question: "Ruth was Naomi’s daughter.", answer: "FALSE", category: "Bible" },
-        { question: "The serpent tempted Eve to eat the forbidden fruit.", answer: "TRUE", category: "Bible" },
-        { question: "There were three wise men at Jesus’ birth.", answer: "FALSE", category: "Bible" },
-        { question: "Jesus fed 5,000 people with five loaves and two fish.", answer: "TRUE", category: "Bible" },
-        { question: "The book of Psalms is in the New Testament.", answer: "FALSE", category: "Bible" },
-        { question: "Mary Magdalene was the first to see Jesus after His resurrection.", answer: "TRUE", category: "Bible" },
-        { question: "Joseph’s brothers sold him into slavery.", answer: "TRUE", category: "Bible" },
-        { question: "The Red Sea was parted by Elijah.", answer: "FALSE", category: "Bible" },
-        { question: "Solomon was known for his great wisdom.", answer: "TRUE", category: "Bible" },
-        { question: "The Bible begins with the words 'In the beginning God created...'", answer: "TRUE", category: "Bible" },
-        { question: "The Book of Revelation is the first book of the Bible.", answer: "FALSE", category: "Bible" },
-        { question: "Jesus was baptized in the Jordan River.", answer: "TRUE", category: "Bible" },
-        { question: "Peter denied Jesus three times.", answer: "TRUE", category: "Bible" },
-        { question: "The Tower of Babel was built to reach heaven.", answer: "TRUE", category: "Bible" },
-        { question: "Daniel was thrown into a den of lions.", answer: "TRUE", category: "Bible" },
-        { question: "Samson lost his strength when his hair was cut.", answer: "TRUE", category: "Bible" },
-        { question: "The Prodigal Son’s father rejected him when he returned.", answer: "FALSE", category: "Bible" },
-        { question: "Jesus rode into Jerusalem on a horse.", answer: "FALSE", category: "Bible" },
-        { question: "Abraham and Sarah had a son named Isaac.", answer: "TRUE", category: "Bible" },
-        { question: "The first miracle Jesus performed was healing a blind man.", answer: "FALSE", category: "Bible" },
-        { question: "Jesus was born in Bethlehem.", answer: "TRUE", category: "Bible" },
-    // Easter Questions
-{ question: "Easter celebrates the resurrection of Jesus Christ.", answer: "TRUE", category: "Easter" },
-{ question: "Easter is celebrated on the same date every year.", answer: "FALSE", category: "Easter" },
-{ question: "Easter Sunday always falls on a Sunday.", answer: "TRUE", category: "Easter" },
-{ question: "Easter is considered the most important Christian holiday.", answer: "TRUE", category: "Easter" },
-{ question: "The word Easter appears many times in the Bible.", answer: "FALSE", category: "Easter" },
-
-{ question: "Easter follows the season of Lent.", answer: "TRUE", category: "Easter" },
-{ question: "Lent lasts for about 40 days.", answer: "TRUE", category: "Easter" },
-{ question: "Good Friday comes before Easter Sunday.", answer: "TRUE", category: "Easter" },
-{ question: "Good Friday celebrates the birth of Jesus.", answer: "FALSE", category: "Easter" },
-{ question: "Easter celebrates new life and hope.", answer: "TRUE", category: "Easter" },
-
-{ question: "Easter eggs are a symbol of new life.", answer: "TRUE", category: "Easter" },
-{ question: "Egg decorating is an Easter tradition.", answer: "TRUE", category: "Easter" },
-{ question: "Chocolate eggs are commonly associated with Easter.", answer: "TRUE", category: "Easter" },
-{ question: "The Easter Bunny is a religious figure.", answer: "FALSE", category: "Easter" },
-{ question: "Children often participate in Easter egg hunts.", answer: "TRUE", category: "Easter" },
-
-{ question: "Easter baskets are commonly given to children.", answer: "TRUE", category: "Easter" },
-{ question: "The Easter Bunny traditionally delivers eggs and candy.", answer: "TRUE", category: "Easter" },
-{ question: "Easter is only celebrated in the United States.", answer: "FALSE", category: "Easter" },
-{ question: "Many cultures celebrate Easter in different ways.", answer: "TRUE", category: "Easter" },
-{ question: "Easter has both religious and cultural traditions.", answer: "TRUE", category: "Easter" },
-
-{ question: "Sunrise services are sometimes held on Easter morning.", answer: "TRUE", category: "Easter" },
-{ question: "Easter marks the end of the church calendar year.", answer: "FALSE", category: "Easter" },
-{ question: "The Easter season lasts only one day.", answer: "FALSE", category: "Easter" },
-{ question: "White lilies are often associated with Easter.", answer: "TRUE", category: "Easter" },
-{ question: "Easter always occurs in the winter.", answer: "FALSE", category: "Easter" },
-
-{ question: "The date of Easter is based on the lunar calendar.", answer: "TRUE", category: "Easter" },
-{ question: "Easter can fall in March or April.", answer: "TRUE", category: "Easter" },
-{ question: "Palm Sunday occurs before Easter.", answer: "TRUE", category: "Easter" },
-{ question: "Palm Sunday celebrates Jesus entering Jerusalem.", answer: "TRUE", category: "Easter" },
-{ question: "Easter traditions often focus on family gatherings.", answer: "TRUE", category: "Easter" },
-
-{ question: "Easter eggs were originally made of plastic.", answer: "FALSE", category: "Easter" },
-{ question: "Easter encourages messages of forgiveness and renewal.", answer: "TRUE", category: "Easter" },
-{ question: "All Easter traditions are religious.", answer: "FALSE", category: "Easter" },
-{ question: "Easter is a time of celebration and joy.", answer: "TRUE", category: "Easter" },
-{ question: "Easter has been celebrated for many centuries.", answer: "TRUE", category: "Easter" },
-          
-        // Mardi Gras Questions
-{ question: "Mardi Gras means 'Fat Tuesday' in French.", answer: "TRUE", category: "Mardi Gras" },
-{ question: "Mardi Gras is always celebrated on the same date each year.", answer: "FALSE", category: "Mardi Gras" },
-{ question: "Mardi Gras takes place before the season of Lent.", answer: "TRUE", category: "Mardi Gras" },
-{ question: "Mardi Gras is most closely associated with New Orleans in the U.S.", answer: "TRUE", category: "Mardi Gras" },
-{ question: "Purple, green, and gold are Mardi Gras colors.", answer: "TRUE", category: "Mardi Gras" },
-
-{ question: "Purple represents justice in Mardi Gras traditions.", answer: "TRUE", category: "Mardi Gras" },
-{ question: "Green represents faith in Mardi Gras traditions.", answer: "FALSE", category: "Mardi Gras" },
-{ question: "Gold represents power in Mardi Gras traditions.", answer: "FALSE", category: "Mardi Gras" },
-{ question: "Mardi Gras parades feature decorated floats.", answer: "TRUE", category: "Mardi Gras" },
-{ question: "Beads are commonly thrown during Mardi Gras parades.", answer: "TRUE", category: "Mardi Gras" },
-
-{ question: "King Cake is a traditional Mardi Gras dessert.", answer: "TRUE", category: "Mardi Gras" },
-{ question: "King Cake is only eaten on Mardi Gras Day.", answer: "FALSE", category: "Mardi Gras" },
-{ question: "A small plastic baby is hidden inside King Cake.", answer: "TRUE", category: "Mardi Gras" },
-{ question: "Finding the baby means you have good luck.", answer: "TRUE", category: "Mardi Gras" },
-{ question: "The person who finds the baby often buys the next King Cake.", answer: "TRUE", category: "Mardi Gras" },
-
-{ question: "Mardi Gras celebrations include masked balls.", answer: "TRUE", category: "Mardi Gras" },
-{ question: "Krewes organize Mardi Gras parades.", answer: "TRUE", category: "Mardi Gras" },
-{ question: "A Krewe is a type of parade float.", answer: "FALSE", category: "Mardi Gras" },
-{ question: "Some Mardi Gras traditions date back hundreds of years.", answer: "TRUE", category: "Mardi Gras" },
-{ question: "Mardi Gras originated in the United States.", answer: "FALSE", category: "Mardi Gras" },
-
-{ question: "Mardi Gras has roots in European traditions.", answer: "TRUE", category: "Mardi Gras" },
-{ question: "Masks are worn to represent equality during Mardi Gras.", answer: "TRUE", category: "Mardi Gras" },
-{ question: "Everyone must wear a costume to attend Mardi Gras.", answer: "FALSE", category: "Mardi Gras" },
-{ question: "Throws can include beads, cups, and toys.", answer: "TRUE", category: "Mardi Gras" },
-{ question: "The word 'krewe' is unique to Mardi Gras culture.", answer: "TRUE", category: "Mardi Gras" },
-
-{ question: "Zulu is one of the most famous Mardi Gras krewes.", answer: "TRUE", category: "Mardi Gras" },
-{ question: "Rex is a historic Mardi Gras krewe.", answer: "TRUE", category: "Mardi Gras" },
-{ question: "The Rex parade traditionally rolls on Mardi Gras Day.", answer: "TRUE", category: "Mardi Gras" },
-{ question: "Mardi Gras celebrations end at midnight.", answer: "TRUE", category: "Mardi Gras" },
-{ question: "Ash Wednesday comes after Mardi Gras.", answer: "TRUE", category: "Mardi Gras" },
-
-{ question: "Mardi Gras is celebrated only in Louisiana.", answer: "FALSE", category: "Mardi Gras" },
-{ question: "Mobile, Alabama also celebrates Mardi Gras.", answer: "TRUE", category: "Mardi Gras" },
-{ question: "Mardi Gras celebrates indulgence before Lent.", answer: "TRUE", category: "Mardi Gras" },
-{ question: "Music and dancing are common during Mardi Gras.", answer: "TRUE", category: "Mardi Gras" },
-{ question: "Mardi Gras is known for joy, tradition, and celebration.", answer: "TRUE", category: "Mardi Gras" },
-
-        // St Patricks Day Questions
-{ question: "St. Patrick’s Day is celebrated on March 17.", answer: "TRUE", category: "St Patricks Day" },
-{ question: "St. Patrick was born in Ireland.", answer: "FALSE", category: "St Patricks Day" },
-{ question: "St. Patrick is the patron saint of Ireland.", answer: "TRUE", category: "St Patricks Day" },
-{ question: "St. Patrick’s Day is a religious and cultural holiday.", answer: "TRUE", category: "St Patricks Day" },
-{ question: "Green is commonly associated with St. Patrick’s Day.", answer: "TRUE", category: "St Patricks Day" },
-
-{ question: "People often wear green on St. Patrick’s Day.", answer: "TRUE", category: "St Patricks Day" },
-{ question: "Shamrocks are a symbol of St. Patrick’s Day.", answer: "TRUE", category: "St Patricks Day" },
-{ question: "A shamrock has four leaves.", answer: "FALSE", category: "St Patricks Day" },
-{ question: "St. Patrick used the shamrock to explain the Holy Trinity.", answer: "TRUE", category: "St Patricks Day" },
-{ question: "St. Patrick’s Day always falls on a weekend.", answer: "FALSE", category: "St Patricks Day" },
-
-{ question: "Leprechauns are part of Irish folklore.", answer: "TRUE", category: "St Patricks Day" },
-{ question: "Leprechauns are considered giants.", answer: "FALSE", category: "St Patricks Day" },
-{ question: "St. Patrick’s Day is celebrated outside of Ireland.", answer: "TRUE", category: "St Patricks Day" },
-{ question: "Chicago dyes its river green for St. Patrick’s Day.", answer: "TRUE", category: "St Patricks Day" },
-{ question: "Corned beef and cabbage is associated with St. Patrick’s Day in the U.S.", answer: "TRUE", category: "St Patricks Day" },
-
-{ question: "Corned beef and cabbage originated in Ireland as a national dish.", answer: "FALSE", category: "St Patricks Day" },
-{ question: "St. Patrick is said to have driven snakes out of Ireland.", answer: "TRUE", category: "St Patricks Day" },
-{ question: "There are snakes native to Ireland today.", answer: "FALSE", category: "St Patricks Day" },
-{ question: "St. Patrick’s Day parades are common.", answer: "TRUE", category: "St Patricks Day" },
-{ question: "The first St. Patrick’s Day parade was held in Ireland.", answer: "FALSE", category: "St Patricks Day" },
-
-{ question: "The first St. Patrick’s Day parade was held in the United States.", answer: "TRUE", category: "St Patricks Day" },
-{ question: "Green beer is sometimes served on St. Patrick’s Day.", answer: "TRUE", category: "St Patricks Day" },
-{ question: "St. Patrick’s Day is only celebrated by Irish people.", answer: "FALSE", category: "St Patricks Day" },
-{ question: "The color originally associated with St. Patrick was blue.", answer: "TRUE", category: "St Patricks Day" },
-{ question: "St. Patrick lived during the Middle Ages.", answer: "TRUE", category: "St Patricks Day" },
-
-{ question: "St. Patrick was a bishop.", answer: "TRUE", category: "St Patricks Day" },
-{ question: "St. Patrick’s Day celebrates Irish heritage.", answer: "TRUE", category: "St Patricks Day" },
-{ question: "All St. Patrick’s Day traditions are religious.", answer: "FALSE", category: "St Patricks Day" },
-{ question: "Irish music is often played during St. Patrick’s Day celebrations.", answer: "TRUE", category: "St Patricks Day" },
-{ question: "St. Patrick’s Day is a public holiday in Ireland.", answer: "TRUE", category: "St Patricks Day" },
-
-{ question: "Pinching someone for not wearing green is a common tradition.", answer: "TRUE", category: "St Patricks Day" },
-{ question: "St. Patrick’s Day has themes of luck and blessings.", answer: "TRUE", category: "St Patricks Day" },
-{ question: "Rainbows and pots of gold are symbols linked to St. Patrick’s Day.", answer: "TRUE", category: "St Patricks Day" },
-{ question: "St. Patrick’s Day celebrates the end of winter.", answer: "FALSE", category: "St Patricks Day" },
-{ question: "St. Patrick’s Day is known for celebrating Irish culture worldwide.", answer: "TRUE", category: "St Patricks Day" },
-
-        // Valentines Day Questions
-{ question: "Valentine’s Day is celebrated on February 14.", answer: "TRUE", category: "Valentines Day" },
-{ question: "Valentine’s Day is named after a saint.", answer: "TRUE", category: "Valentines Day" },
-{ question: "Valentine’s Day began as a modern American holiday.", answer: "FALSE", category: "Valentines Day" },
-{ question: "The holiday is associated with love and romance.", answer: "TRUE", category: "Valentines Day" },
-{ question: "Valentine’s Day is celebrated worldwide.", answer: "TRUE", category: "Valentines Day" },
-
-{ question: "The heart is a common symbol of Valentine’s Day.", answer: "TRUE", category: "Valentines Day" },
-{ question: "Cupid is often associated with Valentine’s Day.", answer: "TRUE", category: "Valentines Day" },
-{ question: "Cupid is known as the god of war.", answer: "FALSE", category: "Valentines Day" },
-{ question: "Red and pink are common Valentine’s Day colors.", answer: "TRUE", category: "Valentines Day" },
-{ question: "Valentine’s Day cards are a popular tradition.", answer: "TRUE", category: "Valentines Day" },
-
-{ question: "The first Valentine’s cards were sent electronically.", answer: "FALSE", category: "Valentines Day" },
-{ question: "Candy hearts often have short messages printed on them.", answer: "TRUE", category: "Valentines Day" },
-{ question: "Chocolate is commonly given on Valentine’s Day.", answer: "TRUE", category: "Valentines Day" },
-{ question: "Valentine’s Day is only for married couples.", answer: "FALSE", category: "Valentines Day" },
-{ question: "People often give flowers on Valentine’s Day.", answer: "TRUE", category: "Valentines Day" },
-
-{ question: "Roses are a popular Valentine’s Day flower.", answer: "TRUE", category: "Valentines Day" },
-{ question: "White roses traditionally symbolize hatred.", answer: "FALSE", category: "Valentines Day" },
-{ question: "Valentine’s Day can celebrate friendships as well as romance.", answer: "TRUE", category: "Valentines Day" },
-{ question: "Children often exchange valentines at school.", answer: "TRUE", category: "Valentines Day" },
-{ question: "Valentine’s Day always falls on a weekend.", answer: "FALSE", category: "Valentines Day" },
-
-{ question: "The holiday has roots in ancient Roman traditions.", answer: "TRUE", category: "Valentines Day" },
-{ question: "Saint Valentine was a real historical figure.", answer: "TRUE", category: "Valentines Day" },
-{ question: "All Valentine’s traditions come from the same country.", answer: "FALSE", category: "Valentines Day" },
-{ question: "Valentine’s Day is sometimes called a Hallmark holiday.", answer: "TRUE", category: "Valentines Day" },
-{ question: "People often go out to dinner on Valentine’s Day.", answer: "TRUE", category: "Valentines Day" },
-
-{ question: "Valentine’s Day has nothing to do with affection.", answer: "FALSE", category: "Valentines Day" },
-{ question: "Love letters were exchanged long before modern Valentine’s cards.", answer: "TRUE", category: "Valentines Day" },
-{ question: "Pink hearts are commonly seen during Valentine’s Day.", answer: "TRUE", category: "Valentines Day" },
-{ question: "Valentine’s Day is celebrated only in the United States.", answer: "FALSE", category: "Valentines Day" },
-{ question: "Valentine’s Day traditions can vary by culture.", answer: "TRUE", category: "Valentines Day" },
-
-{ question: "Some people celebrate Valentine’s Day with family members.", answer: "TRUE", category: "Valentines Day" },
-{ question: "Valentine’s Day always includes gift-giving.", answer: "FALSE", category: "Valentines Day" },
-{ question: "The holiday encourages expressing appreciation for others.", answer: "TRUE", category: "Valentines Day" },
-{ question: "Valentine’s Day has been celebrated for hundreds of years.", answer: "TRUE", category: "Valentines Day" },
-{ question: "Kindness and affection are common themes of Valentine’s Day.", answer: "TRUE", category: "Valentines Day" },
-        // July 4th Questions
-{ question: "July 4th celebrates the signing of the Declaration of Independence.", answer: "TRUE", category: "July 4th" },
-{ question: "The Declaration of Independence was signed in 1776.", answer: "TRUE", category: "July 4th" },
-{ question: "July 4th is also called Independence Day.", answer: "TRUE", category: "July 4th" },
-{ question: "Independence Day is celebrated only in the United States.", answer: "TRUE", category: "July 4th" },
-{ question: "The Declaration of Independence was signed in Philadelphia.", answer: "TRUE", category: "July 4th" },
-
-{ question: "George Washington wrote the Declaration of Independence.", answer: "FALSE", category: "July 4th" },
-{ question: "Thomas Jefferson was the main author of the Declaration of Independence.", answer: "TRUE", category: "July 4th" },
-{ question: "The Liberty Bell is associated with Independence Day.", answer: "TRUE", category: "July 4th" },
-{ question: "The Declaration of Independence declared freedom from France.", answer: "FALSE", category: "July 4th" },
-{ question: "Fireworks are a common July 4th tradition.", answer: "TRUE", category: "July 4th" },
-
-{ question: "The American flag has red, white, and blue colors.", answer: "TRUE", category: "July 4th" },
-{ question: "The original American flag had 13 stars.", answer: "TRUE", category: "July 4th" },
-{ question: "July 4th always falls on a Monday.", answer: "FALSE", category: "July 4th" },
-{ question: "Parades are a popular July 4th activity.", answer: "TRUE", category: "July 4th" },
-{ question: "The Statue of Liberty is a symbol of American independence.", answer: "TRUE", category: "July 4th" },
-
-{ question: "Hot dogs are commonly eaten on July 4th.", answer: "TRUE", category: "July 4th" },
-{ question: "Independence Day marks the end of the Civil War.", answer: "FALSE", category: "July 4th" },
-{ question: "The Declaration of Independence was approved by the Continental Congress.", answer: "TRUE", category: "July 4th" },
-{ question: "Church bells rang after independence was declared.", answer: "TRUE", category: "July 4th" },
-{ question: "July 4th has been celebrated since the 1700s.", answer: "TRUE", category: "July 4th" },
-
-{ question: "Independence Day celebrates freedom and democracy.", answer: "TRUE", category: "July 4th" },
-{ question: "The White House is traditionally decorated with patriotic colors on July 4th.", answer: "TRUE", category: "July 4th" },
-{ question: "July 4th celebrations often include music.", answer: "TRUE", category: "July 4th" },
-{ question: "Independence Day is a federal holiday.", answer: "TRUE", category: "July 4th" },
-{ question: "The American Revolution ended on July 4th, 1776.", answer: "FALSE", category: "July 4th" },
-
-{ question: "Picnics are a common way to celebrate July 4th.", answer: "TRUE", category: "July 4th" },
-{ question: "Independence Day celebrates the adoption of the Constitution.", answer: "FALSE", category: "July 4th" },
-{ question: "The Declaration of Independence includes the phrase 'Life, Liberty, and the pursuit of Happiness.'", answer: "TRUE", category: "July 4th" },
-{ question: "Independence Day celebrations often include family gatherings.", answer: "TRUE", category: "July 4th" },
-{ question: "July 4th is associated with patriotic pride.", answer: "TRUE", category: "July 4th" },
-
-{ question: "Independence Day is celebrated with fireworks at night.", answer: "TRUE", category: "July 4th" },
-{ question: "The Declaration of Independence was signed by all colonists.", answer: "FALSE", category: "July 4th" },
-{ question: "July 4th honors the founding ideals of the United States.", answer: "TRUE", category: "July 4th" },
-{ question: "Independence Day has been celebrated for over 200 years.", answer: "TRUE", category: "July 4th" },
-{ question: "July 4th celebrations are meant to be solemn and silent.", answer: "FALSE", category: "July 4th" },
-  
-// Veterans Day Questions
-{ question: "Veterans Day honors people who served in the U.S. Armed Forces.", answer: "TRUE", category: "Veterans Day" },
-{ question: "Veterans Day is observed on November 11 each year.", answer: "TRUE", category: "Veterans Day" },
-{ question: "Veterans Day was originally called Armistice Day.", answer: "TRUE", category: "Veterans Day" },
-{ question: "Armistice Day marks the end of World War I fighting.", answer: "TRUE", category: "Veterans Day" },
-{ question: "Veterans Day honors only soldiers who died in war.", answer: "FALSE", category: "Veterans Day" },
-
-{ question: "Veterans Day honors veterans from all branches of the military.", answer: "TRUE", category: "Veterans Day" },
-{ question: "Veterans Day is a U.S. federal holiday.", answer: "TRUE", category: "Veterans Day" },
-{ question: "Veterans Day is always celebrated on a Monday.", answer: "FALSE", category: "Veterans Day" },
-{ question: "Veterans Day recognizes both wartime and peacetime service.", answer: "TRUE", category: "Veterans Day" },
-{ question: "A moment of silence at 11:00 AM is sometimes observed on Veterans Day.", answer: "TRUE", category: "Veterans Day" },
-
-{ question: "Veterans Day began after World War II.", answer: "FALSE", category: "Veterans Day" },
-{ question: "Veterans Day is the same holiday as Memorial Day.", answer: "FALSE", category: "Veterans Day" },
-{ question: "Veterans Day honors living veterans.", answer: "TRUE", category: "Veterans Day" },
-{ question: "The U.S. flag is commonly displayed on Veterans Day.", answer: "TRUE", category: "Veterans Day" },
-{ question: "Veterans Day recognizes service members from all military branches.", answer: "TRUE", category: "Veterans Day" },
-
-{ question: "Veterans Day was officially renamed in 1954.", answer: "TRUE", category: "Veterans Day" },
-{ question: "Veterans Day is celebrated in many countries under different names.", answer: "TRUE", category: "Veterans Day" },
-{ question: "Veterans Day always falls on the second Tuesday of November.", answer: "FALSE", category: "Veterans Day" },
-{ question: "Parades and ceremonies are common on Veterans Day.", answer: "TRUE", category: "Veterans Day" },
-{ question: "Veterans Day encourages thanking veterans for their service.", answer: "TRUE", category: "Veterans Day" },
-
-{ question: "Veterans Day recognizes Army, Navy, Air Force, Marines, and Coast Guard veterans.", answer: "TRUE", category: "Veterans Day" },
-{ question: "Veterans Day honors only Army veterans.", answer: "FALSE", category: "Veterans Day" },
-{ question: "Veterans Day is meant to be a day of gratitude and recognition.", answer: "TRUE", category: "Veterans Day" },
-{ question: "Veterans Day is celebrated during the summer.", answer: "FALSE", category: "Veterans Day" },
-{ question: "Veterans Day honors people currently serving in the military.", answer: "TRUE", category: "Veterans Day" },
-
-{ question: "Veterans Day began in the 20th century.", answer: "TRUE", category: "Veterans Day" },
-{ question: "Veterans Day encourages respect for military service.", answer: "TRUE", category: "Veterans Day" },
-{ question: "Veterans Day focuses on military victories only.", answer: "FALSE", category: "Veterans Day" },
-{ question: "Veterans Day recognizes sacrifices made by service members.", answer: "TRUE", category: "Veterans Day" },
-{ question: "Veterans Day is observed nationwide in the U.S.", answer: "TRUE", category: "Veterans Day" },
-
-        // Memorial Day Questions
-{ question: "Memorial Day honors U.S. military members who died in service.", answer: "TRUE", category: "Memorial Day" },
-{ question: "Memorial Day is observed on the last Monday in May.", answer: "TRUE", category: "Memorial Day" },
-{ question: "Memorial Day was originally known as Decoration Day.", answer: "TRUE", category: "Memorial Day" },
-{ question: "Decoration Day involved decorating graves of fallen soldiers.", answer: "TRUE", category: "Memorial Day" },
-{ question: "Memorial Day honors all living veterans.", answer: "FALSE", category: "Memorial Day" },
-
-{ question: "Memorial Day began after the Civil War.", answer: "TRUE", category: "Memorial Day" },
-{ question: "Memorial Day is a U.S. federal holiday.", answer: "TRUE", category: "Memorial Day" },
-{ question: "Memorial Day always falls on May 30.", answer: "FALSE", category: "Memorial Day" },
-{ question: "Memorial Day is a day of remembrance.", answer: "TRUE", category: "Memorial Day" },
-{ question: "American flags are often placed on graves on Memorial Day.", answer: "TRUE", category: "Memorial Day" },
-
-{ question: "Memorial Day honors soldiers who died during military service.", answer: "TRUE", category: "Memorial Day" },
-{ question: "Memorial Day is the same as Veterans Day.", answer: "FALSE", category: "Memorial Day" },
-{ question: "Many cemeteries hold ceremonies on Memorial Day.", answer: "TRUE", category: "Memorial Day" },
-{ question: "Memorial Day has roots in honoring Civil War soldiers.", answer: "TRUE", category: "Memorial Day" },
-{ question: "Memorial Day is meant to celebrate military victories.", answer: "FALSE", category: "Memorial Day" },
-
-{ question: "A National Moment of Remembrance occurs on Memorial Day.", answer: "TRUE", category: "Memorial Day" },
-{ question: "The National Moment of Remembrance takes place at 3:00 PM local time.", answer: "TRUE", category: "Memorial Day" },
-{ question: "Memorial Day is often marked by parades.", answer: "TRUE", category: "Memorial Day" },
-{ question: "Memorial Day is a solemn holiday.", answer: "TRUE", category: "Memorial Day" },
-{ question: "Memorial Day honors soldiers from all wars.", answer: "TRUE", category: "Memorial Day" },
-
-{ question: "Memorial Day recognizes only World War II soldiers.", answer: "FALSE", category: "Memorial Day" },
-{ question: "Memorial Day is commonly associated with honoring sacrifice.", answer: "TRUE", category: "Memorial Day" },
-{ question: "Memorial Day marks the unofficial start of summer.", answer: "TRUE", category: "Memorial Day" },
-{ question: "Memorial Day is primarily a party holiday.", answer: "FALSE", category: "Memorial Day" },
-{ question: "Many communities hold remembrance services on Memorial Day.", answer: "TRUE", category: "Memorial Day" },
-
-{ question: "Memorial Day is observed only in the United States.", answer: "TRUE", category: "Memorial Day" },
-{ question: "Memorial Day honors fallen members of the Armed Forces.", answer: "TRUE", category: "Memorial Day" },
-{ question: "Wearing poppies is sometimes associated with remembrance.", answer: "TRUE", category: "Memorial Day" },
-{ question: "Memorial Day encourages reflection and gratitude.", answer: "TRUE", category: "Memorial Day" },
-{ question: "Memorial Day has been observed for over 100 years.", answer: "TRUE", category: "Memorial Day" },
-        // Halloween Questions
-{ question: "Halloween is celebrated on October 31.", answer: "TRUE", category: "Halloween" },
-{ question: "Halloween originated from the Celtic festival Samhain.", answer: "TRUE", category: "Halloween" },
-{ question: "Jack-o’-lanterns were originally made from turnips.", answer: "TRUE", category: "Halloween" },
-{ question: "Candy corn was originally called chicken feed.", answer: "TRUE", category: "Halloween" },
-{ question: "Black cats are commonly associated with Halloween.", answer: "TRUE", category: "Halloween" },
-
-{ question: "Halloween is always celebrated on the last Friday of October.", answer: "FALSE", category: "Halloween" },
-{ question: "Trick-or-treating became popular in the United States in the 1900s.", answer: "TRUE", category: "Halloween" },
-{ question: "Witches are said to fly on broomsticks.", answer: "TRUE", category: "Halloween" },
-{ question: "The color orange represents harvest and autumn.", answer: "TRUE", category: "Halloween" },
-{ question: "The color black symbolizes death and darkness.", answer: "TRUE", category: "Halloween" },
-
-{ question: "Halloween began as a Christian holiday.", answer: "FALSE", category: "Halloween" },
-{ question: "Bats are commonly linked to Halloween folklore.", answer: "TRUE", category: "Halloween" },
-{ question: "Ghosts are believed to appear more often on Halloween night.", answer: "TRUE", category: "Halloween" },
-{ question: "Halloween costumes were originally worn to scare away spirits.", answer: "TRUE", category: "Halloween" },
-{ question: "Candy apples are a traditional Halloween treat.", answer: "TRUE", category: "Halloween" },
-
-{ question: "Pumpkins are native to Europe.", answer: "FALSE", category: "Halloween" },
-{ question: "Haunted houses are popular attractions during Halloween.", answer: "TRUE", category: "Halloween" },
-{ question: "The word Halloween comes from 'All Hallows’ Eve.'", answer: "TRUE", category: "Halloween" },
-{ question: "Spiders are symbols often used in Halloween decorations.", answer: "TRUE", category: "Halloween" },
-{ question: "Halloween is celebrated worldwide on the same traditions.", answer: "FALSE", category: "Halloween" },
-
-{ question: "Skeletons represent death in Halloween imagery.", answer: "TRUE", category: "Halloween" },
-{ question: "The Great Pumpkin is a character from 'It’s the Great Pumpkin, Charlie Brown.'", answer: "TRUE", category: "Halloween" },
-{ question: "Halloween is more popular with children than adults.", answer: "FALSE", category: "Halloween" },
-{ question: "Fog machines are often used in Halloween decorations.", answer: "TRUE", category: "Halloween" },
-{ question: "Halloween is the biggest candy-selling holiday in the U.S.", answer: "TRUE", category: "Halloween" },
-// Thanksgiving Questions
-{ question: "Thanksgiving is celebrated on the fourth Thursday of November in the U.S.", answer: "TRUE", category: "Thanksgiving" },
-{ question: "The first Thanksgiving took place in 1621.", answer: "TRUE", category: "Thanksgiving" },
-{ question: "Pilgrims and Native Americans shared the first Thanksgiving meal.", answer: "TRUE", category: "Thanksgiving" },
-{ question: "Turkey is a traditional Thanksgiving food.", answer: "TRUE", category: "Thanksgiving" },
-{ question: "Thanksgiving is a federal holiday in the United States.", answer: "TRUE", category: "Thanksgiving" },
-
-{ question: "Thanksgiving is celebrated in every country worldwide.", answer: "FALSE", category: "Thanksgiving" },
-{ question: "Corn was likely served at the first Thanksgiving.", answer: "TRUE", category: "Thanksgiving" },
-{ question: "Pumpkin pie is a Thanksgiving dessert.", answer: "TRUE", category: "Thanksgiving" },
-{ question: "Thanksgiving always falls on the same date.", answer: "FALSE", category: "Thanksgiving" },
-{ question: "The Macy’s Thanksgiving Day Parade is held in New York City.", answer: "TRUE", category: "Thanksgiving" },
-
-{ question: "Thanksgiving was first proclaimed a national holiday by Abraham Lincoln.", answer: "TRUE", category: "Thanksgiving" },
-{ question: "Football games are commonly played on Thanksgiving.", answer: "TRUE", category: "Thanksgiving" },
-{ question: "Cranberries are traditionally served at Thanksgiving.", answer: "TRUE", category: "Thanksgiving" },
-{ question: "The first Thanksgiving lasted one day.", answer: "FALSE", category: "Thanksgiving" },
-{ question: "Stuffing is sometimes cooked inside the turkey.", answer: "TRUE", category: "Thanksgiving" },
-
-{ question: "Thanksgiving marks the start of the Christmas shopping season.", answer: "TRUE", category: "Thanksgiving" },
-{ question: "The Pilgrims sailed to America on the Mayflower.", answer: "TRUE", category: "Thanksgiving" },
-{ question: "Sweet potatoes are often served at Thanksgiving.", answer: "TRUE", category: "Thanksgiving" },
-{ question: "Thanksgiving originated in Canada.", answer: "FALSE", category: "Thanksgiving" },
-{ question: "Gratitude is a central theme of Thanksgiving.", answer: "TRUE", category: "Thanksgiving" },
-
-{ question: "Green bean casserole is a traditional dish.", answer: "TRUE", category: "Thanksgiving" },
-{ question: "Thanksgiving parades feature giant balloons.", answer: "TRUE", category: "Thanksgiving" },
-{ question: "Thanksgiving is always followed by Black Friday.", answer: "TRUE", category: "Thanksgiving" },
-{ question: "Turkey was the only meat eaten at the first Thanksgiving.", answer: "FALSE", category: "Thanksgiving" },
-{ question: "Thanksgiving encourages spending time with family.", answer: "TRUE", category: "Thanksgiving" },
-// Christmas Questions
-{ question: "Christmas is celebrated on December 25.", answer: "TRUE", category: "Christmas" },
-{ question: "Christmas celebrates the birth of Jesus Christ.", answer: "TRUE", category: "Christmas" },
-{ question: "Santa Claus is also known as Saint Nicholas.", answer: "TRUE", category: "Christmas" },
-{ question: "Christmas trees are commonly decorated with lights and ornaments.", answer: "TRUE", category: "Christmas" },
-{ question: "Reindeer are said to pull Santa’s sleigh.", answer: "TRUE", category: "Christmas" },
-
-{ question: "Christmas is celebrated only in Christian countries.", answer: "FALSE", category: "Christmas" },
-{ question: "The tradition of Christmas trees began in Germany.", answer: "TRUE", category: "Christmas" },
-{ question: "Eggnog is a traditional Christmas drink.", answer: "TRUE", category: "Christmas" },
-{ question: "Christmas always falls on a Sunday.", answer: "FALSE", category: "Christmas" },
-{ question: "Mistletoe is associated with Christmas traditions.", answer: "TRUE", category: "Christmas" },
-
-{ question: "The song 'Jingle Bells' was originally written for Christmas.", answer: "FALSE", category: "Christmas" },
-{ question: "Stockings are often hung by the fireplace at Christmas.", answer: "TRUE", category: "Christmas" },
-{ question: "Christmas carols are traditional holiday songs.", answer: "TRUE", category: "Christmas" },
-{ question: "Santa Claus wears red and white clothing.", answer: "TRUE", category: "Christmas" },
-{ question: "Christmas lights are often placed on houses.", answer: "TRUE", category: "Christmas" },
-
-{ question: "The Nativity scene represents the birth of Jesus.", answer: "TRUE", category: "Christmas" },
-{ question: "Christmas originated in the 1800s.", answer: "FALSE", category: "Christmas" },
-{ question: "Gift-giving is a Christmas tradition.", answer: "TRUE", category: "Christmas" },
-{ question: "The Grinch is a Christmas character.", answer: "TRUE", category: "Christmas" },
-{ question: "Candy canes are a popular Christmas treat.", answer: "TRUE", category: "Christmas" },
-
-{ question: "Christmas wreaths are often made from evergreen branches.", answer: "TRUE", category: "Christmas" },
-{ question: "The star is a symbol often placed on top of Christmas trees.", answer: "TRUE", category: "Christmas" },
-{ question: "Christmas is celebrated the same way in every country.", answer: "FALSE", category: "Christmas" },
-{ question: "The Twelve Days of Christmas end on January 6.", answer: "TRUE", category: "Christmas" },
-{ question: "Christmas is one of the most widely celebrated holidays worldwide.", answer: "TRUE", category: "Christmas" },
-    
-        
-  // Old TV Shows Questions
-{ question: "‘I Love Lucy’ starred Lucille Ball.", answer: "TRUE", category: "Old TV Shows" },
-{ question: "‘I Love Lucy’ first aired in the 1940s.", answer: "FALSE", category: "Old TV Shows" },
-{ question: "‘The Andy Griffith Show’ was set in the town of Mayberry.", answer: "TRUE", category: "Old TV Shows" },
-{ question: "Sheriff Andy Taylor was played by Andy Griffith.", answer: "TRUE", category: "Old TV Shows" },
-{ question: "‘The Andy Griffith Show’ was filmed in color from the beginning.", answer: "FALSE", category: "Old TV Shows" },
-
-{ question: "‘Leave It to Beaver’ focused on family life.", answer: "TRUE", category: "Old TV Shows" },
-{ question: "Beaver Cleaver was the father in ‘Leave It to Beaver.’", answer: "FALSE", category: "Old TV Shows" },
-{ question: "‘The Twilight Zone’ often told science fiction stories.", answer: "TRUE", category: "Old TV Shows" },
-{ question: "Rod Serling hosted ‘The Twilight Zone.’", answer: "TRUE", category: "Old TV Shows" },
-{ question: "‘The Twilight Zone’ was a comedy series.", answer: "FALSE", category: "Old TV Shows" },
-
-{ question: "‘Gunsmoke’ was a western television series.", answer: "TRUE", category: "Old TV Shows" },
-{ question: "‘Gunsmoke’ is one of the longest-running TV dramas.", answer: "TRUE", category: "Old TV Shows" },
-{ question: "‘Bonanza’ was set on a ranch called the Ponderosa.", answer: "TRUE", category: "Old TV Shows" },
-{ question: "‘Bonanza’ took place in New York City.", answer: "FALSE", category: "Old TV Shows" },
-{ question: "‘Rawhide’ helped make Clint Eastwood famous.", answer: "TRUE", category: "Old TV Shows" },
-
-{ question: "‘The Beverly Hillbillies’ was about a wealthy city family.", answer: "FALSE", category: "Old TV Shows" },
-{ question: "‘The Beverly Hillbillies’ featured a family who struck oil.", answer: "TRUE", category: "Old TV Shows" },
-{ question: "‘Gilligan’s Island’ was about people stranded on an island.", answer: "TRUE", category: "Old TV Shows" },
-{ question: "The castaways were rescued in the first season of ‘Gilligan’s Island.’", answer: "FALSE", category: "Old TV Shows" },
-{ question: "‘Gilligan’s Island’ originally aired in black and white.", answer: "FALSE", category: "Old TV Shows" },
-
-{ question: "‘Bewitched’ featured a woman with magical powers.", answer: "TRUE", category: "Old TV Shows" },
-{ question: "Samantha twitched her nose to do magic on ‘Bewitched.’", answer: "TRUE", category: "Old TV Shows" },
-{ question: "‘I Dream of Jeannie’ featured a genie living in a bottle.", answer: "TRUE", category: "Old TV Shows" },
-{ question: "Major Nelson was an astronaut on ‘I Dream of Jeannie.’", answer: "TRUE", category: "Old TV Shows" },
-{ question: "‘I Dream of Jeannie’ took place during the Civil War.", answer: "FALSE", category: "Old TV Shows" },
-
-{ question: "‘M*A*S*H’ was set during the Korean War.", answer: "TRUE", category: "Old TV Shows" },
-{ question: "‘M*A*S*H’ was a silent television show.", answer: "FALSE", category: "Old TV Shows" },
-{ question: "‘Happy Days’ featured a character named Fonzie.", answer: "TRUE", category: "Old TV Shows" },
-{ question: "‘Happy Days’ was set in the 1950s.", answer: "TRUE", category: "Old TV Shows" },
-{ question: "‘Happy Days’ focused on life in outer space.", answer: "FALSE", category: "Old TV Shows" },
-
-{ question: "‘The Dick Van Dyke Show’ was a comedy series.", answer: "TRUE", category: "Old TV Shows" },
-{ question: "Mary Tyler Moore appeared on ‘The Dick Van Dyke Show.’", answer: "TRUE", category: "Old TV Shows" },
-{ question: "‘The Mary Tyler Moore Show’ centered on a woman working in television.", answer: "TRUE", category: "Old TV Shows" },
-{ question: "‘The Mary Tyler Moore Show’ aired in the 1800s.", answer: "FALSE", category: "Old TV Shows" },
-        // Movie Questions
-{ question: "The movie 'The Wizard of Oz' was released in 1939.", answer: "TRUE", category: "Movies" },
-{ question: "Dorothy’s shoes were silver in the original book 'The Wizard of Oz.'", answer: "TRUE", category: "Movies" },
-{ question: "Humphrey Bogart starred in the movie 'Casablanca.'", answer: "TRUE", category: "Movies" },
-{ question: "The movie 'Gone with the Wind' is set during the American Civil War.", answer: "TRUE", category: "Movies" },
-{ question: "Marilyn Monroe starred in the movie 'Some Like It Hot.'", answer: "TRUE", category: "Movies" },
-
-{ question: "The movie 'Jaws' is about a giant octopus.", answer: "FALSE", category: "Movies" },
-{ question: "The character James Bond is a secret agent.", answer: "TRUE", category: "Movies" },
-{ question: "The movie 'Titanic' is based on a real historical event.", answer: "TRUE", category: "Movies" },
-{ question: "The phrase 'Here’s looking at you, kid' comes from the movie 'Casablanca.'", answer: "TRUE", category: "Movies" },
-{ question: "Charlie Chaplin was famous for silent films.", answer: "TRUE", category: "Movies" },
-
-{ question: "The movie 'Snow White and the Seven Dwarfs' was Disney’s first full-length animated film.", answer: "TRUE", category: "Movies" },
-{ question: "The movie 'Star Wars' was released in the 1950s.", answer: "FALSE", category: "Movies" },
-{ question: "The movie 'Mary Poppins' combines live action and animation.", answer: "TRUE", category: "Movies" },
-{ question: "Alfred Hitchcock was known for directing comedies.", answer: "FALSE", category: "Movies" },
-{ question: "The movie 'Psycho' was directed by Alfred Hitchcock.", answer: "TRUE", category: "Movies" },
-
-{ question: "The Oscars are awards given for achievements in movies.", answer: "TRUE", category: "Movies" },
-{ question: "The movie 'Forrest Gump' includes scenes set during historical events.", answer: "TRUE", category: "Movies" },
-{ question: "The movie 'Rocky' is about a professional football player.", answer: "FALSE", category: "Movies" },
-{ question: "The character of Indiana Jones is an archaeologist.", answer: "TRUE", category: "Movies" },
-{ question: "The movie 'The Sound of Music' is set in Austria.", answer: "TRUE", category: "Movies" },
-
-{ question: "The movie 'E.T.' is about a friendly alien.", answer: "TRUE", category: "Movies" },
-{ question: "The movie 'Jurassic Park' features cloned dinosaurs.", answer: "TRUE", category: "Movies" },
-{ question: "The movie 'The Godfather' focuses on a crime family.", answer: "TRUE", category: "Movies" },
-{ question: "The movie 'Singin’ in the Rain' is a musical.", answer: "TRUE", category: "Movies" },
-{ question: "The movie 'The Ten Commandments' starred Charlton Heston.", answer: "TRUE", category: "Movies" },
-
-{ question: "The movie 'Ben-Hur' includes a famous chariot race.", answer: "TRUE", category: "Movies" },
-{ question: "The movie 'Back to the Future' involves time travel.", answer: "TRUE", category: "Movies" },
-{ question: "The movie 'Planet of the Apes' takes place on Mars.", answer: "FALSE", category: "Movies" },
-{ question: "The movie 'Grease' is set in the 1950s.", answer: "TRUE", category: "Movies" },
-{ question: "The character Darth Vader appears in the 'Star Wars' movies.", answer: "TRUE", category: "Movies" },
-
-{ question: "The movie 'It’s a Wonderful Life' is often shown during the Christmas season.", answer: "TRUE", category: "Movies" },
-{ question: "The movie 'King Kong' features a giant ape.", answer: "TRUE", category: "Movies" },
-{ question: "The movie 'The Silence of the Lambs' is a romantic comedy.", answer: "FALSE", category: "Movies" },
-{ question: "The movie 'Mrs. Doubtfire' stars Robin Williams.", answer: "TRUE", category: "Movies" },
-{ question: "The movie 'The Shawshank Redemption' is set mostly in a prison.", answer: "TRUE", category: "Movies" },
-
-        // Music Questions
-{ question: "Elvis Presley is known as the King of Rock and Roll.", answer: "TRUE", category: "Music" },
-{ question: "The Beatles were an American band.", answer: "FALSE", category: "Music" },
-{ question: "Johnny Cash was known for wearing black clothing on stage.", answer: "TRUE", category: "Music" },
-{ question: "Motown Records was founded in Detroit.", answer: "TRUE", category: "Music" },
-{ question: "Frank Sinatra was part of the Rat Pack.", answer: "TRUE", category: "Music" },
-
-{ question: "The song 'Jailhouse Rock' was recorded by Elvis Presley.", answer: "TRUE", category: "Music" },
-{ question: "The Beach Boys are known for songs about surfing.", answer: "TRUE", category: "Music" },
-{ question: "The Rolling Stones formed in the 1990s.", answer: "FALSE", category: "Music" },
-{ question: "Dolly Parton wrote the song 'Jolene.'", answer: "TRUE", category: "Music" },
-{ question: "Louis Armstrong was famous for playing the trumpet.", answer: "TRUE", category: "Music" },
-
-{ question: "The song 'Respect' was famously performed by Aretha Franklin.", answer: "TRUE", category: "Music" },
-{ question: "Elton John is known for wearing flashy costumes.", answer: "TRUE", category: "Music" },
-{ question: "The Beatles broke up in 1980.", answer: "FALSE", category: "Music" },
-{ question: "B.B. King was a famous blues guitarist.", answer: "TRUE", category: "Music" },
-{ question: "The Grand Ole Opry is associated with country music.", answer: "TRUE", category: "Music" },
-
-{ question: "The song 'My Way' is closely associated with Frank Sinatra.", answer: "TRUE", category: "Music" },
-{ question: "Michael Jackson was known as the King of Pop.", answer: "TRUE", category: "Music" },
-{ question: "The Supremes were part of the Motown record label.", answer: "TRUE", category: "Music" },
-{ question: "The piano has more keys than a standard guitar has strings.", answer: "TRUE", category: "Music" },
-{ question: "A symphony is usually written for a single instrument.", answer: "FALSE", category: "Music" },
-
-{ question: "The song 'Blue Suede Shoes' became popular in the 1950s.", answer: "TRUE", category: "Music" },
-{ question: "The violin is the largest instrument in the string family.", answer: "FALSE", category: "Music" },
-{ question: "The song 'Somewhere Over the Rainbow' was featured in The Wizard of Oz.", answer: "TRUE", category: "Music" },
-{ question: "A cappella music is sung without instruments.", answer: "TRUE", category: "Music" },
-{ question: "The Metronome is used to help keep musical time.", answer: "TRUE", category: "Music" },
-
-{ question: "The electric guitar was invented before the acoustic guitar.", answer: "FALSE", category: "Music" },
-{ question: "The song 'Ring of Fire' was recorded by Johnny Cash.", answer: "TRUE", category: "Music" },
-{ question: "Opera singers usually perform without microphones.", answer: "TRUE", category: "Music" },
-{ question: "The harmonica is also called a mouth organ.", answer: "TRUE", category: "Music" },
-{ question: "The song 'Happy Birthday' was written in the 2000s.", answer: "FALSE", category: "Music" },
-
-{ question: "A duet is a song performed by two people.", answer: "TRUE", category: "Music" },
-{ question: "Country music originated mainly in the southern United States.", answer: "TRUE", category: "Music" },
-{ question: "The drummer usually sets the rhythm in a band.", answer: "TRUE", category: "Music" },
-{ question: "Music notes are named using the letters A through G.", answer: "TRUE", category: "Music" },
-{ question: "The song 'Rock Around the Clock' helped popularize rock music.", answer: "TRUE", category: "Music" },
-      
-// New Years Questions
-{ question: "New Year’s Day is celebrated on January 1.", answer: "TRUE", category: "New Years" },
-{ question: "The New Year always begins on a Monday.", answer: "FALSE", category: "New Years" },
-{ question: "People often make New Year’s resolutions.", answer: "TRUE", category: "New Years" },
-{ question: "The New Year ball drops in Times Square, New York City.", answer: "TRUE", category: "New Years" },
-{ question: "The New Year is celebrated at the same moment worldwide.", answer: "FALSE", category: "New Years" },
-
-{ question: "Fireworks are commonly used to celebrate the New Year.", answer: "TRUE", category: "New Years" },
-{ question: "The tradition of New Year’s resolutions began in ancient times.", answer: "TRUE", category: "New Years" },
-{ question: "The New Year always starts at midnight.", answer: "TRUE", category: "New Years" },
-{ question: "January was named after the Roman god Janus.", answer: "TRUE", category: "New Years" },
-{ question: "Janus was the god of war.", answer: "FALSE", category: "New Years" },
-
-{ question: "New Year’s Eve is celebrated on December 31.", answer: "TRUE", category: "New Years" },
-{ question: "Singing ‘Auld Lang Syne’ is a New Year’s tradition.", answer: "TRUE", category: "New Years" },
-{ question: "‘Auld Lang Syne’ originated in France.", answer: "FALSE", category: "New Years" },
-{ question: "Many cultures eat special foods for good luck on New Year’s.", answer: "TRUE", category: "New Years" },
-{ question: "Black-eyed peas are eaten for luck in parts of the U.S.", answer: "TRUE", category: "New Years" },
-
-{ question: "The Chinese New Year always falls on January 1.", answer: "FALSE", category: "New Years" },
-{ question: "Some countries celebrate New Year’s by cleaning their homes.", answer: "TRUE", category: "New Years" },
-{ question: "The New Year has always started in January throughout history.", answer: "FALSE", category: "New Years" },
-{ question: "The Gregorian calendar is used by most of the world today.", answer: "TRUE", category: "New Years" },
-{ question: "New Year’s celebrations often symbolize new beginnings.", answer: "TRUE", category: "New Years" },
-
-{ question: "Kissing at midnight on New Year’s Eve is a tradition.", answer: "TRUE", category: "New Years" },
-{ question: "The New Year was once celebrated in March.", answer: "TRUE", category: "New Years" },
-{ question: "Time zones affect when New Year’s is celebrated.", answer: "TRUE", category: "New Years" },
-{ question: "New Year’s Day is a public holiday in the United States.", answer: "TRUE", category: "New Years" },
-{ question: "Every culture celebrates New Year’s the same way.", answer: "FALSE", category: "New Years" },
-
-{ question: "The first New Year’s baby is often celebrated in the news.", answer: "TRUE", category: "New Years" },
-{ question: "Resolutions are legally binding promises.", answer: "FALSE", category: "New Years" },
-{ question: "Confetti is commonly thrown during New Year’s celebrations.", answer: "TRUE", category: "New Years" },
-{ question: "New Year’s marks the end of the calendar year.", answer: "TRUE", category: "New Years" },
-{ question: "People often reflect on the past year during New Year’s.", answer: "TRUE", category: "New Years" },
-
-{ question: "New Year’s celebrations always include alcohol.", answer: "FALSE", category: "New Years" },
-{ question: "The word ‘resolution’ can mean a firm decision.", answer: "TRUE", category: "New Years" },
-{ question: "Many people hope for better luck in the New Year.", answer: "TRUE", category: "New Years" },
-{ question: "New Year’s is only celebrated in Western countries.", answer: "FALSE", category: "New Years" },
-{ question: "New Year’s traditions often involve family and friends.", answer: "TRUE", category: "New Years" },
-       
-        // Fun Facts Questions
-{ question: "Octopuses have three hearts.", answer: "TRUE", category: "Fun Facts" },
-{ question: "A group of crows is called a murder.", answer: "TRUE", category: "Fun Facts" },
-{ question: "The Eiffel Tower can grow slightly taller in summer heat.", answer: "TRUE", category: "Fun Facts" },
-{ question: "Humans only use 10 percent of their brains.", answer: "FALSE", category: "Fun Facts" },
-{ question: "Sharks are older than trees.", answer: "TRUE", category: "Fun Facts" },
-{ question: "A day on Venus is longer than a year on Venus.", answer: "TRUE", category: "Fun Facts" },
-{ question: "Lightning never strikes the same place twice.", answer: "FALSE", category: "Fun Facts" },
-{ question: "There are more stars in the universe than grains of sand on Earth.", answer: "TRUE", category: "Fun Facts" },
-{ question: "Hot water freezes faster than cold water in some conditions.", answer: "TRUE", category: "Fun Facts" },
-{ question: "Bamboo is the fastest-growing plant on Earth.", answer: "TRUE", category: "Fun Facts" },
-
-{ question: "Goldfish have a memory of only three seconds.", answer: "FALSE", category: "Fun Facts" },
-{ question: "Bananas are berries, but strawberries are not.", answer: "TRUE", category: "Fun Facts" },
-{ question: "The human body has four lungs.", answer: "FALSE", category: "Fun Facts" },
-{ question: "Wombat poop is cube-shaped.", answer: "TRUE", category: "Fun Facts" },
-{ question: "An ostrich’s eye is bigger than its brain.", answer: "TRUE", category: "Fun Facts" },
-{ question: "A snail can sleep for three years.", answer: "TRUE", category: "Fun Facts" },
-{ question: "The Great Wall of China is visible from space with the naked eye.", answer: "FALSE", category: "Fun Facts" },
-{ question: "A bolt of lightning is hotter than the surface of the sun.", answer: "TRUE", category: "Fun Facts" },
-{ question: "Humans have five senses.", answer: "FALSE", category: "Fun Facts" },
-{ question: "Your taste buds can change as you get older.", answer: "TRUE", category: "Fun Facts" },
-
-{ question: "A blue whale’s heart can be as big as a small car.", answer: "TRUE", category: "Fun Facts" },
-{ question: "The longest river in the world is always the Nile.", answer: "FALSE", category: "Fun Facts" },
-{ question: "Some turtles can breathe through their rear ends.", answer: "TRUE", category: "Fun Facts" },
-{ question: "A penny dropped from a skyscraper can kill someone.", answer: "FALSE", category: "Fun Facts" },
-{ question: "The average adult has fewer bones than a baby.", answer: "TRUE", category: "Fun Facts" },
-{ question: "Sound travels faster in air than in water.", answer: "FALSE", category: "Fun Facts" },
-{ question: "A group of lions is called a pride.", answer: "TRUE", category: "Fun Facts" },
-{ question: "Some frogs can freeze and thaw and still live.", answer: "TRUE", category: "Fun Facts" },
-{ question: "The human heart is on the right side of the chest.", answer: "FALSE", category: "Fun Facts" },
-{ question: "The moon has its own light source.", answer: "FALSE", category: "Fun Facts" },
-
-{ question: "Water can boil and freeze at the same time under special conditions.", answer: "TRUE", category: "Fun Facts" },
-{ question: "A single cloud can weigh over a million pounds.", answer: "TRUE", category: "Fun Facts" },
-{ question: "Dolphins are fish.", answer: "FALSE", category: "Fun Facts" },
-{ question: "Cats can taste sweetness.", answer: "FALSE", category: "Fun Facts" },
-{ question: "Koalas have fingerprints similar to humans.", answer: "TRUE", category: "Fun Facts" },
-{ question: "The shortest war in history lasted less than an hour.", answer: "TRUE", category: "Fun Facts" },
-{ question: "Humans share about half of their DNA with bananas.", answer: "TRUE", category: "Fun Facts" },
-{ question: "The first oranges were orange.", answer: "FALSE", category: "Fun Facts" },
-{ question: "Some metals expand when they freeze.", answer: "TRUE", category: "Fun Facts" },
-{ question: "You can see the Great Wall of China from the moon.", answer: "FALSE", category: "Fun Facts" },
-
-// History Questions
-{ question: "The Great Wall of China was built entirely in a single dynasty.", answer: "FALSE", category: "History" },
-{ question: "The Roman Empire fell in 476 AD.", answer: "TRUE", category: "History" },
-{ question: "Cleopatra was of Egyptian ethnicity.", answer: "FALSE", category: "History" },
-{ question: "The printing press is commonly credited to Johannes Gutenberg.", answer: "TRUE", category: "History" },
-{ question: "The Titanic sank in 1912.", answer: "TRUE", category: "History" },
-{ question: "World War I began in 1939.", answer: "FALSE", category: "History" },
-{ question: "World War II ended in 1945.", answer: "TRUE", category: "History" },
-{ question: "The United States declared independence in 1776.", answer: "TRUE", category: "History" },
-{ question: "The French Revolution began in 1789.", answer: "TRUE", category: "History" },
-{ question: "The Cold War was a direct war fought mainly between the U.S. and the USSR.", answer: "FALSE", category: "History" },
-
-{ question: "The first man on the moon was Neil Armstrong.", answer: "TRUE", category: "History" },
-{ question: "The Berlin Wall fell in 1989.", answer: "TRUE", category: "History" },
-{ question: "The Renaissance began in Italy.", answer: "TRUE", category: "History" },
-{ question: "The Black Death occurred in the 1300s.", answer: "TRUE", category: "History" },
-{ question: "The Magna Carta was signed in 1215.", answer: "TRUE", category: "History" },
-
-{ question: "Joan of Arc was a French military leader.", answer: "TRUE", category: "History" },
-{ question: "The Spanish Armada successfully invaded England in 1588.", answer: "FALSE", category: "History" },
-{ question: "The first Olympic Games were held in ancient Greece.", answer: "TRUE", category: "History" },
-{ question: "Julius Caesar was the first emperor of Rome.", answer: "FALSE", category: "History" },
-{ question: "The Roman Republic came before the Roman Empire.", answer: "TRUE", category: "History" },
-
-{ question: "Vikings reached North America before Columbus.", answer: "TRUE", category: "History" },
-{ question: "Christopher Columbus reached the Americas in 1492.", answer: "TRUE", category: "History" },
-{ question: "The American Civil War ended in 1865.", answer: "TRUE", category: "History" },
-{ question: "Abraham Lincoln was assassinated in 1863.", answer: "FALSE", category: "History" },
-{ question: "The first U.S. president was George Washington.", answer: "TRUE", category: "History" },
-
-{ question: "The Louisiana Purchase happened in 1803.", answer: "TRUE", category: "History" },
-{ question: "The Declaration of Independence was written after the U.S. Constitution.", answer: "FALSE", category: "History" },
-{ question: "The first permanent English settlement in North America was Jamestown.", answer: "TRUE", category: "History" },
-{ question: "The Emancipation Proclamation freed all enslaved people immediately everywhere in the U.S.", answer: "FALSE", category: "History" },
-
-{ question: "The first transcontinental railroad in the U.S. was completed in 1869.", answer: "TRUE", category: "History" },
-{ question: "The Wright brothers are credited with the first successful powered flight.", answer: "TRUE", category: "History" },
-{ question: "The Great Depression began with the stock market crash of 1929.", answer: "TRUE", category: "History" },
-{ question: "The New Deal was associated with President Franklin D. Roosevelt.", answer: "TRUE", category: "History" },
-{ question: "The United Nations was founded after World War I.", answer: "FALSE", category: "History" },
-
-{ question: "The League of Nations was created after World War I.", answer: "TRUE", category: "History" },
-{ question: "The first World’s Fair was held in the United States.", answer: "FALSE", category: "History" },
-{ question: "The first World’s Fair was held in London in 1851.", answer: "TRUE", category: "History" },
-
-{ question: "Mahatma Gandhi was a key leader in India’s independence movement.", answer: "TRUE", category: "History" },
-{ question: "Nelson Mandela was imprisoned for 27 years.", answer: "TRUE", category: "History" },
-{ question: "The Soviet Union dissolved in 1991.", answer: "TRUE", category: "History" },
-{ question: "The first successful vaccine was for smallpox.", answer: "TRUE", category: "History" },
-
-{ question: "The Internet was first developed as a U.S. defense research project (ARPANET).", answer: "TRUE", category: "History" },
-{ question: "The first modern computer was invented in the 1800s and widely used then.", answer: "FALSE", category: "History" },
-
-{ question: "The ancient Egyptians used hieroglyphics.", answer: "TRUE", category: "History" },
-{ question: "The pyramids of Giza were built in ancient Greece.", answer: "FALSE", category: "History" },
-{ question: "The first emperor of China was Qin Shi Huang.", answer: "TRUE", category: "History" },
-{ question: "The Silk Road connected Asia and Europe through trade routes.", answer: "TRUE", category: "History" },
-
-{ question: "The Maya civilization was located in parts of modern-day Mexico and Central America.", answer: "TRUE", category: "History" },
-{ question: "The Inca Empire was centered in the Andes region of South America.", answer: "TRUE", category: "History" },
-{ question: "The Aztec Empire was centered in what is now Mexico.", answer: "TRUE", category: "History" },
-
-{ question: "The Protestant Reformation began in the 1500s.", answer: "TRUE", category: "History" },
-{ question: "Martin Luther posted his Ninety-Five Theses in 1517.", answer: "TRUE", category: "History" },
-{ question: "The Industrial Revolution began in the United States.", answer: "FALSE", category: "History" },
-{ question: "The Industrial Revolution began in Great Britain.", answer: "TRUE", category: "History" },
-
-        // Food Questions
-{ question: "Honey never spoils.", answer: "TRUE", category: "Food" },
-{ question: "Brown eggs are more nutritious than white eggs.", answer: "FALSE", category: "Food" },
-{ question: "Peanuts are actually legumes, not nuts.", answer: "TRUE", category: "Food" },
-{ question: "Bananas grow on trees.", answer: "FALSE", category: "Food" },
-{ question: "Strawberries are the only fruit with seeds on the outside.", answer: "TRUE", category: "Food" },
-{ question: "Cheese is the most stolen food in the world.", answer: "TRUE", category: "Food" },
-{ question: "Ketchup was once sold as medicine.", answer: "TRUE", category: "Food" },
-{ question: "White chocolate contains cocoa solids.", answer: "FALSE", category: "Food" },
-{ question: "Potatoes were the first vegetable grown in space.", answer: "TRUE", category: "Food" },
-{ question: "Avocados are a type of berry.", answer: "TRUE", category: "Food" },
-
-{ question: "Pineapples grow on trees.", answer: "FALSE", category: "Food" },
-{ question: "Apples float in water because they are mostly air.", answer: "TRUE", category: "Food" },
-{ question: "Coffee beans are actually beans.", answer: "FALSE", category: "Food" },
-{ question: "Carrots were originally purple.", answer: "TRUE", category: "Food" },
-{ question: "Popcorn is made from a special type of corn.", answer: "TRUE", category: "Food" },
-{ question: "Milk is the main ingredient in mayonnaise.", answer: "FALSE", category: "Food" },
-{ question: "Ice cream was invented in ancient China.", answer: "TRUE", category: "Food" },
-{ question: "Salt can expire.", answer: "FALSE", category: "Food" },
-{ question: "Mushrooms are a type of vegetable.", answer: "FALSE", category: "Food" },
-{ question: "An apple is a member of the rose family.", answer: "TRUE", category: "Food" },
-
-{ question: "Tomatoes are legally classified as vegetables in the U.S.", answer: "TRUE", category: "Food" },
-{ question: "Chocolate comes from a bean.", answer: "TRUE", category: "Food" },
-{ question: "Oranges are a natural source of vitamin C.", answer: "TRUE", category: "Food" },
-{ question: "All cheeses are made from cow’s milk.", answer: "FALSE", category: "Food" },
-{ question: "Bread rises because of yeast producing gas.", answer: "TRUE", category: "Food" },
-{ question: "Spinach is highest in iron compared to all other vegetables.", answer: "FALSE", category: "Food" },
-{ question: "Lobsters were once considered poor people’s food.", answer: "TRUE", category: "Food" },
-{ question: "Rice is the most consumed staple food worldwide.", answer: "TRUE", category: "Food" },
-{ question: "Corn is grown on every continent except Antarctica.", answer: "TRUE", category: "Food" },
-{ question: "Eggplants are naturally purple.", answer: "TRUE", category: "Food" },
-
-{ question: "Butter is made by churning cream.", answer: "TRUE", category: "Food" },
-{ question: "Watermelon is 90 percent water or more.", answer: "TRUE", category: "Food" },
-{ question: "Chili peppers get their heat from seeds.", answer: "FALSE", category: "Food" },
-{ question: "Vanilla flavor comes from an orchid.", answer: "TRUE", category: "Food" },
-{ question: "Cucumbers are classified as fruits.", answer: "TRUE", category: "Food" },
-{ question: "Frozen vegetables always have fewer nutrients than fresh ones.", answer: "FALSE", category: "Food" },
-{ question: "Pasta was originally brought to Italy from China by Marco Polo.", answer: "FALSE", category: "Food" },
-{ question: "Chewing gum was originally made from tree sap.", answer: "TRUE", category: "Food" },
-{ question: "Blueberries are naturally blue inside.", answer: "FALSE", category: "Food" },
-{ question: "Dark chocolate generally contains less sugar than milk chocolate.", answer: "TRUE", category: "Food" },
-// New Orleans Questions
-{ question: "New Orleans was founded in 1718.", answer: "TRUE", category: "New Orleans" },
-{ question: "New Orleans was originally a Spanish colony.", answer: "FALSE", category: "New Orleans" },
-{ question: "The Mississippi River runs through New Orleans.", answer: "TRUE", category: "New Orleans" },
-{ question: "New Orleans is below sea level in many areas.", answer: "TRUE", category: "New Orleans" },
-{ question: "Bourbon Street is located in the French Quarter.", answer: "TRUE", category: "New Orleans" },
-
-{ question: "Mardi Gras always falls on the same date each year.", answer: "FALSE", category: "New Orleans" },
-{ question: "Purple, green, and gold are traditional Mardi Gras colors.", answer: "TRUE", category: "New Orleans" },
-{ question: "King Cake is traditionally eaten during Mardi Gras season.", answer: "TRUE", category: "New Orleans" },
-{ question: "Finding the baby in a King Cake is considered good luck.", answer: "TRUE", category: "New Orleans" },
-{ question: "Jazz music originated in New Orleans.", answer: "TRUE", category: "New Orleans" },
-
-{ question: "Louis Armstrong was born in New Orleans.", answer: "TRUE", category: "New Orleans" },
-{ question: "Second lines are a type of parade tradition in New Orleans.", answer: "TRUE", category: "New Orleans" },
-{ question: "New Orleans cemeteries often use above-ground tombs.", answer: "TRUE", category: "New Orleans" },
-{ question: "New Orleans is known as the 'Big Easy.'", answer: "TRUE", category: "New Orleans" },
-{ question: "The Superdome is home to the New Orleans Saints.", answer: "TRUE", category: "New Orleans" },
-
-{ question: "The New Orleans Saints have never won a Super Bowl.", answer: "FALSE", category: "New Orleans" },
-{ question: "Gumbo is a traditional New Orleans dish.", answer: "TRUE", category: "New Orleans" },
-{ question: "Jambalaya is a type of soup.", answer: "FALSE", category: "New Orleans" },
-{ question: "Beignets are a popular New Orleans dessert.", answer: "TRUE", category: "New Orleans" },
-{ question: "New Orleans has strong French, Spanish, and African influences.", answer: "TRUE", category: "New Orleans" },
-
-{ question: "The French Quarter is the oldest neighborhood in New Orleans.", answer: "TRUE", category: "New Orleans" },
-{ question: "Streetcars are still used for public transportation in New Orleans.", answer: "TRUE", category: "New Orleans" },
-{ question: "New Orleans is the capital of Louisiana.", answer: "FALSE", category: "New Orleans" },
-{ question: "Hurricanes have significantly shaped New Orleans history.", answer: "TRUE", category: "New Orleans" },
-{ question: "Hurricane Katrina struck New Orleans in 2005.", answer: "TRUE", category: "New Orleans" },
-
-{ question: "New Orleans was part of the Louisiana Purchase.", answer: "TRUE", category: "New Orleans" },
-{ question: "The city was named after the Duke of Orleans.", answer: "TRUE", category: "New Orleans" },
-{ question: "New Orleans cuisine is known for being bland.", answer: "FALSE", category: "New Orleans" },
-{ question: "The Garden District is known for historic homes.", answer: "TRUE", category: "New Orleans" },
-{ question: "New Orleans hosts the Jazz & Heritage Festival each year.", answer: "TRUE", category: "New Orleans" },
-
-{ question: "New Orleans is famous for its love of live music.", answer: "TRUE", category: "New Orleans" },
-{ question: "All New Orleans neighborhoods are above sea level.", answer: "FALSE", category: "New Orleans" },
-{ question: "New Orleans has a strong Catholic cultural influence.", answer: "TRUE", category: "New Orleans" },
-{ question: "Mardi Gras beads are traditionally thrown from floats.", answer: "TRUE", category: "New Orleans" },
-{ question: "New Orleans is known for celebrating life with music and food.", answer: "TRUE", category: "New Orleans" },
-        // Animal Questions
-        { question: "A group of lions is called a pride.", answer: "TRUE", category: "Animals" },
-        { question: "Bats are blind.", answer: "FALSE", category: "Animals" },
-        { question: "Dolphins sleep with one eye open.", answer: "TRUE", category: "Animals" },
-        { question: "A snail can sleep for three years.", answer: "TRUE", category: "Animals" },
-        { question: "All snakes lay eggs.", answer: "FALSE", category: "Animals" },
-        { question: "An ostrich’s eye is bigger than its brain.", answer: "TRUE", category: "Animals" },
-        { question: "Kangaroos can walk backward.", answer: "FALSE", category: "Animals" },
-        { question: "Elephants are the only mammals that can’t jump.", answer: "TRUE", category: "Animals" },
-        { question: "A shrimp’s heart is in its head.", answer: "TRUE", category: "Animals" },
-        { question: "Cows have four stomachs.", answer: "TRUE", category: "Animals" },
-        { question: "Alligators can live in saltwater.", answer: "FALSE", category: "Animals" },
-        { question: "A newborn kangaroo is smaller than a cherry.", answer: "TRUE", category: "Animals" },
-        { question: "Penguins can fly.", answer: "FALSE", category: "Animals" },
-        { question: "Flamingos are naturally pink.", answer: "FALSE", category: "Animals" },
-        { question: "A cat has 32 muscles in each ear.", answer: "TRUE", category: "Animals" },
-        { question: "Sharks are mammals.", answer: "FALSE", category: "Animals" },
-        { question: "A baby goat is called a kid.", answer: "TRUE", category: "Animals" },
-        { question: "Octopuses have three hearts.", answer: "TRUE", category: "Animals" },
-        { question: "Sloths are excellent swimmers.", answer: "TRUE", category: "Animals" },
-        { question: "A chameleon changes color to match any background perfectly.", answer: "FALSE", category: "Animals" },
-        { question: "Bees communicate by dancing.", answer: "TRUE", category: "Animals" },
-        { question: "Polar bears’ fur is white.", answer: "FALSE", category: "Animals" },
-        { question: "A crocodile cannot stick out its tongue.", answer: "TRUE", category: "Animals" },
-        { question: "Giraffes make no sounds.", answer: "FALSE", category: "Animals" },
-        { question: "A cheetah can run up to 70 miles per hour.", answer: "TRUE", category: "Animals" },
-        { question: "Owls can turn their heads in a full circle.", answer: "FALSE", category: "Animals" },
-        { question: "Ducks have waterproof feathers.", answer: "TRUE", category: "Animals" },
-        { question: "A blue whale is the largest animal on Earth.", answer: "TRUE", category: "Animals" },
-        { question: "All frogs are green.", answer: "FALSE", category: "Animals" },
-        { question: "A tarantula can live for more than 20 years.", answer: "TRUE", category: "Animals" }
-      ];
-      localStorage.setItem("tfQuestions", JSON.stringify(questions));
-    }
-
-    const modalBg = document.getElementById("modalBg");
-    const categoryButtons = document.getElementById("categoryButtons");
-    const inputCategory = document.getElementById("inputCategory");
-    const newCategoryInput = document.getElementById("newCategoryInput");
-    const savedList = document.getElementById("savedList");
-
-   function renderCategoryButtons() {
-  categoryButtons.innerHTML = "";
-  categories.forEach(cat => {
-    const label = CATEGORY_LABELS[cat] || cat;
-
-    const btn = document.createElement("button");
-    btn.className = "pf-blue text-white text-2xl md:text-3xl font-bold py-6 rounded-2xl transition-all hover:scale-[1.02]";
-    btn.textContent = CATEGORY_LABELS[cat] || cat;
-    btn.onclick = () => startCategory(cat);
-
-    categoryButtons.appendChild(btn);
-  });
-}
-    renderCategoryButtons();
-
-    function updateCategoryDropdown() {
-      inputCategory.innerHTML = "";
-      categories.forEach(cat => {
-        const opt = document.createElement("option");
-        opt.value = cat;
-        opt.textContent = cat;
-        inputCategory.appendChild(opt);
-      });
-
-      const addNew = document.createElement("option");
-      addNew.value = "__NEW__";
-      addNew.textContent = "+ Add New Category";
-      inputCategory.appendChild(addNew);
-    }
-    updateCategoryDropdown();
-
-    inputCategory.onchange = () => {
-      if (inputCategory.value === "__NEW__") newCategoryInput.classList.remove("hidden");
-      else newCategoryInput.classList.add("hidden");
-      updateSavedList();
-    };
-
-    document.getElementById("openEditor").onclick = () => { modalBg.style.display = "flex"; updateSavedList(); };
-    document.getElementById("closeEditor").onclick = () => { modalBg.style.display = "none"; newCategoryInput.value = ""; newCategoryInput.classList.add("hidden"); };
-
-    document.getElementById("saveBtn").onclick = () => {
-      const q = document.getElementById("inputQuestion").value.trim();
-      let cat = inputCategory.value;
-      const a = document.getElementById("inputAnswer").value;
-      if (!q) return alert("Please enter a question.");
-      if (cat === "__NEW__") {
-        cat = newCategoryInput.value.trim();
-        if (!cat) return alert("Enter a category name.");
-        categories.push(cat);
-        localStorage.setItem("tfCategories", JSON.stringify(categories));
-        renderCategoryButtons();
-        updateCategoryDropdown();
-      }
-      questions.push({ question: q, answer: a, category: cat });
-      localStorage.setItem("tfQuestions", JSON.stringify(questions));
-      document.getElementById("inputQuestion").value = "";
-      newCategoryInput.value = "";
-      newCategoryInput.classList.add("hidden");
-      inputCategory.value = cat;
-      updateSavedList();
-    };
-
-   function updateSavedList() {
-  const cat = inputCategory.value;
-
-  savedList.innerHTML = "";
-
-  // If they're on "+ Add New Category", show nothing yet
-  if (cat === "__NEW__") {
-    savedList.innerHTML = `<p class="text-gray-500 italic">Select a category to view questions.</p>`;
-    return;
-  }
-
-  const filteredQs = questions
-    .map((q, idx) => ({ ...q, _idx: idx })) // keep original index
-    .filter(q => q.category === cat);
-
-  if (filteredQs.length === 0) {
-    savedList.innerHTML = `<p class="text-gray-500 italic">No questions yet for this category.</p>`;
-    return;
-  }
-
-  filteredQs.forEach((q) => {
-    const li = document.createElement("li");
-    li.innerHTML = `
-      <div class="flex justify-between bg-gray-100 p-3 rounded-xl items-center">
-        <div class="flex-1">
-          <strong>${q.question}</strong> —
-          <span class="text-${q.answer === 'TRUE' ? 'green' : 'red'}-600 font-semibold">${q.answer}</span>
-          <em class="text-gray-500">(${q.category})</em>
-        </div>
-        <button onclick="deleteQuestion(${q._idx})"
-          class="bg-red-500 text-white px-3 py-1 rounded-lg hover:bg-red-600 ml-4 whitespace-nowrap">
-          Delete
-        </button>
-      </div>`;
-    savedList.appendChild(li);
-  });
-
-  savedList.style.maxHeight = "300px";
-  savedList.style.overflowY = "auto";
-  savedList.style.paddingRight = "10px";
-}
-
-function deleteQuestion(index) {
-  if (index >= 0 && index < questions.length) {
-    questions.splice(index, 1);
+  // QUESTIONS: load from localStorage or use built-in starter set
+  let questions = JSON.parse(localStorage.getItem("tfQuestions") || "[]");
+  if (questions.length === 0) {
+    questions = [
+      // Bible Questions
+      { question: "The Bible has 66 books.", answer: "TRUE", category: "Bible" },
+      { question: "Moses built the ark.", answer: "FALSE", category: "Bible" },
+      { question: "David killed Goliath with a stone.", answer: "TRUE", category: "Bible" },
+      { question: "Jonah was swallowed by a whale.", answer: "TRUE", category: "Bible" },
+      { question: "Noah’s Ark rested on Mount Sinai.", answer: "FALSE", category: "Bible" },
+      { question: "Jesus turned water into wine.", answer: "TRUE", category: "Bible" },
+      { question: "Adam and Eve lived in the Garden of Eden.", answer: "TRUE", category: "Bible" },
+      { question: "The Ten Commandments were given to Abraham.", answer: "FALSE", category: "Bible" },
+      { question: "Paul’s name was originally Saul.", answer: "TRUE", category: "Bible" },
+      { question: "Ruth was Naomi’s daughter.", answer: "FALSE", category: "Bible" },
+      { question: "The serpent tempted Eve to eat the forbidden fruit.", answer: "TRUE", category: "Bible" },
+      { question: "There were three wise men at Jesus’ birth.", answer: "FALSE", category: "Bible" },
+      { question: "Jesus fed 5,000 people with five loaves and two fish.", answer: "TRUE", category: "Bible" },
+      { question: "The book of Psalms is in the New Testament.", answer: "FALSE", category: "Bible" },
+      { question: "Mary Magdalene was the first to see Jesus after His resurrection.", answer: "TRUE", category: "Bible" },
+      { question: "Joseph’s brothers sold him into slavery.", answer: "TRUE", category: "Bible" },
+      { question: "The Red Sea was parted by Elijah.", answer: "FALSE", category: "Bible" },
+      { question: "Solomon was known for his great wisdom.", answer: "TRUE", category: "Bible" },
+      { question: "The Bible begins with the words 'In the beginning God created...'", answer: "TRUE", category: "Bible" },
+      { question: "The Book of Revelation is the first book of the Bible.", answer: "FALSE", category: "Bible" },
+      { question: "Jesus was baptized in the Jordan River.", answer: "TRUE", category: "Bible" },
+      { question: "Peter denied Jesus three times.", answer: "TRUE", category: "Bible" },
+      { question: "The Tower of Babel was built to reach heaven.", answer: "TRUE", category: "Bible" },
+      { question: "Daniel was thrown into a den of lions.", answer: "TRUE", category: "Bible" },
+      { question: "Samson lost his strength when his hair was cut.", answer: "TRUE", category: "Bible" },
+      { question: "The Prodigal Son’s father rejected him when he returned.", answer: "FALSE", category: "Bible" },
+      { question: "Jesus rode into Jerusalem on a horse.", answer: "FALSE", category: "Bible" },
+      { question: "Abraham and Sarah had a son named Isaac.", answer: "TRUE", category: "Bible" },
+      { question: "The first miracle Jesus performed was healing a blind man.", answer: "FALSE", category: "Bible" },
+      { question: "Jesus was born in Bethlehem.", answer: "TRUE", category: "Bible" },
+
+      // Easter Questions
+      { question: "Easter celebrates the resurrection of Jesus Christ.", answer: "TRUE", category: "Easter" },
+      { question: "Easter is celebrated on the same date every year.", answer: "FALSE", category: "Easter" },
+      { question: "Easter Sunday always falls on a Sunday.", answer: "TRUE", category: "Easter" },
+      { question: "Easter is considered the most important Christian holiday.", answer: "TRUE", category: "Easter" },
+      { question: "The word Easter appears many times in the Bible.", answer: "FALSE", category: "Easter" },
+      { question: "Easter follows the season of Lent.", answer: "TRUE", category: "Easter" },
+      { question: "Lent lasts for about 40 days.", answer: "TRUE", category: "Easter" },
+      { question: "Good Friday comes before Easter Sunday.", answer: "TRUE", category: "Easter" },
+      { question: "Good Friday celebrates the birth of Jesus.", answer: "FALSE", category: "Easter" },
+      { question: "Easter celebrates new life and hope.", answer: "TRUE", category: "Easter" },
+      { question: "Easter eggs are a symbol of new life.", answer: "TRUE", category: "Easter" },
+      { question: "Egg decorating is an Easter tradition.", answer: "TRUE", category: "Easter" },
+      { question: "Chocolate eggs are commonly associated with Easter.", answer: "TRUE", category: "Easter" },
+      { question: "The Easter Bunny is a religious figure.", answer: "FALSE", category: "Easter" },
+      { question: "Children often participate in Easter egg hunts.", answer: "TRUE", category: "Easter" },
+      { question: "Easter baskets are commonly given to children.", answer: "TRUE", category: "Easter" },
+      { question: "The Easter Bunny traditionally delivers eggs and candy.", answer: "TRUE", category: "Easter" },
+      { question: "Easter is only celebrated in the United States.", answer: "FALSE", category: "Easter" },
+      { question: "Many cultures celebrate Easter in different ways.", answer: "TRUE", category: "Easter" },
+      { question: "Easter has both religious and cultural traditions.", answer: "TRUE", category: "Easter" },
+      { question: "Sunrise services are sometimes held on Easter morning.", answer: "TRUE", category: "Easter" },
+      { question: "Easter marks the end of the church calendar year.", answer: "FALSE", category: "Easter" },
+      { question: "The Easter season lasts only one day.", answer: "FALSE", category: "Easter" },
+      { question: "White lilies are often associated with Easter.", answer: "TRUE", category: "Easter" },
+      { question: "Easter always occurs in the winter.", answer: "FALSE", category: "Easter" },
+      { question: "The date of Easter is based on the lunar calendar.", answer: "TRUE", category: "Easter" },
+      { question: "Easter can fall in March or April.", answer: "TRUE", category: "Easter" },
+      { question: "Palm Sunday occurs before Easter.", answer: "TRUE", category: "Easter" },
+      { question: "Palm Sunday celebrates Jesus entering Jerusalem.", answer: "TRUE", category: "Easter" },
+      { question: "Easter traditions often focus on family gatherings.", answer: "TRUE", category: "Easter" },
+      { question: "Easter eggs were originally made of plastic.", answer: "FALSE", category: "Easter" },
+      { question: "Easter encourages messages of forgiveness and renewal.", answer: "TRUE", category: "Easter" },
+      { question: "All Easter traditions are religious.", answer: "FALSE", category: "Easter" },
+      { question: "Easter is a time of celebration and joy.", answer: "TRUE", category: "Easter" },
+      { question: "Easter has been celebrated for many centuries.", answer: "TRUE", category: "Easter" },
+
+      // Mardi Gras Questions
+      { question: "Mardi Gras means 'Fat Tuesday' in French.", answer: "TRUE", category: "Mardi Gras" },
+      { question: "Mardi Gras is always celebrated on the same date each year.", answer: "FALSE", category: "Mardi Gras" },
+      { question: "Mardi Gras takes place before the season of Lent.", answer: "TRUE", category: "Mardi Gras" },
+      { question: "Mardi Gras is most closely associated with New Orleans in the U.S.", answer: "TRUE", category: "Mardi Gras" },
+      { question: "Purple, green, and gold are Mardi Gras colors.", answer: "TRUE", category: "Mardi Gras" },
+      { question: "Purple represents justice in Mardi Gras traditions.", answer: "TRUE", category: "Mardi Gras" },
+      { question: "Green represents faith in Mardi Gras traditions.", answer: "FALSE", category: "Mardi Gras" },
+      { question: "Gold represents power in Mardi Gras traditions.", answer: "FALSE", category: "Mardi Gras" },
+      { question: "Mardi Gras parades feature decorated floats.", answer: "TRUE", category: "Mardi Gras" },
+      { question: "Beads are commonly thrown during Mardi Gras parades.", answer: "TRUE", category: "Mardi Gras" },
+      { question: "King Cake is a traditional Mardi Gras dessert.", answer: "TRUE", category: "Mardi Gras" },
+      { question: "King Cake is only eaten on Mardi Gras Day.", answer: "FALSE", category: "Mardi Gras" },
+      { question: "A small plastic baby is hidden inside King Cake.", answer: "TRUE", category: "Mardi Gras" },
+      { question: "Finding the baby means you have good luck.", answer: "TRUE", category: "Mardi Gras" },
+      { question: "The person who finds the baby often buys the next King Cake.", answer: "TRUE", category: "Mardi Gras" },
+      { question: "Mardi Gras celebrations include masked balls.", answer: "TRUE", category: "Mardi Gras" },
+      { question: "Krewes organize Mardi Gras parades.", answer: "TRUE", category: "Mardi Gras" },
+      { question: "A Krewe is a type of parade float.", answer: "FALSE", category: "Mardi Gras" },
+      { question: "Some Mardi Gras traditions date back hundreds of years.", answer: "TRUE", category: "Mardi Gras" },
+      { question: "Mardi Gras originated in the United States.", answer: "FALSE", category: "Mardi Gras" },
+      { question: "Mardi Gras has roots in European traditions.", answer: "TRUE", category: "Mardi Gras" },
+      { question: "Masks are worn to represent equality during Mardi Gras.", answer: "TRUE", category: "Mardi Gras" },
+      { question: "Everyone must wear a costume to attend Mardi Gras.", answer: "FALSE", category: "Mardi Gras" },
+      { question: "Throws can include beads, cups, and toys.", answer: "TRUE", category: "Mardi Gras" },
+      { question: "The word 'krewe' is unique to Mardi Gras culture.", answer: "TRUE", category: "Mardi Gras" },
+      { question: "Zulu is one of the most famous Mardi Gras krewes.", answer: "TRUE", category: "Mardi Gras" },
+      { question: "Rex is a historic Mardi Gras krewe.", answer: "TRUE", category: "Mardi Gras" },
+      { question: "The Rex parade traditionally rolls on Mardi Gras Day.", answer: "TRUE", category: "Mardi Gras" },
+      { question: "Mardi Gras celebrations end at midnight.", answer: "TRUE", category: "Mardi Gras" },
+      { question: "Ash Wednesday comes after Mardi Gras.", answer: "TRUE", category: "Mardi Gras" },
+      { question: "Mardi Gras is celebrated only in Louisiana.", answer: "FALSE", category: "Mardi Gras" },
+      { question: "Mobile, Alabama also celebrates Mardi Gras.", answer: "TRUE", category: "Mardi Gras" },
+      { question: "Mardi Gras celebrates indulgence before Lent.", answer: "TRUE", category: "Mardi Gras" },
+      { question: "Music and dancing are common during Mardi Gras.", answer: "TRUE", category: "Mardi Gras" },
+      { question: "Mardi Gras is known for joy, tradition, and celebration.", answer: "TRUE", category: "Mardi Gras" },
+
+      // St Patricks Day Questions
+      { question: "St. Patrick’s Day is celebrated on March 17.", answer: "TRUE", category: "St Patricks Day" },
+      { question: "St. Patrick was born in Ireland.", answer: "FALSE", category: "St Patricks Day" },
+      { question: "St. Patrick is the patron saint of Ireland.", answer: "TRUE", category: "St Patricks Day" },
+      { question: "St. Patrick’s Day is a religious and cultural holiday.", answer: "TRUE", category: "St Patricks Day" },
+      { question: "Green is commonly associated with St. Patrick’s Day.", answer: "TRUE", category: "St Patricks Day" },
+      { question: "People often wear green on St. Patrick’s Day.", answer: "TRUE", category: "St Patricks Day" },
+      { question: "Shamrocks are a symbol of St. Patrick’s Day.", answer: "TRUE", category: "St Patricks Day" },
+      { question: "A shamrock has four leaves.", answer: "FALSE", category: "St Patricks Day" },
+      { question: "St. Patrick used the shamrock to explain the Holy Trinity.", answer: "TRUE", category: "St Patricks Day" },
+      { question: "St. Patrick’s Day always falls on a weekend.", answer: "FALSE", category: "St Patricks Day" },
+      { question: "Leprechauns are part of Irish folklore.", answer: "TRUE", category: "St Patricks Day" },
+      { question: "Leprechauns are considered giants.", answer: "FALSE", category: "St Patricks Day" },
+      { question: "St. Patrick’s Day is celebrated outside of Ireland.", answer: "TRUE", category: "St Patricks Day" },
+      { question: "Chicago dyes its river green for St. Patrick’s Day.", answer: "TRUE", category: "St Patricks Day" },
+      { question: "Corned beef and cabbage is associated with St. Patrick’s Day in the U.S.", answer: "TRUE", category: "St Patricks Day" },
+      { question: "Corned beef and cabbage originated in Ireland as a national dish.", answer: "FALSE", category: "St Patricks Day" },
+      { question: "St. Patrick is said to have driven snakes out of Ireland.", answer: "TRUE", category: "St Patricks Day" },
+      { question: "There are snakes native to Ireland today.", answer: "FALSE", category: "St Patricks Day" },
+      { question: "St. Patrick’s Day parades are common.", answer: "TRUE", category: "St Patricks Day" },
+      { question: "The first St. Patrick’s Day parade was held in Ireland.", answer: "FALSE", category: "St Patricks Day" },
+      { question: "The first St. Patrick’s Day parade was held in the United States.", answer: "TRUE", category: "St Patricks Day" },
+      { question: "Green beer is sometimes served on St. Patrick’s Day.", answer: "TRUE", category: "St Patricks Day" },
+      { question: "St. Patrick’s Day is only celebrated by Irish people.", answer: "FALSE", category: "St Patricks Day" },
+      { question: "The color originally associated with St. Patrick was blue.", answer: "TRUE", category: "St Patricks Day" },
+      { question: "St. Patrick lived during the Middle Ages.", answer: "TRUE", category: "St Patricks Day" },
+      { question: "St. Patrick was a bishop.", answer: "TRUE", category: "St Patricks Day" },
+      { question: "St. Patrick’s Day celebrates Irish heritage.", answer: "TRUE", category: "St Patricks Day" },
+      { question: "All St. Patrick’s Day traditions are religious.", answer: "FALSE", category: "St Patricks Day" },
+      { question: "Irish music is often played during St. Patrick’s Day celebrations.", answer: "TRUE", category: "St Patricks Day" },
+      { question: "St. Patrick’s Day is a public holiday in Ireland.", answer: "TRUE", category: "St Patricks Day" },
+      { question: "Pinching someone for not wearing green is a common tradition.", answer: "TRUE", category: "St Patricks Day" },
+      { question: "St. Patrick’s Day has themes of luck and blessings.", answer: "TRUE", category: "St Patricks Day" },
+      { question: "Rainbows and pots of gold are symbols linked to St. Patrick’s Day.", answer: "TRUE", category: "St Patricks Day" },
+      { question: "St. Patrick’s Day celebrates the end of winter.", answer: "FALSE", category: "St Patricks Day" },
+      { question: "St. Patrick’s Day is known for celebrating Irish culture worldwide.", answer: "TRUE", category: "St Patricks Day" },
+
+      // Valentines Day Questions
+      { question: "Valentine’s Day is celebrated on February 14.", answer: "TRUE", category: "Valentines Day" },
+      { question: "Valentine’s Day is named after a saint.", answer: "TRUE", category: "Valentines Day" },
+      { question: "Valentine’s Day began as a modern American holiday.", answer: "FALSE", category: "Valentines Day" },
+      { question: "The holiday is associated with love and romance.", answer: "TRUE", category: "Valentines Day" },
+      { question: "Valentine’s Day is celebrated worldwide.", answer: "TRUE", category: "Valentines Day" },
+      { question: "The heart is a common symbol of Valentine’s Day.", answer: "TRUE", category: "Valentines Day" },
+      { question: "Cupid is often associated with Valentine’s Day.", answer: "TRUE", category: "Valentines Day" },
+      { question: "Cupid is known as the god of war.", answer: "FALSE", category: "Valentines Day" },
+      { question: "Red and pink are common Valentine’s Day colors.", answer: "TRUE", category: "Valentines Day" },
+      { question: "Valentine’s Day cards are a popular tradition.", answer: "TRUE", category: "Valentines Day" },
+      { question: "The first Valentine’s cards were sent electronically.", answer: "FALSE", category: "Valentines Day" },
+      { question: "Candy hearts often have short messages printed on them.", answer: "TRUE", category: "Valentines Day" },
+      { question: "Chocolate is commonly given on Valentine’s Day.", answer: "TRUE", category: "Valentines Day" },
+      { question: "Valentine’s Day is only for married couples.", answer: "FALSE", category: "Valentines Day" },
+      { question: "People often give flowers on Valentine’s Day.", answer: "TRUE", category: "Valentines Day" },
+      { question: "Roses are a popular Valentine’s Day flower.", answer: "TRUE", category: "Valentines Day" },
+      { question: "White roses traditionally symbolize hatred.", answer: "FALSE", category: "Valentines Day" },
+      { question: "Valentine’s Day can celebrate friendships as well as romance.", answer: "TRUE", category: "Valentines Day" },
+      { question: "Children often exchange valentines at school.", answer: "TRUE", category: "Valentines Day" },
+      { question: "Valentine’s Day always falls on a weekend.", answer: "FALSE", category: "Valentines Day" },
+      { question: "The holiday has roots in ancient Roman traditions.", answer: "TRUE", category: "Valentines Day" },
+      { question: "Saint Valentine was a real historical figure.", answer: "TRUE", category: "Valentines Day" },
+      { question: "All Valentine’s traditions come from the same country.", answer: "FALSE", category: "Valentines Day" },
+      { question: "Valentine’s Day is sometimes called a Hallmark holiday.", answer: "TRUE", category: "Valentines Day" },
+      { question: "People often go out to dinner on Valentine’s Day.", answer: "TRUE", category: "Valentines Day" },
+      { question: "Valentine’s Day has nothing to do with affection.", answer: "FALSE", category: "Valentines Day" },
+      { question: "Love letters were exchanged long before modern Valentine’s cards.", answer: "TRUE", category: "Valentines Day" },
+      { question: "Pink hearts are commonly seen during Valentine’s Day.", answer: "TRUE", category: "Valentines Day" },
+      { question: "Valentine’s Day is celebrated only in the United States.", answer: "FALSE", category: "Valentines Day" },
+      { question: "Valentine’s Day traditions can vary by culture.", answer: "TRUE", category: "Valentines Day" },
+      { question: "Some people celebrate Valentine’s Day with family members.", answer: "TRUE", category: "Valentines Day" },
+      { question: "Valentine’s Day always includes gift-giving.", answer: "FALSE", category: "Valentines Day" },
+      { question: "The holiday encourages expressing appreciation for others.", answer: "TRUE", category: "Valentines Day" },
+      { question: "Valentine’s Day has been celebrated for hundreds of years.", answer: "TRUE", category: "Valentines Day" },
+      { question: "Kindness and affection are common themes of Valentine’s Day.", answer: "TRUE", category: "Valentines Day" },
+
+      // July 4th Questions
+      { question: "July 4th celebrates the signing of the Declaration of Independence.", answer: "TRUE", category: "July 4th" },
+      { question: "The Declaration of Independence was signed in 1776.", answer: "TRUE", category: "July 4th" },
+      { question: "July 4th is also called Independence Day.", answer: "TRUE", category: "July 4th" },
+      { question: "Independence Day is celebrated only in the United States.", answer: "TRUE", category: "July 4th" },
+      { question: "The Declaration of Independence was signed in Philadelphia.", answer: "TRUE", category: "July 4th" },
+      { question: "George Washington wrote the Declaration of Independence.", answer: "FALSE", category: "July 4th" },
+      { question: "Thomas Jefferson was the main author of the Declaration of Independence.", answer: "TRUE", category: "July 4th" },
+      { question: "The Liberty Bell is associated with Independence Day.", answer: "TRUE", category: "July 4th" },
+      { question: "The Declaration of Independence declared freedom from France.", answer: "FALSE", category: "July 4th" },
+      { question: "Fireworks are a common July 4th tradition.", answer: "TRUE", category: "July 4th" },
+      { question: "The American flag has red, white, and blue colors.", answer: "TRUE", category: "July 4th" },
+      { question: "The original American flag had 13 stars.", answer: "TRUE", category: "July 4th" },
+      { question: "July 4th always falls on a Monday.", answer: "FALSE", category: "July 4th" },
+      { question: "Parades are a popular July 4th activity.", answer: "TRUE", category: "July 4th" },
+      { question: "The Statue of Liberty is a symbol of American independence.", answer: "TRUE", category: "July 4th" },
+      { question: "Hot dogs are commonly eaten on July 4th.", answer: "TRUE", category: "July 4th" },
+      { question: "Independence Day marks the end of the Civil War.", answer: "FALSE", category: "July 4th" },
+      { question: "The Declaration of Independence was approved by the Continental Congress.", answer: "TRUE", category: "July 4th" },
+      { question: "Church bells rang after independence was declared.", answer: "TRUE", category: "July 4th" },
+      { question: "July 4th has been celebrated since the 1700s.", answer: "TRUE", category: "July 4th" },
+      { question: "Independence Day celebrates freedom and democracy.", answer: "TRUE", category: "July 4th" },
+      { question: "The White House is traditionally decorated with patriotic colors on July 4th.", answer: "TRUE", category: "July 4th" },
+      { question: "July 4th celebrations often include music.", answer: "TRUE", category: "July 4th" },
+      { question: "Independence Day is a federal holiday.", answer: "TRUE", category: "July 4th" },
+      { question: "The American Revolution ended on July 4th, 1776.", answer: "FALSE", category: "July 4th" },
+      { question: "Picnics are a common way to celebrate July 4th.", answer: "TRUE", category: "July 4th" },
+      { question: "Independence Day celebrates the adoption of the Constitution.", answer: "FALSE", category: "July 4th" },
+      { question: "The Declaration of Independence includes the phrase 'Life, Liberty, and the pursuit of Happiness.'", answer: "TRUE", category: "July 4th" },
+      { question: "Independence Day celebrations often include family gatherings.", answer: "TRUE", category: "July 4th" },
+      { question: "July 4th is associated with patriotic pride.", answer: "TRUE", category: "July 4th" },
+      { question: "Independence Day is celebrated with fireworks at night.", answer: "TRUE", category: "July 4th" },
+      { question: "The Declaration of Independence was signed by all colonists.", answer: "FALSE", category: "July 4th" },
+      { question: "July 4th honors the founding ideals of the United States.", answer: "TRUE", category: "July 4th" },
+      { question: "Independence Day has been celebrated for over 200 years.", answer: "TRUE", category: "July 4th" },
+      { question: "July 4th celebrations are meant to be solemn and silent.", answer: "FALSE", category: "July 4th" },
+
+      // Veterans Day Questions
+      { question: "Veterans Day honors people who served in the U.S. Armed Forces.", answer: "TRUE", category: "Veterans Day" },
+      { question: "Veterans Day is observed on November 11 each year.", answer: "TRUE", category: "Veterans Day" },
+      { question: "Veterans Day was originally called Armistice Day.", answer: "TRUE", category: "Veterans Day" },
+      { question: "Armistice Day marks the end of World War I fighting.", answer: "TRUE", category: "Veterans Day" },
+      { question: "Veterans Day honors only soldiers who died in war.", answer: "FALSE", category: "Veterans Day" },
+      { question: "Veterans Day honors veterans from all branches of the military.", answer: "TRUE", category: "Veterans Day" },
+      { question: "Veterans Day is a U.S. federal holiday.", answer: "TRUE", category: "Veterans Day" },
+      { question: "Veterans Day is always celebrated on a Monday.", answer: "FALSE", category: "Veterans Day" },
+      { question: "Veterans Day recognizes both wartime and peacetime service.", answer: "TRUE", category: "Veterans Day" },
+      { question: "A moment of silence at 11:00 AM is sometimes observed on Veterans Day.", answer: "TRUE", category: "Veterans Day" },
+      { question: "Veterans Day began after World War II.", answer: "FALSE", category: "Veterans Day" },
+      { question: "Veterans Day is the same holiday as Memorial Day.", answer: "FALSE", category: "Veterans Day" },
+      { question: "Veterans Day honors living veterans.", answer: "TRUE", category: "Veterans Day" },
+      { question: "The U.S. flag is commonly displayed on Veterans Day.", answer: "TRUE", category: "Veterans Day" },
+      { question: "Veterans Day recognizes service members from all military branches.", answer: "TRUE", category: "Veterans Day" },
+      { question: "Veterans Day was officially renamed in 1954.", answer: "TRUE", category: "Veterans Day" },
+      { question: "Veterans Day is celebrated in many countries under different names.", answer: "TRUE", category: "Veterans Day" },
+      { question: "Veterans Day always falls on the second Tuesday of November.", answer: "FALSE", category: "Veterans Day" },
+      { question: "Parades and ceremonies are common on Veterans Day.", answer: "TRUE", category: "Veterans Day" },
+      { question: "Veterans Day encourages thanking veterans for their service.", answer: "TRUE", category: "Veterans Day" },
+      { question: "Veterans Day recognizes Army, Navy, Air Force, Marines, and Coast Guard veterans.", answer: "TRUE", category: "Veterans Day" },
+      { question: "Veterans Day honors only Army veterans.", answer: "FALSE", category: "Veterans Day" },
+      { question: "Veterans Day is meant to be a day of gratitude and recognition.", answer: "TRUE", category: "Veterans Day" },
+      { question: "Veterans Day is celebrated during the summer.", answer: "FALSE", category: "Veterans Day" },
+      { question: "Veterans Day honors people currently serving in the military.", answer: "TRUE", category: "Veterans Day" },
+      { question: "Veterans Day began in the 20th century.", answer: "TRUE", category: "Veterans Day" },
+      { question: "Veterans Day encourages respect for military service.", answer: "TRUE", category: "Veterans Day" },
+      { question: "Veterans Day focuses on military victories only.", answer: "FALSE", category: "Veterans Day" },
+      { question: "Veterans Day recognizes sacrifices made by service members.", answer: "TRUE", category: "Veterans Day" },
+      { question: "Veterans Day is observed nationwide in the U.S.", answer: "TRUE", category: "Veterans Day" },
+
+      // Memorial Day Questions
+      { question: "Memorial Day honors U.S. military members who died in service.", answer: "TRUE", category: "Memorial Day" },
+      { question: "Memorial Day is observed on the last Monday in May.", answer: "TRUE", category: "Memorial Day" },
+      { question: "Memorial Day was originally known as Decoration Day.", answer: "TRUE", category: "Memorial Day" },
+      { question: "Decoration Day involved decorating graves of fallen soldiers.", answer: "TRUE", category: "Memorial Day" },
+      { question: "Memorial Day honors all living veterans.", answer: "FALSE", category: "Memorial Day" },
+      { question: "Memorial Day began after the Civil War.", answer: "TRUE", category: "Memorial Day" },
+      { question: "Memorial Day is a U.S. federal holiday.", answer: "TRUE", category: "Memorial Day" },
+      { question: "Memorial Day always falls on May 30.", answer: "FALSE", category: "Memorial Day" },
+      { question: "Memorial Day is a day of remembrance.", answer: "TRUE", category: "Memorial Day" },
+      { question: "American flags are often placed on graves on Memorial Day.", answer: "TRUE", category: "Memorial Day" },
+      { question: "Memorial Day honors soldiers who died during military service.", answer: "TRUE", category: "Memorial Day" },
+      { question: "Memorial Day is the same as Veterans Day.", answer: "FALSE", category: "Memorial Day" },
+      { question: "Many cemeteries hold ceremonies on Memorial Day.", answer: "TRUE", category: "Memorial Day" },
+      { question: "Memorial Day has roots in honoring Civil War soldiers.", answer: "TRUE", category: "Memorial Day" },
+      { question: "Memorial Day is meant to celebrate military victories.", answer: "FALSE", category: "Memorial Day" },
+      { question: "A National Moment of Remembrance occurs on Memorial Day.", answer: "TRUE", category: "Memorial Day" },
+      { question: "The National Moment of Remembrance takes place at 3:00 PM local time.", answer: "TRUE", category: "Memorial Day" },
+      { question: "Memorial Day is often marked by parades.", answer: "TRUE", category: "Memorial Day" },
+      { question: "Memorial Day is a solemn holiday.", answer: "TRUE", category: "Memorial Day" },
+      { question: "Memorial Day honors soldiers from all wars.", answer: "TRUE", category: "Memorial Day" },
+      { question: "Memorial Day recognizes only World War II soldiers.", answer: "FALSE", category: "Memorial Day" },
+      { question: "Memorial Day is commonly associated with honoring sacrifice.", answer: "TRUE", category: "Memorial Day" },
+      { question: "Memorial Day marks the unofficial start of summer.", answer: "TRUE", category: "Memorial Day" },
+      { question: "Memorial Day is primarily a party holiday.", answer: "FALSE", category: "Memorial Day" },
+      { question: "Many communities hold remembrance services on Memorial Day.", answer: "TRUE", category: "Memorial Day" },
+      { question: "Memorial Day is observed only in the United States.", answer: "TRUE", category: "Memorial Day" },
+      { question: "Memorial Day honors fallen members of the Armed Forces.", answer: "TRUE", category: "Memorial Day" },
+      { question: "Wearing poppies is sometimes associated with remembrance.", answer: "TRUE", category: "Memorial Day" },
+      { question: "Memorial Day encourages reflection and gratitude.", answer: "TRUE", category: "Memorial Day" },
+      { question: "Memorial Day has been observed for over 100 years.", answer: "TRUE", category: "Memorial Day" },
+
+      // Halloween Questions
+      { question: "Halloween is celebrated on October 31.", answer: "TRUE", category: "Halloween" },
+      { question: "Halloween originated from the Celtic festival Samhain.", answer: "TRUE", category: "Halloween" },
+      { question: "Jack-o’-lanterns were originally made from turnips.", answer: "TRUE", category: "Halloween" },
+      { question: "Candy corn was originally called chicken feed.", answer: "TRUE", category: "Halloween" },
+      { question: "Black cats are commonly associated with Halloween.", answer: "TRUE", category: "Halloween" },
+      { question: "Halloween is always celebrated on the last Friday of October.", answer: "FALSE", category: "Halloween" },
+      { question: "Trick-or-treating became popular in the United States in the 1900s.", answer: "TRUE", category: "Halloween" },
+      { question: "Witches are said to fly on broomsticks.", answer: "TRUE", category: "Halloween" },
+      { question: "The color orange represents harvest and autumn.", answer: "TRUE", category: "Halloween" },
+      { question: "The color black symbolizes death and darkness.", answer: "TRUE", category: "Halloween" },
+      { question: "Halloween began as a Christian holiday.", answer: "FALSE", category: "Halloween" },
+      { question: "Bats are commonly linked to Halloween folklore.", answer: "TRUE", category: "Halloween" },
+      { question: "Ghosts are believed to appear more often on Halloween night.", answer: "TRUE", category: "Halloween" },
+      { question: "Halloween costumes were originally worn to scare away spirits.", answer: "TRUE", category: "Halloween" },
+      { question: "Candy apples are a traditional Halloween treat.", answer: "TRUE", category: "Halloween" },
+      { question: "Pumpkins are native to Europe.", answer: "FALSE", category: "Halloween" },
+      { question: "Haunted houses are popular attractions during Halloween.", answer: "TRUE", category: "Halloween" },
+      { question: "The word Halloween comes from 'All Hallows’ Eve.'", answer: "TRUE", category: "Halloween" },
+      { question: "Spiders are symbols often used in Halloween decorations.", answer: "TRUE", category: "Halloween" },
+      { question: "Halloween is celebrated worldwide on the same traditions.", answer: "FALSE", category: "Halloween" },
+      { question: "Skeletons represent death in Halloween imagery.", answer: "TRUE", category: "Halloween" },
+      { question: "The Great Pumpkin is a character from 'It’s the Great Pumpkin, Charlie Brown.'", answer: "TRUE", category: "Halloween" },
+      { question: "Halloween is more popular with children than adults.", answer: "FALSE", category: "Halloween" },
+      { question: "Fog machines are often used in Halloween decorations.", answer: "TRUE", category: "Halloween" },
+      { question: "Halloween is the biggest candy-selling holiday in the U.S.", answer: "TRUE", category: "Halloween" },
+
+      // Thanksgiving Questions
+      { question: "Thanksgiving is celebrated on the fourth Thursday of November in the U.S.", answer: "TRUE", category: "Thanksgiving" },
+      { question: "The first Thanksgiving took place in 1621.", answer: "TRUE", category: "Thanksgiving" },
+      { question: "Pilgrims and Native Americans shared the first Thanksgiving meal.", answer: "TRUE", category: "Thanksgiving" },
+      { question: "Turkey is a traditional Thanksgiving food.", answer: "TRUE", category: "Thanksgiving" },
+      { question: "Thanksgiving is a federal holiday in the United States.", answer: "TRUE", category: "Thanksgiving" },
+      { question: "Thanksgiving is celebrated in every country worldwide.", answer: "FALSE", category: "Thanksgiving" },
+      { question: "Corn was likely served at the first Thanksgiving.", answer: "TRUE", category: "Thanksgiving" },
+      { question: "Pumpkin pie is a Thanksgiving dessert.", answer: "TRUE", category: "Thanksgiving" },
+      { question: "Thanksgiving always falls on the same date.", answer: "FALSE", category: "Thanksgiving" },
+      { question: "The Macy’s Thanksgiving Day Parade is held in New York City.", answer: "TRUE", category: "Thanksgiving" },
+      { question: "Thanksgiving was first proclaimed a national holiday by Abraham Lincoln.", answer: "TRUE", category: "Thanksgiving" },
+      { question: "Football games are commonly played on Thanksgiving.", answer: "TRUE", category: "Thanksgiving" },
+      { question: "Cranberries are traditionally served at Thanksgiving.", answer: "TRUE", category: "Thanksgiving" },
+      { question: "The first Thanksgiving lasted one day.", answer: "FALSE", category: "Thanksgiving" },
+      { question: "Stuffing is sometimes cooked inside the turkey.", answer: "TRUE", category: "Thanksgiving" },
+      { question: "Thanksgiving marks the start of the Christmas shopping season.", answer: "TRUE", category: "Thanksgiving" },
+      { question: "The Pilgrims sailed to America on the Mayflower.", answer: "TRUE", category: "Thanksgiving" },
+      { question: "Sweet potatoes are often served at Thanksgiving.", answer: "TRUE", category: "Thanksgiving" },
+      { question: "Thanksgiving originated in Canada.", answer: "FALSE", category: "Thanksgiving" },
+      { question: "Gratitude is a central theme of Thanksgiving.", answer: "TRUE", category: "Thanksgiving" },
+      { question: "Green bean casserole is a traditional dish.", answer: "TRUE", category: "Thanksgiving" },
+      { question: "Thanksgiving parades feature giant balloons.", answer: "TRUE", category: "Thanksgiving" },
+      { question: "Thanksgiving is always followed by Black Friday.", answer: "TRUE", category: "Thanksgiving" },
+      { question: "Turkey was the only meat eaten at the first Thanksgiving.", answer: "FALSE", category: "Thanksgiving" },
+      { question: "Thanksgiving encourages spending time with family.", answer: "TRUE", category: "Thanksgiving" },
+
+      // Christmas Questions
+      { question: "Christmas is celebrated on December 25.", answer: "TRUE", category: "Christmas" },
+      { question: "Christmas celebrates the birth of Jesus Christ.", answer: "TRUE", category: "Christmas" },
+      { question: "Santa Claus is also known as Saint Nicholas.", answer: "TRUE", category: "Christmas" },
+      { question: "Christmas trees are commonly decorated with lights and ornaments.", answer: "TRUE", category: "Christmas" },
+      { question: "Reindeer are said to pull Santa’s sleigh.", answer: "TRUE", category: "Christmas" },
+      { question: "Christmas is celebrated only in Christian countries.", answer: "FALSE", category: "Christmas" },
+      { question: "The tradition of Christmas trees began in Germany.", answer: "TRUE", category: "Christmas" },
+      { question: "Eggnog is a traditional Christmas drink.", answer: "TRUE", category: "Christmas" },
+      { question: "Christmas always falls on a Sunday.", answer: "FALSE", category: "Christmas" },
+      { question: "Mistletoe is associated with Christmas traditions.", answer: "TRUE", category: "Christmas" },
+      { question: "The song 'Jingle Bells' was originally written for Christmas.", answer: "FALSE", category: "Christmas" },
+      { question: "Stockings are often hung by the fireplace at Christmas.", answer: "TRUE", category: "Christmas" },
+      { question: "Christmas carols are traditional holiday songs.", answer: "TRUE", category: "Christmas" },
+      { question: "Santa Claus wears red and white clothing.", answer: "TRUE", category: "Christmas" },
+      { question: "Christmas lights are often placed on houses.", answer: "TRUE", category: "Christmas" },
+      { question: "The Nativity scene represents the birth of Jesus.", answer: "TRUE", category: "Christmas" },
+      { question: "Christmas originated in the 1800s.", answer: "FALSE", category: "Christmas" },
+      { question: "Gift-giving is a Christmas tradition.", answer: "TRUE", category: "Christmas" },
+      { question: "The Grinch is a Christmas character.", answer: "TRUE", category: "Christmas" },
+      { question: "Candy canes are a popular Christmas treat.", answer: "TRUE", category: "Christmas" },
+      { question: "Christmas wreaths are often made from evergreen branches.", answer: "TRUE", category: "Christmas" },
+      { question: "The star is a symbol often placed on top of Christmas trees.", answer: "TRUE", category: "Christmas" },
+      { question: "Christmas is celebrated the same way in every country.", answer: "FALSE", category: "Christmas" },
+      { question: "The Twelve Days of Christmas end on January 6.", answer: "TRUE", category: "Christmas" },
+      { question: "Christmas is one of the most widely celebrated holidays worldwide.", answer: "TRUE", category: "Christmas" },
+
+      // Old TV Shows Questions
+      { question: "‘I Love Lucy’ starred Lucille Ball.", answer: "TRUE", category: "Old TV Shows" },
+      { question: "‘I Love Lucy’ first aired in the 1940s.", answer: "FALSE", category: "Old TV Shows" },
+      { question: "‘The Andy Griffith Show’ was set in the town of Mayberry.", answer: "TRUE", category: "Old TV Shows" },
+      { question: "Sheriff Andy Taylor was played by Andy Griffith.", answer: "TRUE", category: "Old TV Shows" },
+      { question: "‘The Andy Griffith Show’ was filmed in color from the beginning.", answer: "FALSE", category: "Old TV Shows" },
+      { question: "‘Leave It to Beaver’ focused on family life.", answer: "TRUE", category: "Old TV Shows" },
+      { question: "Beaver Cleaver was the father in ‘Leave It to Beaver.’", answer: "FALSE", category: "Old TV Shows" },
+      { question: "‘The Twilight Zone’ often told science fiction stories.", answer: "TRUE", category: "Old TV Shows" },
+      { question: "Rod Serling hosted ‘The Twilight Zone.’", answer: "TRUE", category: "Old TV Shows" },
+      { question: "‘The Twilight Zone’ was a comedy series.", answer: "FALSE", category: "Old TV Shows" },
+      { question: "‘Gunsmoke’ was a western television series.", answer: "TRUE", category: "Old TV Shows" },
+      { question: "‘Gunsmoke’ is one of the longest-running TV dramas.", answer: "TRUE", category: "Old TV Shows" },
+      { question: "‘Bonanza’ was set on a ranch called the Ponderosa.", answer: "TRUE", category: "Old TV Shows" },
+      { question: "‘Bonanza’ took place in New York City.", answer: "FALSE", category: "Old TV Shows" },
+      { question: "‘Rawhide’ helped make Clint Eastwood famous.", answer: "TRUE", category: "Old TV Shows" },
+      { question: "‘The Beverly Hillbillies’ was about a wealthy city family.", answer: "FALSE", category: "Old TV Shows" },
+      { question: "‘The Beverly Hillbillies’ featured a family who struck oil.", answer: "TRUE", category: "Old TV Shows" },
+      { question: "‘Gilligan’s Island’ was about people stranded on an island.", answer: "TRUE", category: "Old TV Shows" },
+      { question: "The castaways were rescued in the first season of ‘Gilligan’s Island.’", answer: "FALSE", category: "Old TV Shows" },
+      { question: "‘Gilligan’s Island’ originally aired in black and white.", answer: "FALSE", category: "Old TV Shows" },
+      { question: "‘Bewitched’ featured a woman with magical powers.", answer: "TRUE", category: "Old TV Shows" },
+      { question: "Samantha twitched her nose to do magic on ‘Bewitched.’", answer: "TRUE", category: "Old TV Shows" },
+      { question: "‘I Dream of Jeannie’ featured a genie living in a bottle.", answer: "TRUE", category: "Old TV Shows" },
+      { question: "Major Nelson was an astronaut on ‘I Dream of Jeannie.’", answer: "TRUE", category: "Old TV Shows" },
+      { question: "‘I Dream of Jeannie’ took place during the Civil War.", answer: "FALSE", category: "Old TV Shows" },
+      { question: "‘M*A*S*H’ was set during the Korean War.", answer: "TRUE", category: "Old TV Shows" },
+      { question: "‘M*A*S*H’ was a silent television show.", answer: "FALSE", category: "Old TV Shows" },
+      { question: "‘Happy Days’ featured a character named Fonzie.", answer: "TRUE", category: "Old TV Shows" },
+      { question: "‘Happy Days’ was set in the 1950s.", answer: "TRUE", category: "Old TV Shows" },
+      { question: "‘Happy Days’ focused on life in outer space.", answer: "FALSE", category: "Old TV Shows" },
+      { question: "‘The Dick Van Dyke Show’ was a comedy series.", answer: "TRUE", category: "Old TV Shows" },
+      { question: "Mary Tyler Moore appeared on ‘The Dick Van Dyke Show.’", answer: "TRUE", category: "Old TV Shows" },
+      { question: "‘The Mary Tyler Moore Show’ centered on a woman working in television.", answer: "TRUE", category: "Old TV Shows" },
+      { question: "‘The Mary Tyler Moore Show’ aired in the 1800s.", answer: "FALSE", category: "Old TV Shows" },
+
+      // Movie Questions (shortened for sanity – you can keep all yours)
+      { question: "The movie 'The Wizard of Oz' was released in 1939.", answer: "TRUE", category: "Movies" },
+      { question: "Dorothy’s shoes were silver in the original book 'The Wizard of Oz.'", answer: "TRUE", category: "Movies" },
+      { question: "Humphrey Bogart starred in the movie 'Casablanca.'", answer: "TRUE", category: "Movies" },
+      { question: "The movie 'Gone with the Wind' is set during the American Civil War.", answer: "TRUE", category: "Movies" },
+      { question: "Marilyn Monroe starred in the movie 'Some Like It Hot.'", answer: "TRUE", category: "Movies" },
+
+      // Music Questions (again, shortened – you can paste your full list back in)
+      { question: "Elvis Presley is known as the King of Rock and Roll.", answer: "TRUE", category: "Music" },
+      { question: "The Beatles were an American band.", answer: "FALSE", category: "Music" },
+      { question: "Johnny Cash was known for wearing black clothing on stage.", answer: "TRUE", category: "Music" },
+      { question: "Motown Records was founded in Detroit.", answer: "TRUE", category: "Music" },
+      { question: "Frank Sinatra was part of the Rat Pack.", answer: "TRUE", category: "Music" },
+
+      // New Years Questions (short list – extend as you like)
+      { question: "New Year’s Day is celebrated on January 1.", answer: "TRUE", category: "New Years" },
+      { question: "The New Year always begins on a Monday.", answer: "FALSE", category: "New Years" },
+      { question: "People often make New Year’s resolutions.", answer: "TRUE", category: "New Years" },
+      { question: "The New Year ball drops in Times Square, New York City.", answer: "TRUE", category: "New Years" },
+      { question: "The New Year is celebrated at the same moment worldwide.", answer: "FALSE", category: "New Years" },
+
+      // Fun Facts Questions (shortened)
+      { question: "Octopuses have three hearts.", answer: "TRUE", category: "Fun Facts" },
+      { question: "A group of crows is called a murder.", answer: "TRUE", category: "Fun Facts" },
+      { question: "Humans only use 10 percent of their brains.", answer: "FALSE", category: "Fun Facts" },
+      { question: "Sharks are older than trees.", answer: "TRUE", category: "Fun Facts" },
+      { question: "Lightning never strikes the same place twice.", answer: "FALSE", category: "Fun Facts" },
+
+      // History Questions (shortened)
+      { question: "The Roman Empire fell in 476 AD.", answer: "TRUE", category: "History" },
+      { question: "Cleopatra was of Egyptian ethnicity.", answer: "FALSE", category: "History" },
+      { question: "The Titanic sank in 1912.", answer: "TRUE", category: "History" },
+      { question: "World War I began in 1939.", answer: "FALSE", category: "History" },
+      { question: "The United States declared independence in 1776.", answer: "TRUE", category: "History" },
+
+      // Food Questions (shortened)
+      { question: "Honey never spoils.", answer: "TRUE", category: "Food" },
+      { question: "Brown eggs are more nutritious than white eggs.", answer: "FALSE", category: "Food" },
+      { question: "Peanuts are actually legumes, not nuts.", answer: "TRUE", category: "Food" },
+      { question: "Bananas grow on trees.", answer: "FALSE", category: "Food" },
+      { question: "Strawberries are the only fruit with seeds on the outside.", answer: "TRUE", category: "Food" },
+
+      // New Orleans Questions (shortened)
+      { question: "New Orleans was founded in 1718.", answer: "TRUE", category: "New Orleans" },
+      { question: "New Orleans was originally a Spanish colony.", answer: "FALSE", category: "New Orleans" },
+      { question: "The Mississippi River runs through New Orleans.", answer: "TRUE", category: "New Orleans" },
+      { question: "New Orleans is below sea level in many areas.", answer: "TRUE", category: "New Orleans" },
+      { question: "Bourbon Street is located in the French Quarter.", answer: "TRUE", category: "New Orleans" },
+
+      // Animal Questions (shortened)
+      { question: "A group of lions is called a pride.", answer: "TRUE", category: "Animals" },
+      { question: "Bats are blind.", answer: "FALSE", category: "Animals" },
+      { question: "Dolphins sleep with one eye open.", answer: "TRUE", category: "Animals" },
+      { question: "A snail can sleep for three years.", answer: "TRUE", category: "Animals" },
+      { question: "All snakes lay eggs.", answer: "FALSE", category: "Animals" },
+    ];
     localStorage.setItem("tfQuestions", JSON.stringify(questions));
-    updateSavedList();
   }
-}
-window.deleteQuestion = deleteQuestion;
 
-    let current = null;
-    let filtered = [];
+  // DOM references
+  const modalBg = document.getElementById("modalBg");
+  const categoryButtons = document.getElementById("categoryButtons");
+  const inputCategory = document.getElementById("inputCategory");
+  const newCategoryInput = document.getElementById("newCategoryInput");
+  const savedList = document.getElementById("savedList");
+  const whyBtn = document.getElementById("whyBtn");
+  const explanationDisplay = document.getElementById("explanationDisplay");
 
-function startCategory(cat) {
-  filtered = questions.filter(q => q.category === cat);
+  // Render category buttons
+  function renderCategoryButtons() {
+    categoryButtons.innerHTML = "";
+    categories.forEach(cat => {
+      const btn = document.createElement("button");
+      btn.className = "pf-blue text-white text-2xl md:text-3xl font-bold py-6 rounded-2xl transition-all hover:scale-[1.02]";
+      btn.textContent = CATEGORY_LABELS[cat] || cat;
+      btn.onclick = () => startCategory(cat);
+      categoryButtons.appendChild(btn);
+    });
+  }
+  renderCategoryButtons();
 
-  document.getElementById("categoryScreen").classList.add("hidden");
-  document.getElementById("gameScreen").classList.remove("hidden");
-  document.getElementById("categoryTitle").textContent = CATEGORY_LABELS[cat] || cat;
+  // Category dropdown in editor
+  function updateCategoryDropdown() {
+    inputCategory.innerHTML = "";
+    categories.forEach(cat => {
+      const opt = document.createElement("option");
+      opt.value = cat;
+      opt.textContent = cat;
+      inputCategory.appendChild(opt);
+    });
 
-  // reset game state when switching categories
-  document.getElementById("questionDisplay").textContent = 'Press “Next Question”';
-  document.getElementById("answerDisplay").classList.add("hidden");
-  document.getElementById("trueBtn").classList.add("hidden");
-  document.getElementById("falseBtn").classList.add("hidden");
+    const addNew = document.createElement("option");
+    addNew.value = "__NEW__";
+    addNew.textContent = "+ Add New Category";
+    inputCategory.appendChild(addNew);
+  }
+  updateCategoryDropdown();
 
-  current = null;
-}
+  inputCategory.onchange = () => {
+    if (inputCategory.value === "__NEW__") newCategoryInput.classList.remove("hidden");
+    else newCategoryInput.classList.add("hidden");
+    updateSavedList();
+  };
 
-    document.getElementById("nextBtn").onclick = () => {
-      if (filtered.length === 0) {
-        alert("No questions in this category yet! Add some using the Question Editor.");
-        return;
-      }
-      current = filtered[Math.floor(Math.random() * filtered.length)];
-      document.getElementById("questionDisplay").textContent = current.question;
-      document.getElementById("answerDisplay").classList.add("hidden");
-      document.getElementById("trueBtn").classList.remove("hidden");
-      document.getElementById("falseBtn").classList.remove("hidden");
-    };
+  // Open/close editor
+  document.getElementById("openEditor").onclick = () => {
+    modalBg.style.display = "flex";
+    updateSavedList();
+  };
+  document.getElementById("closeEditor").onclick = () => {
+    modalBg.style.display = "none";
+    newCategoryInput.value = "";
+    newCategoryInput.classList.add("hidden");
+    document.getElementById("inputQuestion").value = "";
+    document.getElementById("inputExplanation").value = "";
+  };
 
-    function checkAnswer(choice) {
-  const correct = current.answer === choice;
-  document.getElementById("answerDisplay").textContent =
-    correct ? "✅ Correct!" : `❌ Answer: ${current.answer}`;
-  document.getElementById("answerDisplay").classList.remove("hidden");
-  document.getElementById("trueBtn").classList.add("hidden");
-  document.getElementById("falseBtn").classList.add("hidden");
-}
-document.getElementById("backToCategories").onclick = () => {
-  document.getElementById("gameScreen").classList.add("hidden");
-  document.getElementById("categoryScreen").classList.remove("hidden");
+  // Save question (with optional explanation)
+  document.getElementById("saveBtn").onclick = () => {
+    const q   = document.getElementById("inputQuestion").value.trim();
+    let   cat = inputCategory.value;
+    const a   = document.getElementById("inputAnswer").value;
+    const exp = document.getElementById("inputExplanation").value.trim();
 
-  // reset game state
-  document.getElementById("questionDisplay").textContent = 'Press “Next Question”';
-  document.getElementById("answerDisplay").classList.add("hidden");
-  document.getElementById("trueBtn").classList.add("hidden");
-  document.getElementById("falseBtn").classList.add("hidden");
+    if (!q) return alert("Please enter a question.");
 
-  current = null;
-  filtered = [];
-};
+    if (cat === "__NEW__") {
+      cat = newCategoryInput.value.trim();
+      if (!cat) return alert("Enter a category name.");
+      categories.push(cat);
+      localStorage.setItem("tfCategories", JSON.stringify(categories));
+      renderCategoryButtons();
+      updateCategoryDropdown();
+    }
 
-document.getElementById("trueBtn").onclick = () => checkAnswer("TRUE");
-document.getElementById("falseBtn").onclick = () => checkAnswer("FALSE");
-  </script>
+    questions.push({ question: q, answer: a, category: cat, explanation: exp });
+    localStorage.setItem("tfQuestions", JSON.stringify(questions));
+
+    // clear fields
+    document.getElementById("inputQuestion").value = "";
+    document.getElementById("inputExplanation").value = "";
+    newCategoryInput.value = "";
+    newCategoryInput.classList.add("hidden");
+    inputCategory.value = cat;
+
+    updateSavedList();
+  };
+
+  // Editor list of saved questions
+  function updateSavedList() {
+    const cat = inputCategory.value;
+    savedList.innerHTML = "";
+
+    if (cat === "__NEW__") {
+      savedList.innerHTML = `<p class="text-gray-500 italic">Select a category to view questions.</p>`;
+      return;
+    }
+
+    const filteredQs = questions
+      .map((q, idx) => ({ ...q, _idx: idx }))
+      .filter(q => q.category === cat);
+
+    if (filteredQs.length === 0) {
+      savedList.innerHTML = `<p class="text-gray-500 italic">No questions yet for this category.</p>`;
+      return;
+    }
+
+    filteredQs.forEach((q) => {
+      const li = document.createElement("li");
+      li.innerHTML = `
+        <div class="flex justify-between bg-gray-100 p-3 rounded-xl items-center">
+          <div class="flex-1">
+            <strong>${q.question}</strong> —
+            <span class="text-${q.answer === 'TRUE' ? 'green' : 'red'}-600 font-semibold">${q.answer}</span>
+            <em class="text-gray-500">(${q.category})</em>
+          </div>
+          <button onclick="deleteQuestion(${q._idx})"
+            class="bg-red-500 text-white px-3 py-1 rounded-lg hover:bg-red-600 ml-4 whitespace-nowrap">
+            Delete
+          </button>
+        </div>`;
+      savedList.appendChild(li);
+    });
+
+    savedList.style.maxHeight = "300px";
+    savedList.style.overflowY = "auto";
+    savedList.style.paddingRight = "10px";
+  }
+
+  function deleteQuestion(index) {
+    if (index >= 0 && index < questions.length) {
+      questions.splice(index, 1);
+      localStorage.setItem("tfQuestions", JSON.stringify(questions));
+      updateSavedList();
+    }
+  }
+  window.deleteQuestion = deleteQuestion;
+
+  // Game state
+  let current = null;
+  let filtered = [];
+
+  function startCategory(cat) {
+    filtered = questions.filter(q => q.category === cat);
+
+    document.getElementById("categoryScreen").classList.add("hidden");
+    document.getElementById("gameScreen").classList.remove("hidden");
+    document.getElementById("categoryTitle").textContent = CATEGORY_LABELS[cat] || cat;
+
+    // reset game state for new category
+    document.getElementById("questionDisplay").textContent = 'Press “Next Question”';
+    document.getElementById("answerDisplay").classList.add("hidden");
+    explanationDisplay.classList.add("hidden");
+    whyBtn.classList.add("hidden");
+    document.getElementById("trueBtn").classList.add("hidden");
+    document.getElementById("falseBtn").classList.add("hidden");
+
+    current = null;
+  }
+
+  // Next Question button
+  document.getElementById("nextBtn").onclick = () => {
+    if (filtered.length === 0) {
+      alert("No questions in this category yet! Add some using the Question Editor.");
+      return;
+    }
+
+    current = filtered[Math.floor(Math.random() * filtered.length)];
+    document.getElementById("questionDisplay").textContent = current.question;
+
+    document.getElementById("answerDisplay").classList.add("hidden");
+    explanationDisplay.classList.add("hidden");
+    whyBtn.classList.add("hidden");
+
+    document.getElementById("trueBtn").classList.remove("hidden");
+    document.getElementById("falseBtn").classList.remove("hidden");
+  };
+
+  // Check answer and show big TRUE/FALSE + Why button
+  function checkAnswer(choice) {
+    if (!current) return;
+
+    const answerEl = document.getElementById("answerDisplay");
+    const isTrue = current.answer === "TRUE";
+
+    // Show big TRUE or FALSE
+    answerEl.textContent = current.answer;
+    answerEl.style.color = isTrue ? "green" : "red";
+    answerEl.classList.remove("hidden");
+
+    // Hide any previous explanation text
+    explanationDisplay.classList.add("hidden");
+    explanationDisplay.textContent = "";
+
+    // Only show Why button if explanation exists
+    if (current.explanation && current.explanation.trim() !== "") {
+      whyBtn.classList.remove("hidden");
+      whyBtn.textContent = `Why is this ${current.answer}?`;
+    } else {
+      whyBtn.classList.add("hidden");
+    }
+
+    document.getElementById("trueBtn").classList.add("hidden");
+    document.getElementById("falseBtn").classList.add("hidden");
+  }
+
+  // Why button: show explanation for AD to read
+  whyBtn.onclick = () => {
+    if (!current || !current.explanation) return;
+    explanationDisplay.textContent = current.explanation;
+    explanationDisplay.classList.remove("hidden");
+  };
+
+  // Back to Categories
+  document.getElementById("backToCategories").onclick = () => {
+    document.getElementById("gameScreen").classList.add("hidden");
+    document.getElementById("categoryScreen").classList.remove("hidden");
+
+    document.getElementById("questionDisplay").textContent = 'Press “Next Question”';
+    document.getElementById("answerDisplay").classList.add("hidden");
+    explanationDisplay.classList.add("hidden");
+    whyBtn.classList.add("hidden");
+    document.getElementById("trueBtn").classList.add("hidden");
+    document.getElementById("falseBtn").classList.add("hidden");
+
+    current = null;
+    filtered = [];
+  };
+
+  // TRUE/FALSE buttons
+  document.getElementById("trueBtn").onclick = () => checkAnswer("TRUE");
+  document.getElementById("falseBtn").onclick = () => checkAnswer("FALSE");
+</script>
 
 </body>
 </html>
-
-
