@@ -142,7 +142,7 @@
 
 <script>
   // 🚨 DATA VERSION: bump this if you change default questions/categories
-  const TF_DATA_VERSION = "2026-01-10-v24";
+  const TF_DATA_VERSION = "2026-01-10-v25";
   const savedVersion = localStorage.getItem("tfDataVersion");
   if (savedVersion !== TF_DATA_VERSION) {
     localStorage.removeItem("tfQuestions");
@@ -1064,6 +1064,96 @@
 { question: "Day of the Dead and Halloween are identical holidays with the same meaning.", answer: "FALSE", category: "Halloween", explanation: "They occur around the same time but come from different cultures and beliefs." },
 { question: "Some families watch classic monster movies on Halloween night.", answer: "TRUE", category: "Halloween", explanation: "Scary or spooky movies are a common way to celebrate." },
 { question: "Halloween can be both spooky and fun at the same time.", answer: "TRUE", category: "Halloween", explanation: "The holiday mixes pretend scares with candy, costumes, and laughter." },
+// Thanksgiving Questions
+{ question: "Thanksgiving is celebrated on the fourth Thursday in November.", answer: "TRUE", category: "Thanksgiving", explanation: "Congress fixed the holiday to the fourth Thursday in 1941." },
+{ question: "The first Thanksgiving feast took place in the 1600s.", answer: "TRUE", category: "Thanksgiving", explanation: "The event with Pilgrims and Wampanoag was in 1621." },
+{ question: "The first Thanksgiving lasted only one hour.", answer: "FALSE", category: "Thanksgiving", explanation: "Historical accounts say the feast lasted three days." },
+{ question: "Native Americans played a role in the first Thanksgiving.", answer: "TRUE", category: "Thanksgiving", explanation: "The Wampanoag people joined the Pilgrims at the feast." },
+{ question: "Abraham Lincoln declared Thanksgiving a national holiday.", answer: "TRUE", category: "Thanksgiving", explanation: "Lincoln proclaimed it during the Civil War in 1863." },
+
+{ question: "Thanksgiving always falls on the same date.", answer: "FALSE", category: "Thanksgiving", explanation: "It falls on a Thursday, so the date changes each year." },
+{ question: "Pumpkin pie is a traditional Thanksgiving dessert.", answer: "TRUE", category: "Thanksgiving", explanation: "Pumpkin and other harvest foods are classic menu items." },
+{ question: "Turkey is the most common main dish at Thanksgiving.", answer: "TRUE", category: "Thanksgiving", explanation: "Turkey became the iconic center of the meal." },
+{ question: "Cranberry sauce originally came from cans with ridges.", answer: "FALSE", category: "Thanksgiving", explanation: "Cranberries grew wild in New England before canning existed." },
+{ question: "Americans eat millions of turkeys each Thanksgiving.", answer: "TRUE", category: "Thanksgiving", explanation: "Over 45 million turkeys are cooked yearly." },
+
+{ question: "Pilgrims came to America on a ship called the Mayflower.", answer: "TRUE", category: "Thanksgiving", explanation: "The Mayflower left England and landed at Plymouth in 1620." },
+{ question: "Plymouth is in New York.", answer: "FALSE", category: "Thanksgiving", explanation: "Plymouth is located in Massachusetts." },
+{ question: "Stuffing is sometimes cooked inside the turkey.", answer: "TRUE", category: "Thanksgiving", explanation: "Stuffing or dressing is a common part of the meal." },
+{ question: "The first Thanksgiving included mashed potatoes.", answer: "FALSE", category: "Thanksgiving", explanation: "Potatoes were not widely available in New England at that time." },
+{ question: "Many families watch football on Thanksgiving Day.", answer: "TRUE", category: "Thanksgiving", explanation: "NFL games have become tied to the holiday." },
+
+{ question: "Thanksgiving originated as a harvest celebration.", answer: "TRUE", category: "Thanksgiving", explanation: "It marked successful harvest and survival." },
+{ question: "New York City hosts a giant Thanksgiving parade every year.", answer: "TRUE", category: "Thanksgiving", explanation: "The Macy’s Thanksgiving Day Parade is world famous." },
+{ question: "Thanksgiving traditions never include parades.", answer: "FALSE", category: "Thanksgiving", explanation: "Parades are a major part of the holiday." },
+{ question: "Some U.S. Presidents officially pardon a turkey every year.", answer: "TRUE", category: "Thanksgiving", explanation: "The National Turkey Pardon is a modern tradition." },
+{ question: "A pardoned turkey goes back to the White House basement.", answer: "FALSE", category: "Thanksgiving", explanation: "Turkeys are sent to live on farms or petting zoos." },
+
+{ question: "The Pilgrims originally landed at Plymouth Rock.", answer: "TRUE", category: "Thanksgiving", explanation: "Tradition says they stepped ashore near Plymouth Rock." },
+{ question: "Black Friday is the day before Thanksgiving.", answer: "FALSE", category: "Thanksgiving", explanation: "Black Friday is the day AFTER Thanksgiving." },
+{ question: "Sweet potatoes and yams are popular Thanksgiving dishes.", answer: "TRUE", category: "Thanksgiving", explanation: "Sweet potatoes, yams, and marshmallow toppings are common sides." },
+{ question: "Corn was unlikely served at the first Thanksgiving.", answer: "FALSE", category: "Thanksgiving", explanation: "Corn and cornmeal were staples for both Pilgrims and Natives." },
+{ question: "Gravy is often served over turkey and potatoes.", answer: "TRUE", category: "Thanksgiving", explanation: "Drippings from the turkey make gravy a staple." },
+
+{ question: "The Mayflower landed in 1521.", answer: "FALSE", category: "Thanksgiving", explanation: "The landing happened in 1620." },
+{ question: "The Pilgrims left England seeking religious freedom.", answer: "TRUE", category: "Thanksgiving", explanation: "They separated from the Church of England." },
+{ question: "Thanksgiving meals are exactly the same in every household.", answer: "FALSE", category: "Thanksgiving", explanation: "Menus vary widely by region and culture." },
+{ question: "Native Americans taught Pilgrims how to grow food.", answer: "TRUE", category: "Thanksgiving", explanation: "The Wampanoag helped with planting corn, beans, and pumpkins." },
+{ question: "The Plymouth colony invited the Wampanoag as honored guests.", answer: "TRUE", category: "Thanksgiving", explanation: "Historical accounts describe shared food and games." },
+
+{ question: "Thanksgiving is celebrated in Canada on the same day as the U.S.", answer: "FALSE", category: "Thanksgiving", explanation: "Canada celebrates in early October, on a Monday." },
+{ question: "Thanksgiving leftovers are often eaten for days.", answer: "TRUE", category: "Thanksgiving", explanation: "Many families enjoy turkey sandwiches afterward." },
+{ question: "Macy’s parade balloons are filled with helium.", answer: "TRUE", category: "Thanksgiving", explanation: "Giant balloon characters float above New York City." },
+{ question: "The first Thanksgiving had fireworks.", answer: "FALSE", category: "Thanksgiving", explanation: "Fireworks were not part of the original feast." },
+{ question: "Families sometimes share what they are thankful for before eating.", answer: "TRUE", category: "Thanksgiving", explanation: "Expressing gratitude is central to the holiday." },
+// Christmas Questions
+{ question: "Christmas is celebrated on December 25th.", answer: "TRUE", category: "Christmas", explanation: "December 25 is the traditional date observed for Jesus’ birth." },
+{ question: "Christmas celebrates the birth of Jesus Christ.", answer: "TRUE", category: "Christmas", explanation: "Christians mark the birth of Jesus on this holiday." },
+{ question: "The Bible says Jesus was born in Bethlehem.", answer: "TRUE", category: "Christmas", explanation: "Scripture places his birth in Bethlehem." },
+{ question: "Jesus was born in a palace.", answer: "FALSE", category: "Christmas", explanation: "He was born in humble surroundings, often depicted in a stable." },
+{ question: "Mary and Joseph traveled to Bethlehem because of a census.", answer: "TRUE", category: "Christmas", explanation: "They traveled for a Roman census ordered by Caesar." },
+
+{ question: "The wise men visited Jesus on the same night he was born.", answer: "FALSE", category: "Christmas", explanation: "The Magi arrived later, not on the night of his birth." },
+{ question: "The wise men brought gold, frankincense, and myrrh.", answer: "TRUE", category: "Christmas", explanation: "The gifts are named in the Gospel of Matthew." },
+{ question: "Shepherds were told of Jesus’ birth by angels.", answer: "TRUE", category: "Christmas", explanation: "Shepherds received the announcement and visited Mary and Jesus." },
+{ question: "A star guided the wise men to Jesus.", answer: "TRUE", category: "Christmas", explanation: "The Magi followed a star from the East." },
+{ question: "Santa Claus originally came from stories about Saint Nicholas.", answer: "TRUE", category: "Christmas", explanation: "St. Nicholas was a generous bishop from the 300s." },
+
+{ question: "Santa Claus began as a fictional character created in America recently.", answer: "FALSE", category: "Christmas", explanation: "His image evolved from European traditions dating back centuries." },
+{ question: "Candy canes were designed with a shepherd’s crook shape.", answer: "TRUE", category: "Christmas", explanation: "Many believe the shape symbolizes shepherds visiting Jesus." },
+{ question: "The North Pole is Santa’s traditional home.", answer: "TRUE", category: "Christmas", explanation: "Stories place Santa and his elves in the North Pole." },
+{ question: "Christmas trees are always real pine trees.", answer: "FALSE", category: "Christmas", explanation: "Trees may be real or artificial." },
+{ question: "Evergreen trees symbolize everlasting life.", answer: "TRUE", category: "Christmas", explanation: "They stay green even in winter, representing endurance." },
+
+{ question: "People often hang stockings for Santa to fill.", answer: "TRUE", category: "Christmas", explanation: "Stockings are part of modern tradition." },
+{ question: "Rudolph is the oldest reindeer in folklore.", answer: "FALSE", category: "Christmas", explanation: "Rudolph was created much later in 1939." },
+{ question: "Families often exchange gifts on Christmas.", answer: "TRUE", category: "Christmas", explanation: "Gift-giving reflects the Magi and Saint Nicholas traditions." },
+{ question: "Red and green are traditional Christmas colors.", answer: "TRUE", category: "Christmas", explanation: "Green for evergreen, red for holly berries and Christ’s sacrifice." },
+{ question: "Christmas always falls on a Monday.", answer: "FALSE", category: "Christmas", explanation: "It is tied to the date, not the weekday." },
+
+{ question: "Caroling is singing Christmas songs door to door.", answer: "TRUE", category: "Christmas", explanation: "Caroling is a festive musical tradition." },
+{ question: "Many Christmas songs are called carols.", answer: "TRUE", category: "Christmas", explanation: "Carols trace back to medieval Europe." },
+{ question: "The poinsettia plant is associated with Christmas.", answer: "TRUE", category: "Christmas", explanation: "Poinsettias became popular holiday decor in the 1800s." },
+{ question: "Eggnog is a traditional Christmas drink in many families.", answer: "TRUE", category: "Christmas", explanation: "Eggnog is enjoyed during the winter season." },
+{ question: "The Grinch first appeared in a story written by Dr. Seuss.", answer: "TRUE", category: "Christmas", explanation: "The Grinch debuted in 1957's 'How the Grinch Stole Christmas!'." },
+
+{ question: "'Silent Night' was first performed with a guitar in Austria.", answer: "TRUE", category: "Christmas", explanation: "A broken church organ led to its guitar debut in 1818." },
+{ question: "Every country celebrates Christmas exactly the same way.", answer: "FALSE", category: "Christmas", explanation: "Traditions vary widely from culture to culture." },
+{ question: "Some cultures celebrate Christmas on January 7.", answer: "TRUE", category: "Christmas", explanation: "Many Orthodox churches follow a different calendar." },
+{ question: "Nativity scenes show the story of Jesus’ birth.", answer: "TRUE", category: "Christmas", explanation: "Nativity displays depict the stable, shepherds, and Magi." },
+{ question: "Mistletoe was originally a symbol of peace.", answer: "TRUE", category: "Christmas", explanation: "Ancient cultures believed it brought goodwill and healing." },
+
+{ question: "Christmas wreaths are always made from candy canes.", answer: "FALSE", category: "Christmas", explanation: "Most wreaths are evergreens, pinecones, and ribbon." },
+{ question: "Stockings may be filled with oranges, candy, or small gifts.", answer: "TRUE", category: "Christmas", explanation: "Oranges symbolized rare winter fruit in early celebrations." },
+{ question: "Reindeer are imaginary animals and not real at all.", answer: "FALSE", category: "Christmas", explanation: "Reindeer are real animals found in the Arctic." },
+{ question: "Some families attend church services on Christmas Eve or Christmas Day.", answer: "TRUE", category: "Christmas", explanation: "Many churches host special Christmas services." },
+{ question: "'Jingle Bells' was originally written for Thanksgiving.", answer: "TRUE", category: "Christmas", explanation: "It was intended for a Thanksgiving program before becoming a Christmas song." },
+
+{ question: "Yuletide traditions came from winter festivals before Christmas.", answer: "TRUE", category: "Christmas", explanation: "Yule celebrations existed long before Christmas in Northern Europe." },
+{ question: "Santa’s sleigh is pulled by exactly 9 reindeer in every story.", answer: "FALSE", category: "Christmas", explanation: "Early stories included fewer; Rudolph was added later." },
+{ question: "Home decorations may include lights, ornaments, and garlands.", answer: "TRUE", category: "Christmas", explanation: "Homes are often decorated inside and out." },
+{ question: "Christmas marks the beginning of the Christian church year for everyone.", answer: "FALSE", category: "Christmas", explanation: "Liturgical calendars differ; many begin with Advent." },
+{ question: "Christmas combines both sacred and cultural traditions.", answer: "TRUE", category: "Christmas", explanation: "It blends religious observance with modern secular customs." },
 
 ];
 localStorage.setItem("tfQuestions", JSON.stringify(questions));
