@@ -142,7 +142,7 @@
 
 <script>
   // 🚨 DATA VERSION: bump this if you change default questions/categories
-  const TF_DATA_VERSION = "2026-01-10-v20";
+  const TF_DATA_VERSION = "2026-01-10-v21";
   const savedVersion = localStorage.getItem("tfDataVersion");
   if (savedVersion !== TF_DATA_VERSION) {
     localStorage.removeItem("tfQuestions");
@@ -359,7 +359,149 @@
 { question: "Only male bees collect pollen.", answer: "FALSE", category: "Animals", explanation: "Worker bees, which collect pollen, are female." },
 { question: "Gorillas are herbivores.", answer: "TRUE", category: "Animals", explanation: "Gorillas mainly eat leaves, fruit, and shoots." },
 { question: "A narwhal’s tusk is actually a tooth.", answer: "TRUE", category: "Animals", explanation: "It’s an extended canine tooth, mostly on males." },
+// History Questions
+{ question: "George Washington was the first President of the United States.", answer: "TRUE", category: "History", explanation: "He served from 1789–1797 and set many presidential traditions." },
+{ question: "The Declaration of Independence was signed in 1776.", answer: "TRUE", category: "History", explanation: "July 4, 1776 marks the birth of the United States." },
+{ question: "Abraham Lincoln freed the slaves with the Emancipation Proclamation.", answer: "TRUE", category: "History", explanation: "Issued in 1863 during the Civil War, it declared enslaved people free in Confederate states." },
+{ question: "The Civil War was fought between the North and South.", answer: "TRUE", category: "History", explanation: "The Union and Confederacy fought from 1861–1865." },
+{ question: "Christopher Columbus discovered America in 1492.", answer: "TRUE", category: "History", explanation: "Columbus arrived in the Americas in 1492, although Indigenous peoples already lived here." },
 
+{ question: "The American Revolution was fought against France.", answer: "FALSE", category: "History", explanation: "The colonies fought against Great Britain, not France." },
+{ question: "Benjamin Franklin helped write the U.S. Constitution.", answer: "TRUE", category: "History", explanation: "Franklin contributed during the Constitutional Convention in 1787." },
+{ question: "World War I came before World War II.", answer: "TRUE", category: "History", explanation: "World War I (1914–1918) and World War II (1939–1945) came in that order." },
+{ question: "The Titanic sank in 1922.", answer: "FALSE", category: "History", explanation: "It sank on its first voyage in 1912 after striking an iceberg." },
+{ question: "The U.S. bought Alaska from Russia.", answer: "TRUE", category: "History", explanation: "The U.S. purchased Alaska in 1867 for $7.2 million." },
+
+{ question: "The Great Depression took place in the 1930s.", answer: "TRUE", category: "History", explanation: "It began with the 1929 stock market crash and lasted through the 1930s." },
+{ question: "Neil Armstrong was the first person to walk on the moon.", answer: "TRUE", category: "History", explanation: "Armstrong stepped onto the moon in 1969 during Apollo 11." },
+{ question: "The Wright Brothers invented the automobile.", answer: "FALSE", category: "History", explanation: "They invented the airplane; automobiles developed separately." },
+{ question: "Queen Elizabeth II was the longest-reigning British monarch.", answer: "TRUE", category: "History", explanation: "She ruled for over 70 years until 2022." },
+{ question: "World War II ended in 1945.", answer: "TRUE", category: "History", explanation: "Germany surrendered in May and Japan in September 1945." },
+
+{ question: "The Statue of Liberty was a gift from France.", answer: "TRUE", category: "History", explanation: "France gave it to the U.S. in 1886 as a symbol of friendship." },
+{ question: "The Roman Empire was located in South America.", answer: "FALSE", category: "History", explanation: "It was centered in Europe and the Mediterranean." },
+{ question: "Martin Luther King Jr. helped lead the Civil Rights Movement.", answer: "TRUE", category: "History", explanation: "He fought for equality and gave the 'I Have a Dream' speech." },
+{ question: "Pearl Harbor was attacked in 1941.", answer: "TRUE", category: "History", explanation: "Japan's attack pulled the United States into World War II." },
+{ question: "The Berlin Wall separated North and South Korea.", answer: "FALSE", category: "History", explanation: "It divided East and West Berlin during the Cold War." },
+      { question: "Watermelon is made of mostly water.", answer: "TRUE", category: "Food", explanation: "Watermelons are about 90% water." },
+{ question: "Avocados are a type of berry.", answer: "TRUE", category: "Food", explanation: "Botanically, avocados are large single-seeded berries." },
+{ question: "White chocolate is technically chocolate.", answer: "FALSE", category: "Food", explanation: "It contains no cocoa solids, only cocoa butter, milk, and sugar." },
+{ question: "A cow has one stomach with four compartments.", answer: "TRUE", category: "Food", explanation: "The four parts are rumen, reticulum, omasum, and abomasum." },
+{ question: "Yogurt is made using bacteria.", answer: "TRUE", category: "Food", explanation: "Friendly bacteria ferment milk to create yogurt." },
+
+{ question: "Brown eggs are healthier than white eggs.", answer: "FALSE", category: "Food", explanation: "Shell color only depends on the chicken breed, not nutrition." },
+{ question: "Strawberries are the only fruit with seeds on the outside.", answer: "TRUE", category: "Food", explanation: "They have tiny seed-like achenes on their surface." },
+{ question: "Sea salt is simply salt taken from seawater.", answer: "TRUE", category: "Food", explanation: "It is produced by evaporating seawater." },
+{ question: "Macaroni and cheese originated in Italy.", answer: "FALSE", category: "Food", explanation: "The modern dish is American comfort food, popularized in the U.S." },
+{ question: "Maple syrup comes from tree sap.", answer: "TRUE", category: "Food", explanation: "Sap is boiled down to make syrup, mostly from sugar maples." },
+
+{ question: "Oranges are named after their color.", answer: "TRUE", category: "Food", explanation: "The fruit name came before the color name in English." },
+{ question: "Popcorn has been eaten for thousands of years.", answer: "TRUE", category: "Food", explanation: "Archaeologists found popcorn in ancient caves in the Americas." },
+{ question: "Olives can be eaten right off the tree.", answer: "FALSE", category: "Food", explanation: "They must be cured; raw olives are extremely bitter." },
+{ question: "Pasta was invented in China.", answer: "TRUE", category: "Food", explanation: "Noodles originated in China long before Italy adopted them." },
+{ question: "A pineapple is a single fruit.", answer: "FALSE", category: "Food", explanation: "It's made of many fused berries growing together." },
+
+{ question: "Vegetable oil can come from seeds.", answer: "TRUE", category: "Food", explanation: "Canola, sunflower, and soybean oils are pressed from seeds." },
+{ question: "Mustard is made from dried flower petals.", answer: "FALSE", category: "Food", explanation: "Mustard is made from ground mustard seeds and vinegar." },
+{ question: "Some cheeses are aged for years.", answer: "TRUE", category: "Food", explanation: "Certain cheeses develop flavor and texture through long aging." },
+{ question: "Spaghetti sauce always contains tomatoes.", answer: "FALSE", category: "Food", explanation: "Some traditional sauces use cream, pesto, or wine instead." },
+{ question: "Sweet potatoes and yams are the same vegetable.", answer: "FALSE", category: "Food", explanation: "They are different plants often mislabeled in stores." },
+
+// Fun Facts Questions
+{ question: "A year on Earth has 365 days.", answer: "TRUE", category: "Fun Facts", explanation: "A full orbit around the sun takes about 365 days." },
+{ question: "Humans have more than five senses.", answer: "TRUE", category: "Fun Facts", explanation: "Balance, temperature, and hunger are additional senses." },
+{ question: "The human body is mostly water.", answer: "TRUE", category: "Fun Facts", explanation: "The average adult body is about 60% water." },
+{ question: "The Great Wall of China can be seen from space with the naked eye.", answer: "FALSE", category: "Fun Facts", explanation: "Astronauts report it’s too thin to see without magnification." },
+{ question: "Slugs have four noses.", answer: "TRUE", category: "Fun Facts", explanation: "They use two pairs of tentacles, one pair acting like noses." },
+
+{ question: "Lightning never strikes the same place twice.", answer: "FALSE", category: "Fun Facts", explanation: "Lightning often strikes tall objects repeatedly, like skyscrapers." },
+{ question: "An octopus has three hearts.", answer: "TRUE", category: "Fun Facts", explanation: "Two pump blood to the gills; one pumps to the body." },
+{ question: "Bats are blind.", answer: "FALSE", category: "Fun Facts", explanation: "They can see and also use echolocation to navigate." },
+{ question: "Humans share DNA with bananas.", answer: "TRUE", category: "Fun Facts", explanation: "About 60% of our DNA has similar sequences to bananas." },
+{ question: "Sharks can live in freshwater rivers.", answer: "TRUE", category: "Fun Facts", explanation: "Bull sharks can adapt to salt and freshwater." },
+
+{ question: "A sneeze can travel over 100 miles per hour.", answer: "TRUE", category: "Fun Facts", explanation: "Air expelled in a sneeze can reach very high speed." },
+{ question: "The tallest mountain in the world is Mount Everest.", answer: "TRUE", category: "Fun Facts", explanation: "Everest stands over 29,000 feet above sea level." },
+{ question: "Goldfish have a three-second memory.", answer: "FALSE", category: "Fun Facts", explanation: "Goldfish can remember things for months." },
+{ question: "Some turtles can breathe through their butts.", answer: "TRUE", category: "Fun Facts", explanation: "Certain species absorb oxygen through their cloaca underwater." },
+{ question: "The Eiffel Tower grows taller in the summer.", answer: "TRUE", category: "Fun Facts", explanation: "Metal expands in heat, adding several inches." },
+
+{ question: "A group of crows is called a murder.", answer: "TRUE", category: "Fun Facts", explanation: "Many animals have unusual group names." },
+{ question: "Humans only use 10% of their brain.", answer: "FALSE", category: "Fun Facts", explanation: "Brain scans show we use many regions throughout the day." },
+{ question: "Spiders are insects.", answer: "FALSE", category: "Fun Facts", explanation: "Spiders are arachnids and have 8 legs, not 6." },
+{ question: "Your hair and nails keep growing after you die.", answer: "FALSE", category: "Fun Facts", explanation: "Skin shrinks, making hair and nails appear longer." },
+{ question: "Some frogs can freeze solid and survive.", answer: "TRUE", category: "Fun Facts", explanation: "Wood frogs survive winter by nearly freezing their bodies." },
+{ question: "The fastest land animal is the cheetah.", answer: "TRUE", category: "Fun Facts", explanation: "Cheetahs can sprint up to 70 mph in short bursts." },
+{ question: "Earth is the closest planet to the sun.", answer: "FALSE", category: "Fun Facts", explanation: "Mercury is closest to the sun." },
+{ question: "Honeybees communicate by dancing.", answer: "TRUE", category: "Fun Facts", explanation: "Bees perform a 'waggle dance' to share food locations." },
+{ question: "A palindrome reads the same backward and forward.", answer: "TRUE", category: "Fun Facts", explanation: "Examples include 'racecar' or 'level'." },
+{ question: "Dolphins sleep with both halves of their brain turned off.", answer: "FALSE", category: "Fun Facts", explanation: "One half sleeps at a time so they can keep breathing." },
+
+{ question: "There are seven continents.", answer: "TRUE", category: "Fun Facts", explanation: "Africa, Antarctica, Asia, Australia, Europe, North America, South America." },
+{ question: "Cows can walk downstairs easily.", answer: "FALSE", category: "Fun Facts", explanation: "Their knee and muscle structure makes going down difficult." },
+{ question: "The tongue is the strongest muscle in the body.", answer: "FALSE", category: "Fun Facts", explanation: "Other muscles like the jaw or heart are stronger depending on criteria." },
+{ question: "Koalas sleep up to 20 hours a day.", answer: "TRUE", category: "Fun Facts", explanation: "Their eucalyptus diet gives them low energy." },
+{ question: "A rainbow is a full circle.", answer: "TRUE", category: "Fun Facts", explanation: "From the ground we see half, but from air you can see full circles." },
+
+{ question: "Snails can sleep for years.", answer: "TRUE", category: "Fun Facts", explanation: "Some species hibernate during dry conditions." },
+{ question: "There are 1000 years in a century.", answer: "FALSE", category: "Fun Facts", explanation: "A century is 100 years; 1000 years is a millennium." },
+{ question: "Polar bears have black skin under their fur.", answer: "TRUE", category: "Fun Facts", explanation: "Black skin absorbs heat from sunlight." },
+{ question: "A day on Mars is longer than a day on Earth.", answer: "TRUE", category: "Fun Facts", explanation: "A Martian day is about 24 hours and 39 minutes." },
+{ question: "Rainbows often appear in the north sky.", answer: "FALSE", category: "Fun Facts", explanation: "They appear opposite the sun, usually toward the west or east." },
+
+{ question: "Electric eels can produce electricity.", answer: "TRUE", category: "Fun Facts", explanation: "They generate electric shocks up to 600 volts." },
+{ question: "You can hum while holding your nose.", answer: "FALSE", category: "Fun Facts", explanation: "Humming requires air to pass through your nose." },
+{ question: "Some metals float in water.", answer: "TRUE", category: "Fun Facts", explanation: "Lithium, sodium, and potassium are all light enough to float." },
+{ question: "Penguins can fly.", answer: "FALSE", category: "Fun Facts", explanation: "Penguins are flightless birds adapted for swimming." },
+{ question: "Jellyfish have no brain or heart.", answer: "TRUE", category: "Fun Facts", explanation: "They are simple animals made mostly of water and nerves." },
+// Music Questions
+{ question: "Elvis Presley was known as the King of Rock and Roll.", answer: "TRUE", category: "Music", explanation: "Elvis earned the title through his fame and chart-topping hits." },
+{ question: "The Beatles were from the United States.", answer: "FALSE", category: "Music", explanation: "They came from Liverpool, England." },
+{ question: "Louis Armstrong played the trumpet.", answer: "TRUE", category: "Music", explanation: "Armstrong was one of jazz’s most influential trumpet players." },
+{ question: "Aretha Franklin was known as the Queen of Soul.", answer: "TRUE", category: "Music", explanation: "Aretha earned the nickname thanks to her powerful vocals and hits." },
+{ question: "The piano is considered a string instrument.", answer: "TRUE", category: "Music", explanation: "Pressed keys strike strings inside the piano to make sound." },
+
+{ question: "Country music originated in New York City.", answer: "FALSE", category: "Music", explanation: "It began in the southern U.S., especially Appalachian regions." },
+{ question: "The saxophone is made of brass.", answer: "FALSE", category: "Music", explanation: "It’s a woodwind instrument because it uses a reed." },
+{ question: "Beyoncé was once a member of Destiny’s Child.", answer: "TRUE", category: "Music", explanation: "She began her career in the girl group before going solo." },
+{ question: "Ray Charles was blind.", answer: "TRUE", category: "Music", explanation: "He lost his sight as a child but became a music legend." },
+{ question: "Taylor Swift started her career in rap music.", answer: "FALSE", category: "Music", explanation: "Swift began in country music before moving to pop." },
+
+{ question: "The Beatles had four members.", answer: "TRUE", category: "Music", explanation: "John Lennon, Paul McCartney, George Harrison, and Ringo Starr." },
+{ question: "Whitney Houston starred in the movie 'The Bodyguard'.", answer: "TRUE", category: "Music", explanation: "She acted and sang hits like 'I Will Always Love You'." },
+{ question: "A violin has six strings.", answer: "FALSE", category: "Music", explanation: "A standard violin has four strings." },
+{ question: "Jazz music began in New Orleans.", answer: "TRUE", category: "Music", explanation: "New Orleans is widely known as the birthplace of jazz." },
+{ question: "Michael Jackson’s signature move was the moonwalk.", answer: "TRUE", category: "Music", explanation: "He popularized the moonwalk in the 1980s." },
+
+{ question: "The harmonica is a wind instrument.", answer: "TRUE", category: "Music", explanation: "It produces sound when air flows through metal reeds." },
+{ question: "Dolly Parton wrote the song 'Jolene'.", answer: "TRUE", category: "Music", explanation: "Parton wrote and performed the hit in 1973." },
+{ question: "Mariachi music comes from Spain.", answer: "FALSE", category: "Music", explanation: "Mariachi music is traditional to Mexico." },
+{ question: "Mozart was a famous composer from the 1700s.", answer: "TRUE", category: "Music", explanation: "Wolfgang Amadeus Mozart lived from 1756 to 1791." },
+{ question: "The triangle is a percussion instrument.", answer: "TRUE", category: "Music", explanation: "Percussion includes instruments you hit, shake, or strike." },
+
+{ question: "Reggae music began in Brazil.", answer: "FALSE", category: "Music", explanation: "Reggae originated in Jamaica." },
+{ question: "A choir is a group of singers performing together.", answer: "TRUE", category: "Music", explanation: "Choirs usually sing in harmony with multiple voice parts." },
+{ question: "Stevie Wonder is known for playing the keyboard and harmonica.", answer: "TRUE", category: "Music", explanation: "Stevie is a master of many instruments." },
+{ question: "Opera singers perform without microphones.", answer: "TRUE", category: "Music", explanation: "Their voices are trained to fill theaters naturally." },
+{ question: "The accordion is commonly played in Cajun and Zydeco music.", answer: "TRUE", category: "Music", explanation: "It’s a signature sound of Louisiana French culture." },
+
+{ question: "A symphony is written for one person singing alone.", answer: "FALSE", category: "Music", explanation: "A symphony is a large orchestral piece." },
+{ question: "Johnny Cash was known as the Man in Black.", answer: "TRUE", category: "Music", explanation: "Cash often performed dressed in black." },
+{ question: "Ella Fitzgerald was famous for scat singing.", answer: "TRUE", category: "Music", explanation: "Scat uses improvised nonsense syllables to mimic instruments." },
+{ question: "The clarinet is made of wood or plastic.", answer: "TRUE", category: "Music", explanation: "It’s a woodwind instrument played with a single reed." },
+{ question: "The guitar is always acoustic.", answer: "FALSE", category: "Music", explanation: "Guitars can be acoustic, electric, or classical." },
+
+{ question: "Hip hop began in New York City.", answer: "TRUE", category: "Music", explanation: "It emerged from Bronx street culture in the 1970s." },
+{ question: "The song 'Happy Birthday' is in the public domain.", answer: "TRUE", category: "Music", explanation: "The copyright expired, so it’s freely used now." },
+{ question: "The banjo came originally from Africa.", answer: "TRUE", category: "Music", explanation: "Enslaved Africans brought the earliest banjo designs to America." },
+{ question: "Beethoven continued composing music even after he became deaf.", answer: "TRUE", category: "Music", explanation: "He wrote masterpieces despite losing his hearing." },
+{ question: "A drum set only has a single drum.", answer: "FALSE", category: "Music", explanation: "A drum kit has multiple drums plus cymbals." },
+
+{ question: "The Blues style of music began in Hawaii.", answer: "FALSE", category: "Music", explanation: "Blues roots trace to African American experiences in the Deep South." },
+{ question: "Singing in the shower can make your voice sound better.", answer: "TRUE", category: "Music", explanation: "Tile walls create natural echo and resonance." },
+{ question: "The Nutcracker is a famous ballet with music by Tchaikovsky.", answer: "TRUE", category: "Music", explanation: "The score includes classics like 'Dance of the Sugar Plum Fairy'." },
+{ question: "Cajun music uses the fiddle as a main instrument.", answer: "TRUE", category: "Music", explanation: "Fiddles and accordions define the Cajun sound." },
+{ question: "Yodeling started in New York City.", answer: "FALSE", category: "Music", explanation: "Yodeling began in the Alps of Europe." },
 ];
 localStorage.setItem("tfQuestions", JSON.stringify(questions));
 }
