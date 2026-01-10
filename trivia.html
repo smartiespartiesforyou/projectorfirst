@@ -142,7 +142,7 @@
 
 <script>
   // 🚨 DATA VERSION: bump this if you change default questions/categories
-  const TF_DATA_VERSION = "2026-01-10-v19";
+  const TF_DATA_VERSION = "2026-01-10-v20";
   const savedVersion = localStorage.getItem("tfDataVersion");
   if (savedVersion !== TF_DATA_VERSION) {
     localStorage.removeItem("tfQuestions");
@@ -313,7 +313,53 @@
 { question: "Flambeaux are flaming torches historically carried in night parades.", answer: "TRUE", category: "Mardi Gras", explanation: "They originally lit the streets before electric lights." },
 { question: "Masks are not allowed during Mardi Gras.", answer: "FALSE", category: "Mardi Gras", explanation: "Mask wearing is a big Mardi Gras tradition!" },
 { question: "Some Mardi Gras parade floats are kept secret until the parade begins.", answer: "TRUE", category: "Mardi Gras", explanation: "Many krewes reveal themes only on parade day." },
-                  /* your remaining categories follow here... */
+{ question: "A baby kangaroo is called a joey.", answer: "TRUE", category: "Animals", explanation: "All marsupials, including kangaroos, have babies called joeys." },
+{ question: "Bats are blind.", answer: "FALSE", category: "Animals", explanation: "Bats can see; they also use echolocation to navigate in the dark." },
+{ question: "Dolphins are mammals.", answer: "TRUE", category: "Animals", explanation: "Dolphins breathe air and give live birth, so they are mammals." },
+{ question: "Penguins live at the North Pole.", answer: "FALSE", category: "Animals", explanation: "Wild penguins live in the Southern Hemisphere, mostly Antarctica." },
+{ question: "A group of lions is called a pride.", answer: "TRUE", category: "Animals", explanation: "Lion families live together in groups called prides." },
+
+{ question: "Snakes smell with their tongues.", answer: "TRUE", category: "Animals", explanation: "Snakes use their tongues to collect scent chemicals from the air." },
+{ question: "Elephants are the largest land animals.", answer: "TRUE", category: "Animals", explanation: "African elephants are the largest living land mammals." },
+{ question: "Alligators are the same as crocodiles.", answer: "FALSE", category: "Animals", explanation: "They are related but different species with different snouts and habitats." },
+{ question: "Giraffes have the same number of neck bones as humans.", answer: "TRUE", category: "Animals", explanation: "Both have seven neck vertebrae—giraffes’ are just longer!" },
+{ question: "A male deer is called a buck.", answer: "TRUE", category: "Animals", explanation: "Bucks are male deer; females are called does." },
+
+{ question: "A group of fish is called a herd.", answer: "FALSE", category: "Animals", explanation: "Fish swim in schools or shoals, not herds." },
+{ question: "Female chickens are called hens.", answer: "TRUE", category: "Animals", explanation: "Female chickens are hens; males are roosters." },
+{ question: "Polar bears have white skin.", answer: "FALSE", category: "Animals", explanation: "Polar bears have black skin; their fur just looks white." },
+{ question: "Sloths are known for moving slowly.", answer: "TRUE", category: "Animals", explanation: "Sloths move extremely slowly to conserve energy." },
+{ question: "Hummingbirds cannot fly backwards.", answer: "FALSE", category: "Animals", explanation: "Hummingbirds can fly backward, sideways, and hover." },
+
+{ question: "Sharks have bones.", answer: "FALSE", category: "Animals", explanation: "Sharks have cartilage skeletons instead of bones." },
+{ question: "A baby horse is called a calf.", answer: "FALSE", category: "Animals", explanation: "A baby horse is called a foal." },
+{ question: "Beavers build dams.", answer: "TRUE", category: "Animals", explanation: "Beavers build dams and lodges to create safe ponds." },
+{ question: "Cats can see in total darkness.", answer: "FALSE", category: "Animals", explanation: "Cats see well in low light but not complete darkness." },
+{ question: "Parrots are able to mimic human speech.", answer: "TRUE", category: "Animals", explanation: "Parrots imitate sounds they hear, including human words." },
+
+{ question: "Whales breathe through gills.", answer: "FALSE", category: "Animals", explanation: "Whales use lungs and must come to the surface to breathe air." },
+{ question: "Owls can turn their heads all the way around.", answer: "FALSE", category: "Animals", explanation: "They can rotate up to about 270°, not 360°." },
+{ question: "Cows have four stomach compartments.", answer: "TRUE", category: "Animals", explanation: "Cows are ruminants and digest plants using four-chamber stomachs." },
+{ question: "Tigers have striped fur but not striped skin.", answer: "FALSE", category: "Animals", explanation: "A tiger’s skin is striped too!" },
+{ question: "Rabbits chew using their front teeth only.", answer: "FALSE", category: "Animals", explanation: "Their front teeth cut food; their molars grind it." },
+
+{ question: "A camel stores water in its hump.", answer: "FALSE", category: "Animals", explanation: "The hump stores fat, not water." },
+{ question: "Frogs live only in water.", answer: "FALSE", category: "Animals", explanation: "Frogs are amphibians and live on land and in water." },
+{ question: "Koalas eat eucalyptus leaves.", answer: "TRUE", category: "Animals", explanation: "Eucalyptus is almost their entire diet." },
+{ question: "Octopuses have three hearts.", answer: "TRUE", category: "Animals", explanation: "Two pump to the gills; one pumps to the body." },
+{ question: "A group of crows is called a murder.", answer: "TRUE", category: "Animals", explanation: "The term for a gathering of crows is 'a murder'." },
+
+{ question: "All insects have six legs.", answer: "TRUE", category: "Animals", explanation: "Six legs is a defining trait of insects." },
+{ question: "Bees die after they sting you.", answer: "TRUE", category: "Animals", explanation: "Honeybees usually die after stinging." },
+{ question: "Turtles can leave their shells.", answer: "FALSE", category: "Animals", explanation: "A turtle’s shell is part of its skeleton—it cannot come off." },
+{ question: "Dogs are omnivores.", answer: "TRUE", category: "Animals", explanation: "Dogs can eat both meat and plant foods." },
+{ question: "Ants can lift more than their body weight.", answer: "TRUE", category: "Animals", explanation: "Some ants carry 10–50 times their weight." },
+
+{ question: "Flamingos are born pink.", answer: "FALSE", category: "Animals", explanation: "They are gray; they turn pink from eating shrimp and algae." },
+{ question: "Only male bees collect pollen.", answer: "FALSE", category: "Animals", explanation: "Worker bees, which collect pollen, are female." },
+{ question: "Gorillas are herbivores.", answer: "TRUE", category: "Animals", explanation: "Gorillas mainly eat leaves, fruit, and shoots." },
+{ question: "A narwhal’s tusk is actually a tooth.", answer: "TRUE", category: "Animals", explanation: "It’s an extended canine tooth, mostly on males." },
+
 ];
 localStorage.setItem("tfQuestions", JSON.stringify(questions));
 }
