@@ -207,84 +207,79 @@
   if (questions.length === 0) {
     questions = [
       // Bible Questions (first few shown as example)
-      {
-        question: "The Bible has 66 books.",
-        answer: "TRUE",
-        category: "Bible",
-        explanation: "The standard Protestant Bible has 66 books: 39 in the Old Testament and 27 in the New."
-      },
-      {
-        question: "Moses built the ark.",
-        answer: "FALSE",
-        category: "Bible",
-        explanation: "Noah built the ark in Genesis. Moses came much later and led the Israelites out of Egypt."
-      },
-      {
-        question: "David killed Goliath with a stone.",
-        answer: "TRUE",
-        category: "Bible",
-        explanation: "In 1 Samuel 17, David defeats Goliath with a sling and a single stone."
-      },
-      {
-        question: "Jonah was swallowed by a whale.",
-        answer: "TRUE",
-        category: "Bible",
-        explanation: "The book of Jonah says he was swallowed by a 'great fish' after running from God."
-      },
-      {
-        question: "Noah’s Ark rested on Mount Sinai.",
-        answer: "FALSE",
-        category: "Bible",
-        explanation: "Genesis 8:4 says the ark rested on the mountains of Ararat, not Mount Sinai."
-      },
+  // Bible Questions
+{ question: "The Bible has 66 books.", answer: "TRUE", category: "Bible", explanation: "" },
+{ question: "Moses built the ark.", answer: "FALSE", category: "Bible", explanation: "" },
+{ question: "David killed Goliath with a stone.", answer: "TRUE", category: "Bible", explanation: "" },
+{ question: "Jonah was swallowed by a whale.", answer: "TRUE", category: "Bible", explanation: "" },
+{ question: "Noah’s Ark rested on Mount Sinai.", answer: "FALSE", category: "Bible", explanation: "" },
+{ question: "Jesus turned water into wine.", answer: "TRUE", category: "Bible", explanation: "" },
+{ question: "Adam and Eve lived in the Garden of Eden.", answer: "TRUE", category: "Bible", explanation: "" },
+{ question: "The Ten Commandments were given to Abraham.", answer: "FALSE", category: "Bible", explanation: "" },
+{ question: "Paul’s name was originally Saul.", answer: "TRUE", category: "Bible", explanation: "" },
+{ question: "Ruth was Naomi’s daughter.", answer: "FALSE", category: "Bible", explanation: "" },
+{ question: "The serpent tempted Eve to eat the forbidden fruit.", answer: "TRUE", category: "Bible", explanation: "" },
+{ question: "There were three wise men at Jesus’ birth.", answer: "FALSE", category: "Bible", explanation: "" },
+{ question: "Jesus fed 5,000 people with five loaves and two fish.", answer: "TRUE", category: "Bible", explanation: "" },
+{ question: "The book of Psalms is in the New Testament.", answer: "FALSE", category: "Bible", explanation: "" },
+{ question: "Mary Magdalene was the first to see Jesus after His resurrection.", answer: "TRUE", category: "Bible", explanation: "" },
+{ question: "Joseph’s brothers sold him into slavery.", answer: "TRUE", category: "Bible", explanation: "" },
+{ question: "The Red Sea was parted by Elijah.", answer: "FALSE", category: "Bible", explanation: "" },
+{ question: "Solomon was known for his great wisdom.", answer: "TRUE", category: "Bible", explanation: "" },
+{ question: "The Bible begins with the words 'In the beginning God created...'", answer: "TRUE", category: "Bible", explanation: "" },
+{ question: "The Book of Revelation is the first book of the Bible.", answer: "FALSE", category: "Bible", explanation: "" },
+{ question: "Jesus was baptized in the Jordan River.", answer: "TRUE", category: "Bible", explanation: "" },
+{ question: "Peter denied Jesus three times.", answer: "TRUE", category: "Bible", explanation: "" },
+{ question: "The Tower of Babel was built to reach heaven.", answer: "TRUE", category: "Bible", explanation: "" },
+{ question: "Daniel was thrown into a den of lions.", answer: "TRUE", category: "Bible", explanation: "" },
+{ question: "Samson lost his strength when his hair was cut.", answer: "TRUE", category: "Bible", explanation: "" },
+{ question: "The Prodigal Son’s father rejected him when he returned.", answer: "FALSE", category: "Bible", explanation: "" },
+{ question: "Jesus rode into Jerusalem on a horse.", answer: "FALSE", category: "Bible", explanation: "" },
+{ question: "Abraham and Sarah had a son named Isaac.", answer: "TRUE", category: "Bible", explanation: "" },
+{ question: "The first miracle Jesus performed was healing a blind man.", answer: "FALSE", category: "Bible", explanation: "" },
+{ question: "Jesus was born in Bethlehem.", answer: "TRUE", category: "Bible", explanation: "" },
+     // Easter Questions
+{ question: "Easter celebrates the resurrection of Jesus Christ.", answer: "TRUE", category: "Easter", explanation: "Easter honors the day Christians believe Jesus rose from the dead." },
+{ question: "Easter is celebrated on the same date every year.", answer: "FALSE", category: "Easter", explanation: "Easter changes yearly because it follows the lunar calendar, not a fixed date." },
+{ question: "Easter Sunday always falls on a Sunday.", answer: "TRUE", category: "Easter", explanation: "By definition Easter is always observed on a Sunday." },
+{ question: "Easter is considered the most important Christian holiday.", answer: "TRUE", category: "Easter", explanation: "The resurrection is central to Christian faith, making Easter highly significant." },
+{ question: "The word Easter appears many times in the Bible.", answer: "FALSE", category: "Easter", explanation: "Most translations never use the word 'Easter'; only 'Passover' appears." },
 
-      /* 👇 YOUR ORIGINAL HUGE QUESTION LIST FOLLOWS.
-         I’m keeping it exactly as you had it, just without explanations
-         (you can add them over time).                               */
+{ question: "Easter follows the season of Lent.", answer: "TRUE", category: "Easter", explanation: "Lent is a 40-day season that leads up to Easter Sunday." },
+{ question: "Lent lasts for about 40 days.", answer: "TRUE", category: "Easter", explanation: "Lent traditionally lasts 40 days, representing Jesus’ time in the wilderness." },
+{ question: "Good Friday comes before Easter Sunday.", answer: "TRUE", category: "Easter", explanation: "Good Friday commemorates Jesus’ crucifixion two days before Easter." },
+{ question: "Good Friday celebrates the birth of Jesus.", answer: "FALSE", category: "Easter", explanation: "Good Friday marks Jesus’ crucifixion, not His birth." },
+{ question: "Easter celebrates new life and hope.", answer: "TRUE", category: "Easter", explanation: "Easter symbolizes renewal and new beginnings through the resurrection." },
 
-      // --- PASTE OF YOUR EXISTING QUESTIONS STARTS HERE ---
-      // Easter Questions
-{ question: "Easter celebrates the resurrection of Jesus Christ.", answer: "TRUE", category: "Easter" },
-{ question: "Easter is celebrated on the same date every year.", answer: "FALSE", category: "Easter" },
-{ question: "Easter Sunday always falls on a Sunday.", answer: "TRUE", category: "Easter" },
-{ question: "Easter is considered the most important Christian holiday.", answer: "TRUE", category: "Easter" },
-{ question: "The word Easter appears many times in the Bible.", answer: "FALSE", category: "Easter" },
+{ question: "Easter eggs are a symbol of new life.", answer: "TRUE", category: "Easter", explanation: "Eggs represent rebirth, tying into the resurrection theme." },
+{ question: "Egg decorating is an Easter tradition.", answer: "TRUE", category: "Easter", explanation: "People have decorated eggs for Easter for centuries in many cultures." },
+{ question: "Chocolate eggs are commonly associated with Easter.", answer: "TRUE", category: "Easter", explanation: "Candy companies popularized chocolate eggs in the 19th century." },
+{ question: "The Easter Bunny is a religious figure.", answer: "FALSE", category: "Easter", explanation: "The rabbit is a folk tradition and not part of the Bible story." },
+{ question: "Children often participate in Easter egg hunts.", answer: "TRUE", category: "Easter", explanation: "Egg hunts are a common American and European Easter tradition." },
 
-{ question: "Easter follows the season of Lent.", answer: "TRUE", category: "Easter" },
-{ question: "Lent lasts for about 40 days.", answer: "TRUE", category: "Easter" },
-{ question: "Good Friday comes before Easter Sunday.", answer: "TRUE", category: "Easter" },
-{ question: "Good Friday celebrates the birth of Jesus.", answer: "FALSE", category: "Easter" },
-{ question: "Easter celebrates new life and hope.", answer: "TRUE", category: "Easter" },
+{ question: "Easter baskets are commonly given to children.", answer: "TRUE", category: "Easter", explanation: "Families often give baskets filled with candy and treats on Easter morning." },
+{ question: "The Easter Bunny traditionally delivers eggs and candy.", answer: "TRUE", category: "Easter", explanation: "Folklore says the bunny hides eggs for children to find." },
+{ question: "Easter is only celebrated in the United States.", answer: "FALSE", category: "Easter", explanation: "Easter is observed worldwide by Christians and many cultures." },
+{ question: "Many cultures celebrate Easter in different ways.", answer: "TRUE", category: "Easter", explanation: "Traditions vary from egg rolling to bonfires to special meals." },
+{ question: "Easter has both religious and cultural traditions.", answer: "TRUE", category: "Easter", explanation: "Some practices are about faith, while others are seasonal or symbolic." },
 
-{ question: "Easter eggs are a symbol of new life.", answer: "TRUE", category: "Easter" },
-{ question: "Egg decorating is an Easter tradition.", answer: "TRUE", category: "Easter" },
-{ question: "Chocolate eggs are commonly associated with Easter.", answer: "TRUE", category: "Easter" },
-{ question: "The Easter Bunny is a religious figure.", answer: "FALSE", category: "Easter" },
-{ question: "Children often participate in Easter egg hunts.", answer: "TRUE", category: "Easter" },
+{ question: "Sunrise services are sometimes held on Easter morning.", answer: "TRUE", category: "Easter", explanation: "Churches gather at sunrise to honor the empty tomb story." },
+{ question: "Easter marks the end of the church calendar year.", answer: "FALSE", category: "Easter", explanation: "Easter is central, but the church year continues afterward." },
+{ question: "The Easter season lasts only one day.", answer: "FALSE", category: "Easter", explanation: "In many churches Easter lasts several weeks, known as the Easter season." },
+{ question: "White lilies are often associated with Easter.", answer: "TRUE", category: "Easter", explanation: "Easter lilies symbolize purity, resurrection, and new life." },
+{ question: "Easter always occurs in the winter.", answer: "FALSE", category: "Easter", explanation: "Easter occurs in spring in the Northern Hemisphere." },
 
-{ question: "Easter baskets are commonly given to children.", answer: "TRUE", category: "Easter" },
-{ question: "The Easter Bunny traditionally delivers eggs and candy.", answer: "TRUE", category: "Easter" },
-{ question: "Easter is only celebrated in the United States.", answer: "FALSE", category: "Easter" },
-{ question: "Many cultures celebrate Easter in different ways.", answer: "TRUE", category: "Easter" },
-{ question: "Easter has both religious and cultural traditions.", answer: "TRUE", category: "Easter" },
+{ question: "The date of Easter is based on the lunar calendar.", answer: "TRUE", category: "Easter", explanation: "Easter falls on the first Sunday after the first full moon of spring." },
+{ question: "Easter can fall in March or April.", answer: "TRUE", category: "Easter", explanation: "Because it follows the moon, Easter dates move between March and April." },
+{ question: "Palm Sunday occurs before Easter.", answer: "TRUE", category: "Easter", explanation: "Palm Sunday marks Jesus entering Jerusalem one week before Easter." },
+{ question: "Palm Sunday celebrates Jesus entering Jerusalem.", answer: "TRUE", category: "Easter", explanation: "People waved palms as Jesus rode into the city." },
+{ question: "Easter traditions often focus on family gatherings.", answer: "TRUE", category: "Easter", explanation: "Families commonly enjoy meals, worship, and events together." },
 
-{ question: "Sunrise services are sometimes held on Easter morning.", answer: "TRUE", category: "Easter" },
-{ question: "Easter marks the end of the church calendar year.", answer: "FALSE", category: "Easter" },
-{ question: "The Easter season lasts only one day.", answer: "FALSE", category: "Easter" },
-{ question: "White lilies are often associated with Easter.", answer: "TRUE", category: "Easter" },
-{ question: "Easter always occurs in the winter.", answer: "FALSE", category: "Easter" },
-
-{ question: "The date of Easter is based on the lunar calendar.", answer: "TRUE", category: "Easter" },
-{ question: "Easter can fall in March or April.", answer: "TRUE", category: "Easter" },
-{ question: "Palm Sunday occurs before Easter.", answer: "TRUE", category: "Easter" },
-{ question: "Palm Sunday celebrates Jesus entering Jerusalem.", answer: "TRUE", category: "Easter" },
-{ question: "Easter traditions often focus on family gatherings.", answer: "TRUE", category: "Easter" },
-
-{ question: "Easter eggs were originally made of plastic.", answer: "FALSE", category: "Easter" },
-{ question: "Easter encourages messages of forgiveness and renewal.", answer: "TRUE", category: "Easter" },
-{ question: "All Easter traditions are religious.", answer: "FALSE", category: "Easter" },
-{ question: "Easter is a time of celebration and joy.", answer: "TRUE", category: "Easter" },
-{ question: "Easter has been celebrated for many centuries.", answer: "TRUE", category: "Easter" },
+{ question: "Easter eggs were originally made of plastic.", answer: "FALSE", category: "Easter", explanation: "Eggs were originally real eggs before plastic ones became popular." },
+{ question: "Easter encourages messages of forgiveness and renewal.", answer: "TRUE", category: "Easter", explanation: "The resurrection story emphasizes forgiveness, grace, and rebirth." },
+{ question: "All Easter traditions are religious.", answer: "FALSE", category: "Easter", explanation: "Many are cultural or seasonal, not part of the Bible story." },
+{ question: "Easter is a time of celebration and joy.", answer: "TRUE", category: "Easter", explanation: "Christians celebrate Jesus’ victory over death on Easter." },
+{ question: "Easter has been celebrated for many centuries.", answer: "TRUE", category: "Easter", explanation: "Christians have observed Easter since the earliest church times." },
 
       // Mardi Gras Questions
 { question: "Mardi Gras means 'Fat Tuesday' in French.", answer: "TRUE", category: "Mardi Gras" },
