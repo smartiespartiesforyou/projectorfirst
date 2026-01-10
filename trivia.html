@@ -142,7 +142,7 @@
 
 <script>
   // 🚨 DATA VERSION: bump this if you change default questions/categories
-  const TF_DATA_VERSION = "2026-01-10-v21";
+  const TF_DATA_VERSION = "2026-01-10-v22";
   const savedVersion = localStorage.getItem("tfDataVersion");
   if (savedVersion !== TF_DATA_VERSION) {
     localStorage.removeItem("tfQuestions");
@@ -502,6 +502,103 @@
 { question: "The Nutcracker is a famous ballet with music by Tchaikovsky.", answer: "TRUE", category: "Music", explanation: "The score includes classics like 'Dance of the Sugar Plum Fairy'." },
 { question: "Cajun music uses the fiddle as a main instrument.", answer: "TRUE", category: "Music", explanation: "Fiddles and accordions define the Cajun sound." },
 { question: "Yodeling started in New York City.", answer: "FALSE", category: "Music", explanation: "Yodeling began in the Alps of Europe." },
+      // Movies
+{ question: "The movie 'Gone With the Wind' is set during the Civil War.", answer: "TRUE", category: "Movies", explanation: "The story takes place in the American South during and after the Civil War." },
+{ question: "Tom Hanks starred in 'Forrest Gump'.", answer: "TRUE", category: "Movies", explanation: "Tom Hanks played Forrest Gump in the 1994 film." },
+{ question: "'The Wizard of Oz' was originally filmed in black and white and color.", answer: "TRUE", category: "Movies", explanation: "The movie starts in sepia tones and switches to color in Oz." },
+{ question: "Darth Vader is the main hero of the Star Wars movies.", answer: "FALSE", category: "Movies", explanation: "Vader is a villain for most of the original trilogy." },
+{ question: "The shark in 'Jaws' was named Bruce by the film crew.", answer: "TRUE", category: "Movies", explanation: "The mechanical shark’s nickname was Bruce on set." },
+
+{ question: "'Toy Story' was the first fully computer-animated feature film.", answer: "TRUE", category: "Movies", explanation: "Pixar released it in 1995, pioneering CGI animation." },
+{ question: "Indiana Jones always carries a sword.", answer: "FALSE", category: "Movies", explanation: "He’s known for his fedora and bullwhip." },
+{ question: "Julie Andrews starred as Mary Poppins.", answer: "TRUE", category: "Movies", explanation: "She played the magical nanny in the 1964 classic." },
+{ question: "The Titanic sank in the movie 'Titanic'.", answer: "TRUE", category: "Movies", explanation: "The film tells the tragic story of the real ship sinking in 1912." },
+{ question: "'Back to the Future' uses a DeLorean car as a time machine.", answer: "TRUE", category: "Movies", explanation: "Doc Brown converted a DeLorean into a time machine." },
+
+{ question: "Captain Jack Sparrow appears in the movie 'Moana'.", answer: "FALSE", category: "Movies", explanation: "He belongs to 'Pirates of the Caribbean'." },
+{ question: "'The Sound of Music' features the von Trapp family.", answer: "TRUE", category: "Movies", explanation: "It’s based on the real musical von Trapp family." },
+{ question: "'Casablanca' takes place in France.", answer: "FALSE", category: "Movies", explanation: "It takes place in Casablanca, Morocco." },
+{ question: "'Frozen' features a talking snowman named Olaf.", answer: "TRUE", category: "Movies", explanation: "Olaf sings and steals scenes in the Disney film." },
+{ question: "'Rocky' is about a boxer.", answer: "TRUE", category: "Movies", explanation: "Rocky Balboa rises from underdog to champion." },
+
+{ question: "Bruce Lee was famous for starring in Western cowboy movies.", answer: "FALSE", category: "Movies", explanation: "He starred in martial arts films." },
+{ question: "'E.T.' is about a friendly alien trying to return home.", answer: "TRUE", category: "Movies", explanation: "The plot centers on E.T.'s return trip." },
+{ question: "The movie 'Avatar' takes place on a moon called Pandora.", answer: "TRUE", category: "Movies", explanation: "Humans explore Pandora for resources." },
+{ question: "'Cinderella' loses her crown at midnight.", answer: "FALSE", category: "Movies", explanation: "She loses a glass slipper, not a crown." },
+{ question: "Audrey Hepburn starred in 'Breakfast at Tiffany’s'.", answer: "TRUE", category: "Movies", explanation: "One of her most iconic roles." },
+
+{ question: "The T-Rex comes from 'Jurassic Park'.", answer: "TRUE", category: "Movies", explanation: "Jurassic Park features dinosaurs brought back to life." },
+{ question: "'The Godfather' is known for a famous line about an offer you can't refuse.", answer: "TRUE", category: "Movies", explanation: "It’s one of cinema’s most quoted lines." },
+{ question: "'Finding Nemo' takes place mostly on land.", answer: "FALSE", category: "Movies", explanation: "Most of the movie takes place underwater." },
+{ question: "Dorothy travels to Oz by train.", answer: "FALSE", category: "Movies", explanation: "A tornado carries her to Oz." },
+{ question: "Harrison Ford played Han Solo and Indiana Jones.", answer: "TRUE", category: "Movies", explanation: "He starred in both legendary roles." },
+
+{ question: "'The Lion King' features a character named Simba.", answer: "TRUE", category: "Movies", explanation: "Simba is the lion cub destined to be king." },
+{ question: "'Titanic' stars Leonardo DiCaprio and Kate Winslet.", answer: "TRUE", category: "Movies", explanation: "They play Jack and Rose." },
+{ question: "Willy Wonka owns a huge chocolate factory.", answer: "TRUE", category: "Movies", explanation: "He invites children to tour it in the film." },
+{ question: "Gollum appears in the Harry Potter films.", answer: "FALSE", category: "Movies", explanation: "Gollum is from 'The Lord of the Rings'." },
+{ question: "Disney made a movie called 'Bambi'.", answer: "TRUE", category: "Movies", explanation: "It’s the famous story of a young deer." },
+
+{ question: "'The Matrix' features characters who dodge bullets in slow motion.", answer: "TRUE", category: "Movies", explanation: "Bullet time became a cinematic hallmark." },
+{ question: "'Coco' celebrates Mexican traditions like Día de los Muertos.", answer: "TRUE", category: "Movies", explanation: "The movie honors Day of the Dead traditions." },
+{ question: "'Jaws' takes place in a desert town.", answer: "FALSE", category: "Movies", explanation: "It’s set in a beach town called Amity Island." },
+{ question: "Merida from 'Brave' uses a bow and arrow.", answer: "TRUE", category: "Movies", explanation: "She’s skilled in archery." },
+{ question: "'Beauty and the Beast' features talking furniture.", answer: "TRUE", category: "Movies", explanation: "A curse turns castle staff into enchanted objects." },
+
+{ question: "Superman’s secret identity is Peter Parker.", answer: "FALSE", category: "Movies", explanation: "Peter Parker is Spider-Man; Superman is Clark Kent." },
+{ question: "'The Little Mermaid' includes a crab named Sebastian.", answer: "TRUE", category: "Movies", explanation: "Sebastian helps Ariel throughout the story." },
+{ question: "Pixar created the movie 'Up'.", answer: "TRUE", category: "Movies", explanation: "It’s one of Pixar’s most beloved films." },
+{ question: "'Ghostbusters' features a giant marshmallow man.", answer: "TRUE", category: "Movies", explanation: "The Stay-Puft Marshmallow Man appears at the end." },
+{ question: "'Star Wars' begins with the line 'A long time ago in a galaxy far, far away...'", answer: "TRUE", category: "Movies", explanation: "It’s the iconic opening text." },
+// New Orleans
+{ question: "New Orleans is often called the Crescent City.", answer: "TRUE", category: "New Orleans", explanation: "The city curves along a bend in the Mississippi River." },
+{ question: "The Mississippi River runs through New Orleans.", answer: "TRUE", category: "New Orleans", explanation: "The river is central to the city’s identity and history." },
+{ question: "New Orleans is the capital of Louisiana.", answer: "FALSE", category: "New Orleans", explanation: "The capital is Baton Rouge." },
+{ question: "Jazz music has deep roots in New Orleans.", answer: "TRUE", category: "New Orleans", explanation: "The city is widely recognized as the birthplace of jazz." },
+{ question: "The French Quarter is the oldest neighborhood in New Orleans.", answer: "TRUE", category: "New Orleans", explanation: "It dates back to the early 1700s." },
+
+{ question: "Café Du Monde is famous for beignets.", answer: "TRUE", category: "New Orleans", explanation: "The café is known worldwide for its powdered sugar beignets." },
+{ question: "Mardi Gras originally started in California.", answer: "FALSE", category: "New Orleans", explanation: "New Orleans and Mobile are credited with America’s earliest celebrations." },
+{ question: "The St. Louis Cathedral faces Jackson Square.", answer: "TRUE", category: "New Orleans", explanation: "It’s one of the city’s most iconic landmarks." },
+{ question: "New Orleans is known for its Cajun and Creole cuisine.", answer: "TRUE", category: "New Orleans", explanation: "Dishes include gumbo, jambalaya, red beans, and étouffée." },
+{ question: "The Superdome is a famous sports venue in New Orleans.", answer: "TRUE", category: "New Orleans", explanation: "It’s home to the New Orleans Saints." },
+
+{ question: "New Orleans was founded by the Spanish.", answer: "FALSE", category: "New Orleans", explanation: "It was founded by the French in 1718." },
+{ question: "Jackson Square was named after Andrew Jackson.", answer: "TRUE", category: "New Orleans", explanation: "He defended the city in the Battle of New Orleans." },
+{ question: "The streetcar system in New Orleans is one of the oldest in the United States.", answer: "TRUE", category: "New Orleans", explanation: "The St. Charles line is the oldest continuously operating street railway." },
+{ question: "New Orleans is famous for its above-ground cemeteries.", answer: "TRUE", category: "New Orleans", explanation: "Nichols and vaults rise above due to the low water table." },
+{ question: "Bourbon Street is known for being quiet and residential.", answer: "FALSE", category: "New Orleans", explanation: "It’s famous for nightlife, music, and crowds." },
+
+{ question: "Louis Armstrong grew up in New Orleans.", answer: "TRUE", category: "New Orleans", explanation: "Armstrong was born and raised in the city." },
+{ question: "The fleur-de-lis is a common symbol in New Orleans.", answer: "TRUE", category: "New Orleans", explanation: "It reflects the city’s French heritage." },
+{ question: "Hurricanes have never impacted New Orleans.", answer: "FALSE", category: "New Orleans", explanation: "Storms like Katrina have had major effects." },
+{ question: "Jazz funerals mix celebration with mourning.", answer: "TRUE", category: "New Orleans", explanation: "Brass bands turn grief into music and dance." },
+{ question: "The Audubon Zoo is in New York City.", answer: "FALSE", category: "New Orleans", explanation: "It’s located in Uptown New Orleans." },
+
+{ question: "Gumbo usually contains roux, vegetables, and meat or seafood.", answer: "TRUE", category: "New Orleans", explanation: "It’s a signature Louisiana dish." },
+{ question: "Most houses in the French Quarter are modern skyscrapers.", answer: "FALSE", category: "New Orleans", explanation: "They’re historic low buildings with balconies." },
+{ question: "The New Orleans Saints have a logo shaped like a fleur-de-lis.", answer: "TRUE", category: "New Orleans", explanation: "It reflects the city's French roots." },
+{ question: "Storyville was a historic jazz and nightlife district.", answer: "TRUE", category: "New Orleans", explanation: "It was famous in the early 1900s." },
+{ question: "New Orleans is located on the Gulf Coast itself.", answer: "FALSE", category: "New Orleans", explanation: "It’s near the Gulf but sits inland." },
+
+{ question: "The city has a long parade season, not just Mardi Gras Day.", answer: "TRUE", category: "New Orleans", explanation: "Carnival lasts weeks leading up to Fat Tuesday." },
+{ question: "Street performers are common in Jackson Square.", answer: "TRUE", category: "New Orleans", explanation: "Musicians and artists entertain daily." },
+{ question: "The city slogan is 'Let the Good Times Roll'.", answer: "TRUE", category: "New Orleans", explanation: "It translates from the French 'Laissez les bon temps rouler'." },
+{ question: "New Orleans has no seafood traditions.", answer: "FALSE", category: "New Orleans", explanation: "Seafood boils, shrimp, crawfish, and oysters are staples." },
+{ question: "Preservation Hall is known for live jazz.", answer: "TRUE", category: "New Orleans", explanation: "It hosts nightly traditional jazz shows." },
+
+{ question: "New Orleans was once ruled by France and Spain.", answer: "TRUE", category: "New Orleans", explanation: "It changed hands before becoming part of the United States." },
+{ question: "Frenchmen Street is known for live music.", answer: "TRUE", category: "New Orleans", explanation: "It’s a popular music strip outside Bourbon Street." },
+{ question: "The French Quarter is located uptown near Tulane University.", answer: "FALSE", category: "New Orleans", explanation: "It’s downtown near the river." },
+{ question: "Beads are a year-round souvenir in New Orleans.", answer: "TRUE", category: "New Orleans", explanation: "Shops sell them even when it’s not Carnival." },
+{ question: "New Orleans celebrates only one festival a year.", answer: "FALSE", category: "New Orleans", explanation: "The calendar is full—Jazz Fest, French Quarter Fest, Voodoo Fest, and more." },
+
+{ question: "Lake Pontchartrain borders New Orleans.", answer: "TRUE", category: "New Orleans", explanation: "It lies to the north of the city." },
+{ question: "The city’s nickname 'The Big Easy' refers to its relaxed culture.", answer: "TRUE", category: "New Orleans", explanation: "It speaks to the laid-back lifestyle and music scene." },
+{ question: "New Orleans has a cemetery called St. Louis #1.", answer: "TRUE", category: "New Orleans", explanation: "It’s one of the oldest and most famous burial grounds." },
+{ question: "Crawfish are native to the North Pole.", answer: "FALSE", category: "New Orleans", explanation: "They’re freshwater creatures common across Louisiana." },
+{ question: "The French Market is one of the oldest open-air markets in the U.S.", answer: "TRUE", category: "New Orleans", explanation: "Its history dates back centuries." },
+
 ];
 localStorage.setItem("tfQuestions", JSON.stringify(questions));
 }
