@@ -142,7 +142,7 @@
 
 <script>
   // 🚨 DATA VERSION: bump this if you change default questions/categories
-  const TF_DATA_VERSION = "2026-01-10-v23";
+  const TF_DATA_VERSION = "2026-01-10-v24";
   const savedVersion = localStorage.getItem("tfDataVersion");
   if (savedVersion !== TF_DATA_VERSION) {
     localStorage.removeItem("tfQuestions");
@@ -968,6 +968,102 @@
 { question: "Flowers are commonly placed on graves.", answer: "TRUE", category: "Memorial Day", explanation: "A tradition dating back to Decoration Day." },
 { question: "Memorial Day honors only the Army.", answer: "FALSE", category: "Memorial Day", explanation: "All branches are honored." },
 { question: "Some people fly the flag at home all weekend long.", answer: "TRUE", category: "Memorial Day", explanation: "Patriotism is visible throughout the weekend." },
+// Veterans Day Questions
+{ question: "Veterans Day honors all U.S. military veterans, living and dead.", answer: "TRUE", category: "Veterans Day", explanation: "Veterans Day honors everyone who has served in the U.S. armed forces, not just those who died." },
+{ question: "Veterans Day is celebrated on November 11th.", answer: "TRUE", category: "Veterans Day", explanation: "Veterans Day is observed each year on November 11 to mark the end of World War I fighting." },
+{ question: "Veterans Day was originally called Armistice Day.", answer: "TRUE", category: "Veterans Day", explanation: "It began as Armistice Day to remember the end of World War I." },
+{ question: "Armistice Day marked the end of World War I fighting.", answer: "TRUE", category: "Veterans Day", explanation: "The armistice went into effect on November 11, 1918." },
+{ question: "Veterans Day and Memorial Day are the same holiday.", answer: "FALSE", category: "Veterans Day", explanation: "Memorial Day honors those who died in service; Veterans Day honors all who served." },
+
+{ question: "Veterans Day honors only those who died in combat.", answer: "FALSE", category: "Veterans Day", explanation: "It recognizes all veterans, whether they served in war or peacetime." },
+{ question: "Veterans Day was first observed after World War II.", answer: "FALSE", category: "Veterans Day", explanation: "It began after World War I as Armistice Day." },
+{ question: "The armistice ending World War I took effect on the 11th hour of the 11th day of the 11th month.", answer: "TRUE", category: "Veterans Day", explanation: "That timing is why November 11 is so important." },
+{ question: "Many communities hold parades on Veterans Day.", answer: "TRUE", category: "Veterans Day", explanation: "Parades are a common way to honor veterans publicly." },
+{ question: "Schools and government offices may close on Veterans Day.", answer: "TRUE", category: "Veterans Day", explanation: "It is a federal holiday, so many public offices close." },
+
+{ question: "Veterans Day is only celebrated in the United States.", answer: "FALSE", category: "Veterans Day", explanation: "Other countries have similar remembrance days on or near November 11." },
+{ question: "On Veterans Day, people often thank veterans for their service.", answer: "TRUE", category: "Veterans Day", explanation: "Saying 'thank you for your service' is a common tradition." },
+{ question: "Veterans Day always falls on a Monday.", answer: "FALSE", category: "Veterans Day", explanation: "It is tied to the date, not to a specific weekday." },
+{ question: "Veterans Day originally honored World War I veterans only.", answer: "TRUE", category: "Veterans Day", explanation: "At first it focused on WWI; later it expanded to all veterans." },
+{ question: "Later, Veterans Day was expanded to honor veterans of all wars.", answer: "TRUE", category: "Veterans Day", explanation: "The holiday was broadened to include all who served in the armed forces." },
+
+{ question: "Arlington National Cemetery is often visited on Veterans Day.", answer: "TRUE", category: "Veterans Day", explanation: "Ceremonies at Arlington are a key part of national observances." },
+{ question: "Wearing red poppies is only a Memorial Day tradition, never Veterans Day.", answer: "FALSE", category: "Veterans Day", explanation: "Poppies symbolize remembrance and may be worn on both holidays." },
+{ question: "Some churches hold special services for veterans.", answer: "TRUE", category: "Veterans Day", explanation: "Faith communities often recognize veterans in services and prayers." },
+{ question: "Veterans can serve in the Army, Navy, Air Force, Marines, or Coast Guard.", answer: "TRUE", category: "Veterans Day", explanation: "All branches of the U.S. military count as veteran service." },
+{ question: "National ceremonies are often held at the Tomb of the Unknown Soldier.", answer: "TRUE", category: "Veterans Day", explanation: "A major Veterans Day ceremony is held there every year." },
+
+{ question: "Veterans Day is always part of a three-day weekend.", answer: "FALSE", category: "Veterans Day", explanation: "Because it sticks to November 11, some years it lands mid-week." },
+{ question: "President Eisenhower helped officially change Armistice Day to Veterans Day.", answer: "TRUE", category: "Veterans Day", explanation: "In 1954, the name was changed under President Dwight D. Eisenhower." },
+{ question: "Flag-raising ceremonies are common on Veterans Day.", answer: "TRUE", category: "Veterans Day", explanation: "The flag is central to many Veterans Day observances." },
+{ question: "Veterans Day is about honoring military service, not shopping sales.", answer: "TRUE", category: "Veterans Day", explanation: "Sales may happen, but the purpose is to honor service and sacrifice." },
+{ question: "Many businesses offer discounts or free meals to veterans on this day.", answer: "TRUE", category: "Veterans Day", explanation: "Restaurants and stores often show appreciation with special offers." },
+
+{ question: "A veteran is someone currently on active duty.", answer: "FALSE", category: "Veterans Day", explanation: "Active-duty service members are still serving; veterans have completed service." },
+{ question: "A veteran is someone who has served in the armed forces.", answer: "TRUE", category: "Veterans Day", explanation: "Veterans have served at least some time in the military." },
+{ question: "Veterans Day encourages citizens to learn about military history.", answer: "TRUE", category: "Veterans Day", explanation: "It’s a chance to remember past wars and the people who served in them." },
+{ question: "Silence or prayer is sometimes observed to honor veterans.", answer: "TRUE", category: "Veterans Day", explanation: "Moments of silence show respect and remembrance." },
+{ question: "Veterans Day is always in the month of May.", answer: "FALSE", category: "Veterans Day", explanation: "May is for Memorial Day; Veterans Day is in November." },
+
+{ question: "Veterans Day traditions may include school programs and assemblies.", answer: "TRUE", category: "Veterans Day", explanation: "Students often learn about and honor veterans at school." },
+{ question: "Veterans from every branch can march together in parades.", answer: "TRUE", category: "Veterans Day", explanation: "Veterans of all branches are honored side by side." },
+{ question: "Cities never fly the American flag on Veterans Day.", answer: "FALSE", category: "Veterans Day", explanation: "Flags are commonly flown and displayed on this day." },
+{ question: "Some towns read the names of local veterans during ceremonies.", answer: "TRUE", category: "Veterans Day", explanation: "Communities may honor specific local service members by name." },
+{ question: "Veterans Day reminds us of the sacrifices made for freedom.", answer: "TRUE", category: "Veterans Day", explanation: "The holiday points back to the cost of protecting our freedoms." },
+
+{ question: "You must have fought in combat to be considered a veteran.", answer: "FALSE", category: "Veterans Day", explanation: "Serving in the armed forces, whether in combat or not, counts as being a veteran." },
+{ question: "Veterans can include those who served during peacetime.", answer: "TRUE", category: "Veterans Day", explanation: "Many veterans served during times without active war." },
+{ question: "Volunteering at a VA hospital can be a way to honor veterans.", answer: "TRUE", category: "Veterans Day", explanation: "Helping and visiting veterans is one way to show gratitude." },
+{ question: "Veterans Day is a time to reflect on both peace and sacrifice.", answer: "TRUE", category: "Veterans Day", explanation: "It remembers war, service, and the hope for peace." },
+{ question: "Children are not involved in any Veterans Day activities.", answer: "FALSE", category: "Veterans Day", explanation: "Children often participate in school programs, parades, and thank-you cards." },
+// Halloween Questions
+{ question: "Halloween is celebrated on October 31st.", answer: "TRUE", category: "Halloween", explanation: "Halloween is observed every year on the night of October 31st." },
+{ question: "Halloween has roots in the ancient Celtic festival of Samhain.", answer: "TRUE", category: "Halloween", explanation: "Samhain marked the end of harvest and the start of the dark half of the year." },
+{ question: "Trick-or-treating is a common Halloween tradition.", answer: "TRUE", category: "Halloween", explanation: "Children dress up and go door-to-door asking for candy." },
+{ question: "People often carve faces into pumpkins to make jack-o’-lanterns.", answer: "TRUE", category: "Halloween", explanation: "Carved pumpkins with lights inside are classic Halloween decorations." },
+{ question: "Jack-o’-lanterns were originally carved from turnips and other root vegetables.", answer: "TRUE", category: "Halloween", explanation: "In Europe, people originally used turnips and beets before pumpkins became popular." },
+
+{ question: "Halloween is always celebrated on the last Friday of October.", answer: "FALSE", category: "Halloween", explanation: "It is tied to the date, October 31st, not to a specific weekday." },
+{ question: "Costumes were once worn to scare away spirits and ghosts.", answer: "TRUE", category: "Halloween", explanation: "People believed disguises might confuse wandering spirits." },
+{ question: "Candy corn is a popular Halloween candy in the United States.", answer: "TRUE", category: "Halloween", explanation: "Candy corn is a common seasonal candy, especially in the fall." },
+{ question: "Black and orange are traditional Halloween colors.", answer: "TRUE", category: "Halloween", explanation: "Orange represents harvest; black is linked with night and mystery." },
+{ question: "Black cats are never associated with Halloween.", answer: "FALSE", category: "Halloween", explanation: "Black cats are classic Halloween symbols and often linked with superstition." },
+
+{ question: "Many people believe the veil between the living and the dead is thinnest on Halloween.", answer: "TRUE", category: "Halloween", explanation: "Old traditions taught that spirits could draw closer on this night." },
+{ question: "Halloween began as a modern American holiday with no older roots.", answer: "FALSE", category: "Halloween", explanation: "It has deep roots in ancient Celtic and Christian traditions." },
+{ question: "Haunted houses and spooky hayrides are popular Halloween attractions.", answer: "TRUE", category: "Halloween", explanation: "People enjoy being playfully scared in safe, controlled settings." },
+{ question: "Some people bob for apples at Halloween parties.", answer: "TRUE", category: "Halloween", explanation: "Bobbing for apples is a traditional fall party game." },
+{ question: "Pumpkins are native to North America.", answer: "TRUE", category: "Halloween", explanation: "Pumpkins come from the Americas and were adopted into Halloween traditions." },
+
+{ question: "Ghosts, witches, and skeletons are common Halloween decorations.", answer: "TRUE", category: "Halloween", explanation: "These spooky images help set the Halloween mood." },
+{ question: "Halloween is celebrated in exactly the same way in every country.", answer: "FALSE", category: "Halloween", explanation: "Different cultures have very different customs and beliefs." },
+{ question: "The word 'Halloween' comes from 'All Hallows’ Eve.'", answer: "TRUE", category: "Halloween", explanation: "It refers to the evening before All Saints’ (All Hallows’) Day." },
+{ question: "Some churches hold fall festivals or 'trunk-or-treat' events as alternatives.", answer: "TRUE", category: "Halloween", explanation: "These events give families a safe, family-friendly way to celebrate." },
+{ question: "Full moons happen every Halloween.", answer: "FALSE", category: "Halloween", explanation: "A full moon on Halloween is rare, not an every-year event." },
+
+{ question: "Some people light candles inside pumpkins on Halloween night.", answer: "TRUE", category: "Halloween", explanation: "Candles or lights make jack-o’-lanterns glow." },
+{ question: "Scarecrows are sometimes used as Halloween decorations.", answer: "TRUE", category: "Halloween", explanation: "They fit the harvest and spooky farm theme." },
+{ question: "Vampires and werewolves are classic Halloween characters.", answer: "TRUE", category: "Halloween", explanation: "They come from old stories and horror movies popular at Halloween." },
+{ question: "Halloween parties may include costume contests and games.", answer: "TRUE", category: "Halloween", explanation: "People often celebrate with parties, games, and prizes." },
+{ question: "Real bats are never connected to Halloween myths.", answer: "FALSE", category: "Halloween", explanation: "Bats appear in many spooky stories and decorations." },
+
+{ question: "Bats were linked to Halloween partly because they appear around evening bonfires.", answer: "TRUE", category: "Halloween", explanation: "Old Samhain bonfires attracted insects, which attracted bats." },
+{ question: "Spiders are often used in Halloween imagery.", answer: "TRUE", category: "Halloween", explanation: "Webs, spiders, and creepy crawlies are common decorations." },
+{ question: "Halloween is the biggest candy-selling holiday in the United States.", answer: "TRUE", category: "Halloween", explanation: "Americans buy massive amounts of candy for trick-or-treating." },
+{ question: "Halloween always falls during the spring season in the U.S.", answer: "FALSE", category: "Halloween", explanation: "Halloween is a fall holiday in the United States." },
+{ question: "Some people decorate their houses with cobwebs, tombstones, and fake ghosts.", answer: "TRUE", category: "Halloween", explanation: "Home displays can be as simple or extreme as people want." },
+
+{ question: "Apple cider and caramel apples are seasonal Halloween treats.", answer: "TRUE", category: "Halloween", explanation: "They are classic fall and Halloween snacks." },
+{ question: "Halloween started as a way to celebrate the beginning of summer.", answer: "FALSE", category: "Halloween", explanation: "It marked the end of harvest and the coming of winter, not summer." },
+{ question: "Many TV shows air special Halloween episodes.", answer: "TRUE", category: "Halloween", explanation: "Halloween specials have become a tradition in television." },
+{ question: "Some people visit corn mazes in the fall around Halloween.", answer: "TRUE", category: "Halloween", explanation: "Corn mazes are a fun fall activity often tied to Halloween events." },
+{ question: "Safety tips for Halloween include using flashlights and checking candy.", answer: "TRUE", category: "Halloween", explanation: "Visibility and candy checks help keep children safe." },
+
+{ question: "Trick-or-treaters traditionally say 'trick or treat' while knocking on doors.", answer: "TRUE", category: "Halloween", explanation: "The phrase is part of the custom of asking for candy." },
+{ question: "Halloween is only for children; adults never celebrate it.", answer: "FALSE", category: "Halloween", explanation: "Adults join in with costumes, parties, and decorations too." },
+{ question: "Day of the Dead and Halloween are identical holidays with the same meaning.", answer: "FALSE", category: "Halloween", explanation: "They occur around the same time but come from different cultures and beliefs." },
+{ question: "Some families watch classic monster movies on Halloween night.", answer: "TRUE", category: "Halloween", explanation: "Scary or spooky movies are a common way to celebrate." },
+{ question: "Halloween can be both spooky and fun at the same time.", answer: "TRUE", category: "Halloween", explanation: "The holiday mixes pretend scares with candy, costumes, and laughter." },
 
 ];
 localStorage.setItem("tfQuestions", JSON.stringify(questions));
