@@ -142,7 +142,7 @@
 
 <script>
   // 🚨 DATA VERSION: bump this if you change default questions/categories
-  const TF_DATA_VERSION = "2026-01-10-v18";
+  const TF_DATA_VERSION = "2026-01-10-v19";
   const savedVersion = localStorage.getItem("tfDataVersion");
   if (savedVersion !== TF_DATA_VERSION) {
     localStorage.removeItem("tfQuestions");
@@ -313,12 +313,10 @@
 { question: "Flambeaux are flaming torches historically carried in night parades.", answer: "TRUE", category: "Mardi Gras", explanation: "They originally lit the streets before electric lights." },
 { question: "Masks are not allowed during Mardi Gras.", answer: "FALSE", category: "Mardi Gras", explanation: "Mask wearing is a big Mardi Gras tradition!" },
 { question: "Some Mardi Gras parade floats are kept secret until the parade begins.", answer: "TRUE", category: "Mardi Gras", explanation: "Many krewes reveal themes only on parade day." },
-                   */
-
-    ];
-    localStorage.setItem("tfQuestions", JSON.stringify(questions));
-  }
-
+                  /* your remaining categories follow here... */
+];
+localStorage.setItem("tfQuestions", JSON.stringify(questions));
+}
   // Grab DOM elements
   const modalBg = document.getElementById("modalBg");
   const categoryButtons = document.getElementById("categoryButtons");
