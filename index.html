@@ -118,4 +118,20 @@
   <script>
     document.getElementById('year').textContent = new Date().getFullYear();
   </script>
+  <script>
+document.addEventListener('click', function(event) {
+  const target = event.target.closest('button[data-ms-modal], button[data-ms-action]');
+  if (!target) return;
+
+  // Convert button intents to equivalent links Memberstack understands
+  if (target.dataset.msModal === 'signup') {
+    window.MemberStack.openModal('SIGNUP');
+  } else if (target.dataset.msModal === 'login') {
+    window.MemberStack.openModal('LOGIN');
+  } else if (target.dataset.msAction === 'logout') {
+    window.MemberStack.logout();
+  }
+});
+</script>
+
 </body>
