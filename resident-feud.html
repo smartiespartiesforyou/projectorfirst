@@ -58,6 +58,11 @@ body{
   color:#fff;
 }
 
+.active{
+  background:#000 !important;
+  color:#fff !important;
+}
+
 /* Question */
 .question{
   font-size:clamp(28px,3vw,52px);
@@ -98,7 +103,7 @@ body{
   font-size:clamp(26px,3vw,46px);
 }
 
-/* Director Panel */
+/* Director panel */
 .director{
   border-top:4px solid #000;
   padding-top:16px;
@@ -116,17 +121,12 @@ body{
   cursor:pointer;
 }
 
-/* Team controls */
-.teams{
+/* Bottom controls */
+.controls{
   display:flex;
   justify-content:center;
   gap:12px;
   flex-wrap:wrap;
-}
-
-.active{
-  background:#000 !important;
-  color:#fff !important;
 }
 </style>
 </head>
@@ -136,10 +136,12 @@ body{
 
   <div class="top">
     <div class="score" id="scoreA">TABLE A: 0</div>
-    <div class="teams">
-      <button class="btn" onclick="setTeam('A')" id="btnA">Table A</button>
-      <button class="btn" onclick="setTeam('B')" id="btnB">Table B</button>
+
+    <div>
+      <button class="btn" id="btnA" onclick="setTeam('A')">Table A</button>
+      <button class="btn" id="btnB" onclick="setTeam('B')">Table B</button>
     </div>
+
     <div class="score" id="scoreB">TABLE B: 0</div>
   </div>
 
@@ -148,6 +150,10 @@ body{
   <div class="board" id="board"></div>
 
   <div class="director" id="directorPanel"></div>
+
+  <div class="controls">
+    <button class="btn btn-blue" onclick="nextQuestion()">Next Question</button>
+  </div>
 
 </div>
 
@@ -162,6 +168,28 @@ const QUESTIONS = [
       {text:"MICROWAVE", points:10},
       {text:"CABINETS", points:8},
       {text:"DISHES", points:5}
+    ]
+  },
+  {
+    question:"Name something people forget at home",
+    answers:[
+      {text:"KEYS", points:38},
+      {text:"PHONE", points:26},
+      {text:"WALLET", points:18},
+      {text:"GLASSES", points:9},
+      {text:"LUNCH", points:6},
+      {text:"JACKET", points:3}
+    ]
+  },
+  {
+    question:"Name something people do before bedtime",
+    answers:[
+      {text:"BRUSH TEETH", points:40},
+      {text:"WATCH TV", points:22},
+      {text:"PRAY", points:15},
+      {text:"READ", points:10},
+      {text:"LOCK DOORS", points:8},
+      {text:"SET ALARM", points:5}
     ]
   }
 ];
@@ -178,6 +206,7 @@ const directorDiv = document.getElementById("directorPanel");
 function loadQuestion(){
   boardDiv.innerHTML = "";
   directorDiv.innerHTML = "";
+
   const q = QUESTIONS[qIndex];
   questionDiv.textContent = q.question;
 
@@ -221,6 +250,15 @@ function setTeam(t){
 function updateScores(){
   document.getElementById("scoreA").textContent = `TABLE A: ${scoreA}`;
   document.getElementById("scoreB").textContent = `TABLE B: ${scoreB}`;
+}
+
+function nextQuestion(){
+  qIndex++;
+  if(qIndex >= QUESTIONS.length){
+    alert("No more questions loaded.");
+    qIndex = 0;
+  }
+  loadQuestion();
 }
 
 setTeam("A");
