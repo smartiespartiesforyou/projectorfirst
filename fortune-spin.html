@@ -3,53 +3,50 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>Letter Reveal — ProjectorFirst</title>
+  <title>Fortune Spin — ProjectorFirst</title>
   <meta name="description" content="Take turns guessing letters. Big, calm, projector-friendly."/>
   <meta name="theme-color" content="#1e3a8a"/>
   <link rel="icon" href="/logo.svg" type="image/svg+xml"/>
 
   <style>
-    /* ===== ProjectorFirst baseline ===== */
     :root{
       --pf-blue:#1e3a8a;
       --pf-purple:#7c3aed;
       --pf-red:#dc2626;
-      --pf-green:#16a34a;
-      --pf-gray:#e5e7eb;
-      --pf-dark:#111827;
+      --pf-light:#f3f4f6;
     }
 
     *{ box-sizing:border-box; }
-    html, body{
+
+    body{
       margin:0;
-      padding:0;
-      background:#ffffff;        /* LOCKED: white background */
+      padding:16px;
+      background:#ffffff;
       color:#000;
       font-family: ui-sans-serif, system-ui, -apple-system, sans-serif;
     }
 
     .page{
-      max-width: 1600px;
-      margin: 0 auto;
-      padding: 16px;
+      max-width:1600px;
+      margin:0 auto;
       display:flex;
       flex-direction:column;
-      gap: 12px;
+      gap:16px;
     }
 
-    /* ===== Top row ===== */
+    /* Top */
     .top{
       display:flex;
-      align-items:center;
       justify-content:space-between;
+      align-items:center;
       gap:12px;
       flex-wrap:wrap;
     }
 
     .score{
+      font-size:clamp(28px,3.2vw,54px);
       font-weight:900;
-      font-size: clamp(28px, 3.2vw, 54px);
-      color: var(--pf-blue);
+      color:var(--pf-blue);
       letter-spacing:1px;
       user-select:none;
     }
@@ -57,51 +54,49 @@
     .topBtns{
       display:flex;
       gap:10px;
-      align-items:center;
     }
 
     .btn{
+      font-size:clamp(18px,2vw,32px);
       font-weight:900;
-      font-size: clamp(18px, 2.0vw, 32px);
-      padding: 12px 18px;
-      border-radius: 14px;
-      border: 3px solid #000;
+      padding:12px 18px;
+      border-radius:14px;
+      border:3px solid #000;
       cursor:pointer;
       user-select:none;
-      background:#fff;
-      transition: transform .08s;
+      transition:transform .08s;
     }
-    .btn:hover{ transform: scale(1.04); }
+    .btn:hover{ transform:scale(1.04); }
 
-    .btn-blue{ background: var(--pf-blue); color:#fff; }
-    .btn-purple{ background: var(--pf-purple); color:#fff; }
-    .btn-red{ background: var(--pf-red); color:#fff; }
+    .btn-blue{ background:var(--pf-blue); color:#fff; }
+    .btn-purple{ background:var(--pf-purple); color:#fff; }
+    .btn-red{ background:var(--pf-red); color:#fff; }
 
-    /* ===== Puzzle area (floating on white) ===== */
-    .puzzleWrap{
+    /* Puzzle */
+    .puzzle{
       display:flex;
       flex-direction:column;
       align-items:center;
-      gap:10px;
-      margin-top: 10px;
+      gap:12px;
+      margin-top:10px;
     }
 
     .row{
       display:flex;
       gap:10px;
       justify-content:center;
-      flex-wrap:nowrap;
+      flex-wrap:wrap;
     }
 
     .tile{
-      width: clamp(56px, 5.2vw, 92px);
-      height: clamp(68px, 6.2vw, 108px);
-      border-radius: 12px;
-      border: 3px solid #000;
+      width:clamp(56px,5.2vw,92px);
+      height:clamp(68px,6.2vw,108px);
+      border-radius:12px;
+      border:3px solid #000;
+      background:var(--pf-blue);
       display:flex;
       align-items:center;
       justify-content:center;
-      background: #065f46; /* deep green unrevealed */
       user-select:none;
     }
 
@@ -109,128 +104,113 @@
       background:#fff;
     }
 
-    .tile.space{
-      border-color: transparent;
-      background: transparent;
-      width: clamp(26px, 2.2vw, 40px);
-    }
-
     .ch{
+      font-size:clamp(28px,3.2vw,56px);
       font-weight:1000;
-      font-size: clamp(28px, 3.2vw, 56px);
       line-height:1;
       color:#000;
     }
 
     .category{
-      margin-top:8px;
-      padding: 8px 18px;
-      border-radius: 999px;
-      border: 3px solid #000;
-      background: var(--pf-blue);
+      padding:8px 20px;
+      border-radius:999px;
+      background:var(--pf-blue);
+      border:3px solid #000;
       color:#fff;
       font-weight:900;
-      font-size: clamp(18px, 2.0vw, 34px);
+      font-size:clamp(18px,2vw,34px);
       letter-spacing:1px;
       user-select:none;
     }
 
-    /* ===== Letters ===== */
+    /* Letters */
     .letters{
-      margin-top: 18px;
+      margin-top:18px;
       display:grid;
-      grid-template-columns: repeat(13, minmax(0,1fr));
+      grid-template-columns:repeat(13,minmax(0,1fr));
       gap:10px;
-      align-items:center;
-      justify-items:center;
     }
 
     .letterBtn{
-      width:100%;
-      min-width: 48px;
-      height: clamp(56px, 4.8vw, 88px);
-      border-radius: 14px;
-      border: 2px solid #000;
+      height:clamp(56px,4.8vw,88px);
+      border-radius:14px;
+      border:2px solid #000;
       background:#fff;
+      font-size:clamp(20px,2.2vw,38px);
       font-weight:1000;
-      font-size: clamp(20px, 2.2vw, 38px);
       cursor:pointer;
       user-select:none;
-      transition: transform .08s, opacity .1s, background .1s;
+      transition:transform .08s,opacity .1s,background .1s;
     }
-    .letterBtn:hover{ transform: scale(1.04); }
+    .letterBtn:hover{ transform:scale(1.04); }
 
     .letterBtn.used{
       opacity:.35;
       cursor:default;
       transform:none;
     }
-    .letterBtn.hit{
-      background: #dcfce7; /* light green */
-    }
-    .letterBtn.miss{
-      background: #fee2e2; /* light red */
-    }
+    .letterBtn.hit{ background:#dcfce7; }
+    .letterBtn.miss{ background:#fee2e2; }
 
-    /* ===== Bottom actions ===== */
+    /* Bottom */
     .bottom{
-      margin-top: 16px;
       display:flex;
-      gap:12px;
       justify-content:center;
+      gap:12px;
       flex-wrap:wrap;
     }
 
     .status{
-      margin-top: 10px;
-      min-height:1.6em;
       text-align:center;
+      min-height:1.6em;
+      font-size:clamp(18px,1.8vw,30px);
       font-weight:900;
-      font-size: clamp(18px, 1.8vw, 30px);
-      color:#111;
       user-select:none;
     }
 
-    /* ===== Help overlay ===== */
+    /* Overlay */
     .overlay{
       position:fixed;
       inset:0;
-      background: rgba(0,0,0,.75);
+      background:rgba(0,0,0,.75);
       display:none;
       align-items:center;
       justify-content:center;
       padding:16px;
       z-index:9999;
     }
+
     .overlayCard{
       background:#fff;
       border:4px solid #000;
       border-radius:20px;
-      padding:18px;
-      max-width: 900px;
-      width:100%;
+      padding:20px;
+      max-width:900px;
       text-align:center;
     }
+
     .overlayTitle{
+      font-size:clamp(26px,3vw,44px);
       font-weight:1000;
-      font-size: clamp(26px, 3.0vw, 44px);
-      color: var(--pf-blue);
+      color:var(--pf-blue);
     }
+
     .overlayText{
-      margin-top:8px;
+      margin-top:10px;
+      font-size:clamp(18px,1.8vw,28px);
       font-weight:800;
-      font-size: clamp(18px, 1.8vw, 28px);
-      line-height:1.25;
+      line-height:1.3;
     }
+
     .overlayHint{
       margin-top:10px;
+      font-size:clamp(14px,1.4vw,22px);
       font-weight:800;
-      font-size: clamp(14px, 1.4vw, 22px);
       opacity:.85;
     }
 
-    @media (max-width: 1100px){
-      .letters{ grid-template-columns: repeat(10, minmax(0,1fr)); }
+    @media(max-width:1100px){
+      .letters{ grid-template-columns:repeat(10,minmax(0,1fr)); }
     }
   </style>
 </head>
@@ -238,27 +218,21 @@
 <body>
   <div class="page">
 
-    <!-- Top -->
     <div class="top">
-      <div class="score" id="scoreText">SCORE: 0</div>
+      <div class="score" id="score">SCORE: 0</div>
       <div class="topBtns">
         <button class="btn btn-purple" id="fsBtn">Fullscreen</button>
         <button class="btn" id="helpBtn">?</button>
       </div>
     </div>
 
-    <!-- Puzzle -->
-    <div class="puzzleWrap">
-      <div class="row" id="row1"></div>
-      <div class="row" id="row2"></div>
-      <div class="row" id="row3"></div>
-      <div class="category" id="categoryBar">CATEGORY</div>
+    <div class="puzzle">
+      <div class="row" id="row"></div>
+      <div class="category" id="category"></div>
     </div>
 
-    <!-- Letters -->
     <div class="letters" id="letters"></div>
 
-    <!-- Bottom actions -->
     <div class="bottom">
       <button class="btn btn-blue" id="solveBtn">Solve</button>
       <button class="btn btn-red" id="resetBtn">Reset</button>
@@ -267,10 +241,9 @@
     <div class="status" id="status"></div>
   </div>
 
-  <!-- Help Overlay -->
   <div class="overlay" id="overlay">
     <div class="overlayCard">
-      <div class="overlayTitle">Letter Reveal</div>
+      <div class="overlayTitle">Fortune Spin</div>
       <div class="overlayText">
         Take turns guessing letters.<br/>
         Vowels can be guessed anytime.
@@ -282,75 +255,54 @@
   </div>
 
   <script>
-    /* ===== Data ===== */
-    const PUZZLES = [
-      { category:"THING", phrase:"CRAFT GLUE" },
-      { category:"PHRASE", phrase:"TAKE IT ONE DAY AT A TIME" },
-      { category:"PLACE", phrase:"FRONT PORCH" },
-      { category:"FOOD", phrase:"CHICKEN SOUP" },
-      { category:"HOLIDAY", phrase:"MARDI GRAS PARADE" },
-      { category:"HOBBY", phrase:"WORD SEARCH" },
+    const PUZZLES=[
+      {category:"PLACE",phrase:"FRONT PORCH"},
+      {category:"THING",phrase:"CRAFT GLUE"},
+      {category:"FOOD",phrase:"CHICKEN SOUP"},
+      {category:"PHRASE",phrase:"TAKE IT ONE DAY AT A TIME"},
+      {category:"HOLIDAY",phrase:"MARDI GRAS PARADE"}
     ];
-    const ALPHA = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
 
-    /* ===== State ===== */
-    let score = 0;
-    let puzzle = null;
-    let revealed = new Set();
-    let guessed = new Set();
+    const ALPHA="ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
+    let puzzle,revealed,guessed,score;
 
-    /* ===== DOM ===== */
-    const scoreText = document.getElementById("scoreText");
-    const status = document.getElementById("status");
-    const categoryBar = document.getElementById("categoryBar");
-    const lettersDiv = document.getElementById("letters");
-    const overlay = document.getElementById("overlay");
+    const row=document.getElementById("row");
+    const lettersDiv=document.getElementById("letters");
+    const categoryDiv=document.getElementById("category");
+    const status=document.getElementById("status");
+    const scoreDiv=document.getElementById("score");
+    const overlay=document.getElementById("overlay");
 
-    const ROW_CAP = [14,14,14];
+    const norm=s=>s.toUpperCase().replace(/[^A-Z\s]/g,"").replace(/\s+/g," ").trim();
 
-    /* ===== Helpers ===== */
-    const norm = s => s.toUpperCase().replace(/[^A-Z\s]/g,"").replace(/\s+/g," ").trim();
+    function start(){
+      puzzle=PUZZLES[Math.floor(Math.random()*PUZZLES.length)];
+      revealed=new Set();
+      guessed=new Set();
+      score=0;
+      buildRow();
+      buildLetters();
+      update();
+      status.textContent="";
+    }
 
-    function splitRows(text){
-      const words = text.split(" ");
-      const lines = ["","",""];
-      let i=0;
-      for(const w of words){
-        if(i>=3) break;
-        const c = lines[i] ? lines[i]+" "+w : w;
-        if(c.length<=ROW_CAP[i]) lines[i]=c;
-        else { i++; if(i<3) lines[i]=w; }
+    function buildRow(){
+      row.innerHTML="";
+      for(const ch of norm(puzzle.phrase)){
+        if(ch===" "){
+          const gap=document.createElement("div");
+          gap.style.width="24px";
+          row.appendChild(gap);
+        }else{
+          const t=document.createElement("div");
+          t.className="tile";
+          const s=document.createElement("div");
+          s.className="ch";
+          t.appendChild(s);
+          row.appendChild(t);
+        }
       }
-      return lines.map(l=>l.trim());
-    }
-
-    function updateScore(){
-      scoreText.textContent = "SCORE: "+score;
-    }
-
-    function renderRows(){
-      const phrase = norm(puzzle.phrase);
-      const rows = splitRows(phrase);
-      ["row1","row2","row3"].forEach((id,ri)=>{
-        const el = document.getElementById(id);
-        el.innerHTML="";
-        const text = rows[ri]||"";
-        const leftPad = Math.floor((ROW_CAP[ri]-text.length)/2);
-        for(let i=0;i<leftPad;i++){
-          const t=document.createElement("div"); t.className="tile"; t.style.opacity=.35; el.appendChild(t);
-        }
-        for(const ch of text){
-          if(ch===" "){
-            const t=document.createElement("div"); t.className="tile space"; el.appendChild(t);
-          }else{
-            const t=document.createElement("div");
-            t.className="tile"+(revealed.has(ch)?" revealed":"");
-            const s=document.createElement("div"); s.className="ch"; s.textContent=revealed.has(ch)?ch:"";
-            t.appendChild(s); el.appendChild(t);
-          }
-        }
-      });
-      categoryBar.textContent = puzzle.category;
+      categoryDiv.textContent=puzzle.category;
     }
 
     function buildLetters(){
@@ -364,56 +316,49 @@
       }
     }
 
-    function isSolved(){
-      for(const ch of norm(puzzle.phrase)) if(ch!==" " && !revealed.has(ch)) return false;
-      return true;
+    function update(){
+      scoreDiv.textContent="SCORE: "+score;
+      const tiles=[...row.querySelectorAll(".tile")];
+      let i=0;
+      for(const ch of norm(puzzle.phrase)){
+        if(ch===" ") continue;
+        const tile=tiles[i++];
+        tile.classList.toggle("revealed",revealed.has(ch));
+        tile.firstChild.textContent=revealed.has(ch)?ch:"";
+      }
     }
 
     function guess(L,btn){
       if(guessed.has(L)) return;
       guessed.add(L);
 
-      const phrase = norm(puzzle.phrase);
-      const hits = [...phrase].filter(c=>c===L).length;
+      const phrase=norm(puzzle.phrase);
+      const hits=[...phrase].filter(c=>c===L).length;
 
-      if(hits>0){
+      btn.classList.add("used");
+      if(hits){
         revealed.add(L);
-        btn.classList.add("hit","used");
-        score += hits*100;
-        status.textContent = `${L} appears ${hits} time${hits===1?"":"s"}!`;
-        renderRows();
-        updateScore();
-        if(isSolved()){
-          status.textContent = "Solved! Great job!";
-        }
+        btn.classList.add("hit");
+        score+=hits*100;
+        status.textContent=`${L} appears ${hits} time${hits>1?"s":""}`;
       }else{
-        btn.classList.add("miss","used");
-        status.textContent = `${L} is not in the phrase.`;
+        btn.classList.add("miss");
+        status.textContent=`${L} is not in the phrase`;
       }
+      update();
     }
 
-    function newPuzzle(){
-      score=0; revealed=new Set(); guessed=new Set();
-      puzzle = PUZZLES[Math.floor(Math.random()*PUZZLES.length)];
-      buildLetters();
-      renderRows();
-      updateScore();
-      status.textContent="";
-    }
-
-    /* ===== Buttons & Keys ===== */
     document.getElementById("solveBtn").onclick=()=>{
       const g=prompt("Type the full phrase:");
       if(!g) return;
       if(norm(g)===norm(puzzle.phrase)){
         for(const ch of norm(puzzle.phrase)) if(ch!==" ") revealed.add(ch);
-        renderRows();
         status.textContent="Correct! Solved!";
-      }else{
-        status.textContent="Not quite. Keep going.";
-      }
+        update();
+      }else status.textContent="Not quite. Try again.";
     };
-    document.getElementById("resetBtn").onclick=newPuzzle;
+
+    document.getElementById("resetBtn").onclick=start;
 
     document.getElementById("fsBtn").onclick=()=>{
       if(!document.fullscreenElement) document.documentElement.requestFullscreen();
@@ -425,7 +370,7 @@
 
     document.addEventListener("keydown",e=>{
       if(e.code==="Enter") document.getElementById("solveBtn").click();
-      if(e.code==="KeyR") newPuzzle();
+      if(e.code==="KeyR") start();
       if(e.code==="KeyF") document.getElementById("fsBtn").click();
       const k=e.key.toUpperCase();
       if(k>="A"&&k<="Z"){
@@ -434,8 +379,7 @@
       }
     });
 
-    /* ===== Init ===== */
-    newPuzzle();
+    start();
   </script>
 </body>
 </html>
