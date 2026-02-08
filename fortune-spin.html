@@ -3,1033 +3,439 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>Fortune Spin — ProjectorFirst</title>
-  <meta name="description" content="Spin the wheel, guess letters, solve the phrase. Big, projector-friendly."/>
+  <title>Letter Reveal — ProjectorFirst</title>
+  <meta name="description" content="Take turns guessing letters. Big, calm, projector-friendly."/>
   <meta name="theme-color" content="#1e3a8a"/>
   <link rel="icon" href="/logo.svg" type="image/svg+xml"/>
-  <script src="https://cdn.tailwindcss.com"></script>
 
   <style>
+    /* ===== ProjectorFirst baseline ===== */
     :root{
       --pf-blue:#1e3a8a;
       --pf-purple:#7c3aed;
       --pf-red:#dc2626;
       --pf-green:#16a34a;
-      --pf-orange:#f97316;
-      --pf-black:#000;
-      --pf-white:#fff;
-
-      --bg1:#0b2a6f;
-      --bg2:#0f766e;
-      --panel: rgba(255,255,255,0.92);
+      --pf-gray:#e5e7eb;
+      --pf-dark:#111827;
     }
 
-    html, body { height: 100%; }
-
-    body{
+    *{ box-sizing:border-box; }
+    html, body{
       margin:0;
-      font-family: ui-sans-serif, system-ui, -apple-system, sans-serif;
+      padding:0;
+      background:#ffffff;        /* LOCKED: white background */
       color:#000;
-      background: radial-gradient(1200px 800px at 20% 10%, rgba(255,255,255,0.18), rgba(255,255,255,0)),
-                  linear-gradient(135deg, var(--bg1), var(--bg2));
-      overflow-x:hidden;
+      font-family: ui-sans-serif, system-ui, -apple-system, sans-serif;
     }
 
-    .wrap{
+    .page{
       max-width: 1600px;
       margin: 0 auto;
       padding: 16px;
-    }
-
-    .topbar{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap: 12px;
-      margin-bottom: 12px;
-    }
-
-    .score{
-      font-weight: 900;
-      color: #fff;
-      text-shadow: 2px 2px 0 rgba(0,0,0,0.65);
-      font-size: clamp(28px, 3.2vw, 54px);
-      letter-spacing: 1px;
-      user-select:none;
-    }
-
-    .top-actions{
-      display:flex;
-      align-items:center;
-      gap:10px;
-      flex-wrap: wrap;
-      justify-content:flex-end;
-    }
-
-    .pill{
-      background: rgba(255,255,255,0.92);
-      border: 2px solid #000;
-      border-radius: 14px;
-      padding: 10px 14px;
-      box-shadow: 0 8px 22px rgba(0,0,0,0.18);
-    }
-
-    .toggleRow{
-      display:flex;
-      align-items:center;
-      gap:10px;
-      user-select:none;
-      font-weight: 800;
-      color:#000;
-      font-size: 18px;
-    }
-    .toggleRow input{
-      width: 26px;
-      height: 26px;
-      cursor:pointer;
-    }
-
-    .iconBtn{
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      width: 64px;
-      height: 64px;
-      border-radius: 16px;
-      border: 2px solid #000;
-      background: rgba(255,255,255,0.92);
-      box-shadow: 0 8px 22px rgba(0,0,0,0.18);
-      cursor:pointer;
-      transition: transform 0.1s;
-      user-select:none;
-    }
-    .iconBtn:hover{ transform: scale(1.05); }
-
-    .mainGrid{
-      display:grid;
-      grid-template-columns: 1fr;
-      gap: 14px;
-    }
-
-    .boardArea{
-      background: rgba(255,255,255,0.10);
-      border: 2px solid rgba(0,0,0,0.45);
-      border-radius: 20px;
-      padding: 16px;
-      box-shadow: 0 18px 40px rgba(0,0,0,0.20);
-      position: relative;
-      overflow:hidden;
-    }
-
-    .boardShadow{
-      position:absolute;
-      inset:0;
-      background: radial-gradient(900px 420px at 50% 20%, rgba(255,255,255,0.18), rgba(255,255,255,0));
-      pointer-events:none;
-    }
-
-    .boardRows{
       display:flex;
       flex-direction:column;
       gap: 12px;
-      align-items:center;
-      justify-content:center;
-      padding: 12px 10px 6px;
-      position:relative;
-      z-index:1;
     }
 
-    /* Puzzle tiles */
+    /* ===== Top row ===== */
+    .top{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      flex-wrap:wrap;
+    }
+
+    .score{
+      font-weight:900;
+      font-size: clamp(28px, 3.2vw, 54px);
+      color: var(--pf-blue);
+      letter-spacing:1px;
+      user-select:none;
+    }
+
+    .topBtns{
+      display:flex;
+      gap:10px;
+      align-items:center;
+    }
+
+    .btn{
+      font-weight:900;
+      font-size: clamp(18px, 2.0vw, 32px);
+      padding: 12px 18px;
+      border-radius: 14px;
+      border: 3px solid #000;
+      cursor:pointer;
+      user-select:none;
+      background:#fff;
+      transition: transform .08s;
+    }
+    .btn:hover{ transform: scale(1.04); }
+
+    .btn-blue{ background: var(--pf-blue); color:#fff; }
+    .btn-purple{ background: var(--pf-purple); color:#fff; }
+    .btn-red{ background: var(--pf-red); color:#fff; }
+
+    /* ===== Puzzle area (floating on white) ===== */
+    .puzzleWrap{
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      gap:10px;
+      margin-top: 10px;
+    }
+
     .row{
       display:flex;
-      gap: 10px;
+      gap:10px;
       justify-content:center;
-      flex-wrap: nowrap;
+      flex-wrap:nowrap;
     }
 
     .tile{
-      width: clamp(54px, 5.2vw, 92px);
-      height: clamp(64px, 6.0vw, 108px);
+      width: clamp(56px, 5.2vw, 92px);
+      height: clamp(68px, 6.2vw, 108px);
       border-radius: 12px;
-      border: 3px solid rgba(0,0,0,0.80);
-      background: rgba(10, 92, 72, 0.35);
-      box-shadow: 0 10px 18px rgba(0,0,0,0.25);
+      border: 3px solid #000;
       display:flex;
       align-items:center;
       justify-content:center;
+      background: #065f46; /* deep green unrevealed */
       user-select:none;
-      position: relative;
     }
 
     .tile.revealed{
-      background: #fff;
-      box-shadow: 0 10px 18px rgba(0,0,0,0.28);
+      background:#fff;
     }
 
     .tile.space{
-      background: transparent;
       border-color: transparent;
-      box-shadow:none;
+      background: transparent;
       width: clamp(26px, 2.2vw, 40px);
     }
 
-    .tile .ch{
-      font-weight: 1000;
-      color: #000;
+    .ch{
+      font-weight:1000;
       font-size: clamp(28px, 3.2vw, 56px);
-      line-height: 1;
-      text-shadow: 1px 1px 0 rgba(255,255,255,0.35);
+      line-height:1;
+      color:#000;
     }
 
-    .categoryBar{
-      margin-top: 10px;
-      width: min(860px, 92vw);
-      border-radius: 16px;
-      padding: 10px 16px;
-      background: rgba(30,58,138,0.85);
-      border: 2px solid #000;
-      box-shadow: 0 10px 18px rgba(0,0,0,0.25);
-      color: #fff;
-      font-weight: 900;
-      text-align:center;
+    .category{
+      margin-top:8px;
+      padding: 8px 18px;
+      border-radius: 999px;
+      border: 3px solid #000;
+      background: var(--pf-blue);
+      color:#fff;
+      font-weight:900;
       font-size: clamp(18px, 2.0vw, 34px);
-      letter-spacing: 1px;
+      letter-spacing:1px;
       user-select:none;
     }
 
-    /* Letters */
-    .lettersPanel{
-      background: rgba(255,255,255,0.92);
-      border: 2px solid #000;
-      border-radius: 20px;
-      padding: 14px;
-      box-shadow: 0 18px 40px rgba(0,0,0,0.18);
-    }
-
-    .lettersGrid{
+    /* ===== Letters ===== */
+    .letters{
+      margin-top: 18px;
       display:grid;
-      grid-template-columns: repeat(13, minmax(0, 1fr));
-      gap: 10px;
+      grid-template-columns: repeat(13, minmax(0,1fr));
+      gap:10px;
       align-items:center;
       justify-items:center;
     }
 
     .letterBtn{
-      width: 100%;
+      width:100%;
       min-width: 48px;
-      height: clamp(58px, 4.5vw, 90px);
+      height: clamp(56px, 4.8vw, 88px);
       border-radius: 14px;
-      border: 2px solid rgba(0,0,0,0.55);
-      font-weight: 1000;
-      font-size: clamp(22px, 2.2vw, 40px);
+      border: 2px solid #000;
+      background:#fff;
+      font-weight:1000;
+      font-size: clamp(20px, 2.2vw, 38px);
       cursor:pointer;
       user-select:none;
-      background: rgba(15,118,110,0.14);
-      color: rgba(0,0,0,0.75);
-      transition: transform 0.08s, background 0.12s, opacity 0.12s;
-      box-shadow: 0 6px 10px rgba(0,0,0,0.10);
+      transition: transform .08s, opacity .1s, background .1s;
     }
-
-    .letterBtn:hover{ transform: scale(1.03); }
+    .letterBtn:hover{ transform: scale(1.04); }
 
     .letterBtn.used{
-      opacity: 0.38;
-      cursor: default;
+      opacity:.35;
+      cursor:default;
       transform:none;
     }
-
     .letterBtn.hit{
-      background: rgba(22,163,74,0.25);
-      border-color: rgba(0,0,0,0.75);
-      opacity: 1;
-      color:#000;
+      background: #dcfce7; /* light green */
     }
-
     .letterBtn.miss{
-      background: rgba(220,38,38,0.12);
-      opacity: 0.55;
+      background: #fee2e2; /* light red */
     }
 
-    /* Bottom controls */
-    .bottomRow{
-      margin-top: 14px;
-      display:grid;
-      grid-template-columns: 1fr 1fr 1fr;
-      gap: 14px;
-    }
-
-    .btn{
-      font-size: clamp(22px, 2.2vw, 44px);
-      font-weight: 900;
-      padding: clamp(14px, 1.6vw, 22px) clamp(18px, 2.0vw, 30px);
-      border-radius: 18px;
-      cursor:pointer;
-      border: 3px solid #000;
-      box-shadow: 0 10px 18px rgba(0,0,0,0.22);
-      transition: transform 0.10s;
-      user-select:none;
-    }
-    .btn:hover{ transform: scale(1.02); }
-
-    .btn-primary{ background: var(--pf-blue); color:#fff; }
-    .btn-secondary{ background: var(--pf-purple); color:#fff; }
-    .btn-danger{ background: var(--pf-red); color:#fff; }
-
-    .statusLine{
-      margin-top: 10px;
-      color: #fff;
-      text-shadow: 2px 2px 0 rgba(0,0,0,0.65);
-      font-weight: 900;
-      text-align:center;
-      font-size: clamp(18px, 1.8vw, 32px);
-      min-height: 1.6em;
-      user-select:none;
-    }
-
-    /* Wheel */
-    .wheelWrap{
+    /* ===== Bottom actions ===== */
+    .bottom{
+      margin-top: 16px;
       display:flex;
-      align-items:center;
+      gap:12px;
       justify-content:center;
-      gap: 16px;
-      flex-wrap: wrap;
+      flex-wrap:wrap;
+    }
+
+    .status{
       margin-top: 10px;
-    }
-
-    .wheelCard{
-      background: rgba(255,255,255,0.92);
-      border: 2px solid #000;
-      border-radius: 20px;
-      padding: 12px 14px;
-      box-shadow: 0 18px 40px rgba(0,0,0,0.18);
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      gap: 12px;
-    }
-
-    canvas#wheel{
-      width: min(320px, 70vw);
-      height: min(320px, 70vw);
-      border-radius: 999px;
-      border: 3px solid #000;
-      box-shadow: 0 12px 24px rgba(0,0,0,0.22);
-      background: #fff;
-    }
-
-    .pointer{
-      width: 0; height: 0;
-      border-left: 18px solid transparent;
-      border-right: 18px solid transparent;
-      border-bottom: 34px solid #000;
-      transform: translateY(-6px);
-    }
-
-    .multBox{
-      min-width: 280px;
+      min-height:1.6em;
       text-align:center;
-      font-weight: 1000;
-      border: 3px solid #000;
-      border-radius: 18px;
-      padding: 10px 14px;
-      background: rgba(30,58,138,0.10);
-      box-shadow: inset 0 0 0 2px rgba(0,0,0,0.06);
+      font-weight:900;
+      font-size: clamp(18px, 1.8vw, 30px);
+      color:#111;
       user-select:none;
     }
-    .multLabel{
-      font-size: 18px;
-      font-weight: 900;
-      opacity: 0.85;
-    }
-    .multValue{
-      font-size: clamp(26px, 2.4vw, 44px);
-      font-weight: 1000;
-    }
 
-    /* Overlay */
+    /* ===== Help overlay ===== */
     .overlay{
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.75);
+      position:fixed;
+      inset:0;
+      background: rgba(0,0,0,.75);
       display:none;
       align-items:center;
       justify-content:center;
-      padding: 18px;
-      z-index: 9999;
+      padding:16px;
+      z-index:9999;
     }
     .overlayCard{
-      width: min(980px, 96vw);
-      background: #fff;
-      border: 4px solid #000;
-      border-radius: 22px;
-      padding: 18px;
-      box-shadow: 0 22px 60px rgba(0,0,0,0.45);
+      background:#fff;
+      border:4px solid #000;
+      border-radius:20px;
+      padding:18px;
+      max-width: 900px;
+      width:100%;
       text-align:center;
     }
     .overlayTitle{
-      font-size: clamp(28px, 3.0vw, 48px);
-      font-weight: 1000;
+      font-weight:1000;
+      font-size: clamp(26px, 3.0vw, 44px);
       color: var(--pf-blue);
-      margin-bottom: 6px;
     }
     .overlayText{
-      font-size: clamp(18px, 1.8vw, 30px);
-      font-weight: 800;
-      color:#000;
-      line-height: 1.25;
+      margin-top:8px;
+      font-weight:800;
+      font-size: clamp(18px, 1.8vw, 28px);
+      line-height:1.25;
     }
     .overlayHint{
-      margin-top: 10px;
+      margin-top:10px;
+      font-weight:800;
       font-size: clamp(14px, 1.4vw, 22px);
-      font-weight: 800;
-      color:#222;
-      opacity:0.85;
-    }
-
-    /* Modern toggle effect (optional) */
-    .modern .tile{
-      border-radius: 18px;
-      background: rgba(30,58,138,0.15);
-    }
-    .modern .tile.revealed{
-      background: #fff;
-    }
-    .modern .lettersPanel{
-      background: rgba(255,255,255,0.96);
+      opacity:.85;
     }
 
     @media (max-width: 1100px){
-      .lettersGrid{ grid-template-columns: repeat(10, minmax(0, 1fr)); }
-      .bottomRow{ grid-template-columns: 1fr; }
-      .btn{ width: 100%; }
+      .letters{ grid-template-columns: repeat(10, minmax(0,1fr)); }
     }
   </style>
 </head>
 
 <body>
-  <div class="wrap">
-    <div class="topbar">
+  <div class="page">
+
+    <!-- Top -->
+    <div class="top">
       <div class="score" id="scoreText">SCORE: 0</div>
-
-      <div class="top-actions">
-        <div class="iconBtn" id="trophyBtn" title="New Puzzle">🏆</div>
-
-        <div class="pill">
-          <label class="toggleRow">
-            <input type="checkbox" id="modernToggle"/>
-            MODERN
-          </label>
-        </div>
-
-        <div class="iconBtn" id="helpBtn" title="Help">?</div>
-        <div class="iconBtn" id="fsBtn" title="Fullscreen">⛶</div>
+      <div class="topBtns">
+        <button class="btn btn-purple" id="fsBtn">Fullscreen</button>
+        <button class="btn" id="helpBtn">?</button>
       </div>
     </div>
 
-    <div class="mainGrid">
-      <div class="boardArea" id="boardArea">
-        <div class="boardShadow"></div>
-
-        <div class="wheelWrap">
-          <div class="pointer" aria-hidden="true"></div>
-          <div class="wheelCard">
-            <canvas id="wheel" width="520" height="520"></canvas>
-
-            <div class="multBox">
-              <div class="multLabel">CURRENT SPIN</div>
-              <div class="multValue" id="spinValue">SPIN TO START</div>
-              <div class="multLabel" style="margin-top:8px;">LAST RESULT</div>
-              <div class="multValue" id="lastResult">—</div>
-            </div>
-          </div>
-        </div>
-
-        <div class="boardRows" id="boardRows">
-          <div class="row" id="row1"></div>
-          <div class="row" id="row2"></div>
-          <div class="row" id="row3"></div>
-          <div class="categoryBar" id="categoryBar">CATEGORY</div>
-        </div>
-
-        <div class="statusLine" id="statusLine"></div>
-      </div>
-
-      <div class="lettersPanel">
-        <div class="lettersGrid" id="lettersGrid"></div>
-
-        <div class="bottomRow">
-          <button class="btn btn-primary" id="spinBtn">SPIN</button>
-          <button class="btn btn-secondary" id="solveBtn">SOLVE</button>
-          <button class="btn btn-danger" id="resetBtn">RESET</button>
-        </div>
-      </div>
+    <!-- Puzzle -->
+    <div class="puzzleWrap">
+      <div class="row" id="row1"></div>
+      <div class="row" id="row2"></div>
+      <div class="row" id="row3"></div>
+      <div class="category" id="categoryBar">CATEGORY</div>
     </div>
+
+    <!-- Letters -->
+    <div class="letters" id="letters"></div>
+
+    <!-- Bottom actions -->
+    <div class="bottom">
+      <button class="btn btn-blue" id="solveBtn">Solve</button>
+      <button class="btn btn-red" id="resetBtn">Reset</button>
+    </div>
+
+    <div class="status" id="status"></div>
   </div>
 
+  <!-- Help Overlay -->
   <div class="overlay" id="overlay">
-    <div class="overlayCard" id="overlayCard">
-      <div class="overlayTitle">Fortune Spin</div>
-      <div class="overlayText" id="overlayText">
-        Spin the wheel, then guess a letter.<br/>
-        Vowels are allowed anytime. No buy-a-vowel.
+    <div class="overlayCard">
+      <div class="overlayTitle">Letter Reveal</div>
+      <div class="overlayText">
+        Take turns guessing letters.<br/>
+        Vowels can be guessed anytime.
       </div>
       <div class="overlayHint">
-        Click anywhere to continue. Keys: Space=Spin, A–Z=Guess, Enter=Solve, R=Reset, F=Fullscreen
+        Keys: A–Z guess • Enter = Solve • R = Reset • F = Fullscreen
       </div>
     </div>
   </div>
 
   <script>
-    // ---------- Utilities ----------
-    const $ = (id) => document.getElementById(id);
-    const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
-
-    function confettiBurst(){
-      // tiny, dependency-free "confetti-ish" burst
-      const n = 26;
-      for (let i=0;i<n;i++){
-        const p = document.createElement("div");
-        p.style.position="fixed";
-        p.style.left = (window.innerWidth/2 + (Math.random()*120-60)) + "px";
-        p.style.top  = (window.innerHeight/2 + (Math.random()*40-20)) + "px";
-        p.style.width="10px";
-        p.style.height="10px";
-        p.style.borderRadius="3px";
-        p.style.background = ["#1e3a8a","#7c3aed","#16a34a","#f97316","#dc2626"][Math.floor(Math.random()*5)];
-        p.style.zIndex="99999";
-        p.style.opacity="1";
-        p.style.transform="translate(-50%,-50%) rotate("+(Math.random()*360)+"deg)";
-        document.body.appendChild(p);
-
-        const dx = (Math.random()*900-450);
-        const dy = (Math.random()*-700-120);
-        const rot = (Math.random()*720-360);
-        const dur = 700 + Math.random()*550;
-
-        const start = performance.now();
-        function tick(t){
-          const k = (t-start)/dur;
-          if (k>=1){
-            p.remove();
-            return;
-          }
-          const ease = 1 - Math.pow(1-k, 3);
-          p.style.transform = `translate(${dx*ease}px, ${dy*ease}px) rotate(${rot*ease}deg)`;
-          p.style.opacity = String(1 - k);
-          requestAnimationFrame(tick);
-        }
-        requestAnimationFrame(tick);
-      }
-    }
-
-    // ---------- Game data ----------
-    // You can edit/add phrases here anytime.
+    /* ===== Data ===== */
     const PUZZLES = [
-      { category: "THING", phrase: "CRAFT GLUE" },
-      { category: "FOOD", phrase: "CHICKEN SOUP" },
-      { category: "PHRASE", phrase: "TAKE IT ONE DAY AT A TIME" },
-      { category: "MUSIC", phrase: "SING ALONG" },
-      { category: "HOBBY", phrase: "WORD SEARCH" },
-      { category: "PLACE", phrase: "FRONT PORCH" },
-      { category: "HOLIDAY", phrase: "MARDI GRAS PARADE" },
-      { category: "THING", phrase: "COFFEE MUG" },
-      { category: "PHRASE", phrase: "LAUGHTER IS GOOD MEDICINE" },
-      { category: "PLACE", phrase: "LOUISIANA BAYOU" }
+      { category:"THING", phrase:"CRAFT GLUE" },
+      { category:"PHRASE", phrase:"TAKE IT ONE DAY AT A TIME" },
+      { category:"PLACE", phrase:"FRONT PORCH" },
+      { category:"FOOD", phrase:"CHICKEN SOUP" },
+      { category:"HOLIDAY", phrase:"MARDI GRAS PARADE" },
+      { category:"HOBBY", phrase:"WORD SEARCH" },
     ];
+    const ALPHA = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
 
-    const ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
-
-    // Wheel segments (edit freely)
-    const WHEEL = [
-      { label: "100",  value: 100,  color: "#1e3a8a" },
-      { label: "200",  value: 200,  color: "#16a34a" },
-      { label: "300",  value: 300,  color: "#7c3aed" },
-      { label: "400",  value: 400,  color: "#f97316" },
-      { label: "500",  value: 500,  color: "#1e3a8a" },
-      { label: "600",  value: 600,  color: "#16a34a" },
-      { label: "700",  value: 700,  color: "#7c3aed" },
-      { label: "800",  value: 800,  color: "#f97316" },
-      { label: "900",  value: 900,  color: "#1e3a8a" },
-      { label: "1000", value: 1000, color: "#16a34a" },
-      { label: "LOSE TURN", value: "LOSE", color: "#dc2626" },
-      { label: "BANKRUPT",  value: "BANK", color: "#111111" },
-    ];
-
-    // ---------- State ----------
+    /* ===== State ===== */
     let score = 0;
-    let currentPuzzle = null;
-    let revealed = new Set();     // letters revealed
-    let guessed = new Set();      // letters guessed (for disabling)
-    let spinReady = false;
-    let currentSpin = null;       // segment object
-    let spinning = false;
+    let puzzle = null;
+    let revealed = new Set();
+    let guessed = new Set();
 
-    // Board format: 3 rows of 14-ish tiles like your screenshot vibe
-    const ROW_CAPS = [14, 14, 14];
+    /* ===== DOM ===== */
+    const scoreText = document.getElementById("scoreText");
+    const status = document.getElementById("status");
+    const categoryBar = document.getElementById("categoryBar");
+    const lettersDiv = document.getElementById("letters");
+    const overlay = document.getElementById("overlay");
 
-    // ---------- DOM ----------
-    const scoreText = $("scoreText");
-    const categoryBar = $("categoryBar");
-    const statusLine = $("statusLine");
-    const boardArea = $("boardArea");
-    const modernToggle = $("modernToggle");
-    const overlay = $("overlay");
-    const spinValue = $("spinValue");
-    const lastResult = $("lastResult");
+    const ROW_CAP = [14,14,14];
 
-    // ---------- Wheel drawing ----------
-    const wheelCanvas = $("wheel");
-    const ctx = wheelCanvas.getContext("2d");
-    let wheelAngle = 0; // radians
+    /* ===== Helpers ===== */
+    const norm = s => s.toUpperCase().replace(/[^A-Z\s]/g,"").replace(/\s+/g," ").trim();
 
-    function drawWheel(){
-      const w = wheelCanvas.width;
-      const h = wheelCanvas.height;
-      const cx = w/2, cy = h/2;
-      const r = Math.min(w,h)*0.46;
-      ctx.clearRect(0,0,w,h);
-
-      const segCount = WHEEL.length;
-      const segArc = (Math.PI*2)/segCount;
-
-      // outer ring
-      ctx.save();
-      ctx.translate(cx, cy);
-      ctx.rotate(wheelAngle);
-
-      for (let i=0;i<segCount;i++){
-        const seg = WHEEL[i];
-        const a0 = i*segArc;
-        const a1 = a0 + segArc;
-
-        // wedge
-        ctx.beginPath();
-        ctx.moveTo(0,0);
-        ctx.arc(0,0,r,a0,a1);
-        ctx.closePath();
-        ctx.fillStyle = seg.color;
-        ctx.fill();
-
-        // border
-        ctx.lineWidth = 4;
-        ctx.strokeStyle = "#000";
-        ctx.stroke();
-
-        // label
-        ctx.save();
-        ctx.rotate(a0 + segArc/2);
-        ctx.translate(r*0.62, 0);
-        ctx.rotate(Math.PI/2);
-        ctx.fillStyle = (seg.color === "#111111" || seg.color === "#dc2626") ? "#fff" : "#fff";
-        ctx.font = "900 34px ui-sans-serif, system-ui";
-        ctx.textAlign = "center";
-        ctx.textBaseline = "middle";
-        ctx.shadowColor = "rgba(0,0,0,0.5)";
-        ctx.shadowBlur = 6;
-        ctx.fillText(seg.label, 0, 0);
-        ctx.restore();
-      }
-
-      ctx.restore();
-
-      // center hub
-      ctx.beginPath();
-      ctx.arc(cx,cy,r*0.22,0,Math.PI*2);
-      ctx.fillStyle = "#ffffff";
-      ctx.fill();
-      ctx.lineWidth = 5;
-      ctx.strokeStyle = "#000";
-      ctx.stroke();
-
-      ctx.fillStyle = "#000";
-      ctx.font = "1000 34px ui-sans-serif, system-ui";
-      ctx.textAlign = "center";
-      ctx.textBaseline = "middle";
-      ctx.fillText("SPIN", cx, cy);
-    }
-
-    function pickSegmentFromAngle(angleRad){
-      // Pointer is at "top" (negative y). We need which segment is under pointer.
-      // We draw wheel with rotation wheelAngle. Segment index determined by normalized angle.
-      const segArc = (Math.PI*2)/WHEEL.length;
-
-      // pointer angle in wheel's rotated coordinates: top is -pi/2 in canvas space
-      // Convert to wheel local by subtracting wheelAngle.
-      let a = (-Math.PI/2 - angleRad) % (Math.PI*2);
-      if (a < 0) a += Math.PI*2;
-
-      const idx = Math.floor(a / segArc);
-      return WHEEL[idx];
-    }
-
-    function spinWheel(){
-      if (spinning) return;
-      spinning = true;
-
-      statusLine.textContent = "Spinning...";
-      spinValue.textContent = "SPINNING...";
-      spinReady = false;
-      currentSpin = null;
-
-      const start = performance.now();
-      const startAngle = wheelAngle;
-
-      // random spins
-      const extraTurns = 6 + Math.random()*4; // 6-10 turns
-      const endAngle = startAngle + (Math.PI*2)*extraTurns + (Math.random()*Math.PI*2);
-
-      const duration = 1800 + Math.random()*700;
-
-      function easeOutCubic(t){ return 1 - Math.pow(1-t, 3); }
-
-      function animate(now){
-        const t = clamp((now-start)/duration, 0, 1);
-        const e = easeOutCubic(t);
-        wheelAngle = startAngle + (endAngle - startAngle)*e;
-        drawWheel();
-
-        if (t < 1){
-          requestAnimationFrame(animate);
-          return;
-        }
-
-        const seg = pickSegmentFromAngle(wheelAngle);
-        currentSpin = seg;
-        spinReady = true;
-        spinning = false;
-
-        const label = seg.label;
-        lastResult.textContent = label;
-
-        if (seg.value === "BANK"){
-          score = 0;
-          updateScore();
-          spinValue.textContent = "BANKRUPT";
-          statusLine.textContent = "Bankrupt. Score reset to 0. Spin again.";
-          currentSpin = null;
-          spinReady = false;
-          return;
-        }
-
-        if (seg.value === "LOSE"){
-          spinValue.textContent = "LOSE TURN";
-          statusLine.textContent = "Lose turn. Spin again.";
-          currentSpin = null;
-          spinReady = false;
-          return;
-        }
-
-        spinValue.textContent = label + " / LETTER";
-        statusLine.textContent = "Now pick a letter.";
-      }
-
-      requestAnimationFrame(animate);
-    }
-
-    // ---------- Puzzle rendering ----------
-    function choosePuzzle(){
-      const idx = Math.floor(Math.random() * PUZZLES.length);
-      currentPuzzle = PUZZLES[idx];
-      revealed = new Set();
-      guessed = new Set();
-      currentSpin = null;
-      spinReady = false;
-      spinning = false;
-      spinValue.textContent = "SPIN TO START";
-      lastResult.textContent = "—";
-      statusLine.textContent = "";
-      buildLetters();
-      renderBoard();
-      updateScore();
-    }
-
-    function normalizedPhrase(){
-      return currentPuzzle.phrase.toUpperCase().replace(/[^A-Z\s]/g,"").replace(/\s+/g," ").trim();
-    }
-
-    function splitIntoRows(phrase){
-      // Greedy word wrap into 3 lines with caps.
-      const words = phrase.split(" ");
+    function splitRows(text){
+      const words = text.split(" ");
       const lines = ["","",""];
-      let li = 0;
-
-      for (const w of words){
-        if (li >= 3) break;
-        const candidate = lines[li] ? (lines[li] + " " + w) : w;
-
-        if (candidate.length <= ROW_CAPS[li]){
-          lines[li] = candidate;
-        } else {
-          li++;
-          if (li >= 3) break;
-          // if the word is longer than row cap, hard cut
-          if (w.length > ROW_CAPS[li]) {
-            lines[li] = w.slice(0, ROW_CAPS[li]);
-          } else {
-            lines[li] = w;
-          }
-        }
+      let i=0;
+      for(const w of words){
+        if(i>=3) break;
+        const c = lines[i] ? lines[i]+" "+w : w;
+        if(c.length<=ROW_CAP[i]) lines[i]=c;
+        else { i++; if(i<3) lines[i]=w; }
       }
-      return lines.map(s => s.trim());
-    }
-
-    function renderRow(rowEl, text, cap){
-      rowEl.innerHTML = "";
-
-      // center padding with blank tiles to mimic the screenshot framing
-      const chars = text.split("");
-      const tilesNeeded = cap;
-      const contentLen = chars.length;
-      const leftPad = Math.floor((tilesNeeded - contentLen) / 2);
-
-      for (let i=0;i<leftPad;i++){
-        const t = document.createElement("div");
-        t.className = "tile";
-        t.style.opacity = "0.55";
-        rowEl.appendChild(t);
-      }
-
-      for (let i=0;i<contentLen;i++){
-        const ch = chars[i];
-        const tile = document.createElement("div");
-
-        if (ch === " "){
-          tile.className = "tile space";
-          rowEl.appendChild(tile);
-          continue;
-        }
-
-        const isRevealed = revealed.has(ch);
-        tile.className = "tile" + (isRevealed ? " revealed" : "");
-        const span = document.createElement("div");
-        span.className = "ch";
-        span.textContent = isRevealed ? ch : "";
-        tile.appendChild(span);
-        rowEl.appendChild(tile);
-      }
-
-      const rightFill = tilesNeeded - leftPad - contentLen;
-      for (let i=0;i<rightFill;i++){
-        const t = document.createElement("div");
-        t.className = "tile";
-        t.style.opacity = "0.55";
-        rowEl.appendChild(t);
-      }
-    }
-
-    function renderBoard(){
-      if (!currentPuzzle) return;
-      const phrase = normalizedPhrase();
-      const lines = splitIntoRows(phrase);
-
-      renderRow($("row1"), lines[0], ROW_CAPS[0]);
-      renderRow($("row2"), lines[1], ROW_CAPS[1]);
-      renderRow($("row3"), lines[2], ROW_CAPS[2]);
-
-      categoryBar.textContent = currentPuzzle.category.toUpperCase();
-
-      // auto-reveal spaces? (handled by tile.space)
+      return lines.map(l=>l.trim());
     }
 
     function updateScore(){
-      scoreText.textContent = "SCORE: " + score;
+      scoreText.textContent = "SCORE: "+score;
+    }
+
+    function renderRows(){
+      const phrase = norm(puzzle.phrase);
+      const rows = splitRows(phrase);
+      ["row1","row2","row3"].forEach((id,ri)=>{
+        const el = document.getElementById(id);
+        el.innerHTML="";
+        const text = rows[ri]||"";
+        const leftPad = Math.floor((ROW_CAP[ri]-text.length)/2);
+        for(let i=0;i<leftPad;i++){
+          const t=document.createElement("div"); t.className="tile"; t.style.opacity=.35; el.appendChild(t);
+        }
+        for(const ch of text){
+          if(ch===" "){
+            const t=document.createElement("div"); t.className="tile space"; el.appendChild(t);
+          }else{
+            const t=document.createElement("div");
+            t.className="tile"+(revealed.has(ch)?" revealed":"");
+            const s=document.createElement("div"); s.className="ch"; s.textContent=revealed.has(ch)?ch:"";
+            t.appendChild(s); el.appendChild(t);
+          }
+        }
+      });
+      categoryBar.textContent = puzzle.category;
+    }
+
+    function buildLetters(){
+      lettersDiv.innerHTML="";
+      for(const L of ALPHA){
+        const b=document.createElement("button");
+        b.className="letterBtn";
+        b.textContent=L;
+        b.onclick=()=>guess(L,b);
+        lettersDiv.appendChild(b);
+      }
     }
 
     function isSolved(){
-      const phrase = normalizedPhrase();
-      for (const ch of phrase){
-        if (ch === " ") continue;
-        if (!revealed.has(ch)) return false;
-      }
+      for(const ch of norm(puzzle.phrase)) if(ch!==" " && !revealed.has(ch)) return false;
       return true;
     }
 
-    // ---------- Letters ----------
-    function buildLetters(){
-      const grid = $("lettersGrid");
-      grid.innerHTML = "";
-      for (const letter of ALPHABET){
-        const b = document.createElement("button");
-        b.className = "letterBtn";
-        b.textContent = letter;
-        b.dataset.letter = letter;
-        b.addEventListener("click", () => guessLetter(letter));
-        grid.appendChild(b);
-      }
-      refreshLetterStyles();
-    }
+    function guess(L,btn){
+      if(guessed.has(L)) return;
+      guessed.add(L);
 
-    function refreshLetterStyles(){
-      const grid = $("lettersGrid");
-      for (const btn of grid.querySelectorAll("button.letterBtn")){
-        const L = btn.dataset.letter;
-        btn.classList.toggle("used", guessed.has(L));
-      }
-    }
+      const phrase = norm(puzzle.phrase);
+      const hits = [...phrase].filter(c=>c===L).length;
 
-    function guessLetter(letter){
-      if (!currentPuzzle) return;
-
-      // Require a spin before each guess (keeps the wheel meaningful)
-      if (!spinReady || !currentSpin || typeof currentSpin.value !== "number"){
-        statusLine.textContent = "Spin first.";
-        return;
-      }
-
-      if (guessed.has(letter)) return;
-      guessed.add(letter);
-
-      const phrase = normalizedPhrase();
-      const count = [...phrase].filter(ch => ch === letter).length;
-
-      const btn = [...$("lettersGrid").querySelectorAll("button")].find(b => b.dataset.letter === letter);
-
-      if (count > 0){
-        revealed.add(letter);
-
-        // points: segment value * number of hits
-        const points = currentSpin.value * count;
-        score += points;
+      if(hits>0){
+        revealed.add(L);
+        btn.classList.add("hit","used");
+        score += hits*100;
+        status.textContent = `${L} appears ${hits} time${hits===1?"":"s"}!`;
+        renderRows();
         updateScore();
-
-        if (btn){
-          btn.classList.add("hit");
-          btn.classList.add("used");
+        if(isSolved()){
+          status.textContent = "Solved! Great job!";
         }
-
-        statusLine.textContent = `${letter} found ${count} time${count===1?"":"s"}! +${points}`;
-
-        renderBoard();
-
-        if (isSolved()){
-          statusLine.textContent = `Solved! Great job!`;
-          confettiBurst();
-          spinReady = false;
-          currentSpin = null;
-          spinValue.textContent = "YOU WIN";
-          lastResult.textContent = "✅";
-          return;
-        }
-
-        // After a guess, require a new spin for the next guess
-        spinReady = false;
-        currentSpin = null;
-        spinValue.textContent = "SPIN AGAIN";
-      } else {
-        if (btn){
-          btn.classList.add("miss");
-          btn.classList.add("used");
-        }
-        statusLine.textContent = `${letter} is not in the phrase. Spin again.`;
-        spinReady = false;
-        currentSpin = null;
-        spinValue.textContent = "SPIN AGAIN";
+      }else{
+        btn.classList.add("miss","used");
+        status.textContent = `${L} is not in the phrase.`;
       }
     }
 
-    // ---------- Solve ----------
-    function solvePrompt(){
-      if (!currentPuzzle) return;
-      const guess = prompt("Type the full phrase to solve:");
-      if (guess === null) return;
-
-      const cleanedGuess = guess.toUpperCase().replace(/[^A-Z\s]/g,"").replace(/\s+/g," ").trim();
-      const answer = normalizedPhrase();
-
-      if (cleanedGuess === answer){
-        // reveal all
-        for (const ch of answer){
-          if (ch !== " ") revealed.add(ch);
-        }
-        renderBoard();
-        statusLine.textContent = "Correct! Solved!";
-        confettiBurst();
-        spinReady = false;
-        currentSpin = null;
-        spinValue.textContent = "YOU WIN";
-        lastResult.textContent = "✅";
-      } else {
-        statusLine.textContent = "Not quite. Keep going.";
-      }
-    }
-
-    // ---------- Fullscreen / Help / Overlay ----------
-    function toggleFullscreen(){
-      if (!document.fullscreenElement) document.documentElement.requestFullscreen();
-      else document.exitFullscreen();
-    }
-
-    function showOverlay(){
-      overlay.style.display = "flex";
-    }
-    function hideOverlay(){
-      overlay.style.display = "none";
-    }
-
-    overlay.addEventListener("click", hideOverlay);
-    $("overlayCard").addEventListener("click", (e) => e.stopPropagation());
-
-    // ---------- Events ----------
-    $("spinBtn").addEventListener("click", spinWheel);
-    $("solveBtn").addEventListener("click", solvePrompt);
-    $("resetBtn").addEventListener("click", () => {
-      score = 0;
+    function newPuzzle(){
+      score=0; revealed=new Set(); guessed=new Set();
+      puzzle = PUZZLES[Math.floor(Math.random()*PUZZLES.length)];
+      buildLetters();
+      renderRows();
       updateScore();
-      choosePuzzle();
-    });
+      status.textContent="";
+    }
 
-    $("fsBtn").addEventListener("click", toggleFullscreen);
-    $("helpBtn").addEventListener("click", showOverlay);
-    $("trophyBtn").addEventListener("click", () => {
-      statusLine.textContent = "New puzzle loaded.";
-      choosePuzzle();
-    });
+    /* ===== Buttons & Keys ===== */
+    document.getElementById("solveBtn").onclick=()=>{
+      const g=prompt("Type the full phrase:");
+      if(!g) return;
+      if(norm(g)===norm(puzzle.phrase)){
+        for(const ch of norm(puzzle.phrase)) if(ch!==" ") revealed.add(ch);
+        renderRows();
+        status.textContent="Correct! Solved!";
+      }else{
+        status.textContent="Not quite. Keep going.";
+      }
+    };
+    document.getElementById("resetBtn").onclick=newPuzzle;
 
-    modernToggle.addEventListener("change", () => {
-      if (modernToggle.checked) boardArea.classList.add("modern");
-      else boardArea.classList.remove("modern");
-    });
+    document.getElementById("fsBtn").onclick=()=>{
+      if(!document.fullscreenElement) document.documentElement.requestFullscreen();
+      else document.exitFullscreen();
+    };
 
-    document.addEventListener("keydown", (e) => {
-      // Space = Spin
-      if (e.code === "Space"){
-        e.preventDefault();
-        spinWheel();
-        return;
-      }
-      // Enter = Solve
-      if (e.code === "Enter"){
-        e.preventDefault();
-        solvePrompt();
-        return;
-      }
-      // R = Reset
-      if (e.code === "KeyR"){
-        e.preventDefault();
-        score = 0;
-        updateScore();
-        choosePuzzle();
-        return;
-      }
-      // F = Fullscreen
-      if (e.code === "KeyF"){
-        e.preventDefault();
-        toggleFullscreen();
-        return;
-      }
+    document.getElementById("helpBtn").onclick=()=>overlay.style.display="flex";
+    overlay.onclick=()=>overlay.style.display="none";
 
-      // A-Z guess
-      const k = e.key.toUpperCase();
-      if (k.length === 1 && k >= "A" && k <= "Z"){
-        guessLetter(k);
+    document.addEventListener("keydown",e=>{
+      if(e.code==="Enter") document.getElementById("solveBtn").click();
+      if(e.code==="KeyR") newPuzzle();
+      if(e.code==="KeyF") document.getElementById("fsBtn").click();
+      const k=e.key.toUpperCase();
+      if(k>="A"&&k<="Z"){
+        const btn=[...lettersDiv.children].find(b=>b.textContent===k);
+        if(btn) btn.click();
       }
     });
 
-    // ---------- Init ----------
-    drawWheel();
-    choosePuzzle();
-    showOverlay();
+    /* ===== Init ===== */
+    newPuzzle();
   </script>
 </body>
 </html>
-
