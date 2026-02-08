@@ -273,13 +273,77 @@
   </div>
 
   <script>
-    const PUZZLES=[
-      {category:"PLACE",phrase:"FRONT PORCH"},
-      {category:"THING",phrase:"CRAFT GLUE"},
-      {category:"FOOD",phrase:"CHICKEN SOUP"},
-      {category:"PHRASE",phrase:"TAKE IT ONE DAY AT A TIME"},
-      {category:"HOLIDAY",phrase:"MARDI GRAS PARADE"}
-    ];
+const PUZZLES = [
+
+  // ===== PLACES =====
+  { category:"PLACE", phrase:"FRONT PORCH" },
+  { category:"PLACE", phrase:"BACKYARD" },
+  { category:"PLACE", phrase:"LIVING ROOM" },
+  { category:"PLACE", phrase:"DINING ROOM" },
+  { category:"PLACE", phrase:"GROCERY STORE" },
+  { category:"PLACE", phrase:"POST OFFICE" },
+  { category:"PLACE", phrase:"CHURCH PEW" },
+  { category:"PLACE", phrase:"TOWN SQUARE" },
+  { category:"PLACE", phrase:"COUNTRY ROAD" },
+  { category:"PLACE", phrase:"FARM HOUSE" },
+
+  // ===== THINGS =====
+  { category:"THING", phrase:"CRAFT GLUE" },
+  { category:"THING", phrase:"WOODEN SPOON" },
+  { category:"THING", phrase:"COFFEE CUP" },
+  { category:"THING", phrase:"ROCKING CHAIR" },
+  { category:"THING", phrase:"FAMILY BIBLE" },
+  { category:"THING", phrase:"PHOTO ALBUM" },
+  { category:"THING", phrase:"TELEVISION REMOTE" },
+  { category:"THING", phrase:"WASHING MACHINE" },
+  { category:"THING", phrase:"SEWING KIT" },
+  { category:"THING", phrase:"MAILBOX FLAG" },
+
+  // ===== FOOD =====
+  { category:"FOOD", phrase:"CHICKEN SOUP" },
+  { category:"FOOD", phrase:"MEATLOAF DINNER" },
+  { category:"FOOD", phrase:"MASHED POTATOES" },
+  { category:"FOOD", phrase:"GREEN BEANS" },
+  { category:"FOOD", phrase:"CORN BREAD" },
+  { category:"FOOD", phrase:"PEANUT BUTTER" },
+  { category:"FOOD", phrase:"APPLE PIE" },
+  { category:"FOOD", phrase:"FRIED CHICKEN" },
+  { category:"FOOD", phrase:"BISCUITS AND GRAVY" },
+  { category:"FOOD", phrase:"SWEET TEA" },
+
+  // ===== PHRASES =====
+  { category:"PHRASE", phrase:"TAKE IT ONE DAY AT A TIME" },
+  { category:"PHRASE", phrase:"HOME SWEET HOME" },
+  { category:"PHRASE", phrase:"BETTER LATE THAN NEVER" },
+  { category:"PHRASE", phrase:"MAKE HAY WHILE THE SUN SHINES" },
+  { category:"PHRASE", phrase:"A FRIEND IN NEED IS A FRIEND INDEED" },
+  { category:"PHRASE", phrase:"SLOW AND STEADY WINS THE RACE" },
+  { category:"PHRASE", phrase:"THE EARLY BIRD GETS THE WORM" },
+  { category:"PHRASE", phrase:"COUNT YOUR BLESSINGS" },
+  { category:"PHRASE", phrase:"EASY DOES IT" },
+  { category:"PHRASE", phrase:"JUST AROUND THE CORNER" },
+
+  // ===== HOLIDAYS =====
+  { category:"HOLIDAY", phrase:"MARDI GRAS PARADE" },
+  { category:"HOLIDAY", phrase:"CHRISTMAS MORNING" },
+  { category:"HOLIDAY", phrase:"EASTER SUNDAY" },
+  { category:"HOLIDAY", phrase:"THANKSGIVING DINNER" },
+  { category:"HOLIDAY", phrase:"FOURTH OF JULY" },
+  { category:"HOLIDAY", phrase:"HALLOWEEN NIGHT" },
+  { category:"HOLIDAY", phrase:"VALENTINES DAY" },
+  { category:"HOLIDAY", phrase:"NEW YEARS EVE" },
+
+  // ===== PEOPLE / ROLES =====
+  { category:"PERSON", phrase:"SUNDAY SCHOOL TEACHER" },
+  { category:"PERSON", phrase:"FAMILY DOCTOR" },
+  { category:"PERSON", phrase:"BUS DRIVER" },
+  { category:"PERSON", phrase:"FARMER JOHN" },
+  { category:"PERSON", phrase:"GRANDMA ROSE" },
+  { category:"PERSON", phrase:"HIGH SCHOOL COACH" }
+
+];
+</script>
+
 
     const ALPHA="ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
     let puzzle,revealed,guessed,score;
