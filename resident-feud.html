@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Resident Feud — ProjectorFirst</title>
 
 <style>
@@ -15,8 +15,8 @@
 body{
   margin:0;
   padding:16px;
-  background:#fff;
   font-family:system-ui, sans-serif;
+  background:#fff;
   color:#000;
 }
 
@@ -43,11 +43,6 @@ body{
   color:var(--pf-blue);
 }
 
-.topBtns{
-  display:flex;
-  gap:10px;
-}
-
 .btn{
   padding:12px 18px;
   font-size:clamp(18px,2vw,30px);
@@ -55,65 +50,83 @@ body{
   border-radius:14px;
   border:3px solid #000;
   cursor:pointer;
-}
-
-.btn-blue{ background:var(--pf-blue); color:#fff; }
-
-/* Question */
-.questionBox{
-  border:4px solid #000;
-  border-radius:20px;
-  padding:20px;
-  text-align:center;
-  font-size:clamp(24px,2.5vw,44px);
-  font-weight:900;
-}
-
-/* Answers */
-.grid{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:16px;
-}
-
-.card{
-  background:var(--pf-blue);
-  border:4px solid #000;
-  border-radius:18px;
-  height:120px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  cursor:pointer;
-  user-select:none;
-}
-
-.card.revealed{
   background:#fff;
 }
 
-.answerText{
-  font-size:clamp(20px,2.2vw,36px);
+.btn-blue{
+  background:var(--pf-blue);
+  color:#fff;
+}
+
+/* Question */
+.question{
+  font-size:clamp(28px,3vw,52px);
   font-weight:900;
   text-align:center;
+  border:4px solid #000;
+  border-radius:18px;
+  padding:18px;
 }
 
-.points{
-  font-size:clamp(28px,3vw,46px);
+/* Board */
+.board{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:16px;
+}
+
+.answer-card{
+  border:4px solid #000;
+  border-radius:18px;
+  padding:18px;
+  min-height:110px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  background:var(--pf-blue);
+  color:#fff;
+  font-size:clamp(22px,2.4vw,36px);
   font-weight:900;
-  color:var(--pf-blue);
 }
 
-/* Bottom */
-.bottom{
+.answer-card.revealed{
+  background:#fff;
+  color:#000;
+}
+
+.answer-score{
+  font-size:clamp(26px,3vw,46px);
+}
+
+/* Director Panel */
+.director{
+  border-top:4px solid #000;
+  padding-top:16px;
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
+  gap:12px;
+}
+
+.director button{
+  padding:14px;
+  font-size:18px;
+  font-weight:900;
+  border-radius:12px;
+  border:3px solid #000;
+  cursor:pointer;
+}
+
+/* Team controls */
+.teams{
   display:flex;
   justify-content:center;
   gap:12px;
   flex-wrap:wrap;
 }
 
-@media(max-width:900px){
-  .grid{ grid-template-columns:repeat(2,1fr); }
+.active{
+  background:#000 !important;
+  color:#fff !important;
 }
 </style>
 </head>
@@ -122,108 +135,96 @@ body{
 <div class="page">
 
   <div class="top">
-    <div class="score" id="score">SCORE: 0</div>
-    <div class="topBtns">
-      <a href="apps.html" class="btn btn-blue">⬅ Apps</a>
-      <button class="btn btn-blue" id="fsBtn">Fullscreen</button>
+    <div class="score" id="scoreA">TABLE A: 0</div>
+    <div class="teams">
+      <button class="btn" onclick="setTeam('A')" id="btnA">Table A</button>
+      <button class="btn" onclick="setTeam('B')" id="btnB">Table B</button>
     </div>
+    <div class="score" id="scoreB">TABLE B: 0</div>
   </div>
 
-  <div class="questionBox" id="question"></div>
+  <div class="question" id="question"></div>
 
-  <div class="grid" id="grid"></div>
+  <div class="board" id="board"></div>
 
-  <div class="bottom">
-    <button class="btn btn-blue" id="nextBtn">Next Round</button>
-  </div>
+  <div class="director" id="directorPanel"></div>
 
 </div>
 
 <script>
-const ROUNDS = [
+const QUESTIONS = [
   {
-    question:"Name something you find in a kitchen",
+    question:"Name something you keep in the kitchen",
     answers:[
-      {text:"Refrigerator", points:35},
-      {text:"Stove", points:25},
-      {text:"Sink", points:18},
-      {text:"Cabinet", points:12},
-      {text:"Microwave", points:7},
-      {text:"Table", points:3}
-    ]
-  },
-  {
-    question:"Name something people do before bedtime",
-    answers:[
-      {text:"Brush teeth", points:40},
-      {text:"Watch TV", points:22},
-      {text:"Read", points:15},
-      {text:"Pray", points:10},
-      {text:"Change clothes", points:8},
-      {text:"Set alarm", points:5}
-    ]
-  },
-  {
-    question:"Name a food people bring to a potluck",
-    answers:[
-      {text:"Casserole", points:38},
-      {text:"Potato salad", points:26},
-      {text:"Dessert", points:15},
-      {text:"Fried chicken", points:10},
-      {text:"Deviled eggs", points:7},
-      {text:"Bread rolls", points:4}
+      {text:"REFRIGERATOR", points:45},
+      {text:"STOVE", points:22},
+      {text:"SINK", points:15},
+      {text:"MICROWAVE", points:10},
+      {text:"CABINETS", points:8},
+      {text:"DISHES", points:5}
     ]
   }
 ];
 
-let roundIndex = 0;
-let score = 0;
+let qIndex = 0;
+let team = "A";
+let scoreA = 0;
+let scoreB = 0;
 
-const qEl = document.getElementById("question");
-const grid = document.getElementById("grid");
-const scoreEl = document.getElementById("score");
+const questionDiv = document.getElementById("question");
+const boardDiv = document.getElementById("board");
+const directorDiv = document.getElementById("directorPanel");
 
-function loadRound(){
-  const round = ROUNDS[roundIndex % ROUNDS.length];
-  qEl.textContent = round.question;
-  grid.innerHTML = "";
+function loadQuestion(){
+  boardDiv.innerHTML = "";
+  directorDiv.innerHTML = "";
+  const q = QUESTIONS[qIndex];
+  questionDiv.textContent = q.question;
 
-  round.answers.forEach(ans=>{
+  q.answers.forEach((a,i)=>{
     const card = document.createElement("div");
-    card.className = "card";
+    card.className = "answer-card";
+    card.innerHTML = `
+      <div class="answer-text"></div>
+      <div class="answer-score"></div>
+    `;
+    boardDiv.appendChild(card);
 
-    const text = document.createElement("div");
-    text.className = "answerText";
-    text.textContent = "—";
-
-    card.appendChild(text);
-
-    card.onclick = ()=>{
-      if(card.classList.contains("revealed")) return;
-      card.classList.add("revealed");
-      text.innerHTML = `${ans.text}<br><span class="points">${ans.points}</span>`;
-      score += ans.points;
-      scoreEl.textContent = "SCORE: " + score;
-    };
-
-    grid.appendChild(card);
+    const btn = document.createElement("button");
+    btn.textContent = a.text;
+    btn.onclick = ()=>reveal(i);
+    directorDiv.appendChild(btn);
   });
 }
 
-document.getElementById("nextBtn").onclick = ()=>{
-  roundIndex++;
-  loadRound();
-};
+function reveal(index){
+  const card = document.querySelectorAll(".answer-card")[index];
+  if(card.classList.contains("revealed")) return;
 
-document.getElementById("fsBtn").onclick = ()=>{
-  if(!document.fullscreenElement){
-    document.documentElement.requestFullscreen();
-  } else {
-    document.exitFullscreen();
-  }
-};
+  const ans = QUESTIONS[qIndex].answers[index];
+  card.classList.add("revealed");
+  card.querySelector(".answer-text").textContent = ans.text;
+  card.querySelector(".answer-score").textContent = ans.points;
 
-loadRound();
+  if(team==="A") scoreA+=ans.points;
+  else scoreB+=ans.points;
+
+  updateScores();
+}
+
+function setTeam(t){
+  team = t;
+  document.getElementById("btnA").classList.toggle("active",t==="A");
+  document.getElementById("btnB").classList.toggle("active",t==="B");
+}
+
+function updateScores(){
+  document.getElementById("scoreA").textContent = `TABLE A: ${scoreA}`;
+  document.getElementById("scoreB").textContent = `TABLE B: ${scoreB}`;
+}
+
+setTeam("A");
+loadQuestion();
 </script>
 </body>
 </html>
