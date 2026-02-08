@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Resident Feud — ProjectorFirst</title>
+
+<style>
+:root{
+  --pf-blue:#1e3a8a;
+}
+
+*{ box-sizing:border-box; }
+
+body{
+  margin:0;
+  padding:16px;
+  background:#fff;
+  font-family:system-ui, sans-serif;
+  color:#000;
+}
+
+.page{
+  max-width:1600px;
+  margin:0 auto;
+  display:flex;
+  flex-direction:column;
+  gap:20px;
+}
+
+/* Top bar */
+.top{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  flex-wrap:wrap;
+  gap:12px;
+}
+
+.score{
+  font-size:clamp(28px,3vw,52px);
+  font-weight:900;
+  color:var(--pf-blue);
+}
+
+.topBtns{
+  display:flex;
+  gap:10px;
+}
+
+.btn{
+  padding:12px 18px;
+  font-size:clamp(18px,2vw,30px);
+  font-weight:900;
+  border-radius:14px;
+  border:3px solid #000;
+  cursor:pointer;
+}
+
+.btn-blue{ background:var(--pf-blue); color:#fff; }
+
+/* Question */
+.questionBox{
+  border:4px solid #000;
+  border-radius:20px;
+  padding:20px;
+  text-align:center;
+  font-size:clamp(24px,2.5vw,44px);
+  font-weight:900;
+}
+
+/* Answers */
+.grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:16px;
+}
+
+.card{
+  background:var(--pf-blue);
+  border:4px solid #000;
+  border-radius:18px;
+  height:120px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  user-select:none;
+}
+
+.card.revealed{
+  background:#fff;
+}
+
+.answerText{
+  font-size:clamp(20px,2.2vw,36px);
+  font-weight:900;
+  text-align:center;
+}
+
+.points{
+  font-size:clamp(28px,3vw,46px);
+  font-weight:900;
+  color:var(--pf-blue);
+}
+
+/* Bottom */
+.bottom{
+  display:flex;
+  justify-content:center;
+  gap:12px;
+  flex-wrap:wrap;
+}
+
+@media(max-width:900px){
+  .grid{ grid-template-columns:repeat(2,1fr); }
+}
+</style>
+</head>
+
+<body>
+<div class="page">
+
+  <div class="top">
+    <div class="score" id="score">SCORE: 0</div>
+    <div class="topBtns">
+      <a href="apps.html" class="btn btn-blue">⬅ Apps</a>
+      <button class="btn btn-blue" id="fsBtn">Fullscreen</button>
+    </div>
+  </div>
+
+  <div class="questionBox" id="question"></div>
+
+  <div class="grid" id="grid"></div>
+
+  <div class="bottom">
+    <button class="btn btn-blue" id="nextBtn">Next Round</button>
+  </div>
+
+</div>
+
+<script>
+const ROUNDS = [
+  {
+    question:"Name something you find in a kitchen",
+    answers:[
+      {text:"Refrigerator", points:35},
+      {text:"Stove", points:25},
+      {text:"Sink", points:18},
+      {text:"Cabinet", points:12},
+      {text:"Microwave", points:7},
+      {text:"Table", points:3}
+    ]
+  },
+  {
+    question:"Name something people do before bedtime",
+    answers:[
+      {text:"Brush teeth", points:40},
+      {text:"Watch TV", points:22},
+      {text:"Read", points:15},
+      {text:"Pray", points:10},
+      {text:"Change clothes", points:8},
+      {text:"Set alarm", points:5}
+    ]
+  },
+  {
+    question:"Name a food people bring to a potluck",
+    answers:[
+      {text:"Casserole", points:38},
+      {text:"Potato salad", points:26},
+      {text:"Dessert", points:15},
+      {text:"Fried chicken", points:10},
+      {text:"Deviled eggs", points:7},
+      {text:"Bread rolls", points:4}
+    ]
+  }
+];
+
+let roundIndex = 0;
+let score = 0;
+
+const qEl = document.getElementById("question");
+const grid = document.getElementById("grid");
+const scoreEl = document.getElementById("score");
+
+function loadRound(){
+  const round = ROUNDS[roundIndex % ROUNDS.length];
+  qEl.textContent = round.question;
+  grid.innerHTML = "";
+
+  round.answers.forEach(ans=>{
+    const card = document.createElement("div");
+    card.className = "card";
+
+    const text = document.createElement("div");
+    text.className = "answerText";
+    text.textContent = "—";
+
+    card.appendChild(text);
+
+    card.onclick = ()=>{
+      if(card.classList.contains("revealed")) return;
+      card.classList.add("revealed");
+      text.innerHTML = `${ans.text}<br><span class="points">${ans.points}</span>`;
+      score += ans.points;
+      scoreEl.textContent = "SCORE: " + score;
+    };
+
+    grid.appendChild(card);
+  });
+}
+
+document.getElementById("nextBtn").onclick = ()=>{
+  roundIndex++;
+  loadRound();
+};
+
+document.getElementById("fsBtn").onclick = ()=>{
+  if(!document.fullscreenElement){
+    document.documentElement.requestFullscreen();
+  } else {
+    document.exitFullscreen();
+  }
+};
+
+loadRound();
+</script>
+</body>
+</html>
