@@ -144,11 +144,16 @@
     }
     .letterBtn:hover{ transform:scale(1.04); }
 
-    .letterBtn.used{
-      opacity:.35;
-      cursor:default;
-      transform:none;
-    }
+  .letterBtn.used{
+  background:#000;
+  color:#fff;
+  cursor:default;
+  transform:none;
+}
+.letterBtn.used:hover{
+  transform:none;
+}
+
     .letterBtn.hit{ background:#dcfce7; }
     .letterBtn.miss{ background:#fee2e2; }
 
