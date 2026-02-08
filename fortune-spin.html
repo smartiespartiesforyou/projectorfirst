@@ -132,6 +132,11 @@
       grid-template-columns:repeat(13,minmax(0,1fr));
       gap:10px;
     }
+.lettersWrap{
+  width:100%;
+  display:flex;
+  justify-content:center;
+}
 
     .letterBtn{
       height:clamp(56px,4.8vw,88px);
@@ -230,8 +235,10 @@
       <div class="topBtns">
   <a href="apps.html" class="btn btn-blue">⬅ Apps</a>
   <button class="btn btn-purple" id="fsBtn">Fullscreen</button>
-  <button class="btn" id="helpBtn">?</button>
+
 </div>
+      </div>
+
 
 
     <div class="puzzle">
@@ -239,7 +246,10 @@
       <div class="category" id="category"></div>
     </div>
 
-    <div class="letters" id="letters"></div>
+   <div class="lettersWrap">
+  <div class="letters" id="letters"></div>
+</div>
+
 
     <div class="bottom">
       <button class="btn btn-blue" id="solveBtn">Solve</button>
@@ -373,10 +383,7 @@
       else document.exitFullscreen();
     };
 
-    document.getElementById("helpBtn").onclick=()=>overlay.style.display="flex";
-    overlay.onclick=()=>overlay.style.display="none";
-
-    document.addEventListener("keydown",e=>{
+      document.addEventListener("keydown",e=>{
       if(e.code==="Enter") document.getElementById("solveBtn").click();
       if(e.code==="KeyR") start();
       if(e.code==="KeyF") document.getElementById("fsBtn").click();
