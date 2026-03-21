@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>31 Day Morning Devotional — ProjectorFirst</title>
+  <title>31 Day Daily Devotional — ProjectorFirst</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     html, body {
@@ -17,6 +17,7 @@
       background-size: cover;
       background-position: center;
       background-repeat: no-repeat;
+      min-height: 58vh;
     }
   </style>
 </head>
@@ -28,82 +29,86 @@
 
   <div id="app" class="min-h-screen flex flex-col">
 
-    <div class="flex flex-wrap justify-between items-center gap-3 px-6 py-4 bg-black/60 backdrop-blur-sm">
-      <div class="text-2xl font-extrabold">ProjectorFirst Morning Devotional</div>
-      <div class="w-full px-6 py-4 bg-black/60 backdrop-blur-sm">
-  <div class="max-w-7xl mx-auto flex flex-wrap justify-between items-center gap-3">
+    <!-- HEADER -->
+    <div class="w-full px-6 py-4 bg-black/60 backdrop-blur-sm">
+      <div class="max-w-7xl mx-auto flex flex-wrap justify-between items-center gap-3">
 
-    <a href="apps.html" class="px-4 py-2 bg-blue-800 rounded-xl font-bold hover:bg-blue-700">
-      ← Back to Apps
-    </a>
+        <a href="apps.html" class="px-4 py-2 bg-blue-800 rounded-xl font-bold hover:bg-blue-700">
+          ← Back to Apps
+        </a>
 
-    <div class="text-2xl font-extrabold">ProjectorFirst Morning Devotional</div>
+        <div class="text-2xl font-extrabold">ProjectorFirst Daily Devotional</div>
 
-    <div class="flex flex-wrap gap-3">
-      <button id="restartBtn" class="px-4 py-2 bg-blue-800 rounded-xl font-bold hover:bg-blue-700">Restart</button>
-      <button id="fullscreenBtn" class="px-4 py-2 bg-green-700 rounded-xl font-bold hover:bg-green-600">Fullscreen</button>
-      <button id="musicPlayBtn" class="px-4 py-2 bg-purple-700 rounded-xl font-bold hover:bg-purple-600">Play Music</button>
-      <button id="musicPauseBtn" class="px-4 py-2 bg-gray-700 rounded-xl font-bold hover:bg-gray-600">Pause Music</button>
-    </div>
-
-  </div>
-</div>
-
-    <div id="slide"
-<div class="flex justify-center px-4 py-6">
-  <div class="w-full max-w-5xl">
-
-    <div id="slide"
-      class="slide-bg flex items-center justify-center px-6 py-10 rounded-2xl"
-      style="background-image: linear-gradient(rgba(0,0,0,.45), rgba(0,0,0,.45)), url('https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1600&q=80');">
-
-      <div class="w-full text-center">
-        <div id="slideTag" class="text-lg md:text-2xl font-bold uppercase tracking-widest mb-4 text-yellow-300">
-          Day 1
+        <div class="flex flex-wrap gap-3">
+          <button id="restartBtn" class="px-4 py-2 bg-blue-800 rounded-xl font-bold hover:bg-blue-700">Restart</button>
+          <button id="fullscreenBtn" class="px-4 py-2 bg-green-700 rounded-xl font-bold hover:bg-green-600">Fullscreen</button>
+          <button id="musicPlayBtn" class="px-4 py-2 bg-purple-700 rounded-xl font-bold hover:bg-purple-600">Play Music</button>
+          <button id="musicPauseBtn" class="px-4 py-2 bg-gray-700 rounded-xl font-bold hover:bg-gray-600">Pause Music</button>
         </div>
 
-        <h1 id="slideTitle" class="text-4xl md:text-7xl font-extrabold mb-6">
-          God Is With You
-        </h1>
-
-        <p id="slideVerse" class="text-2xl md:text-4xl font-bold mb-6">
-          “Fear thou not; for I am with thee.” — Isaiah 41:10
-        </p>
-
-        <p id="slideText" class="text-xl md:text-3xl max-w-3xl mx-auto">
-          You do not begin this day alone. Strength and help are already beside you.
-        </p>
       </div>
+    </div>
 
+    <!-- SLIDE -->
+    <div class="flex justify-center px-4 py-6">
+      <div class="w-full max-w-5xl">
+
+        <div id="slide"
+          class="slide-bg flex items-center justify-center px-6 py-10 rounded-2xl"
+          style="background-image: linear-gradient(rgba(0,0,0,.45), rgba(0,0,0,.45)), url('https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1600&q=80');">
+
+          <div class="w-full text-center">
+            <div id="slideTag" class="text-lg md:text-2xl font-bold uppercase tracking-widest mb-4 text-yellow-300">
+              Day 1
+            </div>
+
+            <h1 id="slideTitle" class="text-4xl md:text-7xl font-extrabold mb-6">
+              God Is With You
+            </h1>
+
+            <p id="slideVerse" class="text-2xl md:text-4xl font-bold mb-6">
+              “Fear thou not; for I am with thee.” — Isaiah 41:10
+            </p>
+
+            <p id="slideText" class="text-xl md:text-3xl max-w-3xl mx-auto">
+              You do not begin this day alone. Strength and help are already beside you.
+            </p>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+
+    <!-- CONTROLS -->
+    <div class="flex justify-center pb-8">
+      <div class="flex flex-wrap items-center justify-center gap-3 bg-black/70 px-6 py-4 rounded-xl">
+
+        <button id="prevBtn" class="px-6 py-3 bg-gray-700 rounded-xl font-bold hover:bg-gray-600">
+          ← Previous
+        </button>
+
+        <button id="nextBtn" class="px-6 py-3 bg-blue-800 rounded-xl font-bold hover:bg-blue-700">
+          Next →
+        </button>
+
+        <div id="counter" class="px-4 text-lg font-bold">
+          Day 1 of 31
+        </div>
+
+        <button id="playBtn" class="px-6 py-3 bg-green-700 rounded-xl font-bold hover:bg-green-600">
+          Auto Play
+        </button>
+
+        <button id="stopBtn" class="px-6 py-3 bg-red-700 rounded-xl font-bold hover:bg-red-600">
+          Stop
+        </button>
+
+      </div>
     </div>
 
   </div>
-</div>
-<div class="flex justify-center pb-8">
-  <div class="flex flex-wrap items-center justify-center gap-3 bg-black/70 px-6 py-4 rounded-xl">
 
-    <button id="prevBtn" class="px-6 py-3 bg-gray-700 rounded-xl font-bold hover:bg-gray-600">
-      ← Previous
-    </button>
-
-    <button id="nextBtn" class="px-6 py-3 bg-blue-800 rounded-xl font-bold hover:bg-blue-700">
-      Next →
-    </button>
-
-    <div id="counter" class="px-4 text-lg font-bold">
-      Day 1 of 31
-    </div>
-
-    <button id="playBtn" class="px-6 py-3 bg-green-700 rounded-xl font-bold hover:bg-green-600">
-      Auto Play
-    </button>
-
-    <button id="stopBtn" class="px-6 py-3 bg-red-700 rounded-xl font-bold hover:bg-red-600">
-      Stop
-    </button>
-
-  </div>
-</div>
   <script>
     const slides = [
       {
