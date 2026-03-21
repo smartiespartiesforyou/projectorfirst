@@ -123,108 +123,72 @@
       "Thanksgiving",
       "Christmas"
     ];
+const defaultWords = [
 
-    const defaultWords = [
-      { word: "NOAH", category: "Bible" },
-      { word: "DAVID", category: "Bible" },
-      { word: "MOSES", category: "Bible" },
-      { word: "ANGEL", category: "Bible" },
+  // Bible
+  { word: "NOAH", category: "Bible" }, { word: "DAVID", category: "Bible" },
+  { word: "MOSES", category: "Bible" }, { word: "JESUS", category: "Bible" },
+  { word: "MARY", category: "Bible" }, { word: "JOSEPH", category: "Bible" },
+  { word: "BIBLE", category: "Bible" }, { word: "PRAYER", category: "Bible" },
+  { word: "FAITH", category: "Bible" }, { word: "CROSS", category: "Bible" },
+  { word: "HEAVEN", category: "Bible" }, { word: "DISCIPLES", category: "Bible" },
+  { word: "PSALMS", category: "Bible" }, { word: "COMMANDMENTS", category: "Bible" },
+  { word: "SHEPHERD", category: "Bible" }, { word: "ALTAR", category: "Bible" },
 
-      { word: "TIGER", category: "Animals" },
-      { word: "PANDA", category: "Animals" },
-      { word: "HORSE", category: "Animals" },
-      { word: "RABBIT", category: "Animals" },
+  // Animals
+  { word: "DOG", category: "Animals" }, { word: "CAT", category: "Animals" },
+  { word: "LION", category: "Animals" }, { word: "TIGER", category: "Animals" },
+  { word: "BEAR", category: "Animals" }, { word: "ELEPHANT", category: "Animals" },
+  { word: "ZEBRA", category: "Animals" }, { word: "HORSE", category: "Animals" },
+  { word: "RABBIT", category: "Animals" }, { word: "MONKEY", category: "Animals" },
+  { word: "FOX", category: "Animals" }, { word: "DEER", category: "Animals" },
+  { word: "OWL", category: "Animals" }, { word: "DUCK", category: "Animals" },
+  { word: "FROG", category: "Animals" }, { word: "SNAKE", category: "Animals" },
 
-      { word: "LINCOLN", category: "History" },
-      { word: "LIBERTY", category: "History" },
-      { word: "PRESIDENT", category: "History" },
-      { word: "AMERICA", category: "History" },
+  // History
+  { word: "LINCOLN", category: "History" }, { word: "WASHINGTON", category: "History" },
+  { word: "REVOLUTION", category: "History" }, { word: "FREEDOM", category: "History" },
+  { word: "CONSTITUTION", category: "History" }, { word: "PRESIDENT", category: "History" },
+  { word: "AMERICA", category: "History" }, { word: "CIVILWAR", category: "History" },
+  { word: "DECLARATION", category: "History" }, { word: "GOVERNMENT", category: "History" },
+  { word: "COLONY", category: "History" }, { word: "FLAG", category: "History" },
+  { word: "PIONEER", category: "History" }, { word: "SETTLERS", category: "History" },
 
-      { word: "PIZZA", category: "Food" },
-      { word: "COOKIE", category: "Food" },
-      { word: "BACON", category: "Food" },
-      { word: "APPLE", category: "Food" },
+  // Food
+  { word: "PIZZA", category: "Food" }, { word: "BURGER", category: "Food" },
+  { word: "FRIES", category: "Food" }, { word: "COOKIE", category: "Food" },
+  { word: "BACON", category: "Food" }, { word: "APPLE", category: "Food" },
+  { word: "ICECREAM", category: "Food" }, { word: "SANDWICH", category: "Food" },
+  { word: "PANCAKE", category: "Food" }, { word: "WAFFLE", category: "Food" },
+  { word: "SPAGHETTI", category: "Food" }, { word: "MEATBALL", category: "Food" },
+  { word: "CHICKEN", category: "Food" }, { word: "STEAK", category: "Food" },
 
-      { word: "OCTOPUS", category: "Fun Facts" },
-      { word: "RAINBOW", category: "Fun Facts" },
-      { word: "PLANET", category: "Fun Facts" },
-      { word: "DINOSAUR", category: "Fun Facts" },
+  // Music
+  { word: "ELVIS", category: "Music" }, { word: "GUITAR", category: "Music" },
+  { word: "PIANO", category: "Music" }, { word: "JAZZ", category: "Music" },
+  { word: "BLUES", category: "Music" }, { word: "SINGER", category: "Music" },
+  { word: "MELODY", category: "Music" }, { word: "LYRICS", category: "Music" },
+  { word: "BAND", category: "Music" }, { word: "CONCERT", category: "Music" },
 
-      { word: "ELVIS", category: "Music" },
-      { word: "GUITAR", category: "Music" },
-      { word: "PIANO", category: "Music" },
-      { word: "JAZZ", category: "Music" },
+  // Movies
+  { word: "ROCKY", category: "Movies" }, { word: "TITANIC", category: "Movies" },
+  { word: "JAWS", category: "Movies" }, { word: "FROZEN", category: "Movies" },
+  { word: "BATMAN", category: "Movies" }, { word: "SUPERMAN", category: "Movies" },
+  { word: "AVATAR", category: "Movies" }, { word: "ET", category: "Movies" },
+  { word: "GREASE", category: "Movies" }, { word: "CASABLANCA", category: "Movies" },
 
-      { word: "ROCKY", category: "Movies" },
-      { word: "FROZEN", category: "Movies" },
-      { word: "TITANIC", category: "Movies" },
-      { word: "JAWS", category: "Movies" },
+  // New Orleans
+  { word: "BEIGNET", category: "New Orleans" }, { word: "BOURBON", category: "New Orleans" },
+  { word: "CAJUN", category: "New Orleans" }, { word: "GUMBO", category: "New Orleans" },
+  { word: "POBOY", category: "New Orleans" }, { word: "JAZZFEST", category: "New Orleans" },
+  { word: "PARADE", category: "New Orleans" }, { word: "FRENCHQUARTER", category: "New Orleans" },
 
-      { word: "BOURBON", category: "New Orleans" },
-      { word: "BEIGNET", category: "New Orleans" },
-      { word: "CAJUN", category: "New Orleans" },
-      { word: "JAZZFEST", category: "New Orleans" },
+  // Holidays (example block — repeat pattern for others)
+  { word: "CHRISTMAS", category: "Holidays" }, { word: "THANKSGIVING", category: "Holidays" },
+  { word: "HALLOWEEN", category: "Holidays" }, { word: "EASTER", category: "Holidays" },
+  { word: "VALENTINE", category: "Holidays" }, { word: "FIREWORK", category: "Holidays" }
 
-      { word: "MIDNIGHT", category: "New Years" },
-      { word: "CONFETTI", category: "New Years" },
-      { word: "PARTY", category: "New Years" },
-      { word: "COUNTDOWN", category: "New Years" },
-
-      { word: "BONANZA", category: "Old TV Shows" },
-      { word: "MASH", category: "Old TV Shows" },
-      { word: "CHEERS", category: "Old TV Shows" },
-      { word: "GUNSMOKE", category: "Old TV Shows" },
-
-      { word: "HEART", category: "Valentine’s Day" },
-      { word: "CUPID", category: "Valentine’s Day" },
-      { word: "ROSES", category: "Valentine’s Day" },
-      { word: "CANDY", category: "Valentine’s Day" },
-
-      { word: "CLOVER", category: "St. Patrick’s Day" },
-      { word: "GREEN", category: "St. Patrick’s Day" },
-      { word: "LEPRECHAUN", category: "St. Patrick’s Day" },
-      { word: "SHAMROCK", category: "St. Patrick’s Day" },
-
-      { word: "PARADE", category: "Mardi Gras" },
-      { word: "BEADS", category: "Mardi Gras" },
-      { word: "KINGCAKE", category: "Mardi Gras" },
-      { word: "MASK", category: "Mardi Gras" },
-
-      { word: "BUNNY", category: "Easter" },
-      { word: "EGGS", category: "Easter" },
-      { word: "BASKET", category: "Easter" },
-      { word: "SPRING", category: "Easter" },
-
-      { word: "FIREWORK", category: "July 4th" },
-      { word: "FREEDOM", category: "July 4th" },
-      { word: "FLAG", category: "July 4th" },
-      { word: "AMERICA", category: "July 4th" },
-
-      { word: "HONOR", category: "Memorial Day" },
-      { word: "SERVICE", category: "Memorial Day" },
-      { word: "PARADE", category: "Memorial Day" },
-      { word: "REMEMBER", category: "Memorial Day" },
-
-      { word: "VETERAN", category: "Veterans Day" },
-      { word: "SALUTE", category: "Veterans Day" },
-      { word: "ARMY", category: "Veterans Day" },
-      { word: "PATRIOT", category: "Veterans Day" },
-
-      { word: "PUMPKIN", category: "Halloween" },
-      { word: "GHOST", category: "Halloween" },
-      { word: "COSTUME", category: "Halloween" },
-      { word: "CANDY", category: "Halloween" },
-
-      { word: "TURKEY", category: "Thanksgiving" },
-      { word: "GRAVY", category: "Thanksgiving" },
-      { word: "FAMILY", category: "Thanksgiving" },
-      { word: "HARVEST", category: "Thanksgiving" },
-
-      { word: "SANTA", category: "Christmas" },
-      { word: "REINDEER", category: "Christmas" },
-      { word: "PRESENT", category: "Christmas" },
-      { word: "MISTLETOE", category: "Christmas" }
-    ];
+];
 
     let categories = JSON.parse(localStorage.getItem("scrambleCategories") || "null");
     let words = JSON.parse(localStorage.getItem("scrambleWords") || "null");
