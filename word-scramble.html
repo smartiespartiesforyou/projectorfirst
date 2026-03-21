@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Word Scrambler — ProjectorFirst</title>
   <script src="https://cdn.tailwindcss.com"></script>
 
@@ -13,7 +13,7 @@
       font-family: Arial, sans-serif;
     }
     .modal-bg {
-      background: rgba(0,0,0,0.55);
+      background: rgba(0, 0, 0, 0.55);
       position: fixed;
       inset: 0;
       display: none;
@@ -28,7 +28,7 @@
       padding: 30px;
       width: 90%;
       max-width: 700px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
     }
     .big-btn {
       font-size: 40px;
@@ -36,7 +36,7 @@
       border-radius: 1rem;
       font-weight: 800;
       color: white;
-      transition: background-color .1s ease;
+      transition: background-color 0.1s ease;
     }
     .pf-blue { background: #1e3a8a; }
     .pf-blue:hover { background: #1d4ed8; }
@@ -67,6 +67,7 @@
       Press “New Word”
     </div>
     <div id="answer" class="text-5xl md:text-6xl font-black text-green-700 mt-8 hidden break-words"></div>
+    <div id="status" class="text-lg text-gray-600 mt-4"></div>
 
     <div class="flex justify-center gap-6 mt-10 flex-wrap">
       <button id="newWordBtn" class="big-btn pf-blue">New Word</button>
@@ -84,14 +85,16 @@
       </div>
 
       <label class="font-bold text-gray-700">Word</label>
-      <input id="inputWord" class="w-full border p-3 rounded-xl mb-4 text-lg" placeholder="Enter a word…">
+      <input id="inputWord" class="w-full border p-3 rounded-xl mb-4 text-lg" placeholder="Enter a word…" />
 
       <label class="font-bold text-gray-700">Category</label>
       <select id="inputCategory" class="w-full border p-3 rounded-xl mb-4 text-lg"></select>
 
-      <input id="newCategoryInput"
-             class="w-full border p-3 rounded-xl mb-4 text-lg hidden"
-             placeholder="Enter new category…">
+      <input
+        id="newCategoryInput"
+        class="w-full border p-3 rounded-xl mb-4 text-lg hidden"
+        placeholder="Enter new category…"
+      />
 
       <button id="saveBtn" class="bg-green-600 text-white font-bold px-6 py-3 rounded-xl hover:bg-green-500">Save Word</button>
 
@@ -101,6 +104,8 @@
   </div>
 
   <script>
+    const DATA_VERSION = "scrambler-v3-2026-03-21";
+
     const defaultCategories = [
       "Bible",
       "Animals",
@@ -112,8 +117,8 @@
       "New Orleans",
       "New Years",
       "Old TV Shows",
-      "Valentine’s Day",
-      "St. Patrick’s Day",
+      "Valentine's Day",
+      "St. Patrick's Day",
       "Mardi Gras",
       "Easter",
       "July 4th",
@@ -123,72 +128,109 @@
       "Thanksgiving",
       "Christmas"
     ];
-const defaultWords = [
 
-  // Bible
-  { word: "NOAH", category: "Bible" }, { word: "DAVID", category: "Bible" },
-  { word: "MOSES", category: "Bible" }, { word: "JESUS", category: "Bible" },
-  { word: "MARY", category: "Bible" }, { word: "JOSEPH", category: "Bible" },
-  { word: "BIBLE", category: "Bible" }, { word: "PRAYER", category: "Bible" },
-  { word: "FAITH", category: "Bible" }, { word: "CROSS", category: "Bible" },
-  { word: "HEAVEN", category: "Bible" }, { word: "DISCIPLES", category: "Bible" },
-  { word: "PSALMS", category: "Bible" }, { word: "COMMANDMENTS", category: "Bible" },
-  { word: "SHEPHERD", category: "Bible" }, { word: "ALTAR", category: "Bible" },
+    const wordsByCategory = {
+      "Bible": [
+        "NOAH","DAVID","MOSES","JESUS","MARY","JOSEPH","BIBLE","PRAYER","FAITH","CROSS",
+        "HEAVEN","DISCIPLES","PSALMS","COMMANDMENTS","SHEPHERD","ALTAR","MIRACLE","PARABLE","GOLIATH","GENESIS"
+      ],
+      "Animals": [
+        "DOG","CAT","LION","TIGER","BEAR","ELEPHANT","ZEBRA","HORSE","RABBIT","MONKEY",
+        "FOX","DEER","OWL","DUCK","FROG","SNAKE","TURTLE","PANDA","WOLF","EAGLE"
+      ],
+      "History": [
+        "LINCOLN","WASHINGTON","REVOLUTION","FREEDOM","CONSTITUTION","PRESIDENT","AMERICA","CIVILWAR","DECLARATION","GOVERNMENT",
+        "COLONY","FLAG","PIONEER","SETTLERS","LIBERTY","SENATE","CONGRESS","PATRIOT","UNION","CAPITOL"
+      ],
+      "Food": [
+        "PIZZA","BURGER","FRIES","COOKIE","BACON","APPLE","ICECREAM","SANDWICH","PANCAKE","WAFFLE",
+        "SPAGHETTI","MEATBALL","CHICKEN","STEAK","CHEESE","SOUP","TACO","SALAD","BISCUIT","POPCORN"
+      ],
+      "Fun Facts": [
+        "OCTOPUS","RAINBOW","PLANET","DINOSAUR","VOLCANO","GALAXY","COMET","TELESCOPE","PENGUIN","KANGAROO",
+        "JUPITER","SATURN","MUSEUM","PYRAMID","ECLIPSE","CRYSTAL","THUNDER","LIGHTNING","WATERFALL","BUTTERFLY"
+      ],
+      "Music": [
+        "ELVIS","GUITAR","PIANO","JAZZ","BLUES","SINGER","MELODY","LYRICS","BAND","CONCERT",
+        "TRUMPET","DRUMMER","VIOLIN","CHORUS","HARMONY","RHYTHM","COUNTRY","GOSPEL","DANCING","MICROPHONE"
+      ],
+      "Movies": [
+        "ROCKY","TITANIC","JAWS","FROZEN","BATMAN","SUPERMAN","AVATAR","GREASE","CASABLANCA","BAMBI",
+        "PINOCCHIO","ALADDIN","DUMBO","CINDERELLA","JURASSIC","GODFATHER","STARWARS","ET","MARYPOPPINS","PSYCHO"
+      ],
+      "New Orleans": [
+        "BEIGNET","BOURBON","CAJUN","GUMBO","POBOY","JAZZFEST","PARADE","FRENCHQUARTER","STREETCAR","LOUISIANA",
+        "BAYOU","CREOLE","RIVERWALK","CAFEAULAIT","MUFFULETTA","SAINTS","SUPERDOME","MISSISSIPPI","TRUMPET","MAGAZINE"
+      ],
+      "New Years": [
+        "MIDNIGHT","CONFETTI","PARTY","COUNTDOWN","CELEBRATE","CHEERS","RESOLUTION","FIREWORKS","TOAST","CLOCK",
+        "SPARKLER","BALLOONS","STREAMERS","MIDNIGHTKISS","JANUARY","FESTIVE","CHAMPAGNE","LAUGHTER","DANCING","GATHERING"
+      ],
+      "Old TV Shows": [
+        "BONANZA","MASH","CHEERS","GUNSMOKE","BEWITCHED","PERRYMASON","MATLOCK","DALLAS","DYNASTY","MASHUNIT",
+        "LASSIE","FLIPPER","DRAGNET","KOJAK","COLUMBO","JEOPARDY","WHEELFORTUNE","ANDYGRIFFITH","WALTONS","LUCY"
+      ],
+      "Valentine's Day": [
+        "HEART","CUPID","ROSES","CANDY","LOVE","HUGS","KISSES","FLOWERS","CHOCOLATE","ROMANCE",
+        "VALENTINE","CARD","SWEETHEART","DINNER","POEM","BALLOON","RED","PINK","DARLING","AFFECTION"
+      ],
+      "St. Patrick's Day": [
+        "CLOVER","GREEN","LEPRECHAUN","SHAMROCK","RAINBOW","GOLD","LUCK","POTOFGOLD","IRELAND","MARCH",
+        "PARADE","BAGPIPE","CELTIC","TREASURE","CHARM","EMERALD","JIG","CABBAGE","MINT","WHISTLE"
+      ],
+      "Mardi Gras": [
+        "PARADE","BEADS","KINGCAKE","MASK","FLOAT","PURPLE","GOLD","GREEN","CARNIVAL","DOUBLOON",
+        "COSTUME","MUSIC","DANCING","CELEBRATION","KREWE","JESTER","FEATHERS","TRUMPET","MARCHING","PARTY"
+      ],
+      "Easter": [
+        "BUNNY","EGGS","BASKET","SPRING","CHOCOLATE","HUNT","LILIES","PASTEL","JELLYBEANS","SUNRISE",
+        "CHICK","BONNET","FLOWERS","RABBIT","SUNDAY","REJOICE","CANDY","CROSS","BLOSSOM","PICNIC"
+      ],
+      "July 4th": [
+        "FIREWORK","FREEDOM","FLAG","AMERICA","PARADE","CELEBRATE","INDEPENDENCE","REDWHITEBLUE","PICNIC","SPARKLER",
+        "PATRIOT","LIBERTY","EAGLE","GRILLING","SUMMER","CONSTITUTION","STARS","STRIPES","NATION","HOLIDAY"
+      ],
+      "Memorial Day": [
+        "HONOR","SERVICE","PARADE","REMEMBER","FLAG","HERO","TRIBUTE","COURAGE","SOLDIER","FREEDOM",
+        "SACRIFICE","NATION","GRATITUDE","MONUMENT","RESPECT","DUTY","BRAVE","PATRIOT","CEREMONY","MEMORY"
+      ],
+      "Veterans Day": [
+        "VETERAN","SALUTE","ARMY","PATRIOT","SERVICE","HONOR","FREEDOM","COUNTRY","NAVY","MARINES",
+        "AIRFORCE","COASTGUARD","UNIFORM","BRAVE","TRIBUTE","MEDAL","FLAG","CEREMONY","DUTY","REMEMBER"
+      ],
+      "Halloween": [
+        "PUMPKIN","GHOST","COSTUME","CANDY","WITCH","BAT","SPIDER","HAUNTED","MASK","MONSTER",
+        "SKELETON","BROOM","JACKOLANTERN","MOONLIGHT","HOWL","CREEPY","SCARY","TREAT","PARTY","ORANGE"
+      ],
+      "Thanksgiving": [
+        "TURKEY","GRAVY","FAMILY","HARVEST","STUFFING","PUMPKINPIE","DINNER","BLESSINGS","AUTUMN","FEAST",
+        "CORN","CRANBERRY","POTATOES","PARADE","THANKFUL","GATHERING","ROLLS","KIN","TRADITION","NOVEMBER"
+      ],
+      "Christmas": [
+        "SANTA","REINDEER","PRESENT","MISTLETOE","TREE","LIGHTS","ORNAMENT","CAROL","STOCKING","SNOWMAN",
+        "GINGERBREAD","WREATH","TINSEL","SLEIGH","HOLLY","ELF","NATIVITY","CANDYCANE","BELLS","JOYFUL"
+      ]
+    };
 
-  // Animals
-  { word: "DOG", category: "Animals" }, { word: "CAT", category: "Animals" },
-  { word: "LION", category: "Animals" }, { word: "TIGER", category: "Animals" },
-  { word: "BEAR", category: "Animals" }, { word: "ELEPHANT", category: "Animals" },
-  { word: "ZEBRA", category: "Animals" }, { word: "HORSE", category: "Animals" },
-  { word: "RABBIT", category: "Animals" }, { word: "MONKEY", category: "Animals" },
-  { word: "FOX", category: "Animals" }, { word: "DEER", category: "Animals" },
-  { word: "OWL", category: "Animals" }, { word: "DUCK", category: "Animals" },
-  { word: "FROG", category: "Animals" }, { word: "SNAKE", category: "Animals" },
+    const defaultWords = Object.entries(wordsByCategory).flatMap(([category, arr]) =>
+      arr.map(word => ({ word, category }))
+    );
 
-  // History
-  { word: "LINCOLN", category: "History" }, { word: "WASHINGTON", category: "History" },
-  { word: "REVOLUTION", category: "History" }, { word: "FREEDOM", category: "History" },
-  { word: "CONSTITUTION", category: "History" }, { word: "PRESIDENT", category: "History" },
-  { word: "AMERICA", category: "History" }, { word: "CIVILWAR", category: "History" },
-  { word: "DECLARATION", category: "History" }, { word: "GOVERNMENT", category: "History" },
-  { word: "COLONY", category: "History" }, { word: "FLAG", category: "History" },
-  { word: "PIONEER", category: "History" }, { word: "SETTLERS", category: "History" },
+    function shuffleArray(arr) {
+      const copy = [...arr];
+      for (let i = copy.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [copy[i], copy[j]] = [copy[j], copy[i]];
+      }
+      return copy;
+    }
 
-  // Food
-  { word: "PIZZA", category: "Food" }, { word: "BURGER", category: "Food" },
-  { word: "FRIES", category: "Food" }, { word: "COOKIE", category: "Food" },
-  { word: "BACON", category: "Food" }, { word: "APPLE", category: "Food" },
-  { word: "ICECREAM", category: "Food" }, { word: "SANDWICH", category: "Food" },
-  { word: "PANCAKE", category: "Food" }, { word: "WAFFLE", category: "Food" },
-  { word: "SPAGHETTI", category: "Food" }, { word: "MEATBALL", category: "Food" },
-  { word: "CHICKEN", category: "Food" }, { word: "STEAK", category: "Food" },
-
-  // Music
-  { word: "ELVIS", category: "Music" }, { word: "GUITAR", category: "Music" },
-  { word: "PIANO", category: "Music" }, { word: "JAZZ", category: "Music" },
-  { word: "BLUES", category: "Music" }, { word: "SINGER", category: "Music" },
-  { word: "MELODY", category: "Music" }, { word: "LYRICS", category: "Music" },
-  { word: "BAND", category: "Music" }, { word: "CONCERT", category: "Music" },
-
-  // Movies
-  { word: "ROCKY", category: "Movies" }, { word: "TITANIC", category: "Movies" },
-  { word: "JAWS", category: "Movies" }, { word: "FROZEN", category: "Movies" },
-  { word: "BATMAN", category: "Movies" }, { word: "SUPERMAN", category: "Movies" },
-  { word: "AVATAR", category: "Movies" }, { word: "ET", category: "Movies" },
-  { word: "GREASE", category: "Movies" }, { word: "CASABLANCA", category: "Movies" },
-
-  // New Orleans
-  { word: "BEIGNET", category: "New Orleans" }, { word: "BOURBON", category: "New Orleans" },
-  { word: "CAJUN", category: "New Orleans" }, { word: "GUMBO", category: "New Orleans" },
-  { word: "POBOY", category: "New Orleans" }, { word: "JAZZFEST", category: "New Orleans" },
-  { word: "PARADE", category: "New Orleans" }, { word: "FRENCHQUARTER", category: "New Orleans" },
-
-  // Holidays (example block — repeat pattern for others)
-  { word: "CHRISTMAS", category: "Holidays" }, { word: "THANKSGIVING", category: "Holidays" },
-  { word: "HALLOWEEN", category: "Holidays" }, { word: "EASTER", category: "Holidays" },
-  { word: "VALENTINE", category: "Holidays" }, { word: "FIREWORK", category: "Holidays" }
-
-];
+    // Force refresh of old stored data when version changes
+    if (localStorage.getItem("scrambleDataVersion") !== DATA_VERSION) {
+      localStorage.setItem("scrambleDataVersion", DATA_VERSION);
+      localStorage.setItem("scrambleCategories", JSON.stringify(defaultCategories));
+      localStorage.setItem("scrambleWords", JSON.stringify(defaultWords));
+    }
 
     let categories = JSON.parse(localStorage.getItem("scrambleCategories") || "null");
     let words = JSON.parse(localStorage.getItem("scrambleWords") || "null");
@@ -207,6 +249,14 @@ const defaultWords = [
     const categoryButtons = document.getElementById("categoryButtons");
     const inputCategory = document.getElementById("inputCategory");
     const newCategoryInput = document.getElementById("newCategoryInput");
+    const scrambleEl = document.getElementById("scramble");
+    const answerEl = document.getElementById("answer");
+    const statusEl = document.getElementById("status");
+
+    let filtered = [];
+    let currentWord = "";
+    let currentCategory = "";
+    let categoryQueue = {};
 
     function renderCategoryButtons() {
       categoryButtons.innerHTML = "";
@@ -278,6 +328,7 @@ const defaultWords = [
 
       words.push({ word: w, category: cat });
       localStorage.setItem("scrambleWords", JSON.stringify(words));
+      categoryQueue[cat] = [];
 
       document.getElementById("inputWord").value = "";
       newCategoryInput.value = "";
@@ -302,14 +353,15 @@ const defaultWords = [
     }
 
     function deleteWord(i) {
+      const removed = words[i];
       words.splice(i, 1);
       localStorage.setItem("scrambleWords", JSON.stringify(words));
+      if (removed && removed.category) {
+        categoryQueue[removed.category] = [];
+      }
       updateSavedList();
     }
     window.deleteWord = deleteWord;
-
-    const scrambleEl = document.getElementById("scramble");
-    const answerEl = document.getElementById("answer");
 
     function shuffleWord(word) {
       const arr = word.split("");
@@ -332,10 +384,29 @@ const defaultWords = [
       return scrambled;
     }
 
-    let filtered = [];
-    let currentWord = "";
+    function getNextWordForCategory(cat) {
+      const categoryWords = words.filter(w => w.category === cat).map(w => w.word);
+
+      if (categoryWords.length === 0) {
+        return null;
+      }
+
+      if (!categoryQueue[cat] || categoryQueue[cat].length === 0) {
+        categoryQueue[cat] = shuffleArray(categoryWords);
+      }
+
+      return categoryQueue[cat].pop();
+    }
+
+    function updateStatus(cat) {
+      const total = words.filter(w => w.category === cat).length;
+      const remaining = categoryQueue[cat] ? categoryQueue[cat].length : 0;
+      const used = total - remaining;
+      statusEl.textContent = `Used this round: ${used}/${total}`;
+    }
 
     function startCategory(cat) {
+      currentCategory = cat;
       filtered = words.filter(w => w.category === cat);
       document.getElementById("categoryScreen").classList.add("hidden");
       document.getElementById("gameScreen").classList.remove("hidden");
@@ -344,17 +415,21 @@ const defaultWords = [
     }
 
     function newWord() {
-      if (filtered.length === 0) {
+      if (!currentCategory) return;
+
+      if (words.filter(w => w.category === currentCategory).length === 0) {
         scrambleEl.textContent = "No words yet in this category!";
         answerEl.classList.add("hidden");
+        statusEl.textContent = "";
         return;
       }
 
-      const randomWord = filtered[Math.floor(Math.random() * filtered.length)].word;
-      currentWord = randomWord;
-      scrambleEl.textContent = shuffleWord(randomWord);
+      const next = getNextWordForCategory(currentCategory);
+      currentWord = next;
+      scrambleEl.textContent = shuffleWord(currentWord);
       answerEl.textContent = currentWord;
       answerEl.classList.add("hidden");
+      updateStatus(currentCategory);
     }
 
     function revealAnswer() {
@@ -364,6 +439,9 @@ const defaultWords = [
     function backToCategories() {
       document.getElementById("gameScreen").classList.add("hidden");
       document.getElementById("categoryScreen").classList.remove("hidden");
+      answerEl.classList.add("hidden");
+      statusEl.textContent = "";
+      currentCategory = "";
     }
 
     document.getElementById("newWordBtn").onclick = newWord;
