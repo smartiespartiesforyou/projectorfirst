@@ -1,0 +1,1272 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    
+                
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta property="og:url" content="https://memoryco.org/"/>
+    <meta property="og:type" content="website"/>
+    <meta property="og:title" content="EngagedSenior"/>
+    <meta property="og:description" content="Senior Living Engagement Platform with Games and Activities"/>
+    <meta property="og:image" content="https://memoryco.org/images/EngagedSenior_120x120.png"/>
+    <meta name="description" content=" Engagement Platform with Games and Activities"/>
+    <meta name="mobile-web-app-capable" content="yes">
+    <link rel="manifest" href="/js/manifest.json">
+    <link rel="icon" sizes="512x512" href="/images/MemoryCo_Icon-512x512.png">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="theme-color" content="#4481AD">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="csrf-token" content="8U6zGavQaq8M6Jqwpnq9Ewc2CBYjUR4gjrFLTkva">
+    <meta name="referrer" content="no-referrer-when-downgrade">
+
+    <title>EngagedSenior</title>
+    <link rel="apple-touch-icon" href="/images/MemoryCo_Icon-192x192.png">
+    <meta name="title" content="EngagedSenior: Engaging Games and Activities">
+    <meta name="description" content="Engaging Games and Activities">
+    <meta name="keywords"
+          content="memory, memory training, games, senior games, senior activities, senior living, assisted living, memory care, activity director">
+    <meta name="robots" content="noindex">
+    <meta name="language" content="English">
+    <meta name="author" content="MemoryCo, LLC">
+    <meta name="theme-color" content="#4481AC"/>
+    <link href="/css/fontawesome/css/all.css?v=1.0" rel="stylesheet">
+    <link rel="icon" sizes="192x192" href="/images/MemoryCo_Icon-144x144.png">
+    <link href="https://www.memoryco.org/css/app.css?v=1.3" rel="stylesheet">
+    <link rel='stylesheet' href="/css/uploadStyles.css" type='text/css'/>
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link
+            href="https://fonts.googleapis.com/css2?family=Bubblegum+Sans&family=Dancing+Script&family=IM+Fell+English&family=Luckiest+Guy&family=Cinzel:wght@400..900&family=Kavoon&family=Great+Vibes&family=Limelight&family=Parisienne&display=swap"
+            rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/css/animate.min.css">
+    <link rel="stylesheet" href="/css/gutenberg.min.css" media="print">
+    <!-- Scripts -->
+    <script src="https://www.memoryco.org/js/app.js"></script>
+    <script src="/js/intro.min.js"></script>
+    <script src="/js/printThis.js"></script>
+    <script src="/js/tweenmax.min.js"></script>
+    
+    <script src='/js/spinWheel.js'></script>
+    <script type="module" src="/js/countUp.js"></script>
+    <link rel='stylesheet' href="/css/introjs.min.css"/>
+    <link href="/css/flag-icon/css/flag-icon.min.css" rel="stylesheet">
+    <script src="/js/bootstrap-toolkit.js"></script>
+    <script src="/js/jquery.form.min.js"></script>
+
+    <script src="/js/bigtext.js"></script>
+    <script src="/js/moment.min.js"></script>
+    <script src="/js/moment-timezone-with-data.js"></script>
+    <script src='/js/jquery.countdown.min.js'></script>
+    <script src="/js/cookiesetter.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.4.0/dist/confetti.browser.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"
+            integrity="sha512-ElRFoEQdI5Ht6kZvyzXhYG9NqjtkmlkfYk0wr6wHxU9JEHakS7UJZNeml5ALk+8IKlU6jDgMabC3vkumRokgJA=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/regression/2.0.1/regression.min.js"
+            integrity="sha512-0k6FXllQktdobw8Nc8KQN2WtZrOuxpMn7jC2RKCF6LR7EdOhhrg3H5cBPxhs3CFzQVlO6ni1B9SDLUPhBs0Alg=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-datalabels/2.1.0/chartjs-plugin-datalabels.min.js"
+            integrity="sha512-Tfw6etYMUhL4RTki37niav99C6OHwMDB2iBT5S5piyHO+ltK2YX8Hjy9TXxhE1Gm/TmAV0uaykSpnHKFIAif/A=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    
+    
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/material_blue.css"/>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+    <style>
+
+        html {
+            height: 100%;
+        }
+
+        body {
+            height: 100%;
+            margin: 0;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+        }
+
+        .navbar {
+            z-index: 1200 !important;
+        }
+
+        .nav > li > a {
+            font-size: 1.75vw !important;
+        }
+
+        #memorycologo {
+            max-height: 3vw;
+            height: 100%;
+            width: auto;
+            margin: 1vh;
+            padding-top: 5px;
+        }
+
+        @media only screen and (max-width: 800px) {
+            .navbar {
+                z-index: 9999999999 !important;
+            }
+
+            .nav > li > a {
+                font-size: 3em !important;
+            }
+
+            #memorycologo {
+                max-height: 5vw;
+            }
+
+            #fullScreenBtn {
+                display: none;
+            }
+        }
+
+
+        @media only screen and (min-width: 1920px) {
+            #memorycologo {
+                height: 160px !important;
+                width: auto;
+                padding-top: 70px !important;
+                padding-left: 5px;
+                padding-bottom: 10px;
+            }
+
+            .navbar-nav > li > a {
+                padding: 30px !important;
+            }
+
+        }
+
+
+        .shiny-button {
+            position: relative; /* so the pseudo-element can be absolutely positioned */
+            overflow: hidden; /* hide the pseudo-element edges */
+        }
+
+        /* The “light sweep” pseudo-element */
+        .shiny-button::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: -25%;
+            width: 50%;
+            height: 100%;
+
+            /* A diagonal gradient that goes from transparent to white-ish back to transparent */
+            background: linear-gradient(
+                    75deg,
+                    rgba(255, 255, 255, 0.0) 0%,
+                    rgba(255, 255, 255, 0.4) 50%,
+                    rgba(255, 255, 255, 0.0) 100%
+            );
+
+            /* The “shimmer” animation moves it across the button */
+            animation: shimmer 2s infinite;
+            pointer-events: none; /* click through */
+        }
+
+        @keyframes shimmer {
+            0% {
+                transform: translateX(0%);
+            }
+            100% {
+                transform: translateX(500%);
+            }
+        }
+
+        /* Fullscreen toggle button - visible on all backgrounds */
+        #fullscreenToggle {
+            background: linear-gradient(135deg, #1f5085, #9e4ab9) !important;
+            border: 3px solid #333 !important;
+            color: white !important;
+            box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.4);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        #fullscreenToggle:hover {
+            transform: scale(1.05);
+            box-shadow: 3px 3px 12px rgba(0, 0, 0, 0.5);
+        }
+    </style>
+
+                        <!-- Google tag (gtag.js) for EngagedSenior -->
+            <script async src="https://www.googletagmanager.com/gtag/js?id=G-Q428WMREVR"></script>
+            <script>
+                window.dataLayer = window.dataLayer || [];
+
+                function gtag() {
+                    dataLayer.push(arguments);
+                }
+
+                gtag('js', new Date());
+                gtag('config', 'G-Q428WMREVR');
+            </script>
+                            <script>
+                window.onerror = function (message, source, lineno, colno, error) {
+                    console.log('error');
+                    $.ajax({
+                        url: '/jserrorlog', // Laravel route
+                        method: 'POST',
+                        data: {
+                            messages: message,
+                            source: source,
+                            lineno: lineno,
+                            colno: colno,
+                            error: error.toString(),
+                            _token: '8U6zGavQaq8M6Jqwpnq9Ewc2CBYjUR4gjrFLTkva', // Laravel csrf token
+                        },
+                        success: function (result) {
+                            console.log(result);
+                        },
+                        error: function (xhr, status, error) {
+                            console.log(xhr.responseText);
+                        }
+                    });
+                }
+            </script>
+            
+
+                
+            
+        <script type="text/javascript">
+            (function (c, l, a, r, i, t, y) {
+                c[a] = c[a] || function () {
+                    (c[a].q = c[a].q || []).push(arguments)
+                };
+                t = l.createElement(r);
+                t.async = 1;
+                t.src = "https://www.clarity.ms/tag/" + i;
+                y = l.getElementsByTagName(r)[0];
+                y.parentNode.insertBefore(t, y);
+            })(window, document, "clarity", "script", "p58tko8bb8");
+        </script>
+
+                    <script>
+                window.clarity = window.clarity || function () {
+                    (window.clarity.q = window.clarity.q || []).push(arguments)
+                };
+                // Identify the user with Clarity
+                // custom-id = userEmail (or userId), custom-session-id = userId, custom-page-id = "page-" + userId, friendly-name = userName
+                window.clarity("identify",
+                    "user_9509 | https://memoryco.org/nova/resources/users/9509",
+                    "",
+                    "",
+                    "Jenna Jaxon (Harvest Manor"
+                );
+
+
+                // Set additional user attributes as custom tags
+                window.clarity("set", "community", "Harvest Manor");
+                window.clarity("set", "company", "N/A");
+                window.clarity("set", "status", "trial");
+                window.clarity("set", "api", "0");
+            </script>
+            
+
+        <meta name="csrf-token" content="8U6zGavQaq8M6Jqwpnq9Ewc2CBYjUR4gjrFLTkva">
+    <meta name="progress-url" content="https://www.memoryco.org/passportlearn/progress">
+    <meta name="start-index" content="0">
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/SplitText.min.js"></script>
+</head>
+
+    
+<body>
+
+<style>
+    #fullScreenBtn:hover {
+        transform: scale(1.5);
+    }
+
+    /* Force the hamburger to appear up to 800px
+       and the menu to be collapsed by default. */
+    @media (max-width: 800px) {
+
+        /* 1) Ensure the .navbar-toggle is visible at <= 800px. */
+        .navbar-toggle {
+            display: block !important;
+        }
+
+        /* 2) Keep the .navbar-collapse hidden by default … */
+        .navbar-collapse.collapse {
+            display: none !important;
+        }
+
+        /* 3) … but when Bootstrap’s JS adds .in, show it. */
+        .navbar-collapse.collapse.in {
+            display: block !important;
+        }
+
+        .navbar-header, .nav > li {
+            width: 100%;
+        }
+    }
+
+    /* For screens above 800px, you may want the toggle to disappear
+       and the full nav to be shown. Typically that’s handled by default
+       in Bootstrap, but you can override here if you want: */
+    @media (min-width: 801px) {
+        .navbar-toggle {
+            display: none !important;
+        }
+
+        .navbar-collapse.collapse {
+            display: block !important; /* Show the nav normally on large screens */
+        }
+    }
+
+</style>
+
+    <div class='no-print' onclick="toggleFullScreen(document.documentElement)"
+         style="position:fixed;top:60vh;right:0;z-index:999;
+    cursor: pointer; transition: transform .2s;
+    text-shadow: 3px 3px 4px black;" id="fullScreenBtn">
+        <i class="fas fa-expand-wide fa-2x fa-fw animate animated pulse infinite"
+           style="color:white;animation-duration:5s;position:relative;right:1%;margin-right:5px"></i>
+        <p id="fullscreen"
+           style="font-size:1.1vw !important;position:absolute;top:100%;color:white;right:5%;text-align: center"></p>
+    </div>
+
+    <nav class="navbar navbar-default navbar-fixed-top"
+         style='border:none;
+     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+     font-size:2vw;'>
+        <div class="container-fluid">
+            <div class="navbar-header">
+                                    <a rel="external" class="navbar-brand"
+                                                  href="/?main=true"
+                                              style="padding:0;display:flex;justify-content:center;align-items:center;position: relative">
+                                            <img id="memorycologo" src='/images/EngagedSenior_color.png' alt='logo'></a>
+                                                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+                        data-target="#bs-example-navbar-collapse-1">
+                    <span class="sr-only">Toggle Navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+            </div>
+
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav navbar-left" style="font-family: Helvetica;">
+                                            <li>
+                            <a class=""
+                               style="color:black"
+                               rel="external"
+                               href="https://www.memoryco.org/home"
+                               data-toggle="tooltip"
+                               data-placement="bottom"
+                               title="Games"
+                               id="games">Games</a>
+                        </li>
+
+                        <li>
+                            <a class=""
+                               style="color:black"
+                               rel="external"
+                               href="https://www.memoryco.org/mygames"
+                               data-toggle="tooltip"
+                               data-placement="bottom"
+                               title="MyGames"
+                               id="personalized">MyGames</a>
+                        </li>
+
+                        <li>
+                            <a class="activenav"
+                               style="color:black"
+                               rel="external"
+                               href="https://www.memoryco.org/activities"
+                               data-toggle="tooltip"
+                               data-placement="bottom"
+                               title="Activities"
+                               id="activities">Activities</a>
+                        </li>
+
+                        <li>
+                            <a class=""
+                               style="color:black"
+                               rel="external"
+                               href="https://www.memoryco.org/community"
+                               data-toggle="tooltip"
+                               data-placement="bottom"
+                               title="Community"
+                               id="community">Community</a>
+                        </li>
+
+                    
+                </ul>
+                <style>
+                    .navbar-nav > li > a {
+                        line-height: normal !important;
+                    }
+
+                    .companylogo {
+                        max-height: 2.3vw;
+                    }
+
+                    @media screen and (max-width: 900px) {
+                        .companylogo {
+                            max-height: 4vh;
+                        }
+                    }
+                </style>
+
+                <ul class="nav navbar-nav navbar-right">
+                    <!-- IF GUEST -->
+
+                    
+                        <!-- IF LOGGED IN  -->
+                        <li><a rel="external" href="https://www.memoryco.org/rankings"><i class="fad fa-trophy"
+                                                                               style="--fa-primary-color:gold; --fa-secondary-color:gray;--fa-secondary-opacity:1; text-shadow: -1px 0 #000, 0 1px #000, 1px 0 #000, 0 -1px #000;"
+                                ></i></a></li>
+
+                        
+                        
+                            <li>
+                                <a class=""
+                                   rel="external"
+                                   id="adminCommunity"
+                                   style="color:black;"
+                                   href="https://www.memoryco.org/admin-community"
+                                   data-toggle="tooltip"
+                                   data-placement="bottom"
+                                   title="Upload Panel">
+                                    <i class="fad fa-cloud-upload fa-fw"></i> Upload
+                                </a>
+                            </li>
+                        
+                        <li class="dropdown" style="position:relative">
+                            <a rel="external" href="#" data-toggle="dropdown" role="button"
+                               class="dropdown-toggle "
+                               aria-expanded="false">
+                                                                    <span style="position:absolute;
+                           left:0%;top:50%;"></span>
+                                                                            <span style="color:black !important;">Account</span>
+                                                                        <span class="caret"></span>
+                                                            </a>
+                            <ul class="dropdown-menu" role="menu" style='font-size:1.5rem'>
+                                                                    <li><a href="/subscribe"><i class="fas fa-heart-circle-bolt fa-fw"></i>
+                                            Subscribe</a></li>
+                                    <li>
+                                                                                                    <li><a href="/account"><i class="fad fa-gear fa-fw"></i>
+                                            Manage</a></li>
+                                    <li>
+                                                                                            <a href='/dashboard/9509/week/52'>
+                                                                                                                <i class='fa-solid fa-chart-pie fa-fw'
+                                                           style='color:black'></i>
+                                                        Dashboard
+                                                    </a>
+                                            </a>
+                                    </li>
+
+                                    <li>
+                                        <a href='/rankings'>
+                                            <i class='fa-solid fa-trophy-alt fa-fw' style='color:black'></i>
+                                            Rankings
+                                        </a>
+                                    </li>
+
+                                                                                                                                        <li><a href="/messages"><i class="fa fa-envelope fa-fw"></i>
+                                            Messages </a></li>
+                                                                            <li><a href="/messages/create/1"><i
+                                                        class="fa fa-envelope-open-text fa-fw"></i> Message
+                                                MemoryCo</a></li>
+                                    
+                                    <li><a rel="external" href="/logout"><i
+                                                    class="fas fa-fw fa-sign-out-alt"></i>&nbsp;Log Out
+                                        </a>
+                            </ul>
+                                                    </li> <!-- dropdown -->
+
+                     <!-- if logged in -->
+                </ul>
+
+
+            </div>
+        </div>
+    </nav>
+<style>
+    html {
+        height: 100% !important;
+    }
+
+    @keyframes gradient {
+        0% {
+            background-position: 0% 50%;
+        }
+        50% {
+            background-position: 100% 50%;
+        }
+        100% {
+            background-position: 0% 50%;
+        }
+    }
+
+    body {
+        background: linear-gradient(-45deg, #1879bd, #02a77a, #1879bd, #7bfcda);
+        height: 100% !important;
+        margin: 0;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+        overflow-x: hidden;
+        background-size: 400% 400%;
+    }
+
+</style>
+    <div style="position:fixed;bottom:1%;right:1%;opacity:0;pointer-events:none"
+         id="myemail"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="b3c0ded2c1c7dad6c0c3d2c1c7dad6c0d5dcc1cadcc6f3d4ded2dadf9dd0dcde">[email&#160;protected]</a></div>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+    $('#fullscreen').fadeIn(300).delay(2000).fadeOut(300);
+</script>
+<style>
+    #alertDivFlex {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        pointer-events: none;
+    }
+
+    .alertDiv {
+        position: fixed;
+        align-self: center;
+        width: fit-content;
+        height: auto;
+        font-size: 2rem;
+        font-weight: 700;
+        bottom: 0;
+        z-index: 99999;
+        margin-bottom: 5px !important;
+        border-radius: 10px;
+        text-align: left;
+    }
+
+    strong {
+        color: black !important;
+    }
+
+    .close {
+        color: black !important;
+        pointer-events: auto;
+    }
+
+    button.close {
+        opacity: 1 !important;
+    }
+
+    @media only screen and (min-width: 1920px) {
+        .alertDiv {
+            font-size: 2vw;
+        }
+    }
+</style>
+<div id="alertDivFlex">
+    <div class='alertDiv'>
+        
+
+        
+
+        
+
+        
+                                </div>
+</div>
+<script>
+        let delayTime = 4000;
+        $('.alert').fadeIn().delay(delayTime).queue(function (next) {
+        $(this).removeClass('fadeInUp').addClass('fadeOutDown');
+        next(); // Continue to the next item in the queue
+    });
+</script>    
+            <img src="https://memorycofiles.s3.us-west-1.amazonaws.com/passportlearns/4654082-T0rUN.jpg" decoding="async" style="display:none;" fetchpriority="high">
+
+        <link rel="preload"
+              as="image"
+              href="https://memorycofiles.s3.us-west-1.amazonaws.com/passportlearns/4654082-T0rUN.jpg"
+              fetchpriority="high">
+        <link rel="prefetch" href="https://memorycofiles.s3.us-west-1.amazonaws.com/passportlearns/4654082-T0rUN.jpg">
+        <style>
+        #bg1 {
+                            background-image: url('https://memorycofiles.s3.us-west-1.amazonaws.com/passportlearns/4654082-T0rUN.jpg');
+                        opacity: 1;
+        }
+    </style>
+    <link rel="stylesheet" href="/css/passportLearn.css?v=1.9">
+
+    <!-- Slide Counter (based on blurb count, not images) -->
+    <div id="slideCounter"
+         style="position: fixed; top: 7vh; left: -5px; background: rgba(0,0,0,0.7); color: white; padding: 10px 15px; border-radius:0 0 20px 0; font-size: 18px; font-weight: bold; z-index: 1000; box-shadow: 0 2px 8px rgba(0,0,0,0.3);">
+        <span id="currentSlide">1</span> / <span id="totalSlides">51</span>
+    </div>
+
+    <div id="bg1" class="bg-layer"></div>
+    <div id="bg2" class="bg-layer"></div>
+
+    <div class="slideshow-container">
+
+        <div class="mySlides animated fadeIn" style="position: relative;">
+            <span class="blurbContainer"><span class="blurb"></span><span id="xOut">x</span></span>
+            <span class="credit"></span>
+        </div>
+
+        <nav class="slides-navigation">
+            <a href="#" class="slideBtn next" onclick="plusSlides(1)"><i class="fas fa-chevron-right"></i></a>
+            <a href="#" class="slideBtn prev" onclick="plusSlides(-1)"><i class="fas fa-chevron-left"></i></a>
+        </nav>
+
+    </div>
+
+    <div class="slideshow-controls"
+         style="position: fixed; bottom: 2vh; right: 5px; display: flex; align-items: center; gap: 10px; ">
+        <select id="timer-select"
+                style="position: fixed; bottom: 2vh; right: 40px; padding: 5px; height: 36px; border-radius: 10px; border: 1px solid white;">
+            <option value="10000">10 s</option>
+            <option value="15000" selected>15 s</option>
+            <option value="20000">20 s</option>
+            <option value="30000">30 s</option>
+        </select>
+        <div id="startShowBtn"><i class="fas fa-play"></i></div>
+        <div id="stopShowBtn"><i class="fas fa-pause"></i></div>
+    </div>
+
+    <div id="restartBtn"><i class="fas fa-undo"></i> Restart</div>
+
+
+    <div id="countdownDiv"></div>
+
+    
+
+    <script>
+        window.slideData = {
+            images: ["https:\/\/memorycofiles.s3.us-west-1.amazonaws.com\/passportlearns\/4654082-T0rUN.jpg","https:\/\/memorycofiles.s3.us-west-1.amazonaws.com\/passportlearns\/8267813-8FfNB.jpg","https:\/\/memorycofiles.s3.us-west-1.amazonaws.com\/passportlearns\/5199810-RXvX9.jpg","https:\/\/memorycofiles.s3.us-west-1.amazonaws.com\/passportlearns\/107722929-03DcX.jpg","https:\/\/memorycofiles.s3.us-west-1.amazonaws.com\/passportlearns\/1769067-5tu5a.jpg","https:\/\/memorycofiles.s3.us-west-1.amazonaws.com\/passportlearns\/5875450-yD6ap.jpg","https:\/\/memorycofiles.s3.us-west-1.amazonaws.com\/passportlearns\/8674834-moiRs.jpg","https:\/\/memorycofiles.s3.us-west-1.amazonaws.com\/passportlearns\/ai-11965-cJPMYI.jpg","https:\/\/memorycofiles.s3.us-west-1.amazonaws.com\/passportlearns\/7468196-qUu6M.jpg","https:\/\/memorycofiles.s3.us-west-1.amazonaws.com\/passportlearns\/8383656-6DW1E.jpg","https:\/\/memorycofiles.s3.us-west-1.amazonaws.com\/passportlearns\/5206086-aOaZj.jpg","https:\/\/memorycofiles.s3.us-west-1.amazonaws.com\/passportlearns\/135540108-SYKlm.jpg","https:\/\/memorycofiles.s3.us-west-1.amazonaws.com\/passportlearns\/112990-hjwxD.jpg","https:\/\/memorycofiles.s3.us-west-1.amazonaws.com\/passportlearns\/5875400-5a4zg.jpg","https:\/\/memorycofiles.s3.us-west-1.amazonaws.com\/passportlearns\/6860390-SdQmQ.jpg","https:\/\/memorycofiles.s3.us-west-1.amazonaws.com\/passportlearns\/8383490-r5rZc.jpg","https:\/\/memorycofiles.s3.us-west-1.amazonaws.com\/passportlearns\/8383676-aZLN1.jpg","https:\/\/memorycofiles.s3.us-west-1.amazonaws.com\/passportlearns\/9586398-mZy5q.jpg","https:\/\/memorycofiles.s3.us-west-1.amazonaws.com\/passportlearns\/8674786-UF0Ej.jpg","https:\/\/memorycofiles.s3.us-west-1.amazonaws.com\/passportlearns\/8955315-UplcH.jpg","https:\/\/memorycofiles.s3.us-west-1.amazonaws.com\/passportlearns\/15601178-MuCgH.jpg","https:\/\/memorycofiles.s3.us-west-1.amazonaws.com\/passportlearns\/8383646-43yAY.jpg","https:\/\/memorycofiles.s3.us-west-1.amazonaws.com\/passportlearns\/8383493-Kyn4n.jpg","https:\/\/memorycofiles.s3.us-west-1.amazonaws.com\/passportlearns\/6860413-We86u.jpg","https:\/\/memorycofiles.s3.us-west-1.amazonaws.com\/passportlearns\/9588731-To8cL.jpg","https:\/\/memorycofiles.s3.us-west-1.amazonaws.com\/passportlearns\/12812920-H3PxA.jpg","https:\/\/memorycofiles.s3.us-west-1.amazonaws.com\/passportlearns\/5199818-fKi4w.jpg","https:\/\/memorycofiles.s3.us-west-1.amazonaws.com\/passportlearns\/236339-glwUN.jpg","https:\/\/memorycofiles.s3.us-west-1.amazonaws.com\/passportlearns\/8384038-UhXfB.jpg","https:\/\/memorycofiles.s3.us-west-1.amazonaws.com\/passportlearns\/8383497-4pPmH.jpg","https:\/\/memorycofiles.s3.us-west-1.amazonaws.com\/passportlearns\/13158885-ABhC4.jpg","https:\/\/memorycofiles.s3.us-west-1.amazonaws.com\/passportlearns\/14673946-78UA1.jpg","https:\/\/memorycofiles.s3.us-west-1.amazonaws.com\/passportlearns\/8719161-qLzji.jpg","https:\/\/memorycofiles.s3.us-west-1.amazonaws.com\/passportlearns\/7218356-uyBl0.jpg","https:\/\/memorycofiles.s3.us-west-1.amazonaws.com\/passportlearns\/5875321-xsTV4.jpg","https:\/\/memorycofiles.s3.us-west-1.amazonaws.com\/passportlearns\/8674184-Eyi4J.jpg","https:\/\/memorycofiles.s3.us-west-1.amazonaws.com\/passportlearns\/8268314-mObHe.jpg","https:\/\/memorycofiles.s3.us-west-1.amazonaws.com\/passportlearns\/36164992-6jjYK.jpg","https:\/\/memorycofiles.s3.us-west-1.amazonaws.com\/passportlearns\/4049005-f9USO.jpg","https:\/\/memorycofiles.s3.us-west-1.amazonaws.com\/passportlearns\/5685161-b8okg.jpg","https:\/\/memorycofiles.s3.us-west-1.amazonaws.com\/passportlearns\/1771219-5FDm9.jpg","https:\/\/memorycofiles.s3.us-west-1.amazonaws.com\/passportlearns\/33927501-sqB4s.jpg","https:\/\/memorycofiles.s3.us-west-1.amazonaws.com\/passportlearns\/9042043-9CHJI.jpg","https:\/\/memorycofiles.s3.us-west-1.amazonaws.com\/passportlearns\/56926-Pci9u.jpg","https:\/\/memorycofiles.s3.us-west-1.amazonaws.com\/passportlearns\/5875063-ch2oJ.jpg","https:\/\/memorycofiles.s3.us-west-1.amazonaws.com\/passportlearns\/8383409-3DJBF.jpg","https:\/\/memorycofiles.s3.us-west-1.amazonaws.com\/passportlearns\/8383458-8ukcc.jpg","https:\/\/memorycofiles.s3.us-west-1.amazonaws.com\/passportlearns\/9965894-e3qxJ.jpg","https:\/\/memorycofiles.s3.us-west-1.amazonaws.com\/passportlearns\/8815048-7v76M.jpg","https:\/\/memorycofiles.s3.us-west-1.amazonaws.com\/passportlearns\/8383491-XSEfR.jpg","https:\/\/memorycofiles.s3.us-west-1.amazonaws.com\/passportlearns\/8468592-v231P.jpg"],
+            blurbs: ["\u003Cu\u003EGenesis 1:1\u003C\/u\u003E\u003Cbr\u003EIn the beginning God created the heaven and the earth.\u003Cbr\u003E\u003Ci\u003E\ud83d\udd4a This verse marks the commencement of the universe by God\u0027s hand.\u003C\/i\u003E","\u003Cu\u003EPsalm 23:1\u003C\/u\u003E\u003Cbr\u003EThe LORD is my shepherd; I shall not want.\u003Cbr\u003E\u003Ci\u003E\ud83d\udd4a This assures that God provides and cares for His people like a shepherd.\u003C\/i\u003E","\u003Cu\u003EJohn 3:16\u003C\/u\u003E\u003Cbr\u003EFor God so loved the world, that he gave his only begotten Son, that whosoever believeth in him should not perish, but have everlasting life.\u003Cbr\u003E\u003Ci\u003E\ud83d\udd4a A cornerstone verse about God\u0027s love and the gift of salvation through Jesus.\u003C\/i\u003E","\u003Cu\u003EPhilippians 4:13\u003C\/u\u003E\u003Cbr\u003EI can do all things through Christ which strengtheneth me.\u003Cbr\u003E\u003Ci\u003E\ud83d\udd4a This verse emphasizes the strength available in Christ to face any situation.\u003C\/i\u003E","\u003Cu\u003EPsalm 27:1\u003C\/u\u003E\u003Cbr\u003EThe LORD is my light and my salvation; whom shall I fear? the LORD is the strength of my life; of whom shall I be afraid?\u003Cbr\u003E\u003Ci\u003E\ud83d\udd4a God\u0027s presence eliminates fear and provides strength.\u003C\/i\u003E","\u003Cu\u003EJeremiah 29:11\u003C\/u\u003E\u003Cbr\u003EFor I know the thoughts that I think toward you, saith the LORD, thoughts of peace, and not of evil, to give you an expected end.\u003Cbr\u003E\u003Ci\u003E\ud83d\udd4a God\u0027s plans for us are filled with hope and a future.\u003C\/i\u003E","\u003Cu\u003EProverbs 3:5\u003C\/u\u003E\u003Cbr\u003ETrust in the LORD with all thine heart; and lean not unto thine own understanding.\u003Cbr\u003E\u003Ci\u003E\ud83d\udd4a Encourages complete trust in God rather than relying on oneself.\u003C\/i\u003E","\u003Cu\u003EJohn 11:35\u003C\/u\u003E\u003Cbr\u003EJesus wept.\u003Cbr\u003E\u003Ci\u003E\ud83d\udd4a A powerful reminder of Jesus\u0027 empathy and humanity.\u003C\/i\u003E","\u003Cu\u003EIsaiah 40:31\u003C\/u\u003E\u003Cbr\u003EBut they that wait upon the LORD shall renew their strength; they shall mount up with wings as eagles; they shall run, and not be weary; and they shall walk, and not faint.\u003Cbr\u003E\u003Ci\u003E\ud83d\udd4a Waiting on God brings renewal and strength.\u003C\/i\u003E","\u003Cu\u003EEphesians 2:8\u003C\/u\u003E\u003Cbr\u003EFor by grace are ye saved through faith; and that not of yourselves: it is the gift of God.\u003Cbr\u003E\u003Ci\u003E\ud83d\udd4a Salvation is a divine gift, not a human effort.\u003C\/i\u003E","\u003Cu\u003EPsalm 119:105\u003C\/u\u003E\u003Cbr\u003EThy word is a lamp unto my feet, and a light unto my path.\u003Cbr\u003E\u003Ci\u003E\ud83d\udd4a God\u0027s word provides guidance and clarity in life.\u003C\/i\u003E","\u003Cu\u003ERomans 8:28\u003C\/u\u003E\u003Cbr\u003EAnd we know that all things work together for good to them that love God, to them who are the called according to his purpose.\u003Cbr\u003E\u003Ci\u003E\ud83d\udd4a God orchestrates everything for the good of those who love Him.\u003C\/i\u003E","\u003Cu\u003EJohn 1:1\u003C\/u\u003E\u003Cbr\u003EIn the beginning was the Word, and the Word was with God, and the Word was God.\u003Cbr\u003E\u003Ci\u003E\ud83d\udd4a Establishes the divine nature and eternal existence of Christ.\u003C\/i\u003E","\u003Cu\u003EGalatians 5:22\u003C\/u\u003E\u003Cbr\u003EBut the fruit of the Spirit is love, joy, peace, longsuffering, gentleness, goodness, faith,\u003Cbr\u003E\u003Ci\u003E\ud83d\udd4a The Holy Spirit produces these virtues in believers.\u003C\/i\u003E","\u003Cu\u003EMatthew 18:20\u003C\/u\u003E\u003Cbr\u003EFor where two or three are gathered together in my name, there am I in the midst of them.\u003Cbr\u003E\u003Ci\u003E\ud83d\udd4a Jesus promises His presence in communal worship.\u003C\/i\u003E","\u003Cu\u003EJohn 14:6\u003C\/u\u003E\u003Cbr\u003EI am the way, the truth, and the life: no man cometh unto the Father, but by me.\u003Cbr\u003E\u003Ci\u003E\ud83d\udd4a Jesus is the exclusive path to God.\u003C\/i\u003E","\u003Cu\u003EJoshua 1:9\u003C\/u\u003E\u003Cbr\u003EBe strong and of a good courage; be not afraid, neither be thou dismayed: for the LORD thy God is with thee whithersoever thou goest.\u003Cbr\u003E\u003Ci\u003E\ud83d\udd4a God\u0027s presence empowers and encourages His people.\u003C\/i\u003E","\u003Cu\u003EIsaiah 9:6\u003C\/u\u003E\u003Cbr\u003EFor unto us a child is born, unto us a son is given: and the government shall be upon his shoulder: and his name shall be called Wonderful, Counsellor, The mighty God, The everlasting Father, The Prince of Peace.\u003Cbr\u003E\u003Ci\u003E\ud83d\udd4a A prophecy of the birth and roles of the Messiah.\u003C\/i\u003E","\u003Cu\u003EPhilippians 4:4\u003C\/u\u003E\u003Cbr\u003ERejoice in the Lord alway: and again I say, Rejoice.\u003Cbr\u003E\u003Ci\u003E\ud83d\udd4a A call to constant joy in the Lord.\u003C\/i\u003E","\u003Cu\u003EProverbs 9:10\u003C\/u\u003E\u003Cbr\u003EThe fear of the LORD is the beginning of wisdom: and the knowledge of the holy is understanding.\u003Cbr\u003E\u003Ci\u003E\ud83d\udd4a True wisdom starts with reverence for God.\u003C\/i\u003E","\u003Cu\u003EMatthew 11:28\u003C\/u\u003E\u003Cbr\u003ECome unto me, all ye that labour and are heavy laden, and I will give you rest.\u003Cbr\u003E\u003Ci\u003E\ud83d\udd4a Jesus offers rest to the weary and burdened.\u003C\/i\u003E","\u003Cu\u003EMatthew 5:9\u003C\/u\u003E\u003Cbr\u003EBlessed are the peacemakers: for they shall be called the children of God.\u003Cbr\u003E\u003Ci\u003E\ud83d\udd4a Those who promote peace reflect God\u0027s nature.\u003C\/i\u003E","\u003Cu\u003EMatthew 6:33\u003C\/u\u003E\u003Cbr\u003EBut seek ye first the kingdom of God, and his righteousness; and all these things shall be added unto you.\u003Cbr\u003E\u003Ci\u003E\ud83d\udd4a Prioritize God\u0027s kingdom and righteousness over worldly concerns.\u003C\/i\u003E","\u003Cu\u003EMatthew 5:16\u003C\/u\u003E\u003Cbr\u003ELet your light so shine before men, that they may see your good works, and glorify your Father which is in heaven.\u003Cbr\u003E\u003Ci\u003E\ud83d\udd4a Believers are called to live in a way that reflects God\u0027s glory.\u003C\/i\u003E","\u003Cu\u003EPsalm 91:1\u003C\/u\u003E\u003Cbr\u003EHe that dwelleth in the secret place of the most High shall abide under the shadow of the Almighty.\u003Cbr\u003E\u003Ci\u003E\ud83d\udd4a Living in God\u0027s presence offers protection and comfort.\u003C\/i\u003E","\u003Cu\u003EJohn 6:35\u003C\/u\u003E\u003Cbr\u003EAnd Jesus said unto them, I am the bread of life: he that cometh to me shall never hunger; and he that believeth on me shall never thirst.\u003Cbr\u003E\u003Ci\u003E\ud83d\udd4a Jesus satisfies the spiritual needs of those who come to Him.\u003C\/i\u003E","\u003Cu\u003EIsaiah 26:3\u003C\/u\u003E\u003Cbr\u003EThou wilt keep him in perfect peace, whose mind is stayed on thee: because he trusteth in thee.\u003Cbr\u003E\u003Ci\u003E\ud83d\udd4a Trusting in God brings peace of mind.\u003C\/i\u003E","\u003Cu\u003ERomans 3:23\u003C\/u\u003E\u003Cbr\u003EFor all have sinned, and come short of the glory of God;\u003Cbr\u003E\u003Ci\u003E\ud83d\udd4a Every person has failed to meet God\u0027s perfect standard.\u003C\/i\u003E","\u003Cu\u003ENahum 1:7\u003C\/u\u003E\u003Cbr\u003EThe LORD is good, a strong hold in the day of trouble; and he knoweth them that trust in him.\u003Cbr\u003E\u003Ci\u003E\ud83d\udd4a God is a refuge for those who trust Him.\u003C\/i\u003E","\u003Cu\u003ERomans 6:23\u003C\/u\u003E\u003Cbr\u003EFor the wages of sin is death; but the gift of God is eternal life through Jesus Christ our Lord.\u003Cbr\u003E\u003Ci\u003E\ud83d\udd4a Sin leads to death, but God offers eternal life through Christ.\u003C\/i\u003E","\u003Cu\u003EJohn 14:2\u003C\/u\u003E\u003Cbr\u003EIn my Father\u0027s house are many mansions: if it were not so, I would have told you. I go to prepare a place for you.\u003Cbr\u003E\u003Ci\u003E\ud83d\udd4a Jesus promises a place for believers in heaven.\u003C\/i\u003E","\u003Cu\u003EMatthew 5:8\u003C\/u\u003E\u003Cbr\u003EBlessed are the pure in heart: for they shall see God.\u003Cbr\u003E\u003Ci\u003E\ud83d\udd4a Purity of heart grants the vision to see God.\u003C\/i\u003E","\u003Cu\u003EMicah 6:8\u003C\/u\u003E\u003Cbr\u003EHe hath shewed thee, O man, what is good; and what doth the LORD require of thee, but to do justly, and to love mercy, and to walk humbly with thy God?\u003Cbr\u003E\u003Ci\u003E\ud83d\udd4a God desires justice, mercy, and humility from His people.\u003C\/i\u003E","\u003Cu\u003ERomans 5:8\u003C\/u\u003E\u003Cbr\u003EBut God commendeth his love toward us, in that, while we were yet sinners, Christ died for us.\u003Cbr\u003E\u003Ci\u003E\ud83d\udd4a God\u0027s love is demonstrated through Christ\u0027s sacrificial death.\u003C\/i\u003E","\u003Cu\u003EPsalm 51:10\u003C\/u\u003E\u003Cbr\u003ECreate in me a clean heart, O God; and renew a right spirit within me.\u003Cbr\u003E\u003Ci\u003E\ud83d\udd4a A plea for inner renewal and purity.\u003C\/i\u003E","\u003Cu\u003ERevelation 3:20\u003C\/u\u003E\u003Cbr\u003EBehold, I stand at the door, and knock: if any man hear my voice, and open the door, I will come in to him, and will sup with him, and he with me.\u003Cbr\u003E\u003Ci\u003E\ud83d\udd4a Christ invites us to fellowship with Him.\u003C\/i\u003E","\u003Cu\u003ELuke 19:10\u003C\/u\u003E\u003Cbr\u003EFor the Son of man is come to seek and to save that which was lost.\u003Cbr\u003E\u003Ci\u003E\ud83d\udd4a Jesus\u0027 mission was to rescue the lost.\u003C\/i\u003E","\u003Cu\u003E1 Samuel 16:7\u003C\/u\u003E\u003Cbr\u003EBut the LORD said unto Samuel, Look not on his countenance, or on the height of his stature; because I have refused him: for the LORD seeth not as man seeth; for man looketh on the outward appearance, but the LORD looketh on the heart.\u003Cbr\u003E\u003Ci\u003E\ud83d\udd4a God values the heart over outward appearances.\u003C\/i\u003E","\u003Cu\u003EJohn 10:10\u003C\/u\u003E\u003Cbr\u003EThe thief cometh not, but for to steal, and to kill, and to destroy: I am come that they might have life, and that they might have it more abundantly.\u003Cbr\u003E\u003Ci\u003E\ud83d\udd4a Jesus offers abundant life as opposed to destruction.\u003C\/i\u003E","\u003Cu\u003EJohn 13:34\u003C\/u\u003E\u003Cbr\u003EA new commandment I give unto you, That ye love one another; as I have loved you, that ye also love one another.\u003Cbr\u003E\u003Ci\u003E\ud83d\udd4a Jesus commands His followers to love each other sacrificially.\u003C\/i\u003E","\u003Cu\u003E2 Corinthians 5:17\u003C\/u\u003E\u003Cbr\u003ETherefore if any man be in Christ, he is a new creature: old things are passed away; behold, all things are become new.\u003Cbr\u003E\u003Ci\u003E\ud83d\udd4a Believers in Christ experience a transformative new beginning.\u003C\/i\u003E","\u003Cu\u003E1 Peter 5:7\u003C\/u\u003E\u003Cbr\u003ECasting all your care upon him; for he careth for you.\u003Cbr\u003E\u003Ci\u003E\ud83d\udd4a We are invited to entrust our worries to God, who cares for us.\u003C\/i\u003E","\u003Cu\u003EPsalm 34:4\u003C\/u\u003E\u003Cbr\u003EI sought the LORD, and he heard me, and delivered me from all my fears.\u003Cbr\u003E\u003Ci\u003E\ud83d\udd4a Seeking God brings deliverance from fear.\u003C\/i\u003E","\u003Cu\u003ELeviticus 19:18\u003C\/u\u003E\u003Cbr\u003EThou shalt love thy neighbour as thyself.\u003Cbr\u003E\u003Ci\u003E\ud83d\udd4a A fundamental command to love others with the same regard as oneself.\u003C\/i\u003E","\u003Cu\u003EGalatians 6:9\u003C\/u\u003E\u003Cbr\u003EAnd let us not be weary in well doing: for in due season we shall reap, if we faint not.\u003Cbr\u003E\u003Ci\u003E\ud83d\udd4a Perseverance in doing good will eventually bring results.\u003C\/i\u003E","\u003Cu\u003EProverbs 18:10\u003C\/u\u003E\u003Cbr\u003EThe name of the LORD is a strong tower: the righteous runneth into it, and is safe.\u003Cbr\u003E\u003Ci\u003E\ud83d\udd4a God\u0027s name is a refuge of safety for the righteous.\u003C\/i\u003E","\u003Cu\u003EJohn 15:13\u003C\/u\u003E\u003Cbr\u003EGreater love hath no man than this, that a man lay down his life for his friends.\u003Cbr\u003E\u003Ci\u003E\ud83d\udd4a The ultimate expression of love is self-sacrifice.\u003C\/i\u003E","\u003Cu\u003EPsalm 37:23\u003C\/u\u003E\u003Cbr\u003EThe steps of a good man are ordered by the LORD: and he delighteth in his way.\u003Cbr\u003E\u003Ci\u003E\ud83d\udd4a God directs the path of those who follow Him.\u003C\/i\u003E","\u003Cu\u003EHebrews 4:2\u003C\/u\u003E\u003Cbr\u003EFor unto us was the gospel preached, as well as unto them: but the word preached did not profit them, not being mixed with faith in them that heard it.\u003Cbr\u003E\u003Ci\u003E\ud83d\udd4a Faith is necessary to benefit from the gospel message.\u003C\/i\u003E","\u003Cu\u003EHebrews 4:16\u003C\/u\u003E\u003Cbr\u003ELet us therefore come boldly unto the throne of grace, that we may obtain mercy, and find grace to help in time of need.\u003Cbr\u003E\u003Ci\u003E\ud83d\udd4a We are encouraged to approach God confidently for help.\u003C\/i\u003E","\u003Cu\u003E1 John 1:9\u003C\/u\u003E\u003Cbr\u003EIf we confess our sins, he is faithful and just to forgive us our sins, and to cleanse us from all unrighteousness.\u003Cbr\u003E\u003Ci\u003E\ud83d\udd4a Confession leads to forgiveness and cleansing.\u003C\/i\u003E"],
+            ids: [11958,11959,11960,11961,11962,11963,11964,11965,11966,11967,11968,11969,11970,11971,11972,11973,11974,11975,11976,11977,11978,11979,11980,11981,11982,11983,11984,11985,11986,11987,11988,11989,11990,11991,11992,11993,11994,11995,11996,11997,11998,11999,12000,12001,12002,12003,12004,12005,12006,12007,12008],
+            review: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+            photographers: ["Brett Jordan","FRANK MERI\u00d1O","Tima Miroshnichenko","EyeEm","Luis Quintero","RDNE Stock project","RDNE Stock project","Gpt-Image-1","RDNE Stock project","Tara Winstead","Tima Miroshnichenko","FreeWhaleMedia","George Becker","RDNE Stock project","Tima Miroshnichenko","Tara Winstead","Tara Winstead","cottonbro studio","RDNE Stock project","Ivan Samkov","Roman Ziomka","Tara Winstead","Tara Winstead","Tima Miroshnichenko","cottonbro studio","Amy Far\u00edas","Tima Miroshnichenko","Pixabay","Tara Winstead","Tara Winstead","vad_7","Brett Jordan","Mikhail Nilov","MART  PRODUCTION","RDNE Stock project","RDNE Stock project","Ella Wei","BillionPhotos","Naassom Azevedo","Brett Jordan","Luis Quintero","jievani","K2 Production","Caio","RDNE Stock project","Tara Winstead","Tara Winstead","Donna","Pavel Danilyuk","Tara Winstead","Thirdman"],
+            photographerUrls: ["https:\/\/www.pexels.com\/@brettjordan","https:\/\/www.pexels.com\/@franco30","https:\/\/www.pexels.com\/@tima-miroshnichenko","https:\/\/www.freepik.com\/author\/EyeEm","https:\/\/www.pexels.com\/@jibarofoto","https:\/\/www.pexels.com\/@rdne","https:\/\/www.pexels.com\/@rdne","https:\/\/openai.com","https:\/\/www.pexels.com\/@rdne","https:\/\/www.pexels.com\/@tara-winstead","https:\/\/www.pexels.com\/@tima-miroshnichenko","https:\/\/www.freepik.com\/author\/freewhalemedia","https:\/\/www.pexels.com\/@eye4dtail","https:\/\/www.pexels.com\/@rdne","https:\/\/www.pexels.com\/@tima-miroshnichenko","https:\/\/www.pexels.com\/@tara-winstead","https:\/\/www.pexels.com\/@tara-winstead","https:\/\/www.pexels.com\/@cottonbro","https:\/\/www.pexels.com\/@rdne","https:\/\/www.pexels.com\/@ivan-samkov","https:\/\/www.pexels.com\/@roman-ziomka-262758540","https:\/\/www.pexels.com\/@tara-winstead","https:\/\/www.pexels.com\/@tara-winstead","https:\/\/www.pexels.com\/@tima-miroshnichenko","https:\/\/www.pexels.com\/@cottonbro","https:\/\/www.pexels.com\/@amfaru","https:\/\/www.pexels.com\/@tima-miroshnichenko","https:\/\/www.pexels.com\/@pixabay","https:\/\/www.pexels.com\/@tara-winstead","https:\/\/www.pexels.com\/@tara-winstead","https:\/\/www.freepik.com\/author\/vad7","https:\/\/www.pexels.com\/@brettjordan","https:\/\/www.pexels.com\/@mikhail-nilov","https:\/\/www.pexels.com\/@mart-production","https:\/\/www.pexels.com\/@rdne","https:\/\/www.pexels.com\/@rdne","https:\/\/www.pexels.com\/@ewei2805","https:\/\/www.freepik.com\/author\/billionphotos","https:\/\/www.pexels.com\/@naassom-azevedo-174951","https:\/\/www.pexels.com\/@brettjordan","https:\/\/www.pexels.com\/@jibarofoto","https:\/\/www.freepik.com\/author\/user28326776","https:\/\/www.pexels.com\/@k2production","https:\/\/www.pexels.com\/@caio","https:\/\/www.pexels.com\/@rdne","https:\/\/www.pexels.com\/@tara-winstead","https:\/\/www.pexels.com\/@tara-winstead","https:\/\/www.pexels.com\/@donna-117218948","https:\/\/www.pexels.com\/@pavel-danilyuk","https:\/\/www.pexels.com\/@tara-winstead","https:\/\/www.pexels.com\/@thirdman"],
+            providers: ["pexels","pexels","pexels","freepik","pexels","pexels","pexels","openai","pexels","pexels","pexels","freepik","pexels","pexels","pexels","pexels","pexels","pexels","pexels","pexels","pexels","pexels","pexels","pexels","pexels","pexels","pexels","pexels","pexels","pexels","freepik","pexels","pexels","pexels","pexels","pexels","pexels","freepik","pexels","pexels","pexels","freepik","pexels","pexels","pexels","pexels","pexels","pexels","pexels","pexels","pexels"],
+            country: "Bible",
+            flagUrl: null,
+            type: "devotional",
+        };
+    </script>
+
+    <script type="text/javascript" src="/js/passportlearn.js?v=2.3"></script>
+
+    <script>
+        let slideIndex = parseInt(
+            document.querySelector('meta[name="start-index"]').content, 10
+        ) || 0;
+
+        if (document.querySelector('meta[name="start-index"]').content > 0) {
+            $('.alertDiv').fadeIn().html("<div class='alert alert-info alert-block animated fadeInUp' style='border-left:10px solid blue;color:blue;'><button type='button' class='close' data-dismiss='alert'>&nbsp;×</button><i class='fad fa-check-square'></i> Picking up where you left off. Click on Restart to Start over.</div>").delay(3000).fadeOut();
+        }
+
+        const progressUrl = document.querySelector('meta[name="progress-url"]').content;
+        const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
+        showSlides(slideIndex);
+        let timer = parseInt($('#timer-select').val()); // Get initial value from select
+        let setIntervalId;
+
+        window.updateCredit = function (idx = slideIndex) {
+            const name = photographers[idx];
+            const url = photographerUrls[idx];
+            const prov = providers[idx];
+
+            let html = '';
+            if (prov) {
+                let platformName = '';
+                let platformLink = '';
+                let licenseText = '';
+                let licenseLink = '';
+
+                // Check if it's a Wikimedia Commons with CC license
+                if (prov.startsWith('wikimedia-')) {
+                    platformName = 'Wikimedia Commons';
+                    platformLink = 'https://commons.wikimedia.org';
+
+                    // Extract CC license from the value (e.g., "wikimedia-cc-by-3.0" -> "cc-by-3.0")
+                    const licensePart = prov.replace('wikimedia-', '');
+                    if (licensePart === 'cc0') {
+                        licenseText = 'CC0';
+                    } else {
+                        // Convert "cc-by-sa-3.0" to "CC BY-SA 3.0"
+                        licenseText = licensePart.toUpperCase().replace(/-/g, ' ').replace('CC ', 'CC ');
+                    }
+                    licenseLink = CC_LICENSE_URLS[licensePart];
+                }
+                // Check for other platforms
+                else if (prov === 'freepik') {
+                    platformName = 'Freepik';
+                    platformLink = 'https://www.freepik.com';
+                } else if (prov === 'pexels') {
+                    platformName = 'Pexels';
+                    platformLink = 'https://www.pexels.com';
+                } else if (prov === 'unsplash') {
+                    platformName = 'Unsplash';
+                    platformLink = 'https://unsplash.com';
+                } else if (prov === 'openai') {
+                    platformName = 'OpenAI';
+                    platformLink = 'https://openai.com';
+                } else if (prov === 'custom') {
+                    platformName = 'Custom Source';
+                    platformLink = '#';
+                } else {
+                    // Fallback for backwards compatibility
+                    platformName = prov.charAt(0).toUpperCase() + prov.slice(1);
+                    platformLink = PROVIDER_LINK[prov] || '#';
+                }
+
+                // Build the HTML
+                if (name && name.trim()) {
+                    const nameHtml = url ? `<a href="${url}" target="_blank">${name}</a>` : name;
+                    const platformHtml = `<a href="${platformLink}" target="_blank">${platformName}</a>`;
+
+                    if (licenseText && licenseLink) {
+                        // With CC license
+                        html = `Photo by ${nameHtml} on ${platformHtml} • <a href="${licenseLink}" target="_blank">${licenseText}</a>`;
+                    } else {
+                        // Without CC license
+                        html = `Photo by ${nameHtml} on ${platformHtml}`;
+                    }
+                } else {
+                    // No photographer name
+                    const platformHtml = `<a href="${platformLink}" target="_blank">${platformName}</a>`;
+                    if (licenseText && licenseLink) {
+                        html = `Photo from ${platformHtml} • <a href="${licenseLink}" target="_blank">${licenseText}</a>`;
+                    } else {
+                        html = `Photo from ${platformHtml}`;
+                    }
+                }
+            }
+            $('.credit').html(html).toggle(!!html);
+        };
+
+        // Add the timer select change handler
+        $('#timer-select').on('change', function () {
+            timer = parseInt($(this).val());
+
+            // If slideshow is currently running, restart it with new duration
+            if ($('#stopShowBtn').is(':visible')) {
+                stopSlideShow();
+                startSlideShow(timer);
+            }
+        });
+        showSlides(slideIndex);
+        $('#xOut').on('click', () => {
+            gsap.to('.blurbContainer', {autoAlpha: 0, y: 30, duration: 0.1, ease: 'power1.in'});
+        });
+
+
+        $("#startShowBtn").on('click', function () {
+            gsap.fromTo("#startShowBtn", {rotation: 0}, {
+                rotation: 360,
+                duration: 0.5,
+                ease: "power2.inOut"
+            });
+
+            $('.next').trigger("click");  // Changed to match your HTML
+            $("#startShowBtn").hide();    // Simplified to just hide the start button
+            $('#stopShowBtn').fadeIn();
+            startSlideShow(timer);
+        });
+
+        $("#stopShowBtn").on('click', function () {
+            $('#stopShowBtn').hide();
+            $("#startShowBtn,#backgrounds,#nextbutton,#previousbutton").fadeIn();
+            stopSlideShow();
+        });
+
+        $("#startShowBtn").on('mouseenter', function () {
+            gsap.to("#startShowBtn", {
+                scale: 1.1,
+                boxShadow: "0 0 15px rgba(0,255,0,0.6)",
+                duration: 0.3
+            });
+        });
+
+        $("#startShowBtn").on('mouseleave', function () {
+            gsap.to("#startShowBtn", {
+                scale: 1,
+                boxShadow: "none",
+                duration: 0.3
+            });
+        });
+
+        function startSlideShow(duration) {
+            $('.slideBtn').fadeOut();
+            runCountDown(duration);
+            setIntervalId = setInterval(function () {
+                $('.next').trigger("click");
+                $('.previous').hide();
+                console.log('next slide...');
+            }, duration);
+        }
+
+        function stopSlideShow() {
+            $('.slideBtn').fadeIn();
+            $('#countdown').remove();
+            clearInterval(setIntervalId);
+        }
+
+
+        gsap.utils.toArray('.slideBtn').forEach(btn => {
+            const isNext = btn.classList.contains('next');
+            const isPrev = btn.classList.contains('prev');
+
+            // Hover in
+            btn.addEventListener('mouseenter', () => {
+                gsap.to(btn, {
+                    boxShadow: "0 0 15px rgba(30,144,255, 0.8)",
+                    scale: 1.05,
+                    x: isNext ? 5 : isPrev ? -5 : 0,
+                    duration: 0.3,
+                    ease: "power2.out"
+                });
+            });
+
+            // Hover out
+            btn.addEventListener('mouseleave', () => {
+                gsap.to(btn, {
+                    boxShadow: "none",
+                    scale: 1,
+                    x: 0,
+                    duration: 0.3,
+                    ease: "power2.out"
+                });
+            });
+
+            // Click (pressed state)
+            btn.addEventListener('mousedown', () => {
+                gsap.to(btn, {
+                    scale: 0.75,
+                    x: 0,
+                    boxShadow: "none",
+                    duration: 0.1,
+                    ease: "power1.in"
+                });
+                gsap.set('.blurbContainer', {clearProps: 'all', autoAlpha: 1, delay: 0.5});
+            });
+
+            // Reset after click
+            btn.addEventListener('mouseup', () => {
+                gsap.to(btn, {
+                    scale: 1,
+                    x: isNext ? 5 : isPrev ? -5 : 0,
+                    boxShadow: "0 0 15px rgba(30,144,255, 0.8)",
+                    duration: 0.2,
+                    ease: "power1.out"
+                });
+            });
+
+            // Optional: also reset if mouse leaves while pressed
+            btn.addEventListener('mouseleave', () => {
+                gsap.to(btn, {
+                    scale: 1,
+                    x: 0,
+                    boxShadow: "none",
+                    duration: 0.2,
+                    ease: "power1.out"
+                });
+            });
+        });
+
+        function runCountDown(duration) {
+            $('#countdownDiv').append("<div id='countdown'><div id='countdown-number'></div><svg><circle r='18' cx='20' cy='20'></circle></svg></div>");
+            var countdownNumberEl = document.getElementById('countdown-number');
+            var countdown = duration / 1000;
+            countdownNumberEl.textContent = duration / 1000;
+
+            // Update the animation duration dynamically
+            const circle = document.querySelector('#countdown circle');
+            circle.style.animation = `countdown ${duration / 1000}s linear infinite forwards`;
+
+            setInterval(function () {
+                countdown = --countdown <= 0 ? (duration / 1000) : countdown;
+                countdownNumberEl.textContent = countdown;
+            }, 1000);
+        }
+
+    </script>
+
+<script>
+            $.ajaxSetup({headers: {'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')}});
+    //   let swreg;
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('/sw.js').then(function (reg) {
+//      swreg = reg;
+            if (reg.active != null) {
+                if (reg.active.state == 'activated') {
+                    $('#userIcon').css('color', 'gold');
+                }
+            }
+
+// updatefound is fired if service-worker.js changes.
+            reg.onupdatefound = function () {
+                var installingWorker = reg.installing;
+
+                installingWorker.onstatechange = function () {
+                    switch (installingWorker.state) {
+                        case 'installed':
+                            if (navigator.serviceWorker.controller) {
+                                // At this point, the old content will have been purged and the fresh content will have been added to the cache.
+                                // It's the perfect time to display a "New content is available; please refresh."
+                                console.log('MemoryCo has been updated!')
+                                $('#updateNotification').fadeIn().delay(5000).fadeOut();
+                            } else {
+                                // At this point, everything has been precached.
+                                // It's the perfect time to display a "Content is cached for offline use." message.
+                                console.log('MemoryCo is ready to be used offline!');
+                                $('#offlineNotification').fadeIn().delay(5000).fadeOut();
+                                $('#userIcon').css('color', 'gold');
+                                $('#userIcon').css('text-shadow', '0 0 3px #000')
+                            }
+                            break;
+
+                        case 'redundant':
+                            console.error('The installing service worker became redundant.');
+                            break;
+                    }
+                };
+            };
+        }).catch(function (e) {
+            console.error('Error during service worker registration:', e);
+        });
+    }
+
+    window.addEventListener('load', function (e) {
+        if (navigator.onLine) {
+            console.log('We\'re online!');
+                        document.getElementById("activities").style.visibility = "visible";
+                        document.getElementById("adminCommunity").style.visibility = "visible";
+                        $('#userIcon').removeClass('fa-signal-slash');
+            $('#userIcon').addClass('fa-user');
+            
+        } else {
+            console.log('We\'re offline...');
+                        document.getElementById("activities").style.visibility = "hidden";
+                        document.getElementById("adminCommunity").style.visibility = "hidden";
+                        $('#userIcon').removeClass('fa-user');
+            $('#userIcon').addClass('fa-signal-slash');
+                    }
+    }, false);
+
+    window.addEventListener('online', function (e) {
+        console.log('And we\'re back :).');
+                document.getElementById("activities").style.visibility = "visible";
+                document.getElementById("adminCommunity").style.visibility = "visible";
+                $('#userIcon').removeClass('fa-signal-slash');
+        $('#userIcon').addClass('fa-user');
+            }, false);
+
+    window.addEventListener('offline', function (e) {
+        console.log('Connection is down.');
+                document.getElementById("activities").style.visibility = "hidden";
+                document.getElementById("adminCommunity").style.visibility = "hidden";
+        
+        $('#userIcon').removeClass('fa-user');
+        $('#userIcon').addClass('fa-signal-slash');
+            }, false);
+            function toggleFullScreen(elem) {
+        $('.fa-expand-wide').removeClass("animate animated pulse infinite");
+// ## The below if statement seems to work better ## if ((document.fullScreenElement && document.fullScreenElement !== null) || (document.msfullscreenElement && document.msfullscreenElement !== null) || (!document.mozFullScreen && !document.webkitIsFullScreen)) {
+        if ((document.fullScreenElement !== undefined && document.fullScreenElement === null) || (document.msFullscreenElement !== undefined && document.msFullscreenElement === null) || (document.mozFullScreen !== undefined && !document.mozFullScreen) || (document.webkitIsFullScreen !== undefined && !document.webkitIsFullScreen)) {
+            if (elem.requestFullScreen) {
+                elem.requestFullScreen();
+            } else if (elem.mozRequestFullScreen) {
+                elem.mozRequestFullScreen();
+            } else if (elem.webkitRequestFullScreen) {
+                elem.webkitRequestFullScreen(Element.ALLOW_KEYBOARD_INPUT);
+            } else if (elem.msRequestFullscreen) {
+                elem.msRequestFullscreen();
+            }
+        } else {
+            if (document.cancelFullScreen) {
+                document.cancelFullScreen();
+            } else if (document.mozCancelFullScreen) {
+                document.mozCancelFullScreen();
+            } else if (document.webkitCancelFullScreen) {
+                document.webkitCancelFullScreen();
+            } else if (document.msExitFullscreen) {
+                document.msExitFullscreen();
+            }
+            $('.fa-expand-wide').addClass("animate animated pulse infinite");
+        }
+    };
+</script>
+    <script>
+    // AGREE TO TOS
+    $('#agree').click(function () {
+        if ($('#agree').is(':checked')) {
+            $('#submitInfo').attr('disabled', false);
+            $('#agree').removeClass('animated infinite flash');
+        } else {
+            $('#submitInfo').attr('disabled', true);
+            $('#agree').addClass('animated infinite flash');
+        }
+    });
+</script>
+
+<script src='https://cdn.jsdelivr.net/npm/fullcalendar-scheduler@6.1.10/index.global.min.js'></script>
+
+<script>
+    function printAsPDF() {
+        const currentUrl = window.location.href;
+
+        // Send the current URL to the server
+        $.ajax({
+            url: '/print-pdf',
+            method: 'POST',
+            data: {
+                url: currentUrl, // Pass the full page URL
+                _token: $('meta[name="csrf-token"]').attr('content')
+            },
+            xhrFields: {responseType: 'blob'}, // Ensure the response is treated as a file
+            success: function (data) {
+                // Create a blob and open the PDF inline
+                const blob = new Blob([data], {type: 'application/pdf'});
+                const url = URL.createObjectURL(blob);
+                window.open(url, '_blank'); // Open PDF in a new tab
+            },
+            error: function (error) {
+                console.error('Failed to generate PDF:', error);
+            }
+        });
+    }
+
+
+</script>
+
+    
+
+
+<!-- Meta Pixel Code -->
+<script>
+    !function (f, b, e, v, n, t, s) {
+        if (f.fbq) return;
+        n = f.fbq = function () {
+            n.callMethod ?
+                n.callMethod.apply(n, arguments) : n.queue.push(arguments)
+        };
+        if (!f._fbq) f._fbq = n;
+        n.push = n;
+        n.loaded = !0;
+        n.version = '2.0';
+        n.queue = [];
+        t = b.createElement(e);
+        t.async = !0;
+        t.src = v;
+        s = b.getElementsByTagName(e)[0];
+        s.parentNode.insertBefore(t, s)
+    }(window, document, 'script',
+        'https://connect.facebook.net/en_US/fbevents.js');
+
+    // Enhanced initialization with advanced matching
+        // For logged-in users, provide hashed email for better matching
+    fbq('init', '647042818232836', {
+        em: 'c5fa61320bff73b067546c6e0ede66a6c5cfe8b1fcb956f4bc0da7ff79e9bdff',
+        fn: '6e7e2ef0fbf160847f3a3f905528807e0dd6261d8020ce9ed58609b60e43aa7c',
+        ln: 'c0fc3ee4a239032bba00bbf6988a5a4c0dc9140155ebcc675ac434a2d8543b2f'
+    });
+    
+    fbq('track', 'PageView');
+</script>
+<noscript><img height="1" width="1" style="display:none"
+               src="https://www.facebook.com/tr?id=647042818232836&ev=PageView&noscript=1"
+    /></noscript>
+<!-- End Meta Pixel Code -->
+<script>
+    (function () {
+        // Check for fbclid in URL and create _fbc if needed (for first-time FB ad visitors)
+        const urlParams = new URLSearchParams(window.location.search);
+        const fbclid = urlParams.get('fbclid');
+        if (fbclid && !document.cookie.match(/_fbc=/)) {
+            // Meta's recommended format for _fbc when created from fbclid
+            const fbc = 'fb.1.' + Math.floor(Date.now() / 1000) + '.' + fbclid;
+            document.cookie = `_fbc=${fbc}; max-age=7776000; path=/; SameSite=Lax`;
+        }
+
+        if (sessionStorage.getItem('fbc-sent')) return;   // avoid repeats
+
+        const fbcMatch = document.cookie.match(/(?:^|;\s*)_fbc=([^;]+)/);
+        const fbpMatch = document.cookie.match(/(?:^|;\s*)_fbp=([^;]+)/);
+
+        // Send only if at least one cookie exists
+        if (!fbcMatch && !fbpMatch) return;
+
+        fetch("https://www.memoryco.org/fb-cookie", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRF-TOKEN": "8U6zGavQaq8M6Jqwpnq9Ewc2CBYjUR4gjrFLTkva",
+            },
+            body: JSON.stringify({
+                _fbc: fbcMatch ? fbcMatch[1] : null,
+                _fbp: fbpMatch ? fbpMatch[1] : null
+            })
+        }).then(() => sessionStorage.setItem('fbc-sent', '1'));
+    })();
+</script>
+
+    <script>
+        let START_URL = '/start-session';
+        let END_URL = '/end-session';
+        let HEARTBEAT_URL = '/heartbeat-session';
+        (() => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const jwtToken = urlParams.get('token');
+            const CSRF = '8U6zGavQaq8M6Jqwpnq9Ewc2CBYjUR4gjrFLTkva';
+
+            const buildHeaders = () => {
+                const h = {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': CSRF,
+                };
+                if (jwtToken) {                    // ← add ONLY when the param exists and is a string
+                    h['Authorization'] = `Bearer ${jwtToken}`;
+                }
+                return h;
+            };
+
+            /* 1. declare once in the outer scope (let, not const) */
+
+
+            /* 2. adjust if a token is present */
+            if (jwtToken) {
+                START_URL += '?token=' + jwtToken;
+                END_URL += '?token=' + jwtToken;
+                HEARTBEAT_URL += '?token=' + jwtToken;
+            }
+
+            // Keep one session per browser TAB
+            let sid = sessionStorage.getItem('mc_session_id');
+
+            // ---------- Heartbeat tracking variables ----------
+            let lastActivity = Date.now();
+            let heartbeatInterval = null;
+            const HEARTBEAT_FREQUENCY = 5 * 60 * 1000;  // Send heartbeat every 5 minutes
+            const IDLE_THRESHOLD = 10 * 60 * 1000;      // Consider idle after 10 minutes of no activity
+
+            // ---------- helpers ----------
+            const ajax = (url, bodyObj) =>
+                fetch(url, {
+                    method: 'POST',
+                    headers: buildHeaders(),
+                    body:
+                        JSON.stringify(bodyObj)
+                })
+            ;
+
+            // ---------- start session ----------
+            const begin = async () => {
+                if (sid) return;                         // already tracking this tab
+                try {
+                    const res = await ajax(START_URL, {});
+                    if (!res.ok) {
+                        console.warn('Session start failed:', res.status);
+                        return;  // Don't start heartbeat if session creation fails
+                    }
+                    const data = await res.json();
+                    sid = data.session_id;
+                    sessionStorage.setItem('mc_session_id', sid);
+
+                    // Start heartbeat monitoring after session starts
+                    startHeartbeatMonitoring();
+                } catch (error) {
+                    console.warn('Failed to start session tracking:', error);
+                    // Don't crash - just skip session tracking
+                }
+            };
+
+            // ---------- end session ----------
+            const finish = () => {
+                if (!sid) return;
+
+                // Stop heartbeat monitoring
+                if (heartbeatInterval) {
+                    clearInterval(heartbeatInterval);
+                    heartbeatInterval = null;
+                }
+
+                fetch(END_URL, {
+                        method: 'POST',
+                        keepalive: true,                 // ← works like sendBeacon
+                        headers: buildHeaders(),
+                        body: JSON.stringify({session_id: sid}),
+                    }
+                )
+                ;
+
+                sessionStorage.removeItem('mc_session_id');
+            };
+
+            // ---------- Send heartbeat ----------
+            const sendHeartbeat = () => {
+                if (!sid) return;
+
+                // Only send heartbeat if user was active recently
+                const timeSinceActivity = Date.now() - lastActivity;
+                if (timeSinceActivity > IDLE_THRESHOLD) {
+                    return;  // User is idle, skip heartbeat
+                }
+
+                // Send heartbeat (fire and forget)
+                fetch(HEARTBEAT_URL, {
+                    method: 'POST',
+                    headers: buildHeaders(),
+                    body: JSON.stringify({session_id: sid}),
+                }).catch(() => {
+                    // Silently ignore heartbeat errors
+                });
+            };
+
+            // ---------- Track user activity ----------
+            const updateActivity = () => {
+                lastActivity = Date.now();
+            };
+
+            // ---------- Start heartbeat monitoring ----------
+            const startHeartbeatMonitoring = () => {
+                if (heartbeatInterval) return;  // Already monitoring
+
+                // Track various user activities (throttled)
+                let activityThrottle = null;
+                const throttledActivity = () => {
+                    if (activityThrottle) return;
+                    activityThrottle = setTimeout(() => {
+                        updateActivity();
+                        activityThrottle = null;
+                    }, 1000);  // Throttle to once per second
+                };
+
+                // Listen for activity events
+                document.addEventListener('mousemove', throttledActivity);
+                document.addEventListener('keypress', throttledActivity);
+                document.addEventListener('click', throttledActivity);
+                document.addEventListener('scroll', throttledActivity);
+                document.addEventListener('touchstart', throttledActivity);
+
+                // Send heartbeats periodically
+                heartbeatInterval = setInterval(sendHeartbeat, HEARTBEAT_FREQUENCY);
+
+                // Send initial heartbeat to mark session as active
+                sendHeartbeat();
+            };
+
+            // kick off
+            begin();
+
+            // when the tab or window disappears
+            window.addEventListener('pagehide', finish);  // fires for refresh, close, nav-away
+        })
+        ();
+    </script>
+
+<script defer src="https://static.cloudflareinsights.com/beacon.min.js/vcd15cbe7772f49c399c6a5babf22c1241717689176015" integrity="sha512-ZpsOmlRQV6y907TI0dKBHq9Md29nnaEIPlkf84rnaERnq6zvWvPUqr2ft8M1aS28oN72PdrCzSjY4U6VaAw1EQ==" data-cf-beacon='{"version":"2024.11.0","token":"f1f75ac3ef26439e986810ca41ea9bf1","r":1,"server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
+</body>
+</html>
