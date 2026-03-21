@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>31 Day Morning Devotional — ProjectorFirst</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      background: #111827;
+      font-family: Arial, sans-serif;
+    }
+    .slide-bg {
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+    }
+  </style>
+</head>
+<body class="text-white">
+
+  <audio id="bgMusic" loop>
+    <source src="music/soft-piano.mp3" type="audio/mpeg">
+  </audio>
+
+  <div id="app" class="min-h-screen flex flex-col">
+
+    <div class="flex flex-wrap justify-between items-center gap-3 px-6 py-4 bg-black/60 backdrop-blur-sm">
+      <div class="text-2xl font-extrabold">ProjectorFirst Morning Devotional</div>
+      <div class="flex flex-wrap gap-3">
+        <button id="restartBtn" class="px-4 py-2 bg-blue-800 rounded-xl font-bold hover:bg-blue-700">Restart</button>
+        <button id="fullscreenBtn" class="px-4 py-2 bg-green-700 rounded-xl font-bold hover:bg-green-600">Fullscreen</button>
+        <button id="musicPlayBtn" class="px-4 py-2 bg-purple-700 rounded-xl font-bold hover:bg-purple-600">Play Music</button>
+        <button id="musicPauseBtn" class="px-4 py-2 bg-gray-700 rounded-xl font-bold hover:bg-gray-600">Pause Music</button>
+      </div>
+    </div>
+
+    <div id="slide"
+         class="slide-bg flex-1 flex items-center justify-center px-6 py-10"
+         style="background-image: linear-gradient(rgba(0,0,0,.45), rgba(0,0,0,.45)), url('https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1600&q=80');">
+
+      <div class="max-w-5xl w-full text-center">
+        <div id="slideTag" class="text-lg md:text-2xl font-bold uppercase tracking-widest mb-4 text-yellow-300">
+          Day 1
+        </div>
+
+        <h1 id="slideTitle" class="text-4xl md:text-7xl font-extrabold leading-tight mb-6">
+          God Is With You
+        </h1>
+
+        <p id="slideVerse" class="text-2xl md:text-4xl font-bold leading-relaxed mb-6">
+          “Fear thou not; for I am with thee.” — Isaiah 41:10
+        </p>
+
+        <p id="slideText" class="text-xl md:text-3xl leading-relaxed max-w-4xl mx-auto">
+          You do not begin this day alone. Strength and help are already beside you.
+        </p>
+      </div>
+    </div>
+
+    <div class="bg-black/70 px-6 py-5">
+      <div class="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+        <div class="flex gap-3">
+          <button id="prevBtn" class="px-6 py-3 bg-gray-700 rounded-xl font-bold text-xl hover:bg-gray-600">← Previous</button>
+          <button id="nextBtn" class="px-6 py-3 bg-blue-800 rounded-xl font-bold text-xl hover:bg-blue-700">Next →</button>
+        </div>
+
+        <div id="counter" class="text-lg md:text-2xl font-bold">
+          Day 1 of 31
+        </div>
+
+        <div class="flex items-center gap-3">
+          <button id="playBtn" class="px-6 py-3 bg-green-700 rounded-xl font-bold text-xl hover:bg-green-600">Auto Play</button>
+          <button id="stopBtn" class="px-6 py-3 bg-red-700 rounded-xl font-bold text-xl hover:bg-red-600">Stop</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const slides = [
+      {
+        tag: "Day 1",
+        title: "God Is With You",
+        verse: "“Fear thou not; for I am with thee.” — Isaiah 41:10",
+        text: "You do not begin this day alone. Strength and help are already beside you.",
+        image: "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1600&q=80"
+      },
+      {
+        tag: "Day 2",
+        title: "New Mercies",
+        verse: "“His mercies are new every morning.” — Lamentations 3:23",
+        text: "Today is a fresh start. Grace meets you again this morning.",
+        image: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1600&q=80"
+      },
+      {
+        tag: "Day 3",
+        title: "Be Still",
+        verse: "“Be still, and know that I am God.” — Psalm 46:10",
+        text: "Pause your thoughts and let peace settle in your heart.",
+        image: "https://images.unsplash.com/photo-1470770903676-69b98201ea1c?auto=format&fit=crop&w=1600&q=80"
+      },
+      {
+        tag: "Day 4",
+        title: "Walk by Faith",
+        verse: "“For we walk by faith, not by sight.” — 2 Corinthians 5:7",
+        text: "You do not need to see the whole road to take the next step.",
+        image: "https://images.unsplash.com/photo-1502082553048-f009c37129b9?auto=format&fit=crop&w=1600&q=80"
+      },
+      {
+        tag: "Day 5",
+        title: "The Lord Is Near",
+        verse: "“The Lord is nigh unto them that are of a broken heart.” — Psalm 34:18",
+        text: "God draws close to hurting hearts with comfort and tenderness.",
+        image: "https://images.unsplash.com/photo-1500534623283-312aade485b7?auto=format&fit=crop&w=1600&q=80"
+      },
+      {
+        tag: "Day 6",
+        title: "Strength for Today",
+        verse: "“He giveth power to the faint.” — Isaiah 40:29",
+        text: "When you feel weak, strength can still rise to meet you.",
+        image: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1600&q=80"
+      },
+      {
+        tag: "Day 7",
+        title: "This Is the Day",
+        verse: "“This is the day which the Lord hath made.” — Psalm 118:24",
+        text: "There is something good to notice in today, even if it is small.",
+        image: "https://images.unsplash.com/photo-1493246507139-91e8fad9978e?auto=format&fit=crop&w=1600&q=80"
+      },
+      {
+        tag: "Day 8",
+        title: "Trust the Lord",
+        verse: "“Trust in the Lord with all thine heart.” — Proverbs 3:5",
+        text: "You do not have to carry every answer. Trust can hold what worry cannot.",
+        image: "https://images.unsplash.com/photo-1505761671935-60b3a7427bad?auto=format&fit=crop&w=1600&q=80"
+      },
+      {
+        tag: "Day 9",
+        title: "Grace Is Enough",
+        verse: "“My grace is sufficient for thee.” — 2 Corinthians 12:9",
+        text: "God’s grace is enough for weakness, waiting, and today’s needs.",
+        image: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1600&q=80"
+      },
+      {
+        tag: "Day 10",
+        title: "Come Unto Me",
+        verse: "“Come unto me... and I will give you rest.” — Matthew 11:28",
+        text: "Rest is not failure. It is a place where peace can grow.",
+        image: "https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=1600&q=80"
+      },
+      {
+        tag: "Day 11",
+        title: "Held by Love",
+        verse: "“Nothing shall be able to separate us from the love of God.” — Romans 8:39",
+        text: "Nothing can pull you out of the reach of God’s love.",
+        image: "https://images.unsplash.com/photo-1501594907352-04cda38ebc29?auto=format&fit=crop&w=1600&q=80"
+      },
+      {
+        tag: "Day 12",
+        title: "Peaceful Rest",
+        verse: "“I will both lay me down in peace, and sleep.” — Psalm 4:8",
+        text: "Peace can cover the mind and heart like a blanket.",
+        image: "https://images.unsplash.com/photo-1504893524553-b855bce32c67?auto=format&fit=crop&w=1600&q=80"
+      },
+      {
+        tag: "Day 13",
+        title: "A Lamp Unto My Feet",
+        verse: "“Thy word is a lamp unto my feet.” — Psalm 119:105",
+        text: "God gives enough light for the next step, even when the whole path is not visible.",
+        image: "https://images.unsplash.com/photo-1501004318641-b39e6451bec6?auto=format&fit=crop&w=1600&q=80"
+      },
+      {
+        tag: "Day 14",
+        title: "Perfect Peace",
+        verse: "“Thou wilt keep him in perfect peace.” — Isaiah 26:3",
+        text: "Peace grows when the mind turns away from fear and toward God.",
+        image: "https://images.unsplash.com/photo-1439405326854-014607f694d7?auto=format&fit=crop&w=1600&q=80"
+      },
+      {
+        tag: "Day 15",
+        title: "Rejoice Always",
+        verse: "“Rejoice evermore.” — 1 Thessalonians 5:16",
+        text: "Joy does not have to be loud. Sometimes it is quiet gratitude.",
+        image: "https://images.unsplash.com/photo-1490750967868-88aa4486c946?auto=format&fit=crop&w=1600&q=80"
+      },
+      {
+        tag: "Day 16",
+        title: "God Is Your Refuge",
+        verse: "“God is our refuge and strength.” — Psalm 46:1",
+        text: "When life feels unstable, God remains a safe place.",
+        image: "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?auto=format&fit=crop&w=1600&q=80"
+      },
+      {
+        tag: "Day 17",
+        title: "He Cares for You",
+        verse: "“Casting all your care upon him; for he careth for you.” — 1 Peter 5:7",
+        text: "You do not have to carry every burden alone today.",
+        image: "https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?auto=format&fit=crop&w=1600&q=80"
+      },
+      {
+        tag: "Day 18",
+        title: "Joy Comes in the Morning",
+        verse: "“Joy cometh in the morning.” — Psalm 30:5",
+        text: "Morning brings more than sunlight. It brings renewed hope.",
+        image: "https://images.unsplash.com/photo-1465146344425-f00d5f5c8f07?auto=format&fit=crop&w=1600&q=80"
+      },
+      {
+        tag: "Day 19",
+        title: "The Lord Is My Shepherd",
+        verse: "“The Lord is my shepherd; I shall not want.” — Psalm 23:1",
+        text: "You are guided, watched over, and cared for.",
+        image: "https://images.unsplash.com/photo-1472396961693-142e6e269027?auto=format&fit=crop&w=1600&q=80"
+      },
+      {
+        tag: "Day 20",
+        title: "Wait on the Lord",
+        verse: "“Wait on the Lord: be of good courage.” — Psalm 27:14",
+        text: "Waiting is hard, but courage can still grow in quiet places.",
+        image: "https://images.unsplash.com/photo-1500534314209-a26db0f0b8d9?auto=format&fit=crop&w=1600&q=80"
+      },
+      {
+        tag: "Day 21",
+        title: "He Will Sustain You",
+        verse: "“He shall sustain thee.” — Psalm 55:22",
+        text: "You are not left to hold yourself together by sheer strength.",
+        image: "https://images.unsplash.com/photo-1508672019048-805c876b67e2?auto=format&fit=crop&w=1600&q=80"
+      },
+      {
+        tag: "Day 22",
+        title: "Light in Darkness",
+        verse: "“The light shineth in darkness.” — John 1:5",
+        text: "Dark moments do not mean light is gone. It still shines.",
+        image: "https://images.unsplash.com/photo-1473116763249-2faaef81ccda?auto=format&fit=crop&w=1600&q=80"
+      },
+      {
+        tag: "Day 23",
+        title: "Give Thanks",
+        verse: "“In every thing give thanks.” — 1 Thessalonians 5:18",
+        text: "Gratitude softens the heart and opens the eyes to quiet blessings.",
+        image: "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=1600&q=80"
+      },
+      {
+        tag: "Day 24",
+        title: "He Will Direct Your Paths",
+        verse: "“He shall direct thy paths.” — Proverbs 3:6",
+        text: "You do not have to see the whole way. Guidance comes step by step.",
+        image: "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1600&q=80"
+      },
+      {
+        tag: "Day 25",
+        title: "My Help Comes From the Lord",
+        verse: "“My help cometh from the Lord.” — Psalm 121:2",
+        text: "Help is not far away. God’s care reaches into ordinary days.",
+        image: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1600&q=80"
+      },
+      {
+        tag: "Day 26",
+        title: "A Cheerful Heart",
+        verse: "“A merry heart doeth good like a medicine.” — Proverbs 17:22",
+        text: "A smile, a laugh, a kind moment can bring healing too.",
+        image: "https://images.unsplash.com/photo-1493246507139-91e8fad9978e?auto=format&fit=crop&w=1600&q=80"
+      },
+      {
+        tag: "Day 27",
+        title: "Hope in the Lord",
+        verse: "“Be of good courage, and he shall strengthen thine heart.” — Psalm 31:24",
+        text: "Hope is not pretending. It is choosing courage again.",
+        image: "https://images.unsplash.com/photo-1502082553048-f009c37129b9?auto=format&fit=crop&w=1600&q=80"
+      },
+      {
+        tag: "Day 28",
+        title: "His Peace Guards You",
+        verse: "“The peace of God... shall keep your hearts and minds.” — Philippians 4:7",
+        text: "Peace can stand guard over anxious thoughts.",
+        image: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1600&q=80"
+      },
+      {
+        tag: "Day 29",
+        title: "Blessed Are the Peacemakers",
+        verse: "“Blessed are the peacemakers.” — Matthew 5:9",
+        text: "Gentleness, patience, and peace bring light into a room.",
+        image: "https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=1600&q=80"
+      },
+      {
+        tag: "Day 30",
+        title: "He Makes All Things New",
+        verse: "“Behold, I make all things new.” — Revelation 21:5",
+        text: "God is still at work, even in places that feel worn out.",
+        image: "https://images.unsplash.com/photo-1501594907352-04cda38ebc29?auto=format&fit=crop&w=1600&q=80"
+      },
+      {
+        tag: "Day 31",
+        title: "The Lord Bless You",
+        verse: "“The Lord bless thee, and keep thee.” — Numbers 6:24",
+        text: "May this day begin with blessing, steadiness, and peace.",
+        image: "https://images.unsplash.com/photo-1504893524553-b855bce32c67?auto=format&fit=crop&w=1600&q=80"
+      }
+    ];
+
+    let currentIndex = 0;
+    let autoplay = null;
+
+    const slideEl = document.getElementById("slide");
+    const slideTagEl = document.getElementById("slideTag");
+    const slideTitleEl = document.getElementById("slideTitle");
+    const slideVerseEl = document.getElementById("slideVerse");
+    const slideTextEl = document.getElementById("slideText");
+    const counterEl = document.getElementById("counter");
+    const bgMusic = document.getElementById("bgMusic");
+
+    function renderSlide() {
+      const s = slides[currentIndex];
+      slideTagEl.textContent = s.tag;
+      slideTitleEl.textContent = s.title;
+      slideVerseEl.textContent = s.verse;
+      slideTextEl.textContent = s.text;
+      slideEl.style.backgroundImage =
+        `linear-gradient(rgba(0,0,0,.45), rgba(0,0,0,.45)), url('${s.image}')`;
+      counterEl.textContent = `Day ${currentIndex + 1} of ${slides.length}`;
+    }
+
+    function nextSlide() {
+      currentIndex = (currentIndex + 1) % slides.length;
+      renderSlide();
+    }
+
+    function prevSlide() {
+      currentIndex = (currentIndex - 1 + slides.length) % slides.length;
+      renderSlide();
+    }
+
+    function restartSlides() {
+      currentIndex = 0;
+      renderSlide();
+    }
+
+    function startAutoplay() {
+      if (autoplay) return;
+      autoplay = setInterval(nextSlide, 8000);
+    }
+
+    function stopAutoplay() {
+      clearInterval(autoplay);
+      autoplay = null;
+    }
+
+    function playMusic() {
+      bgMusic.volume = 0.18;
+      bgMusic.play().catch(() => {});
+    }
+
+    function pauseMusic() {
+      bgMusic.pause();
+    }
+
+    document.getElementById("nextBtn").addEventListener("click", nextSlide);
+    document.getElementById("prevBtn").addEventListener("click", prevSlide);
+    document.getElementById("restartBtn").addEventListener("click", restartSlides);
+    document.getElementById("playBtn").addEventListener("click", startAutoplay);
+    document.getElementById("stopBtn").addEventListener("click", stopAutoplay);
+    document.getElementById("musicPlayBtn").addEventListener("click", playMusic);
+    document.getElementById("musicPauseBtn").addEventListener("click", pauseMusic);
+
+    document.getElementById("fullscreenBtn").addEventListener("click", async () => {
+      const el = document.documentElement;
+      if (!document.fullscreenElement) {
+        await el.requestFullscreen();
+      } else {
+        await document.exitFullscreen();
+      }
+    });
+
+    renderSlide();
+  </script>
+</body>
+</html>
