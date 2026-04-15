@@ -283,12 +283,19 @@
     }
 
     function loadSong(songKey) {
-      currentSongKey = songKey;
-      currentIndex = 0;
-      stopAutoplay();
-      updateScreen();
-    }
+  currentSongKey = songKey;
+  currentIndex = 0;
+  stopAutoplay();
 
+  const song = songs[songKey];
+
+  if (song.audio) {
+    bgMusic.src = song.audio;
+    bgMusic.currentTime = 0;
+  }
+
+  updateScreen();
+}
     prevBtn.addEventListener("click", prevLine);
     nextBtn.addEventListener("click", nextLine);
     restartBtn.addEventListener("click", restartSong);
