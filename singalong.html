@@ -88,9 +88,19 @@
             Next
           </button>
 
-          <button id="playBtn" class="btn-main rounded-2xl bg-emerald-600 hover:bg-emerald-500 px-4 py-4 text-lg font-bold">
-            Auto Play
-          </button>
+         playBtn.addEventListener("click", async () => {
+  const song = songs[currentSongKey];
+
+  if (song.audio) {
+    try {
+      await bgMusic.play();
+    } catch (err) {
+      console.log("Click again to start audio");
+    }
+  }
+
+  startAutoplay();
+});
 
           <button id="pauseBtn" class="btn-main rounded-2xl bg-amber-500 hover:bg-amber-400 text-slate-900 px-4 py-4 text-lg font-bold">
             Pause
