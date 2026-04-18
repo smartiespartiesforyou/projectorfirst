@@ -111,14 +111,18 @@
     let timer = null;
     const AUTO_SECONDS = 10;
     const LIMITS = {
-      "On This Day": 3,
+      "On This Day": 2,
       "Happy Birthday": 2,
       "Remembered": 1
     };
     const PREFERRED_KEYWORDS = [
       "united states", "u.s.", "american", "usa", "president", "congress", "white house",
       "actor", "actress", "singer", "musician", "movie", "television", "hollywood",
-      "baseball", "football", "basketball", "olympics", "grammy", "oscar"
+      "baseball", "football", "basketball", "olympics", "grammy", "oscar",
+      "nasa", "moon", "space", "disney", "broadway", "record", "award"
+    ];
+    const DEEMPHASIZE_TERMS = [
+      "treaty", "battle", "massacre", "siege", "invasion", "armed conflict"
     ];
     const OFFLINE_FACT_BANK = [
       { type: "On This Day", year: "1776", text: "The United States Declaration of Independence was adopted." },
@@ -200,14 +204,18 @@
       for (const keyword of PREFERRED_KEYWORDS) {
         if (normalized.includes(keyword)) score += 2;
       }
+      for (const boring of DEEMPHASIZE_TERMS) {
+        if (normalized.includes(boring)) score -= 2;
+      }
       if (normalized.length >= 40 && normalized.length <= 220) score += 1;
       return score;
     }
 
-    function pickTopFacts(facts, max = 3) {
-      return [...facts]
-        .sort((a, b) => scoreFact(b.text) - scoreFact(a.text))
-        .slice(0, max);
+    function pickTopFacts(facts, max = 3, minScore = 0) {
+      const ranked = [...facts].sort((a, b) => scoreFact(b.text) - scoreFact(a.text));
+      const preferred = ranked.filter(item => scoreFact(item.text) >= minScore);
+      if (preferred.length >= max) return preferred.slice(0, max);
+      return ranked.slice(0, max);
     }
 
     function renderFilters() {
@@ -385,9 +393,9 @@
           .map(item => normalize("Remembered", item))
           .filter(s => s.text && s.text.length > 20);
 
-        const topEvents = pickTopFacts(eventFacts, LIMITS["On This Day"]);
-        const topBirths = pickTopFacts(birthFacts, LIMITS["Happy Birthday"]);
-        const topDeaths = pickTopFacts(deathFacts, LIMITS["Remembered"]);
+        const topEvents = pickTopFacts(eventFacts, LIMITS["On This Day"], 3);
+        const topBirths = pickTopFacts(birthFacts, LIMITS["Happy Birthday"], 2);
+        const topDeaths = pickTopFacts(deathFacts, LIMITS["Remembered"], 2);
 
         allSlides = [...topEvents, ...topBirths, ...topDeaths];
         shuffle(allSlides);
