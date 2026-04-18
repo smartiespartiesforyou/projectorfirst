@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Reminisce Cards</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Memberstack Loader -->
+  <script
+    data-memberstack-app="app_cmgnwpg8y00x10suih4pua785"
+    src="https://static.memberstack.com/scripts/v2/memberstack.js"
+    type="text/javascript"></script>
+
+  <!-- Protect this page -->
+  <script>
+    document.addEventListener("DOMContentLoaded", async () => {
+      try {
+        const member = await window.$memberstackDom.getCurrentMember();
+        if (!member.data) window.location.href = "/subscribe.html";
+      } catch {
+        window.location.href = "/subscribe.html";
+      }
+    });
+  </script>
+</head>
+<body class="bg-white text-gray-900 min-h-screen">
+  <div class="max-w-6xl mx-auto p-6 text-center">
+    <h1 class="text-6xl font-extrabold mb-4 text-blue-900">Reminisce Cards</h1>
+
+    <div class="flex justify-center mb-8">
+      <a href="apps.html"
+         class="inline-flex items-center gap-2 px-8 py-4 bg-blue-900 text-white rounded-2xl font-extrabold text-2xl shadow hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300">
+        ← Back to Apps
+      </a>
+    </div>
+
+    <!-- Category -->
+    <div class="mb-5">
+      <p class="text-xl font-semibold text-gray-600 mb-3">Choose a category</p>
+      <div id="categoryButtons" class="flex flex-wrap justify-center gap-3"></div>
+    </div>
+
+    <!-- Card -->
+    <div class="mx-auto max-w-4xl border-[10px] border-blue-200 rounded-3xl bg-blue-50 shadow-2xl p-8 md:p-10 min-h-[22rem] flex items-center justify-center">
+      <p id="promptText"
+         class="text-[2rem] md:text-[2.6rem] leading-tight font-black text-blue-900">
+        Press "Next Card" to begin.
+      </p>
+    </div>
+
+    <!-- Controls -->
+    <div class="flex flex-wrap justify-center gap-4 mt-8">
+      <button id="prevBtn" class="bg-white border-4 border-blue-900 text-blue-900 text-2xl py-3 px-6 rounded-2xl shadow-lg hover:bg-gray-50">
+        Previous
+      </button>
+      <button id="nextBtn" class="bg-blue-600 hover:bg-blue-800 text-white text-2xl py-3 px-6 rounded-2xl shadow-lg">
+        Next Card
+      </button>
+      <button id="shuffleBtn" class="bg-white border-4 border-blue-900 text-blue-900 text-2xl py-3 px-6 rounded-2xl shadow-lg hover:bg-gray-50">
+        Shuffle
+      </button>
+      <button id="resetBtn" class="bg-white border-4 border-amber-600 text-amber-700 text-2xl py-3 px-6 rounded-2xl shadow-lg hover:bg-amber-50">
+        Reset Deck
+      </button>
+    </div>
+
+    <!-- Text size -->
+    <div class="flex justify-center gap-4 mt-6">
+      <button id="fontMinus" class="bg-white border-2 border-gray-400 text-gray-800 text-xl py-2 px-4 rounded-xl">A−</button>
+      <button id="fontPlus" class="bg-white border-2 border-gray-400 text-gray-800 text-xl py-2 px-4 rounded-xl">A+</button>
+    </div>
+
+    <!-- Progress -->
+    <p id="progress" class="mt-6 text-xl font-bold text-gray-700">0 / 0</p>
+  </div>
+
+  <script>
+    // Add/edit prompts here
+    const promptBank = {
+      All: [],
+      Childhood: [
+        "What was your favorite game to play as a child?",
+        "What did your neighborhood look like growing up?",
+        "Did you have a favorite toy?",
+        "What was your favorite thing to do in summer?",
+        "Who was your best friend in school?"
+      ],
+      Family: [
+        "What family tradition do you remember most?",
+        "Who in your family made the best meals?",
+        "What was a holiday gathering like in your home?",
+        "What advice from your parents stayed with you?",
+        "What is a funny family memory you still enjoy?"
+      ],
+      Work: [
+        "What was your first job?",
+        "What job did you enjoy the most?",
+        "Who was a memorable coworker?",
+        "What is one lesson work taught you?",
+        "What tools or equipment did you use that people don’t use now?"
+      ],
+      Music: [
+        "What song always makes you smile?",
+        "Did your family sing together at home or church?",
+        "What artist did you listen to most in your younger years?",
+        "What dance songs do you remember?",
+        "Do you remember your first concert?"
+      ],
+      Holidays: [
+        "What was your favorite holiday as a child?",
+        "What did your family cook for special holidays?",
+        "What decorations do you remember most?",
+        "Did you travel for holidays or stay home?",
+        "What holiday tradition would you like to pass on?"
+      ]
+    };
+
+    // Build "All" automatically from other categories
+    promptBank.All = Object.entries(promptBank)
+      .filter(([k]) => k !== "All")
+      .flatMap(([, arr]) => arr);
+
+    let currentCategory = "All";
+    let deck = [];
+    let history = [];
+    let currentIndex = -1;
+    let fontSize = 2.2; // rem
+
+    const promptText = document.getElementById("promptText");
+    const progress = document.getElementById("progress");
+    const categoryButtons = document.getElementById("categoryButtons");
+
+    function shuffle(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+    }
+
+    function buildDeck(category) {
+      currentCategory = category;
+      deck = [...promptBank[category]];
+      shuffle(deck);
+      history = [];
+      currentIndex = -1;
+      promptText.textContent = 'Press "Next Card" to begin.';
+      updateProgress();
+      renderCategories();
+    }
+
+    function nextCard() {
+      if (deck.length === 0) {
+        promptText.textContent = "Great sharing! You finished all cards in this category.";
+        updateProgress(true);
+        return;
+      }
+      const card = deck.pop();
+      history.push(card);
+      currentIndex = history.length - 1;
+      showCurrent();
+    }
+
+    function prevCard() {
+      if (history.length === 0) return;
+      if (currentIndex > 0) {
+        currentIndex--;
+        showCurrent();
+      }
+    }
+
+    function showCurrent() {
+      if (currentIndex < 0 || currentIndex >= history.length) return;
+      promptText.textContent = history[currentIndex];
+      updateProgress();
+    }
+
+    function shuffleRemaining() {
+      shuffle(deck);
+      promptText.textContent = "Shuffled! Press Next Card.";
+    }
+
+    function resetDeck() {
+      buildDeck(currentCategory);
+    }
+
+    function updateProgress(finished = false) {
+      const shown = history.length;
+      const total = promptBank[currentCategory].length;
+      progress.textContent = finished ? `${total} / ${total}` : `${shown} / ${total}`;
+    }
+
+    function setFontSize() {
+      promptText.style.fontSize = `${fontSize}rem`;
+    }
+
+    function renderCategories() {
+      categoryButtons.innerHTML = "";
+      Object.keys(promptBank).forEach(category => {
+        const btn = document.createElement("button");
+        btn.textContent = category;
+        btn.className = `px-5 py-3 rounded-xl border text-xl font-extrabold ${
+          category === currentCategory
+            ? "bg-blue-900 text-white border-blue-900"
+            : "bg-white text-blue-900 border-blue-300 hover:bg-blue-50"
+        }`;
+        btn.addEventListener("click", () => buildDeck(category));
+        categoryButtons.appendChild(btn);
+      });
+    }
+
+    // Event listeners
+    document.getElementById("nextBtn").addEventListener("click", nextCard);
+    document.getElementById("prevBtn").addEventListener("click", prevCard);
+    document.getElementById("shuffleBtn").addEventListener("click", shuffleRemaining);
+    document.getElementById("resetBtn").addEventListener("click", resetDeck);
+
+    document.getElementById("fontPlus").addEventListener("click", () => {
+      fontSize = Math.min(4.2, fontSize + 0.2);
+      setFontSize();
+    });
+
+    document.getElementById("fontMinus").addEventListener("click", () => {
+      fontSize = Math.max(1.4, fontSize - 0.2);
+      setFontSize();
+    });
+
+    // Init
+    setFontSize();
+    renderCategories();
+    buildDeck("All");
+  </script>
+</body>
+</html>
