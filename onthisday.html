@@ -110,6 +110,12 @@
     let autoOn = false;
     let timer = null;
     const AUTO_SECONDS = 10;
+    const MAX_PER_TYPE = 5;
+    const PREFERRED_KEYWORDS = [
+      "united states", "u.s.", "american", "usa", "president", "congress", "white house",
+      "actor", "actress", "singer", "musician", "movie", "television", "hollywood",
+      "baseball", "football", "basketball", "olympics", "grammy", "oscar"
+    ];
     const OFFLINE_FACT_BANK = [
       { type: "Events", year: "1776", text: "The United States Declaration of Independence was adopted." },
       { type: "Events", year: "1865", text: "The American Civil War ended in 1865." },
@@ -172,6 +178,22 @@
         [seeded[i], seeded[j]] = [seeded[j], seeded[i]];
       }
       return seeded.slice(0, Math.min(total, seeded.length));
+    }
+
+    function scoreFact(text = "") {
+      const normalized = text.toLowerCase();
+      let score = 0;
+      for (const keyword of PREFERRED_KEYWORDS) {
+        if (normalized.includes(keyword)) score += 2;
+      }
+      if (normalized.length >= 40 && normalized.length <= 220) score += 1;
+      return score;
+    }
+
+    function pickTopFacts(facts, max = MAX_PER_TYPE) {
+      return [...facts]
+        .sort((a, b) => scoreFact(b.text) - scoreFact(a.text))
+        .slice(0, max);
     }
 
     function renderFilters() {
@@ -339,12 +361,21 @@
           deathsRes.json()
         ]);
 
-        const collected = [];
-        (eventsData.events || []).forEach(item => collected.push(normalize("Events", item)));
-        (birthsData.births || []).forEach(item => collected.push(normalize("Births", item)));
-        (deathsData.deaths || []).forEach(item => collected.push(normalize("Deaths", item)));
+        const eventFacts = (eventsData.events || [])
+          .map(item => normalize("Events", item))
+          .filter(s => s.text && s.text.length > 20);
+        const birthFacts = (birthsData.births || [])
+          .map(item => normalize("Births", item))
+          .filter(s => s.text && s.text.length > 20);
+        const deathFacts = (deathsData.deaths || [])
+          .map(item => normalize("Deaths", item))
+          .filter(s => s.text && s.text.length > 20);
 
-        allSlides = collected.filter(s => s.text && s.text.length > 20);
+        const topEvents = pickTopFacts(eventFacts, MAX_PER_TYPE);
+        const topBirths = pickTopFacts(birthFacts, MAX_PER_TYPE);
+        const topDeaths = pickTopFacts(deathFacts, MAX_PER_TYPE);
+
+        allSlides = [...topEvents, ...topBirths, ...topDeaths];
         shuffle(allSlides);
 
         if (!allSlides.length) {
