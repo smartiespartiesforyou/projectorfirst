@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>On This Day</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Memberstack Loader -->
+  <script
+    data-memberstack-app="app_cmgnwpg8y00x10suih4pua785"
+    src="https://static.memberstack.com/scripts/v2/memberstack.js"
+    type="text/javascript"></script>
+
+  <!-- Protect this page -->
+  <script>
+    document.addEventListener("DOMContentLoaded", async () => {
+      try {
+        const member = await window.$memberstackDom.getCurrentMember();
+        if (!member.data) window.location.href = "/subscribe.html";
+      } catch {
+        window.location.href = "/subscribe.html";
+      }
+    });
+  </script>
+</head>
+<body class="bg-white text-gray-900 min-h-screen">
+  <div class="max-w-6xl mx-auto p-6 text-center">
+    <h1 class="text-6xl font-extrabold mb-4 text-blue-900">On This Day in History</h1>
+
+    <div class="flex justify-center mb-6">
+      <a href="apps.html"
+         class="inline-flex items-center gap-2 px-8 py-4 bg-blue-900 text-white rounded-2xl font-extrabold text-2xl shadow hover:bg-blue-800">
+        ← Back to Apps
+      </a>
+    </div>
+
+    <!-- Date + Load -->
+    <div class="flex flex-wrap justify-center items-center gap-4 mb-6">
+      <label for="dateInput" class="text-2xl font-bold text-gray-700">Choose Date:</label>
+      <input id="dateInput" type="date"
+             class="text-2xl px-4 py-3 border-4 border-blue-200 rounded-xl font-bold" />
+      <button id="loadBtn"
+              class="bg-blue-600 hover:bg-blue-800 text-white text-2xl py-3 px-6 rounded-2xl shadow-lg">
+        Load Facts
+      </button>
+    </div>
+
+    <!-- Filters -->
+    <div id="filterButtons" class="flex flex-wrap justify-center gap-3 mb-8"></div>
+
+    <!-- Fact card -->
+    <div class="mx-auto max-w-5xl border-[10px] border-blue-200 rounded-3xl bg-blue-50 shadow-2xl p-8 md:p-10 min-h-[22rem] flex items-center justify-center">
+      <div>
+        <p id="factType" class="text-2xl md:text-3xl font-extrabold text-blue-900 mb-4">Ready</p>
+        <p id="factText" class="text-[2rem] md:text-[2.4rem] leading-tight font-black text-gray-900">
+          Press "Load Facts" to begin.
+        </p>
+      </div>
+    </div>
+
+    <!-- Controls -->
+    <div class="flex flex-wrap justify-center gap-4 mt-8">
+      <button id="prevBtn" class="bg-white border-4 border-blue-900 text-blue-900 text-2xl py-3 px-6 rounded-2xl shadow-lg hover:bg-gray-50">
+        Previous
+      </button>
+      <button id="nextBtn" class="bg-blue-600 hover:bg-blue-800 text-white text-2xl py-3 px-6 rounded-2xl shadow-lg">
+        Next Fact
+      </button>
+      <button id="shuffleBtn" class="bg-white border-4 border-blue-900 text-blue-900 text-2xl py-3 px-6 rounded-2xl shadow-lg hover:bg-gray-50">
+        Shuffle
+      </button>
+    </div>
+
+    <!-- Text size -->
+    <div class="flex justify-center gap-4 mt-6">
+      <button id="fontMinus" class="bg-white border-2 border-gray-400 text-gray-800 text-xl py-2 px-4 rounded-xl">A−</button>
+      <button id="fontPlus" class="bg-white border-2 border-gray-400 text-gray-800 text-xl py-2 px-4 rounded-xl">A+</button>
+    </div>
+
+    <p id="progress" class="mt-6 text-xl font-bold text-gray-700">0 / 0</p>
+    <p id="status" class="mt-2 text-lg font-semibold text-gray-600"></p>
+  </div>
+
+  <script>
+    const typeMap = {
+      selected: "All",
+      buttons: ["All", "Events", "Births", "Deaths", "Holidays"],
+      apiKeys: {
+        Events: "events",
+        Births: "births",
+        Deaths: "deaths",
+        Holidays: "holidays"
+      }
+    };
+
+    let allFacts = [];
+    let filteredFacts = [];
+    let historyIndex = -1;
+    let fontSize = 2.0;
+
+    const factTypeEl = document.getElementById("factType");
+    const factTextEl = document.getElementById("factText");
+    const progressEl = document.getElementById("progress");
+    const statusEl = document.getElementById("status");
+
+    function setTodayDate() {
+      const today = new Date();
+      const yyyy = today.getFullYear();
+      const mm = String(today.getMonth() + 1).padStart(2, "0");
+      const dd = String(today.getDate()).padStart(2, "0");
+      document.getElementById("dateInput").value = `${yyyy}-${mm}-${dd}`;
+    }
+
+    function setStatus(msg, warning = false) {
+      statusEl.textContent = msg;
+      statusEl.className = `mt-2 text-lg font-semibold ${warning ? "text-amber-700" : "text-gray-600"}`;
+    }
+
+    function shuffle(arr) {
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+    }
+
+    function renderFilters() {
+      const container = document.getElementById("filterButtons");
+      container.innerHTML = "";
+      typeMap.buttons.forEach(type => {
+        const btn = document.createElement("button");
+        btn.textContent = type;
+        btn.className = `px-5 py-3 rounded-xl border text-xl font-extrabold ${
+          typeMap.selected === type
+            ? "bg-blue-900 text-white border-blue-900"
+            : "bg-white text-blue-900 border-blue-300 hover:bg-blue-50"
+        }`;
+        btn.addEventListener("click", () => {
+          typeMap.selected = type;
+          applyFilter();
+          renderFilters();
+        });
+        container.appendChild(btn);
+      });
+    }
+
+    function applyFilter() {
+      if (typeMap.selected === "All") {
+        filteredFacts = [...allFacts];
+      } else {
+        filteredFacts = allFacts.filter(f => f.type === typeMap.selected);
+      }
+      historyIndex = -1;
+      updateProgress();
+      if (filteredFacts.length === 0) {
+        factTypeEl.textContent = "No Facts";
+        factTextEl.textContent = "No facts found for this filter/date.";
+      } else {
+        nextFact();
+      }
+    }
+
+    function showFact(index) {
+      if (!filteredFacts.length) return;
+      const fact = filteredFacts[index];
+      factTypeEl.textContent = `${fact.type} • ${fact.year || "—"}`;
+      factTextEl.textContent = fact.text;
+      updateProgress();
+    }
+
+    function nextFact() {
+      if (!filteredFacts.length) return;
+      historyIndex = (historyIndex + 1) % filteredFacts.length;
+      showFact(historyIndex);
+    }
+
+    function prevFact() {
+      if (!filteredFacts.length) return;
+      historyIndex = (historyIndex - 1 + filteredFacts.length) % filteredFacts.length;
+      showFact(historyIndex);
+    }
+
+    function shuffleFacts() {
+      shuffle(filteredFacts);
+      historyIndex = -1;
+      nextFact();
+    }
+
+    function updateProgress() {
+      const total = filteredFacts.length;
+      const current = total === 0 ? 0 : historyIndex + 1;
+      progressEl.textContent = `${current} / ${total}`;
+    }
+
+    function setFontSize() {
+      factTextEl.style.fontSize = `${fontSize}rem`;
+    }
+
+    function normalizeItem(type, item) {
+      // Wikipedia payload can vary slightly; normalize safely.
+      let year = item.year || "";
+      let text = item.text || "";
+
+      // If no text, try pages[0].titles.normalized
+      if (!text && item.pages && item.pages.length) {
+        text = item.pages[0]?.titles?.normalized || "";
+      }
+
+      return {
+        type,
+        year,
+        text: text || "No details available."
+      };
+    }
+
+    async function loadFacts() {
+      const dateValue = document.getElementById("dateInput").value;
+      if (!dateValue) {
+        setStatus("Please choose a date first.", true);
+        return;
+      }
+
+      const [year, month, day] = dateValue.split("-");
+      const url = `https://api.wikimedia.org/feed/v1/wikipedia/en/onthisday/all/${Number(month)}/${Number(day)}`;
+
+      setStatus("Loading facts...");
+      factTypeEl.textContent = "Loading";
+      factTextEl.textContent = "Please wait...";
+      progressEl.textContent = "0 / 0";
+
+      try {
+        const res = await fetch(url);
+        if (!res.ok) throw new Error("Failed to fetch");
+        const data = await res.json();
+
+        const collected = [];
+        Object.entries(typeMap.apiKeys).forEach(([label, key]) => {
+          const arr = Array.isArray(data[key]) ? data[key] : [];
+          arr.forEach(item => collected.push(normalizeItem(label, item)));
+        });
+
+        // Remove empties and very short items
+        allFacts = collected.filter(f => f.text && f.text.length > 20);
+
+        if (!allFacts.length) {
+          setStatus("No facts found for that date.", true);
+          factTypeEl.textContent = "No Facts";
+          factTextEl.textContent = "Try another date.";
+          return;
+        }
+
+        shuffle(allFacts);
+        applyFilter();
+        setStatus(`Loaded ${allFacts.length} facts for ${year}-${month}-${day}.`);
+      } catch (err) {
+        setStatus("Could not load online facts. Check internet connection and try again.", true);
+        factTypeEl.textContent = "Error";
+        factTextEl.textContent = "Unable to fetch history facts right now.";
+      }
+    }
+
+    // Event listeners
+    document.getElementById("loadBtn").addEventListener("click", loadFacts);
+    document.getElementById("nextBtn").addEventListener("click", nextFact);
+    document.getElementById("prevBtn").addEventListener("click", prevFact);
+    document.getElementById("shuffleBtn").addEventListener("click", shuffleFacts);
+
+    document.getElementById("fontPlus").addEventListener("click", () => {
+      fontSize = Math.min(fontSize + 0.2, 4.0);
+      setFontSize();
+    });
+
+    document.getElementById("fontMinus").addEventListener("click", () => {
+      fontSize = Math.max(fontSize - 0.2, 1.2);
+      setFontSize();
+    });
+
+    // Init
+    setTodayDate();
+    renderFilters();
+    setFontSize();
+    setStatus("Ready. Press Load Facts.");
+  </script>
+</body>
+</html>
