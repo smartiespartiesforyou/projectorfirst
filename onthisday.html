@@ -100,8 +100,8 @@
   <script>
     const typeMap = {
       selected: "All",
-      list: ["All", "Events", "Births", "Deaths", "Holidays"],
-      keys: { Events: "events", Births: "births", Deaths: "deaths", Holidays: "holidays" }
+      list: ["All", "Events", "Births", "Deaths"],
+      keys: { Events: "events", Births: "births", Deaths: "deaths" }
     };
 
     let allSlides = [];
@@ -110,6 +110,30 @@
     let autoOn = false;
     let timer = null;
     const AUTO_SECONDS = 10;
+    const OFFLINE_FACT_BANK = [
+      { type: "Events", year: "1776", text: "The United States Declaration of Independence was adopted." },
+      { type: "Events", year: "1865", text: "The American Civil War ended in 1865." },
+      { type: "Events", year: "1903", text: "The Wright brothers achieved the first powered, controlled flight." },
+      { type: "Events", year: "1912", text: "The Titanic sank after striking an iceberg in the North Atlantic." },
+      { type: "Events", year: "1969", text: "Apollo 11 landed on the Moon, and Neil Armstrong walked on the lunar surface." },
+      { type: "Events", year: "1989", text: "The Berlin Wall began coming down, symbolizing major political change in Europe." },
+      { type: "Events", year: "1990", text: "The Hubble Space Telescope was launched into orbit." },
+      { type: "Events", year: "2004", text: "Facebook launched and later became a major social media platform." },
+      { type: "Births", year: "1809", text: "Abraham Lincoln, 16th U.S. president, was born." },
+      { type: "Births", year: "1879", text: "Albert Einstein, physicist known for relativity, was born." },
+      { type: "Births", year: "1918", text: "Nelson Mandela, anti-apartheid leader and South African president, was born." },
+      { type: "Births", year: "1926", text: "Queen Elizabeth II was born." },
+      { type: "Births", year: "1940", text: "Ringo Starr, drummer of The Beatles, was born." },
+      { type: "Births", year: "1942", text: "Muhammad Ali, boxing champion and activist, was born." },
+      { type: "Births", year: "1946", text: "Dolly Parton, singer-songwriter and entertainer, was born." },
+      { type: "Births", year: "1963", text: "Michael Jordan, basketball legend, was born." },
+      { type: "Deaths", year: "1826", text: "Thomas Jefferson, third U.S. president, died." },
+      { type: "Deaths", year: "1826", text: "John Adams, second U.S. president, died on the same day as Jefferson." },
+      { type: "Deaths", year: "1931", text: "Thomas Edison, inventor and businessman, died." },
+      { type: "Deaths", year: "1968", text: "Martin Luther King Jr., civil rights leader, was assassinated." },
+      { type: "Deaths", year: "1977", text: "Elvis Presley, singer and cultural icon, died." },
+      { type: "Deaths", year: "2013", text: "Margaret Thatcher, former Prime Minister of the United Kingdom, died." }
+    ];
 
     const slideEl = document.getElementById("slide");
     const factTextEl = document.getElementById("factText");
@@ -140,6 +164,16 @@
       }
     }
 
+    function buildOfflineSlides(mm, dd, total = 15) {
+      const seeded = [...OFFLINE_FACT_BANK];
+      const seed = (mm * 100) + dd;
+      for (let i = seeded.length - 1; i > 0; i--) {
+        const j = (seed + i * 17) % (i + 1);
+        [seeded[i], seeded[j]] = [seeded[j], seeded[i]];
+      }
+      return seeded.slice(0, Math.min(total, seeded.length));
+    }
+
     function renderFilters() {
       const wrap = document.getElementById("filters");
       wrap.innerHTML = "";
@@ -161,9 +195,12 @@
     }
 
     function normalize(type, item) {
-      let text = item.text || "";
-      if (!text && item.pages?.[0]?.titles?.normalized) text = item.pages[0].titles.normalized;
-      return { type, year: item.year || "—", text: text || "No details available." };
+      // Wikimedia REST format
+      return {
+        type,
+        year: item.year || "—",
+        text: item.text || item.description || "No details available."
+      };
     }
 
     function applyFilter() {
@@ -188,7 +225,6 @@
         Events: "from-blue-900 via-blue-700 to-indigo-700",
         Births: "from-emerald-900 via-emerald-700 to-teal-700",
         Deaths: "from-slate-900 via-slate-700 to-gray-700",
-        Holidays: "from-purple-900 via-fuchsia-700 to-pink-700"
       };
       return map[type] || "from-blue-900 via-blue-700 to-indigo-700";
     }
@@ -271,40 +307,58 @@
       if (!dateValue) return setStatus("Please choose a date.", true);
 
       const [y, m, d] = dateValue.split("-");
+      const mm = Number(m);
+      const dd = Number(d);
+
       slideDateEl.textContent = `Date: ${y}-${m}-${d}`;
       setStatus("Loading slides...");
       factTextEl.textContent = "Loading...";
       yearBadgeEl.textContent = "—";
       typeChipEl.textContent = "Loading";
 
-      const url = `https://api.wikimedia.org/feed/v1/wikipedia/en/onthisday/all/${Number(m)}/${Number(d)}`;
-
       try {
-        const res = await fetch(url);
-        if (!res.ok) throw new Error("fetch failed");
-        const data = await res.json();
+        const urls = {
+          Events: `https://en.wikipedia.org/api/rest_v1/feed/onthisday/events/${mm}/${dd}`,
+          Births: `https://en.wikipedia.org/api/rest_v1/feed/onthisday/births/${mm}/${dd}`,
+          Deaths: `https://en.wikipedia.org/api/rest_v1/feed/onthisday/deaths/${mm}/${dd}`
+        };
+
+        const [eventsRes, birthsRes, deathsRes] = await Promise.all([
+          fetch(urls.Events),
+          fetch(urls.Births),
+          fetch(urls.Deaths)
+        ]);
+
+        if (!eventsRes.ok || !birthsRes.ok || !deathsRes.ok) {
+          throw new Error("One or more endpoints failed");
+        }
+
+        const [eventsData, birthsData, deathsData] = await Promise.all([
+          eventsRes.json(),
+          birthsRes.json(),
+          deathsRes.json()
+        ]);
 
         const collected = [];
-        Object.entries(typeMap.keys).forEach(([label, key]) => {
-          const arr = Array.isArray(data[key]) ? data[key] : [];
-          arr.forEach(item => collected.push(normalize(label, item)));
-        });
+        (eventsData.events || []).forEach(item => collected.push(normalize("Events", item)));
+        (birthsData.births || []).forEach(item => collected.push(normalize("Births", item)));
+        (deathsData.deaths || []).forEach(item => collected.push(normalize("Deaths", item)));
 
-        allSlides = collected.filter(s => s.text && s.text.length > 25);
+        allSlides = collected.filter(s => s.text && s.text.length > 20);
         shuffle(allSlides);
 
         if (!allSlides.length) {
-          setStatus("No facts available for that date.", true);
-          return;
+          allSlides = buildOfflineSlides(mm, dd);
+          setStatus("Online facts were empty, showing backup history slides.", true);
         }
 
         applyFilter();
         setStatus(`Loaded ${allSlides.length} slides for ${y}-${m}-${d}.`);
       } catch (e) {
-        setStatus("Could not load history slides. Check internet and try again.", true);
-        factTextEl.textContent = "Unable to load data right now.";
-        typeChipEl.textContent = "Error";
-        yearBadgeEl.textContent = "—";
+        console.error(e);
+        allSlides = buildOfflineSlides(mm, dd);
+        applyFilter();
+        setStatus("Could not reach online history source. Showing backup slides instead.", true);
       }
     }
 
