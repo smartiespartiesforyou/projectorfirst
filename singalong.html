@@ -3,357 +3,345 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ProjectorFirst | Sing-Along Karaoke</title>
+  <title>Singalong</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
-  <style>
-    body {
-      font-family: 'Inter', sans-serif;
-      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-      overflow: hidden;
-    }
 
-    .lyrics-box {
-      min-height: 320px;
-    }
+  <!-- Memberstack Loader -->
+  <script
+    data-memberstack-app="app_cmgnwpg8y00x10suih4pua785"
+    src="https://static.memberstack.com/scripts/v2/memberstack.js"
+    type="text/javascript"></script>
 
-    .fade-in {
-      animation: fadeIn 0.5s ease-in-out;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(12px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    .glow {
-      text-shadow:
-        0 0 10px rgba(255,255,255,0.10),
-        0 0 20px rgba(255,255,255,0.08);
-    }
-
-    .btn-main {
-      transition: all 0.2s ease;
-    }
-
-    .btn-main:hover {
-      transform: translateY(-2px);
-    }
-
-    .btn-main:active {
-      transform: translateY(0);
-    }
-  </style>
+  <!-- Protect this page -->
+  <script>
+    document.addEventListener("DOMContentLoaded", async () => {
+      try {
+        const member = await window.$memberstackDom.getCurrentMember();
+        if (!member.data) window.location.href = "/subscribe.html";
+      } catch {
+        window.location.href = "/subscribe.html";
+      }
+    });
+  </script>
 </head>
-<body class="text-white">
+<body class="bg-white text-gray-900 min-h-screen">
+  <div class="max-w-6xl mx-auto p-6 text-center">
+    <h1 class="text-6xl font-extrabold mb-4 text-blue-900">Singalong</h1>
 
-  <div class="w-full h-screen flex flex-col">
+    <div class="flex justify-center mb-8">
+      <a href="apps.html"
+         class="inline-flex items-center gap-2 px-8 py-4 bg-blue-900 text-white rounded-2xl font-extrabold text-2xl shadow hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300">
+        ← Back to Apps
+      </a>
+    </div>
 
-    <!-- Top Bar -->
-    <header class="w-full px-6 py-4 flex items-center justify-between bg-black/20 border-b border-white/10">
-      <div>
-        <h1 class="text-2xl md:text-3xl font-extrabold tracking-tight">ProjectorFirst Sing-Along</h1>
-        <p class="text-sm md:text-base text-slate-300 mt-1">Big-screen karaoke activity for senior living</p>
-      </div>
+    <div class="mb-4">
+      <p class="text-xl text-gray-500 font-semibold">Now Singing</p>
+      <h2 id="songTitle" class="text-4xl md:text-5xl font-extrabold text-blue-900 mt-1">Press "Start"</h2>
+    </div>
 
-      <div class="text-right">
-        <div id="songTitle" class="text-xl md:text-2xl font-bold">You Are My Sunshine</div>
-        <div id="slideCounter" class="text-sm text-slate-300 mt-1">Line 1 of 8</div>
-      </div>
-    </header>
+    <!-- Lyrics -->
+    <div class="mx-auto max-w-4xl border-[10px] border-blue-200 rounded-3xl bg-blue-50 shadow-2xl p-8 md:p-10 min-h-[24rem] flex items-center justify-center">
+      <pre id="lyricsDisplay"
+           class="whitespace-pre-wrap text-[2.2rem] md:text-[2.6rem] leading-tight font-bold text-gray-900 text-center">
+Welcome! Press Next Song to begin.
+      </pre>
+    </div>
 
-    <!-- Main Screen -->
-    <main class="flex-1 flex flex-col items-center justify-center px-6 py-6">
-      <div class="w-full max-w-6xl bg-white/10 border border-white/10 rounded-3xl shadow-2xl p-8 md:p-12 lyrics-box flex items-center justify-center">
-        <div id="lyricText" class="text-center text-4xl md:text-6xl lg:text-7xl font-extrabold leading-tight glow fade-in">
-          You are my sunshine
-        </div>
-      </div>
+    <!-- Song controls -->
+    <div class="flex flex-wrap justify-center gap-4 mt-8">
+      <button id="prevBtn" class="bg-white border-4 border-blue-900 text-blue-900 text-2xl py-3 px-6 rounded-2xl shadow-lg hover:bg-gray-50">
+        Previous
+      </button>
+      <button id="nextBtn" class="bg-blue-600 hover:bg-blue-800 text-white text-2xl py-3 px-6 rounded-2xl shadow-lg">
+        Next Song
+      </button>
+      <button id="shuffleBtn" class="bg-white border-4 border-blue-900 text-blue-900 text-2xl py-3 px-6 rounded-2xl shadow-lg hover:bg-gray-50">
+        Shuffle
+      </button>
+      <button id="autoBtn" class="bg-emerald-600 hover:bg-emerald-700 text-white text-2xl py-3 px-6 rounded-2xl shadow-lg">
+        Auto: Off
+      </button>
+    </div>
 
-      <div class="mt-8 text-center text-slate-300 text-lg md:text-2xl font-semibold">
-        <span id="sectionLabel">Verse 1</span>
-      </div>
-    </main>
+    <!-- Audio controls -->
+    <div class="flex flex-wrap justify-center gap-4 mt-6">
+      <button id="playPauseBtn" class="bg-purple-600 hover:bg-purple-700 text-white text-2xl py-3 px-6 rounded-2xl shadow-lg">
+        Play
+      </button>
+      <button id="replayBtn" class="bg-white border-4 border-purple-700 text-purple-700 text-2xl py-3 px-6 rounded-2xl shadow-lg hover:bg-purple-50">
+        Replay
+      </button>
+      <button id="volDownBtn" class="bg-white border-2 border-gray-500 text-gray-800 text-xl py-2 px-4 rounded-xl">Vol −</button>
+      <button id="volUpBtn" class="bg-white border-2 border-gray-500 text-gray-800 text-xl py-2 px-4 rounded-xl">Vol +</button>
+      <div id="volLabel" class="text-xl font-bold text-gray-700 self-center">Volume: 80%</div>
+    </div>
 
-    <!-- Controls -->
-    <footer class="px-6 pb-6">
-      <div class="max-w-6xl mx-auto bg-black/20 border border-white/10 rounded-3xl p-4 md:p-5">
-        <div class="grid grid-cols-2 md:grid-cols-6 gap-3">
+    <!-- Font controls -->
+    <div class="flex justify-center gap-4 mt-6">
+      <button id="fontMinus" class="bg-white border-2 border-gray-400 text-gray-800 text-xl py-2 px-4 rounded-xl">A−</button>
+      <button id="fontPlus" class="bg-white border-2 border-gray-400 text-gray-800 text-xl py-2 px-4 rounded-xl">A+</button>
+    </div>
 
-          <button id="prevBtn" class="btn-main rounded-2xl bg-slate-700 hover:bg-slate-600 px-4 py-4 text-lg font-bold">
-            Previous
-          </button>
+    <!-- Status -->
+    <div id="statusMsg" class="mt-4 text-lg font-semibold text-gray-600"></div>
 
-          <button id="nextBtn" class="btn-main rounded-2xl bg-blue-600 hover:bg-blue-500 px-4 py-4 text-lg font-bold">
-            Next
-          </button>
-
-         playBtn.addEventListener("click", async () => {
-  const song = songs[currentSongKey];
-
-  if (song.audio) {
-    try {
-      await bgMusic.play();
-    } catch (err) {
-      console.log("Click again to start audio");
-    }
-  }
-
-  startAutoplay();
-});
-
-          <button id="pauseBtn" class="btn-main rounded-2xl bg-amber-500 hover:bg-amber-400 text-slate-900 px-4 py-4 text-lg font-bold">
-            Pause
-          </button>
-
-          <button id="restartBtn" class="btn-main rounded-2xl bg-rose-600 hover:bg-rose-500 px-4 py-4 text-lg font-bold">
-            Restart
-          </button>
-
-          <button id="fullscreenBtn" class="btn-main rounded-2xl bg-violet-600 hover:bg-violet-500 px-4 py-4 text-lg font-bold">
-            Full Screen
-          </button>
-        </div>
-
-        <div class="mt-4 grid md:grid-cols-2 gap-4 items-center">
-          <div class="bg-white/5 rounded-2xl p-4">
-            <label for="speedRange" class="block text-sm text-slate-300 mb-2">Auto Play Speed</label>
-            <input id="speedRange" type="range" min="2500" max="9000" step="500" value="4500" class="w-full">
-            <div class="mt-2 text-sm text-slate-300">
-              Current delay: <span id="speedLabel" class="font-bold text-white">4.5 seconds</span>
-            </div>
-          </div>
-
-          <div class="bg-white/5 rounded-2xl p-4">
-            <label for="songSelect" class="block text-sm text-slate-300 mb-2">Choose Song</label>
-            <select id="songSelect" class="w-full rounded-xl bg-slate-900 border border-white/10 px-4 py-3 text-white text-lg">
-              <option value="sunshine">You Are My Sunshine</option>
-              <option value="amazingGrace">Amazing Grace</option>
-              <option value="countryRoads">Take Me Home, Country Roads</option>
-            </select>
-          </div>
-        </div>
-      </div>
-    </footer>
+    <!-- Playlist -->
+    <div id="playlist" class="mt-10 text-lg text-gray-700 flex flex-wrap justify-center gap-3"></div>
   </div>
 
-<script>
-  const songs = {
-    sunshine: {
-      title: "You Are My Sunshine",
-      audio: "music/sunshine.mp3",
-      lines: [
-        { section: "Verse 1", text: "You are my sunshine" },
-        { section: "Verse 1", text: "My only sunshine" },
-        { section: "Verse 1", text: "You make me happy" },
-        { section: "Verse 1", text: "When skies are gray" },
-        { section: "Verse 1", text: "You'll never know dear" },
-        { section: "Verse 1", text: "How much I love you" },
-        { section: "Chorus", text: "Please don't take my sunshine away" },
+  <!-- Hidden audio player -->
+  <audio id="audioPlayer" preload="auto"></audio>
 
-        { section: "Verse 2", text: "The other night dear, as I lay sleeping" },
-        { section: "Verse 2", text: "I dreamed I held you in my arms" },
-        { section: "Verse 2", text: "When I awoke dear, I was mistaken" },
-        { section: "Verse 2", text: "So I hung my head and cried" },
-
-        { section: "Chorus", text: "You are my sunshine" },
-        { section: "Chorus", text: "My only sunshine" },
-        { section: "Chorus", text: "You make me happy" },
-        { section: "Chorus", text: "When skies are gray" },
-        { section: "Chorus", text: "You'll never know dear" },
-        { section: "Chorus", text: "How much I love you" },
-        { section: "Chorus", text: "Please don't take my sunshine away" }
-      ]
-    }
-  };
-</script>
-
-      amazingGrace: {
+  <script>
+    // Replace these with YOUR songs/lyrics/audio files.
+    // Keep audio files in /audio folder for easy management.
+    const songs = [
+      {
         title: "Amazing Grace",
-        lines: [
-          { section: "Verse 1", text: "Amazing grace" },
-          { section: "Verse 1", text: "How sweet the sound" },
-          { section: "Verse 1", text: "That saved a wretch like me" },
-          { section: "Verse 1", text: "I once was lost" },
-          { section: "Verse 1", text: "But now am found" },
-          { section: "Verse 1", text: "Was blind, but now I see" },
-          { section: "Sing Along", text: "Let the room sing together" }
-        ]
+        lyrics: `[Verse 1]
+Amazing grace, how sweet the sound
+That saved a wretch like me
+I once was lost, but now am found
+Was blind, but now I see`,
+        audio: "/audio/amazing-grace.mp3"
       },
-
-      countryRoads: {
-        title: "Take Me Home, Country Roads",
-        lines: [
-          { section: "Verse 1", text: "Almost heaven" },
-          { section: "Verse 1", text: "West Virginia" },
-          { section: "Verse 1", text: "Blue Ridge Mountains" },
-          { section: "Verse 1", text: "Shenandoah River" },
-          { section: "Chorus", text: "Country roads" },
-          { section: "Chorus", text: "Take me home" },
-          { section: "Chorus", text: "To the place I belong" },
-          { section: "Sing Along", text: "Everybody now" }
-        ]
+      {
+        title: "When the Saints Go Marching In",
+        lyrics: `[Chorus]
+Oh, when the saints go marching in
+Oh, when the saints go marching in
+Oh Lord, I want to be in that number
+When the saints go marching in`,
+        audio: "/audio/saints-go-marching-in.mp3"
+      },
+      {
+        title: "You Are My Sunshine",
+        lyrics: `[Verse 1]
+You are my sunshine, my only sunshine
+You make me happy when skies are gray
+You'll never know dear, how much I love you
+Please don't take my sunshine away`,
+        audio: "/audio/you-are-my-sunshine.mp3"
       }
-    };
+    ];
 
-    let currentSongKey = "sunshine";
-    let currentIndex = 0;
-    let autoplayTimer = null;
-    let autoplaySpeed = 4500;
+    let currentIndex = -1;
+    let autoMode = false;
+    let autoTimer = null;
+    const AUTO_SECONDS = 25;
+    let fontSize = 2.2; // rem
 
-    const lyricText = document.getElementById("lyricText");
-    const sectionLabel = document.getElementById("sectionLabel");
-    const slideCounter = document.getElementById("slideCounter");
-    const songTitle = document.getElementById("songTitle");
-    const songSelect = document.getElementById("songSelect");
-    const speedRange = document.getElementById("speedRange");
-    const speedLabel = document.getElementById("speedLabel");
+    const songTitleEl = document.getElementById("songTitle");
+    const lyricsEl = document.getElementById("lyricsDisplay");
+    const playlistEl = document.getElementById("playlist");
+    const statusMsgEl = document.getElementById("statusMsg");
 
-    const prevBtn = document.getElementById("prevBtn");
-    const nextBtn = document.getElementById("nextBtn");
-    const playBtn = document.getElementById("playBtn");
-    const pauseBtn = document.getElementById("pauseBtn");
-    const restartBtn = document.getElementById("restartBtn");
-    const fullscreenBtn = document.getElementById("fullscreenBtn");
+    const audio = document.getElementById("audioPlayer");
+    const playPauseBtn = document.getElementById("playPauseBtn");
+    const autoBtn = document.getElementById("autoBtn");
+    const volLabel = document.getElementById("volLabel");
 
-    function getCurrentSong() {
-      return songs[currentSongKey];
+    audio.volume = 0.8;
+    updateVolumeLabel();
+
+    function setStatus(msg, isWarning = false) {
+      statusMsgEl.textContent = msg;
+      statusMsgEl.className = `mt-4 text-lg font-semibold ${isWarning ? "text-amber-700" : "text-gray-600"}`;
     }
 
-    function updateScreen() {
-      const song = getCurrentSong();
-      const line = song.lines[currentIndex];
-
-      lyricText.classList.remove("fade-in");
-      void lyricText.offsetWidth;
-      lyricText.classList.add("fade-in");
-
-      lyricText.textContent = line.text;
-      sectionLabel.textContent = line.section;
-      songTitle.textContent = song.title;
-      slideCounter.textContent = `Line ${currentIndex + 1} of ${song.lines.length}`;
-
-      prevBtn.disabled = currentIndex === 0;
-      prevBtn.classList.toggle("opacity-50", currentIndex === 0);
-      prevBtn.classList.toggle("cursor-not-allowed", currentIndex === 0);
+    function renderPlaylist() {
+      playlistEl.innerHTML = "";
+      songs.forEach((song, i) => {
+        const chip = document.createElement("button");
+        chip.className = `px-4 py-2 rounded-xl border text-base font-semibold ${
+          i === currentIndex
+            ? "bg-blue-900 text-white border-blue-900"
+            : "bg-white text-blue-900 border-blue-300 hover:bg-blue-50"
+        }`;
+        chip.textContent = `${i + 1}. ${song.title}`;
+        chip.addEventListener("click", () => showSong(i, true));
+        playlistEl.appendChild(chip);
+      });
     }
 
-    function nextLine() {
-      const song = getCurrentSong();
-      if (currentIndex < song.lines.length - 1) {
-        currentIndex++;
-        updateScreen();
+    function showSong(index, autoplay = true) {
+      if (!songs.length) return;
+      currentIndex = (index + songs.length) % songs.length;
+      const song = songs[currentIndex];
+
+      songTitleEl.textContent = song.title;
+      lyricsEl.textContent = song.lyrics || "(No lyrics provided)";
+      renderPlaylist();
+
+      loadAudio(song.audio, autoplay);
+      restartAutoIfNeeded();
+    }
+
+    function nextSong() {
+      if (currentIndex === -1) showSong(0, true);
+      else showSong(currentIndex + 1, true);
+    }
+
+    function prevSong() {
+      if (currentIndex === -1) showSong(0, true);
+      else showSong(currentIndex - 1, true);
+    }
+
+    function shuffleSong() {
+      if (!songs.length) return;
+      const randomIndex = Math.floor(Math.random() * songs.length);
+      showSong(randomIndex, true);
+    }
+
+    function loadAudio(src, autoplay = true) {
+      audio.pause();
+      playPauseBtn.textContent = "Play";
+
+      if (!src) {
+        audio.removeAttribute("src");
+        audio.load();
+        setStatus("No audio file linked for this song.", true);
+        return;
+      }
+
+      audio.src = src;
+      audio.load();
+
+      if (autoplay) {
+        audio.play()
+          .then(() => {
+            playPauseBtn.textContent = "Pause";
+            setStatus("Playing...");
+          })
+          .catch(() => {
+            // Browser blocked autoplay until user interacts
+            setStatus("Song loaded. Press Play to start audio.", true);
+          });
       } else {
-        stopAutoplay();
+        setStatus("Song loaded. Press Play.");
       }
     }
 
-    function prevLine() {
-      if (currentIndex > 0) {
-        currentIndex--;
-        updateScreen();
+    function togglePlayPause() {
+      if (!audio.src) {
+        setStatus("No audio loaded for this song.", true);
+        return;
       }
-    }
 
-    function restartSong() {
-      currentIndex = 0;
-      updateScreen();
-    }
-
-    function stopAutoplay() {
-      if (autoplayTimer) {
-        clearInterval(autoplayTimer);
-        autoplayTimer = null;
-      }
-      playBtn.textContent = "Auto Play";
-    }
-
-    function startAutoplay() {
-      stopAutoplay();
-      autoplayTimer = setInterval(() => {
-        const song = getCurrentSong();
-        if (currentIndex < song.lines.length - 1) {
-          currentIndex++;
-          updateScreen();
-        } else {
-          stopAutoplay();
-        }
-      }, autoplaySpeed);
-      playBtn.textContent = "Playing...";
-    }
-
-    function toggleFullscreen() {
-      if (!document.fullscreenElement) {
-        document.documentElement.requestFullscreen().catch(err => {
-          console.error("Fullscreen error:", err);
-        });
+      if (audio.paused) {
+        audio.play()
+          .then(() => {
+            playPauseBtn.textContent = "Pause";
+            setStatus("Playing...");
+          })
+          .catch(() => setStatus("Unable to play audio on this device.", true));
       } else {
-        document.exitFullscreen();
+        audio.pause();
+        playPauseBtn.textContent = "Play";
+        setStatus("Paused.");
       }
     }
 
-    function loadSong(songKey) {
-  currentSongKey = songKey;
-  currentIndex = 0;
-  stopAutoplay();
+    function replayAudio() {
+      if (!audio.src) {
+        setStatus("No audio loaded for this song.", true);
+        return;
+      }
+      audio.currentTime = 0;
+      audio.play()
+        .then(() => {
+          playPauseBtn.textContent = "Pause";
+          setStatus("Replaying...");
+        })
+        .catch(() => setStatus("Unable to replay audio.", true));
+    }
 
-  const song = songs[songKey];
+    function updateVolumeLabel() {
+      volLabel.textContent = `Volume: ${Math.round(audio.volume * 100)}%`;
+    }
 
-  if (song.audio) {
-    bgMusic.src = song.audio;
-    bgMusic.currentTime = 0;
-  }
+    function volumeUp() {
+      audio.volume = Math.min(1, audio.volume + 0.1);
+      updateVolumeLabel();
+    }
 
-  updateScreen();
-}
-    prevBtn.addEventListener("click", prevLine);
-    nextBtn.addEventListener("click", nextLine);
-    restartBtn.addEventListener("click", restartSong);
+    function volumeDown() {
+      audio.volume = Math.max(0, audio.volume - 0.1);
+      updateVolumeLabel();
+    }
 
-    playBtn.addEventListener("click", () => {
-      startAutoplay();
+    function toggleAuto() {
+      autoMode = !autoMode;
+      autoBtn.textContent = `Auto: ${autoMode ? "On" : "Off"}`;
+
+      if (autoMode) {
+        if (currentIndex === -1) showSong(0, true);
+        startAuto();
+      } else {
+        stopAuto();
+      }
+    }
+
+    function startAuto() {
+      stopAuto();
+      autoTimer = setInterval(nextSong, AUTO_SECONDS * 1000);
+      setStatus(`Auto mode on: changing songs every ${AUTO_SECONDS} seconds.`);
+    }
+
+    function stopAuto() {
+      if (autoTimer) clearInterval(autoTimer);
+      autoTimer = null;
+      if (!audio.paused) setStatus("Auto mode off. Playing current song.");
+      else setStatus("Auto mode off.");
+    }
+
+    function restartAutoIfNeeded() {
+      if (autoMode) startAuto();
+    }
+
+    function setFontSize() {
+      lyricsEl.style.fontSize = `${fontSize}rem`;
+    }
+
+    // When a song ends, keep button in sync.
+    audio.addEventListener("ended", () => {
+      playPauseBtn.textContent = "Play";
+      setStatus("Song ended.");
+      // Optional: uncomment to auto-advance at end of each track
+      // nextSong();
     });
 
-    pauseBtn.addEventListener("click", () => {
-      stopAutoplay();
+    audio.addEventListener("error", () => {
+      setStatus("Could not load this audio file. Check path/filename.", true);
+      playPauseBtn.textContent = "Play";
     });
 
-    fullscreenBtn.addEventListener("click", toggleFullscreen);
+    // UI handlers
+    document.getElementById("nextBtn").addEventListener("click", nextSong);
+    document.getElementById("prevBtn").addEventListener("click", prevSong);
+    document.getElementById("shuffleBtn").addEventListener("click", shuffleSong);
+    document.getElementById("autoBtn").addEventListener("click", toggleAuto);
 
-    songSelect.addEventListener("change", (e) => {
-      loadSong(e.target.value);
+    document.getElementById("playPauseBtn").addEventListener("click", togglePlayPause);
+    document.getElementById("replayBtn").addEventListener("click", replayAudio);
+    document.getElementById("volUpBtn").addEventListener("click", volumeUp);
+    document.getElementById("volDownBtn").addEventListener("click", volumeDown);
+
+    document.getElementById("fontPlus").addEventListener("click", () => {
+      fontSize = Math.min(4.2, fontSize + 0.2);
+      setFontSize();
     });
 
-    speedRange.addEventListener("input", (e) => {
-      autoplaySpeed = Number(e.target.value);
-      speedLabel.textContent = `${(autoplaySpeed / 1000).toFixed(1)} seconds`;
-
-      if (autoplayTimer) {
-        startAutoplay();
-      }
+    document.getElementById("fontMinus").addEventListener("click", () => {
+      fontSize = Math.max(1.4, fontSize - 0.2);
+      setFontSize();
     });
 
-    document.addEventListener("keydown", (e) => {
-      if (e.key === "ArrowRight" || e.key === " ") {
-        e.preventDefault();
-        nextLine();
-      }
-
-      if (e.key === "ArrowLeft") {
-        e.preventDefault();
-        prevLine();
-      }
-
-      if (e.key.toLowerCase() === "f") {
-        toggleFullscreen();
-      }
-
-      if (e.key.toLowerCase() === "r") {
-        restartSong();
-      }
-    });
-
-    updateScreen();
+    // Init
+    renderPlaylist();
+    setFontSize();
+    setStatus("Ready. Press Next Song to start.");
   </script>
 </body>
 </html>
