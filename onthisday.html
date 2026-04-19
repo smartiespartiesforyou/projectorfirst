@@ -102,6 +102,8 @@
       selected: "All",
       list: ["All", "Celebrity Spotlight", "Light History", "Then vs Now"],
       keys: { "Light History": "events", "Celebrity Spotlight": "births", "Then vs Now": "local" }
+      list: ["All", "Events", "Births", "Deaths"],
+      keys: { Events: "events", Births: "births", Deaths: "deaths" }
     };
 
     let allSlides = [];
@@ -145,6 +147,29 @@
       { thenYear: "1950s", item: "Postage stamp", thenCost: "$0.03", nowCost: "$0.73" },
       { thenYear: "1970s", item: "Loaf of bread", thenCost: "$0.25", nowCost: "$2.50+" },
       { thenYear: "1980s", item: "McDonald's burger", thenCost: "$0.50", nowCost: "$3.00+" }
+    const OFFLINE_FACT_BANK = [
+      { type: "Events", year: "1776", text: "The United States Declaration of Independence was adopted." },
+      { type: "Events", year: "1865", text: "The American Civil War ended in 1865." },
+      { type: "Events", year: "1903", text: "The Wright brothers achieved the first powered, controlled flight." },
+      { type: "Events", year: "1912", text: "The Titanic sank after striking an iceberg in the North Atlantic." },
+      { type: "Events", year: "1969", text: "Apollo 11 landed on the Moon, and Neil Armstrong walked on the lunar surface." },
+      { type: "Events", year: "1989", text: "The Berlin Wall began coming down, symbolizing major political change in Europe." },
+      { type: "Events", year: "1990", text: "The Hubble Space Telescope was launched into orbit." },
+      { type: "Events", year: "2004", text: "Facebook launched and later became a major social media platform." },
+      { type: "Births", year: "1809", text: "Abraham Lincoln, 16th U.S. president, was born." },
+      { type: "Births", year: "1879", text: "Albert Einstein, physicist known for relativity, was born." },
+      { type: "Births", year: "1918", text: "Nelson Mandela, anti-apartheid leader and South African president, was born." },
+      { type: "Births", year: "1926", text: "Queen Elizabeth II was born." },
+      { type: "Births", year: "1940", text: "Ringo Starr, drummer of The Beatles, was born." },
+      { type: "Births", year: "1942", text: "Muhammad Ali, boxing champion and activist, was born." },
+      { type: "Births", year: "1946", text: "Dolly Parton, singer-songwriter and entertainer, was born." },
+      { type: "Births", year: "1963", text: "Michael Jordan, basketball legend, was born." },
+      { type: "Deaths", year: "1826", text: "Thomas Jefferson, third U.S. president, died." },
+      { type: "Deaths", year: "1826", text: "John Adams, second U.S. president, died on the same day as Jefferson." },
+      { type: "Deaths", year: "1931", text: "Thomas Edison, inventor and businessman, died." },
+      { type: "Deaths", year: "1968", text: "Martin Luther King Jr., civil rights leader, was assassinated." },
+      { type: "Deaths", year: "1977", text: "Elvis Presley, singer and cultural icon, died." },
+      { type: "Deaths", year: "2013", text: "Margaret Thatcher, former Prime Minister of the United Kingdom, died." }
     ];
 
     const slideEl = document.getElementById("slide");
@@ -227,6 +252,7 @@
       const preferred = ranked.filter(item => scoreFact(item.text) >= minScore);
       if (preferred.length >= max) return preferred.slice(0, max);
       return ranked.slice(0, max);
+      return seeded.slice(0, Math.min(total, seeded.length));
     }
 
     function renderFilters() {
@@ -280,6 +306,9 @@
         "Celebrity Spotlight": "from-emerald-900 via-emerald-700 to-teal-700",
         "Light History": "from-blue-900 via-blue-700 to-indigo-700",
         "Then vs Now": "from-amber-800 via-orange-700 to-rose-700",
+        Events: "from-blue-900 via-blue-700 to-indigo-700",
+        Births: "from-emerald-900 via-emerald-700 to-teal-700",
+        Deaths: "from-slate-900 via-slate-700 to-gray-700",
       };
       return map[type] || "from-blue-900 via-blue-700 to-indigo-700";
     }
@@ -407,6 +436,23 @@
         const priceSlides = buildPriceSlides(mm, dd, LIMITS["Then vs Now"]);
 
         allSlides = [...topCelebs, ...topLightHistory, ...priceSlides];
+
+        if (!eventsRes.ok || !birthsRes.ok || !deathsRes.ok) {
+          throw new Error("One or more endpoints failed");
+        }
+
+        const [eventsData, birthsData, deathsData] = await Promise.all([
+          eventsRes.json(),
+          birthsRes.json(),
+          deathsRes.json()
+        ]);
+
+        const collected = [];
+        (eventsData.events || []).forEach(item => collected.push(normalize("Events", item)));
+        (birthsData.births || []).forEach(item => collected.push(normalize("Births", item)));
+        (deathsData.deaths || []).forEach(item => collected.push(normalize("Deaths", item)));
+
+        allSlides = collected.filter(s => s.text && s.text.length > 20);
         shuffle(allSlides);
 
         if (!allSlides.length) {
