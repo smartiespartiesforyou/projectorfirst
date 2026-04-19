@@ -59,7 +59,7 @@
         <div class="flex justify-between items-start gap-4">
           <div id="typeChip"
                class="inline-block px-5 py-2 rounded-full text-xl md:text-2xl font-extrabold bg-white/20 backdrop-blur">
-            On This Day
+            Celebrity Spotlight
           </div>
           <div id="yearBadge"
                class="inline-block px-6 py-3 rounded-2xl text-3xl md:text-4xl font-black bg-yellow-300 text-blue-950 shadow-lg">
@@ -100,8 +100,8 @@
   <script>
     const typeMap = {
       selected: "All",
-      list: ["All", "On This Day", "Happy Birthday", "Remembered"],
-      keys: { "On This Day": "events", "Happy Birthday": "births", "Remembered": "deaths" }
+      list: ["All", "Celebrity Spotlight", "Light History", "Then vs Now"],
+      keys: { "Light History": "events", "Celebrity Spotlight": "births", "Then vs Now": "local" }
     };
 
     let allSlides = [];
@@ -111,42 +111,40 @@
     let timer = null;
     const AUTO_SECONDS = 10;
     const LIMITS = {
-      "On This Day": 2,
-      "Happy Birthday": 2,
-      "Remembered": 1
+      "Celebrity Spotlight": 3,
+      "Light History": 1,
+      "Then vs Now": 1
     };
     const PREFERRED_KEYWORDS = [
-      "united states", "u.s.", "american", "usa", "president", "congress", "white house",
       "actor", "actress", "singer", "musician", "movie", "television", "hollywood",
       "baseball", "football", "basketball", "olympics", "grammy", "oscar",
-      "nasa", "moon", "space", "disney", "broadway", "record", "award"
+      "nasa", "moon", "space", "disney", "broadway", "record", "award",
+      "first", "invented", "opened", "launched", "premiered"
     ];
     const DEEMPHASIZE_TERMS = [
       "treaty", "battle", "massacre", "siege", "invasion", "armed conflict"
     ];
     const OFFLINE_FACT_BANK = [
-      { type: "On This Day", year: "1776", text: "The United States Declaration of Independence was adopted." },
-      { type: "On This Day", year: "1865", text: "The American Civil War ended in 1865." },
-      { type: "On This Day", year: "1903", text: "The Wright brothers achieved the first powered, controlled flight." },
-      { type: "On This Day", year: "1912", text: "The Titanic sank after striking an iceberg in the North Atlantic." },
-      { type: "On This Day", year: "1969", text: "Apollo 11 landed on the Moon, and Neil Armstrong walked on the lunar surface." },
-      { type: "On This Day", year: "1989", text: "The Berlin Wall began coming down, symbolizing major political change in Europe." },
-      { type: "On This Day", year: "1990", text: "The Hubble Space Telescope was launched into orbit." },
-      { type: "On This Day", year: "2004", text: "Facebook launched and later became a major social media platform." },
-      { type: "Happy Birthday", year: "1809", text: "Abraham Lincoln, 16th U.S. president, was born." },
-      { type: "Happy Birthday", year: "1879", text: "Albert Einstein, physicist known for relativity, was born." },
-      { type: "Happy Birthday", year: "1918", text: "Nelson Mandela, anti-apartheid leader and South African president, was born." },
-      { type: "Happy Birthday", year: "1926", text: "Queen Elizabeth II was born." },
-      { type: "Happy Birthday", year: "1940", text: "Ringo Starr, drummer of The Beatles, was born." },
-      { type: "Happy Birthday", year: "1942", text: "Muhammad Ali, boxing champion and activist, was born." },
-      { type: "Happy Birthday", year: "1946", text: "Dolly Parton, singer-songwriter and entertainer, was born." },
-      { type: "Happy Birthday", year: "1963", text: "Michael Jordan, basketball legend, was born." },
-      { type: "Remembered", year: "1826", text: "Thomas Jefferson, third U.S. president, died." },
-      { type: "Remembered", year: "1826", text: "John Adams, second U.S. president, died on the same day as Jefferson." },
-      { type: "Remembered", year: "1931", text: "Thomas Edison, inventor and businessman, died." },
-      { type: "Remembered", year: "1968", text: "Martin Luther King Jr., civil rights leader, was assassinated." },
-      { type: "Remembered", year: "1977", text: "Elvis Presley, singer and cultural icon, died." },
-      { type: "Remembered", year: "2013", text: "Margaret Thatcher, former Prime Minister of the United Kingdom, died." }
+      { type: "Light History", year: "1903", text: "The Wright brothers achieved the first powered flight." },
+      { type: "Light History", year: "1955", text: "Disneyland opened in California." },
+      { type: "Light History", year: "1969", text: "Apollo 11 landed on the Moon." },
+      { type: "Light History", year: "1981", text: "MTV launched and changed music television." },
+      { type: "Light History", year: "1990", text: "The Hubble Space Telescope was launched." },
+      { type: "Celebrity Spotlight", year: "1926", text: "Queen Elizabeth II was born." },
+      { type: "Celebrity Spotlight", year: "1940", text: "Ringo Starr of The Beatles was born." },
+      { type: "Celebrity Spotlight", year: "1942", text: "Muhammad Ali was born." },
+      { type: "Celebrity Spotlight", year: "1946", text: "Dolly Parton was born." },
+      { type: "Celebrity Spotlight", year: "1963", text: "Michael Jordan was born." },
+      { type: "Celebrity Spotlight", year: "1977", text: "Elvis Presley died." },
+      { type: "Celebrity Spotlight", year: "2016", text: "Muhammad Ali was remembered around the world." }
+    ];
+    const PRICE_COMPARISONS = [
+      { thenYear: "1960s", item: "Movie ticket", thenCost: "$1.00", nowCost: "$12.00+" },
+      { thenYear: "1970s", item: "Gallon of gas", thenCost: "$0.36", nowCost: "$3.50+" },
+      { thenYear: "1980s", item: "New car", thenCost: "$7,200", nowCost: "$48,000+" },
+      { thenYear: "1950s", item: "Postage stamp", thenCost: "$0.03", nowCost: "$0.73" },
+      { thenYear: "1970s", item: "Loaf of bread", thenCost: "$0.25", nowCost: "$2.50+" },
+      { thenYear: "1980s", item: "McDonald's burger", thenCost: "$0.50", nowCost: "$3.00+" }
     ];
 
     const slideEl = document.getElementById("slide");
@@ -186,16 +184,29 @@
         [seeded[i], seeded[j]] = [seeded[j], seeded[i]];
       }
       const byType = {
-        "On This Day": seeded.filter(item => item.type === "On This Day"),
-        "Happy Birthday": seeded.filter(item => item.type === "Happy Birthday"),
-        "Remembered": seeded.filter(item => item.type === "Remembered")
+        "Celebrity Spotlight": seeded.filter(item => item.type === "Celebrity Spotlight"),
+        "Light History": seeded.filter(item => item.type === "Light History")
       };
       const selected = [
-        ...byType["On This Day"].slice(0, LIMITS["On This Day"]),
-        ...byType["Happy Birthday"].slice(0, LIMITS["Happy Birthday"]),
-        ...byType["Remembered"].slice(0, LIMITS["Remembered"])
+        ...byType["Celebrity Spotlight"].slice(0, LIMITS["Celebrity Spotlight"]),
+        ...byType["Light History"].slice(0, LIMITS["Light History"]),
+        ...buildPriceSlides(mm, dd, LIMITS["Then vs Now"])
       ];
       return selected.slice(0, Math.min(total, selected.length));
+    }
+
+    function buildPriceSlides(mm, dd, count = 1) {
+      const pool = [...PRICE_COMPARISONS];
+      const seed = (mm * 100) + dd + 31;
+      for (let i = pool.length - 1; i > 0; i--) {
+        const j = (seed + i * 11) % (i + 1);
+        [pool[i], pool[j]] = [pool[j], pool[i]];
+      }
+      return pool.slice(0, count).map(entry => ({
+        type: "Then vs Now",
+        year: `${entry.thenYear} → Today`,
+        text: `${entry.item}: then ${entry.thenCost}, now about ${entry.nowCost}`
+      }));
     }
 
     function scoreFact(text = "") {
@@ -266,9 +277,9 @@
 
     function gradientForType(type) {
       const map = {
-        "On This Day": "from-blue-900 via-blue-700 to-indigo-700",
-        "Happy Birthday": "from-emerald-900 via-emerald-700 to-teal-700",
-        "Remembered": "from-slate-900 via-slate-700 to-gray-700",
+        "Celebrity Spotlight": "from-emerald-900 via-emerald-700 to-teal-700",
+        "Light History": "from-blue-900 via-blue-700 to-indigo-700",
+        "Then vs Now": "from-amber-800 via-orange-700 to-rose-700",
       };
       return map[type] || "from-blue-900 via-blue-700 to-indigo-700";
     }
@@ -383,21 +394,19 @@
           deathsRes.json()
         ]);
 
-        const eventFacts = (eventsData.events || [])
-          .map(item => normalize("On This Day", item))
+        const lightHistoryFacts = (eventsData.events || [])
+          .map(item => normalize("Light History", item))
           .filter(s => s.text && s.text.length > 20);
-        const birthFacts = (birthsData.births || [])
-          .map(item => normalize("Happy Birthday", item))
-          .filter(s => s.text && s.text.length > 20);
-        const deathFacts = (deathsData.deaths || [])
-          .map(item => normalize("Remembered", item))
-          .filter(s => s.text && s.text.length > 20);
+        const celebFacts = [
+          ...(birthsData.births || []).map(item => normalize("Celebrity Spotlight", item)),
+          ...(deathsData.deaths || []).map(item => normalize("Celebrity Spotlight", item))
+        ].filter(s => s.text && s.text.length > 20);
 
-        const topEvents = pickTopFacts(eventFacts, LIMITS["On This Day"], 3);
-        const topBirths = pickTopFacts(birthFacts, LIMITS["Happy Birthday"], 2);
-        const topDeaths = pickTopFacts(deathFacts, LIMITS["Remembered"], 2);
+        const topCelebs = pickTopFacts(celebFacts, LIMITS["Celebrity Spotlight"], 3);
+        const topLightHistory = pickTopFacts(lightHistoryFacts, LIMITS["Light History"], 2);
+        const priceSlides = buildPriceSlides(mm, dd, LIMITS["Then vs Now"]);
 
-        allSlides = [...topEvents, ...topBirths, ...topDeaths];
+        allSlides = [...topCelebs, ...topLightHistory, ...priceSlides];
         shuffle(allSlides);
 
         if (!allSlides.length) {
