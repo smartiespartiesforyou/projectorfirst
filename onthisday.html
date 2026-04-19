@@ -59,7 +59,7 @@
         <div class="flex justify-between items-start gap-4">
           <div id="typeChip"
                class="inline-block px-5 py-2 rounded-full text-xl md:text-2xl font-extrabold bg-white/20 backdrop-blur">
-            Event
+            Celebrity Spotlight
           </div>
           <div id="yearBadge"
                class="inline-block px-6 py-3 rounded-2xl text-3xl md:text-4xl font-black bg-yellow-300 text-blue-950 shadow-lg">
@@ -100,6 +100,8 @@
   <script>
     const typeMap = {
       selected: "All",
+      list: ["All", "Celebrity Spotlight", "Light History", "Then vs Now"],
+      keys: { "Light History": "events", "Celebrity Spotlight": "births", "Then vs Now": "local" }
       list: ["All", "Events", "Births", "Deaths"],
       keys: { Events: "events", Births: "births", Deaths: "deaths" }
     };
@@ -110,6 +112,41 @@
     let autoOn = false;
     let timer = null;
     const AUTO_SECONDS = 10;
+    const LIMITS = {
+      "Celebrity Spotlight": 3,
+      "Light History": 1,
+      "Then vs Now": 1
+    };
+    const PREFERRED_KEYWORDS = [
+      "actor", "actress", "singer", "musician", "movie", "television", "hollywood",
+      "baseball", "football", "basketball", "olympics", "grammy", "oscar",
+      "nasa", "moon", "space", "disney", "broadway", "record", "award",
+      "first", "invented", "opened", "launched", "premiered"
+    ];
+    const DEEMPHASIZE_TERMS = [
+      "treaty", "battle", "massacre", "siege", "invasion", "armed conflict"
+    ];
+    const OFFLINE_FACT_BANK = [
+      { type: "Light History", year: "1903", text: "The Wright brothers achieved the first powered flight." },
+      { type: "Light History", year: "1955", text: "Disneyland opened in California." },
+      { type: "Light History", year: "1969", text: "Apollo 11 landed on the Moon." },
+      { type: "Light History", year: "1981", text: "MTV launched and changed music television." },
+      { type: "Light History", year: "1990", text: "The Hubble Space Telescope was launched." },
+      { type: "Celebrity Spotlight", year: "1926", text: "Queen Elizabeth II was born." },
+      { type: "Celebrity Spotlight", year: "1940", text: "Ringo Starr of The Beatles was born." },
+      { type: "Celebrity Spotlight", year: "1942", text: "Muhammad Ali was born." },
+      { type: "Celebrity Spotlight", year: "1946", text: "Dolly Parton was born." },
+      { type: "Celebrity Spotlight", year: "1963", text: "Michael Jordan was born." },
+      { type: "Celebrity Spotlight", year: "1977", text: "Elvis Presley died." },
+      { type: "Celebrity Spotlight", year: "2016", text: "Muhammad Ali was remembered around the world." }
+    ];
+    const PRICE_COMPARISONS = [
+      { thenYear: "1960s", item: "Movie ticket", thenCost: "$1.00", nowCost: "$12.00+" },
+      { thenYear: "1970s", item: "Gallon of gas", thenCost: "$0.36", nowCost: "$3.50+" },
+      { thenYear: "1980s", item: "New car", thenCost: "$7,200", nowCost: "$48,000+" },
+      { thenYear: "1950s", item: "Postage stamp", thenCost: "$0.03", nowCost: "$0.73" },
+      { thenYear: "1970s", item: "Loaf of bread", thenCost: "$0.25", nowCost: "$2.50+" },
+      { thenYear: "1980s", item: "McDonald's burger", thenCost: "$0.50", nowCost: "$3.00+" }
     const OFFLINE_FACT_BANK = [
       { type: "Events", year: "1776", text: "The United States Declaration of Independence was adopted." },
       { type: "Events", year: "1865", text: "The American Civil War ended in 1865." },
@@ -171,6 +208,50 @@
         const j = (seed + i * 17) % (i + 1);
         [seeded[i], seeded[j]] = [seeded[j], seeded[i]];
       }
+      const byType = {
+        "Celebrity Spotlight": seeded.filter(item => item.type === "Celebrity Spotlight"),
+        "Light History": seeded.filter(item => item.type === "Light History")
+      };
+      const selected = [
+        ...byType["Celebrity Spotlight"].slice(0, LIMITS["Celebrity Spotlight"]),
+        ...byType["Light History"].slice(0, LIMITS["Light History"]),
+        ...buildPriceSlides(mm, dd, LIMITS["Then vs Now"])
+      ];
+      return selected.slice(0, Math.min(total, selected.length));
+    }
+
+    function buildPriceSlides(mm, dd, count = 1) {
+      const pool = [...PRICE_COMPARISONS];
+      const seed = (mm * 100) + dd + 31;
+      for (let i = pool.length - 1; i > 0; i--) {
+        const j = (seed + i * 11) % (i + 1);
+        [pool[i], pool[j]] = [pool[j], pool[i]];
+      }
+      return pool.slice(0, count).map(entry => ({
+        type: "Then vs Now",
+        year: `${entry.thenYear} → Today`,
+        text: `${entry.item}: then ${entry.thenCost}, now about ${entry.nowCost}`
+      }));
+    }
+
+    function scoreFact(text = "") {
+      const normalized = text.toLowerCase();
+      let score = 0;
+      for (const keyword of PREFERRED_KEYWORDS) {
+        if (normalized.includes(keyword)) score += 2;
+      }
+      for (const boring of DEEMPHASIZE_TERMS) {
+        if (normalized.includes(boring)) score -= 2;
+      }
+      if (normalized.length >= 40 && normalized.length <= 220) score += 1;
+      return score;
+    }
+
+    function pickTopFacts(facts, max = 3, minScore = 0) {
+      const ranked = [...facts].sort((a, b) => scoreFact(b.text) - scoreFact(a.text));
+      const preferred = ranked.filter(item => scoreFact(item.text) >= minScore);
+      if (preferred.length >= max) return preferred.slice(0, max);
+      return ranked.slice(0, max);
       return seeded.slice(0, Math.min(total, seeded.length));
     }
 
@@ -222,6 +303,9 @@
 
     function gradientForType(type) {
       const map = {
+        "Celebrity Spotlight": "from-emerald-900 via-emerald-700 to-teal-700",
+        "Light History": "from-blue-900 via-blue-700 to-indigo-700",
+        "Then vs Now": "from-amber-800 via-orange-700 to-rose-700",
         Events: "from-blue-900 via-blue-700 to-indigo-700",
         Births: "from-emerald-900 via-emerald-700 to-teal-700",
         Deaths: "from-slate-900 via-slate-700 to-gray-700",
@@ -328,6 +412,30 @@
           fetch(urls.Births),
           fetch(urls.Deaths)
         ]);
+
+        if (!eventsRes.ok || !birthsRes.ok || !deathsRes.ok) {
+          throw new Error("One or more endpoints failed");
+        }
+
+        const [eventsData, birthsData, deathsData] = await Promise.all([
+          eventsRes.json(),
+          birthsRes.json(),
+          deathsRes.json()
+        ]);
+
+        const lightHistoryFacts = (eventsData.events || [])
+          .map(item => normalize("Light History", item))
+          .filter(s => s.text && s.text.length > 20);
+        const celebFacts = [
+          ...(birthsData.births || []).map(item => normalize("Celebrity Spotlight", item)),
+          ...(deathsData.deaths || []).map(item => normalize("Celebrity Spotlight", item))
+        ].filter(s => s.text && s.text.length > 20);
+
+        const topCelebs = pickTopFacts(celebFacts, LIMITS["Celebrity Spotlight"], 3);
+        const topLightHistory = pickTopFacts(lightHistoryFacts, LIMITS["Light History"], 2);
+        const priceSlides = buildPriceSlides(mm, dd, LIMITS["Then vs Now"]);
+
+        allSlides = [...topCelebs, ...topLightHistory, ...priceSlides];
 
         if (!eventsRes.ok || !birthsRes.ok || !deathsRes.ok) {
           throw new Error("One or more endpoints failed");
