@@ -101,6 +101,12 @@
 
   <script>
     const AUTO_SECONDS = 10;
+    const TOTAL_SLIDES = 8;
+    const TARGET_COUNTS = {
+      "Celebrity Spotlight": 3,
+      "Remember When": 2,
+      "Then vs Now": 3
+    };
 
     const typeMap = {
       selected: "All",
@@ -142,11 +148,11 @@
       { year: "1942", text: "Muhammad Ali was born. He became one of America’s most famous boxers." },
       { year: "1946", text: "Dolly Parton was born. She became a country music legend." },
       { year: "1963", text: "Michael Jordan was born. He became one of basketball’s biggest stars." },
-      { year: "1926", text: "Queen Elizabeth II was born. Americans followed her life for many years." },
-      { year: "1935", text: "Elvis Presley rose to fame and became one of the biggest names in music." },
+      { year: "1931", text: "Willie Nelson was born. He became one of country music’s best-known voices." },
+      { year: "1941", text: "Ann-Margret was born. She became a well-known movie star." },
       { year: "1958", text: "Prince was born. He became one of America’s most unforgettable performers." },
       { year: "1945", text: "Rod Stewart was born. His songs became familiar to generations of listeners." },
-      { year: "1941", text: "Ann-Margret was born. She became a well-known movie star." }
+      { year: "1937", text: "Sandy Koufax was born. He became one of baseball’s most admired pitchers." }
     ];
 
     const OFFLINE_REMEMBER_WHEN = [
@@ -173,7 +179,8 @@
       "war", "battle", "massacre", "siege", "invasion", "treaty", "military",
       "politics", "government", "president", "election", "assassination",
       "conflict", "attack", "killed", "execution", "riot", "lunar module",
-      "commanded by", "piloted by", "apollo program", "orion"
+      "commanded by", "piloted by", "apollo program", "orion", "english comedian",
+      "british comedian", "prime minister", "parliament", "kingdom", "empire"
     ];
 
     const AMERICAN_FUN_KEYWORDS = [
@@ -241,7 +248,19 @@
       return clean;
     }
 
-    function makePriceSlides(mm, dd, count = 4) {
+    function uniqueSlides(items) {
+      const seen = new Set();
+      const result = [];
+      for (const item of items) {
+        const key = `${item.type}|${item.text.toLowerCase()}`;
+        if (seen.has(key)) continue;
+        seen.add(key);
+        result.push(item);
+      }
+      return result;
+    }
+
+    function makePriceSlides(mm, dd, count = TARGET_COUNTS["Then vs Now"]) {
       const pool = [...FUN_PRICE_COMPARISONS];
       const seed = (mm * 100) + dd + 77;
       for (let i = pool.length - 1; i > 0; i--) {
@@ -253,6 +272,23 @@
         year: `${entry.thenYear} → Today`,
         text: `${entry.item}: then ${entry.thenCost}, now about ${entry.nowCost}`
       }));
+    }
+
+    function trimCategory(list, count) {
+      const copy = [...list];
+      shuffle(copy);
+      return copy.slice(0, count);
+    }
+
+    function buildFinalPack(celebs, remember, prices) {
+      const selected = [
+        ...trimCategory(celebs, TARGET_COUNTS["Celebrity Spotlight"]),
+        ...trimCategory(remember, TARGET_COUNTS["Remember When"]),
+        ...trimCategory(prices, TARGET_COUNTS["Then vs Now"])
+      ];
+
+      shuffle(selected);
+      return selected.slice(0, TOTAL_SLIDES);
     }
 
     function makeOfflineSlides(mm, dd) {
@@ -271,23 +307,21 @@
         [remember[i], remember[j]] = [remember[j], remember[i]];
       }
 
-      const celebSlides = celebs.slice(0, 5).map(item => ({
+      const celebSlides = celebs.map(item => ({
         type: "Celebrity Spotlight",
         year: item.year,
         text: item.text
       }));
 
-      const rememberSlides = remember.slice(0, 4).map(item => ({
+      const rememberSlides = remember.map(item => ({
         type: "Remember When",
         year: item.year,
         text: item.text
       }));
 
-      const priceSlides = makePriceSlides(mm, dd, 4);
+      const priceSlides = makePriceSlides(mm, dd, TARGET_COUNTS["Then vs Now"]);
 
-      const pack = [...celebSlides, ...rememberSlides, ...priceSlides];
-      shuffle(pack);
-      return pack;
+      return buildFinalPack(celebSlides, rememberSlides, priceSlides);
     }
 
     function renderFilters() {
@@ -458,6 +492,8 @@
           if (!text) continue;
           if (includesBlockedTerm(text)) continue;
           if (!looksFunCelebrity(text)) continue;
+          if (text.toLowerCase().includes("english comedian")) continue;
+          if (text.toLowerCase().includes("british")) continue;
 
           celebSlides.push({
             type: "Celebrity Spotlight",
@@ -471,6 +507,8 @@
           if (!text) continue;
           if (includesBlockedTerm(text)) continue;
           if (!looksFunCelebrity(text)) continue;
+          if (text.toLowerCase().includes("english comedian")) continue;
+          if (text.toLowerCase().includes("british")) continue;
 
           celebSlides.push({
             type: "Celebrity Spotlight",
@@ -493,40 +531,18 @@
           });
         }
 
-        const uniqueCelebs = [];
-        const seenCelebs = new Set();
-        for (const slide of celebSlides) {
-          const key = slide.text.toLowerCase();
-          if (seenCelebs.has(key)) continue;
-          seenCelebs.add(key);
-          uniqueCelebs.push(slide);
-        }
+        const cleanCelebs = uniqueSlides(celebSlides);
+        const cleanRemember = uniqueSlides(rememberSlides);
+        const priceSlides = makePriceSlides(mm, dd, TARGET_COUNTS["Then vs Now"]);
 
-        const uniqueRemember = [];
-        const seenRemember = new Set();
-        for (const slide of rememberSlides) {
-          const key = slide.text.toLowerCase();
-          if (seenRemember.has(key)) continue;
-          seenRemember.add(key);
-          uniqueRemember.push(slide);
-        }
-
-        shuffle(uniqueCelebs);
-        shuffle(uniqueRemember);
-
-        const priceSlides = makePriceSlides(mm, dd, 4);
-
-        allSlides = [
-          ...uniqueCelebs.slice(0, 5),
-          ...uniqueRemember.slice(0, 4),
-          ...priceSlides
-        ];
-
-        if (allSlides.length < 7) {
+        if (
+          cleanCelebs.length < TARGET_COUNTS["Celebrity Spotlight"] ||
+          cleanRemember.length < TARGET_COUNTS["Remember When"]
+        ) {
           allSlides = makeOfflineSlides(mm, dd);
           setStatus("Using built-in American fun facts for a better coffee-time slideshow.", true);
         } else {
-          shuffle(allSlides);
+          allSlides = buildFinalPack(cleanCelebs, cleanRemember, priceSlides);
           setStatus(`Loaded ${allSlides.length} slides for ${y}-${m}-${d}.`);
         }
 
