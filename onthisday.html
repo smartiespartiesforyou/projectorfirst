@@ -3,16 +3,14 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>On This Day Slideshow</title>
+  <title>Morning Coffee — On This Day</title>
   <script src="https://cdn.tailwindcss.com"></script>
 
-  <!-- Memberstack Loader -->
   <script
     data-memberstack-app="app_cmgnwpg8y00x10suih4pua785"
     src="https://static.memberstack.com/scripts/v2/memberstack.js"
     type="text/javascript"></script>
 
-  <!-- Protect this page -->
   <script>
     document.addEventListener("DOMContentLoaded", async () => {
       try {
@@ -26,7 +24,10 @@
 </head>
 <body class="bg-slate-100 min-h-screen text-slate-900">
   <div class="max-w-7xl mx-auto p-6 text-center">
-    <h1 class="text-5xl md:text-6xl font-extrabold text-blue-900 mb-4">On This Day — Slideshow</h1>
+    <h1 class="text-5xl md:text-6xl font-extrabold text-amber-700 mb-2">Morning Coffee — On This Day</h1>
+    <p class="text-xl md:text-2xl text-slate-700 font-semibold mb-6">
+      Fun facts, famous faces, and a little nostalgia
+    </p>
 
     <div class="flex justify-center mb-6">
       <a href="apps.html"
@@ -35,25 +36,27 @@
       </a>
     </div>
 
-    <!-- Controls -->
     <div class="flex flex-wrap justify-center items-center gap-4 mb-6">
       <input id="dateInput" type="date"
-             class="text-2xl px-4 py-3 border-4 border-blue-200 rounded-xl font-bold bg-white" />
+             class="text-2xl px-4 py-3 border-4 border-amber-200 rounded-xl font-bold bg-white" />
       <button id="loadBtn"
-              class="bg-blue-600 hover:bg-blue-800 text-white text-2xl py-3 px-6 rounded-2xl shadow-lg">
-        Load Slides
+              class="bg-amber-600 hover:bg-amber-700 text-white text-2xl py-3 px-6 rounded-2xl shadow-lg font-extrabold">
+        Load Today
       </button>
       <button id="autoBtn"
-              class="bg-emerald-600 hover:bg-emerald-700 text-white text-2xl py-3 px-6 rounded-2xl shadow-lg">
-        Auto: Off
+              class="bg-emerald-600 hover:bg-emerald-700 text-white text-2xl py-3 px-6 rounded-2xl shadow-lg font-extrabold">
+        Auto: On
+      </button>
+      <button id="fullscreenBtn"
+              class="bg-blue-700 hover:bg-blue-800 text-white text-2xl py-3 px-6 rounded-2xl shadow-lg font-extrabold">
+        Full Screen
       </button>
     </div>
 
-    <!-- Type filters -->
     <div id="filters" class="flex flex-wrap justify-center gap-3 mb-6"></div>
 
-    <!-- Slide stage -->
-    <div class="relative max-w-6xl mx-auto h-[30rem] md:h-[34rem] rounded-[2rem] shadow-2xl overflow-hidden border-[10px] border-white bg-gradient-to-br from-blue-900 via-blue-700 to-indigo-700">
+    <div id="stage"
+         class="relative max-w-6xl mx-auto h-[32rem] md:h-[38rem] rounded-[2rem] shadow-2xl overflow-hidden border-[10px] border-white bg-gradient-to-br from-amber-700 via-orange-600 to-rose-600">
       <div id="slide"
            class="absolute inset-0 p-8 md:p-12 flex flex-col justify-between text-white transition-all duration-500 opacity-100 translate-x-0">
         <div class="flex justify-between items-start gap-4">
@@ -62,15 +65,15 @@
             Celebrity Spotlight
           </div>
           <div id="yearBadge"
-               class="inline-block px-6 py-3 rounded-2xl text-3xl md:text-4xl font-black bg-yellow-300 text-blue-950 shadow-lg">
-            1900
+               class="inline-block px-6 py-3 rounded-2xl text-3xl md:text-4xl font-black bg-yellow-300 text-slate-900 shadow-lg">
+            Today
           </div>
         </div>
 
         <div class="flex-1 flex items-center justify-center px-2">
           <p id="factText"
-             class="text-[2rem] md:text-[2.7rem] leading-tight font-extrabold max-w-5xl">
-            Press "Load Slides" to begin.
+             class="text-[2.2rem] md:text-[3rem] leading-tight font-extrabold max-w-5xl">
+            Loading today’s coffee-time facts...
           </p>
         </div>
 
@@ -81,15 +84,14 @@
       </div>
     </div>
 
-    <!-- Navigation -->
     <div class="flex flex-wrap justify-center gap-4 mt-8">
-      <button id="prevBtn" class="bg-white border-4 border-blue-900 text-blue-900 text-2xl py-3 px-6 rounded-2xl shadow-lg hover:bg-gray-50">
+      <button id="prevBtn" class="bg-white border-4 border-blue-900 text-blue-900 text-2xl py-3 px-6 rounded-2xl shadow-lg hover:bg-gray-50 font-extrabold">
         ◀ Previous
       </button>
-      <button id="nextBtn" class="bg-blue-600 hover:bg-blue-800 text-white text-2xl py-3 px-6 rounded-2xl shadow-lg">
+      <button id="nextBtn" class="bg-blue-600 hover:bg-blue-800 text-white text-2xl py-3 px-6 rounded-2xl shadow-lg font-extrabold">
         Next ▶
       </button>
-      <button id="shuffleBtn" class="bg-white border-4 border-blue-900 text-blue-900 text-2xl py-3 px-6 rounded-2xl shadow-lg hover:bg-gray-50">
+      <button id="shuffleBtn" class="bg-white border-4 border-blue-900 text-blue-900 text-2xl py-3 px-6 rounded-2xl shadow-lg hover:bg-gray-50 font-extrabold">
         Shuffle
       </button>
     </div>
@@ -98,56 +100,21 @@
   </div>
 
   <script>
+    const AUTO_SECONDS = 10;
+
     const typeMap = {
       selected: "All",
-      list: ["All", "Celebrity Spotlight", "Light History", "Then vs Now"],
-      keys: { "Light History": "events", "Celebrity Spotlight": "births", "Then vs Now": "local" }
+      list: ["All", "Celebrity Spotlight", "Remember When", "Then vs Now"],
     };
 
     let allSlides = [];
     let slides = [];
     let idx = -1;
-    let autoOn = false;
+    let autoOn = true;
     let timer = null;
-    const AUTO_SECONDS = 10;
-    const LIMITS = {
-      "Celebrity Spotlight": 3,
-      "Light History": 1,
-      "Then vs Now": 1
-    };
-    const PREFERRED_KEYWORDS = [
-      "actor", "actress", "singer", "musician", "movie", "television", "hollywood",
-      "baseball", "football", "basketball", "olympics", "grammy", "oscar",
-      "nasa", "moon", "space", "disney", "broadway", "record", "award",
-      "first", "invented", "opened", "launched", "premiered"
-    ];
-    const DEEMPHASIZE_TERMS = [
-      "treaty", "battle", "massacre", "siege", "invasion", "armed conflict"
-    ];
-    const OFFLINE_FACT_BANK = [
-      { type: "Light History", year: "1903", text: "The Wright brothers achieved the first powered flight." },
-      { type: "Light History", year: "1955", text: "Disneyland opened in California." },
-      { type: "Light History", year: "1969", text: "Apollo 11 landed on the Moon." },
-      { type: "Light History", year: "1981", text: "MTV launched and changed music television." },
-      { type: "Light History", year: "1990", text: "The Hubble Space Telescope was launched." },
-      { type: "Celebrity Spotlight", year: "1926", text: "Queen Elizabeth II was born." },
-      { type: "Celebrity Spotlight", year: "1940", text: "Ringo Starr of The Beatles was born." },
-      { type: "Celebrity Spotlight", year: "1942", text: "Muhammad Ali was born." },
-      { type: "Celebrity Spotlight", year: "1946", text: "Dolly Parton was born." },
-      { type: "Celebrity Spotlight", year: "1963", text: "Michael Jordan was born." },
-      { type: "Celebrity Spotlight", year: "1977", text: "Elvis Presley died." },
-      { type: "Celebrity Spotlight", year: "2016", text: "Muhammad Ali was remembered around the world." }
-    ];
-    const PRICE_COMPARISONS = [
-      { thenYear: "1960s", item: "Movie ticket", thenCost: "$1.00", nowCost: "$12.00+" },
-      { thenYear: "1970s", item: "Gallon of gas", thenCost: "$0.36", nowCost: "$3.50+" },
-      { thenYear: "1980s", item: "New car", thenCost: "$7,200", nowCost: "$48,000+" },
-      { thenYear: "1950s", item: "Postage stamp", thenCost: "$0.03", nowCost: "$0.73" },
-      { thenYear: "1970s", item: "Loaf of bread", thenCost: "$0.25", nowCost: "$2.50+" },
-      { thenYear: "1980s", item: "McDonald's burger", thenCost: "$0.50", nowCost: "$3.00+" }
-    ];
 
     const slideEl = document.getElementById("slide");
+    const stageEl = document.getElementById("stage");
     const factTextEl = document.getElementById("factText");
     const yearBadgeEl = document.getElementById("yearBadge");
     const typeChipEl = document.getElementById("typeChip");
@@ -156,10 +123,55 @@
     const statusEl = document.getElementById("status");
     const autoBtn = document.getElementById("autoBtn");
 
+    const FUN_PRICE_COMPARISONS = [
+      { thenYear: "1950s", item: "Cup of coffee", thenCost: "$0.10", nowCost: "$3.00+" },
+      { thenYear: "1960s", item: "Movie ticket", thenCost: "$1.00", nowCost: "$12.00+" },
+      { thenYear: "1970s", item: "Gallon of gas", thenCost: "$0.36", nowCost: "$3.50+" },
+      { thenYear: "1980s", item: "New car", thenCost: "$7,200", nowCost: "$48,000+" },
+      { thenYear: "1970s", item: "Loaf of bread", thenCost: "$0.25", nowCost: "$2.50+" },
+      { thenYear: "1960s", item: "Haircut", thenCost: "$2.00", nowCost: "$25.00+" },
+      { thenYear: "1950s", item: "Postage stamp", thenCost: "$0.03", nowCost: "$0.73" },
+      { thenYear: "1960s", item: "Candy bar", thenCost: "$0.05", nowCost: "$1.50+" },
+      { thenYear: "1970s", item: "Dozen eggs", thenCost: "$0.60", nowCost: "$3.00+" }
+    ];
+
+    const OFFLINE_CELEBS = [
+      { year: "1934", text: "Doris Day was born — she became one of America’s best-loved singers and actresses." },
+      { year: "1940", text: "Ringo Starr was born — the Beatles drummer helped change music forever." },
+      { year: "1942", text: "Muhammad Ali was born — one of the most famous boxers in history." },
+      { year: "1946", text: "Dolly Parton was born — singer, songwriter, and country music legend." },
+      { year: "1963", text: "Michael Jordan was born — later known as one of basketball’s biggest stars." },
+      { year: "1926", text: "Queen Elizabeth II was born — one of the most recognized figures in the world." },
+      { year: "1935", text: "Elvis Presley made the charts and became one of the biggest stars in music." },
+      { year: "1958", text: "Prince was born — known for unforgettable music and style." }
+    ];
+
+    const OFFLINE_REMEMBER_WHEN = [
+      { year: "1955", text: "Disneyland opened and families lined up to see the magic." },
+      { year: "1969", text: "Apollo 11 landed on the Moon and people watched in amazement." },
+      { year: "1981", text: "MTV launched and changed the way people watched music." },
+      { year: "1950s", text: "Black-and-white TV sets were the center of many living rooms." },
+      { year: "1960s", text: "Drive-in movies were a favorite night out for many families." },
+      { year: "1970s", text: "Color televisions became more common in American homes." },
+      { year: "1980s", text: "Arcades were packed with people playing Pac-Man and other games." }
+    ];
+
+    const SAFE_FAMOUS_PEOPLE = [
+      "actor", "actress", "singer", "musician", "entertainer", "comedian",
+      "television", "movie", "film", "hollywood", "broadway", "baseball",
+      "football", "basketball", "olympic", "grammy", "oscar", "artist"
+    ];
+
+    const BLOCKED_TERMS = [
+      "war", "battle", "massacre", "siege", "invasion", "treaty", "military",
+      "politics", "government", "president", "election", "assassination",
+      "conflict", "attack", "killed", "execution", "riot"
+    ];
+
     function setToday() {
       const d = new Date();
       const y = d.getFullYear();
-      const m = String(d.getMonth()+1).padStart(2, "0");
+      const m = String(d.getMonth() + 1).padStart(2, "0");
       const day = String(d.getDate()).padStart(2, "0");
       document.getElementById("dateInput").value = `${y}-${m}-${day}`;
     }
@@ -176,30 +188,25 @@
       }
     }
 
-    function buildOfflineSlides(mm, dd, total = 15) {
-      const seeded = [...OFFLINE_FACT_BANK];
-      const seed = (mm * 100) + dd;
-      for (let i = seeded.length - 1; i > 0; i--) {
-        const j = (seed + i * 17) % (i + 1);
-        [seeded[i], seeded[j]] = [seeded[j], seeded[i]];
-      }
-      const byType = {
-        "Celebrity Spotlight": seeded.filter(item => item.type === "Celebrity Spotlight"),
-        "Light History": seeded.filter(item => item.type === "Light History")
-      };
-      const selected = [
-        ...byType["Celebrity Spotlight"].slice(0, LIMITS["Celebrity Spotlight"]),
-        ...byType["Light History"].slice(0, LIMITS["Light History"]),
-        ...buildPriceSlides(mm, dd, LIMITS["Then vs Now"])
-      ];
-      return selected.slice(0, Math.min(total, selected.length));
+    function normalizeText(text) {
+      return String(text || "").replace(/\s+/g, " ").trim();
     }
 
-    function buildPriceSlides(mm, dd, count = 1) {
-      const pool = [...PRICE_COMPARISONS];
-      const seed = (mm * 100) + dd + 31;
+    function includesBlockedTerm(text) {
+      const lower = text.toLowerCase();
+      return BLOCKED_TERMS.some(term => lower.includes(term));
+    }
+
+    function looksFunCelebrity(text) {
+      const lower = text.toLowerCase();
+      return SAFE_FAMOUS_PEOPLE.some(term => lower.includes(term));
+    }
+
+    function makePriceSlides(mm, dd, count = 3) {
+      const pool = [...FUN_PRICE_COMPARISONS];
+      const seed = (mm * 100) + dd + 77;
       for (let i = pool.length - 1; i > 0; i--) {
-        const j = (seed + i * 11) % (i + 1);
+        const j = (seed + i * 13) % (i + 1);
         [pool[i], pool[j]] = [pool[j], pool[i]];
       }
       return pool.slice(0, count).map(entry => ({
@@ -209,29 +216,45 @@
       }));
     }
 
-    function scoreFact(text = "") {
-      const normalized = text.toLowerCase();
-      let score = 0;
-      for (const keyword of PREFERRED_KEYWORDS) {
-        if (normalized.includes(keyword)) score += 2;
-      }
-      for (const boring of DEEMPHASIZE_TERMS) {
-        if (normalized.includes(boring)) score -= 2;
-      }
-      if (normalized.length >= 40 && normalized.length <= 220) score += 1;
-      return score;
-    }
+    function makeOfflineSlides(mm, dd) {
+      const celebs = [...OFFLINE_CELEBS];
+      const remember = [...OFFLINE_REMEMBER_WHEN];
 
-    function pickTopFacts(facts, max = 3, minScore = 0) {
-      const ranked = [...facts].sort((a, b) => scoreFact(b.text) - scoreFact(a.text));
-      const preferred = ranked.filter(item => scoreFact(item.text) >= minScore);
-      if (preferred.length >= max) return preferred.slice(0, max);
-      return ranked.slice(0, max);
+      const seed = (mm * 100) + dd;
+
+      for (let i = celebs.length - 1; i > 0; i--) {
+        const j = (seed + i * 7) % (i + 1);
+        [celebs[i], celebs[j]] = [celebs[j], celebs[i]];
+      }
+
+      for (let i = remember.length - 1; i > 0; i--) {
+        const j = (seed + i * 11) % (i + 1);
+        [remember[i], remember[j]] = [remember[j], remember[i]];
+      }
+
+      const celebSlides = celebs.slice(0, 5).map(item => ({
+        type: "Celebrity Spotlight",
+        year: item.year,
+        text: item.text
+      }));
+
+      const rememberSlides = remember.slice(0, 3).map(item => ({
+        type: "Remember When",
+        year: item.year,
+        text: item.text
+      }));
+
+      const priceSlides = makePriceSlides(mm, dd, 3);
+
+      const pack = [...celebSlides, ...rememberSlides, ...priceSlides];
+      shuffle(pack);
+      return pack;
     }
 
     function renderFilters() {
       const wrap = document.getElementById("filters");
       wrap.innerHTML = "";
+
       typeMap.list.forEach(t => {
         const b = document.createElement("button");
         b.textContent = t;
@@ -240,21 +263,15 @@
             ? "bg-blue-900 text-white border-blue-900"
             : "bg-white text-blue-900 border-blue-300 hover:bg-blue-50"
         }`;
+
         b.onclick = () => {
           typeMap.selected = t;
           applyFilter();
           renderFilters();
         };
+
         wrap.appendChild(b);
       });
-    }
-
-    function normalize(type, item) {
-      return {
-        type,
-        year: item.year || "—",
-        text: item.text || item.description || "No details available."
-      };
     }
 
     function applyFilter() {
@@ -266,21 +283,22 @@
       updateProgress();
 
       if (!slides.length) {
-        factTextEl.textContent = "No slides for this filter/date.";
+        factTextEl.textContent = "No slides for this section on this date.";
         typeChipEl.textContent = "No Data";
         yearBadgeEl.textContent = "—";
         return;
       }
+
       nextSlide(true);
     }
 
     function gradientForType(type) {
       const map = {
-        "Celebrity Spotlight": "from-emerald-900 via-emerald-700 to-teal-700",
-        "Light History": "from-blue-900 via-blue-700 to-indigo-700",
-        "Then vs Now": "from-amber-800 via-orange-700 to-rose-700",
+        "Celebrity Spotlight": "from-purple-800 via-fuchsia-700 to-pink-700",
+        "Remember When": "from-blue-900 via-sky-700 to-cyan-600",
+        "Then vs Now": "from-amber-700 via-orange-600 to-rose-600"
       };
-      return map[type] || "from-blue-900 via-blue-700 to-indigo-700";
+      return map[type] || "from-amber-700 via-orange-600 to-rose-600";
     }
 
     function animateTo(slideData, direction = "next") {
@@ -293,8 +311,7 @@
         typeChipEl.textContent = slideData.type;
         updateProgress();
 
-        const stage = slideEl.parentElement;
-        stage.className = `relative max-w-6xl mx-auto h-[30rem] md:h-[34rem] rounded-[2rem] shadow-2xl overflow-hidden border-[10px] border-white bg-gradient-to-br ${gradientForType(slideData.type)}`;
+        stageEl.className = `relative max-w-6xl mx-auto h-[32rem] md:h-[38rem] rounded-[2rem] shadow-2xl overflow-hidden border-[10px] border-white bg-gradient-to-br ${gradientForType(slideData.type)}`;
 
         slideEl.classList.remove("opacity-0", "-translate-x-8", "translate-x-8");
         slideEl.classList.add("opacity-100", "translate-x-0");
@@ -330,10 +347,13 @@
     function toggleAuto() {
       autoOn = !autoOn;
       autoBtn.textContent = `Auto: ${autoOn ? "On" : "Off"}`;
+
       if (autoOn) {
         if (idx === -1 && slides.length) nextSlide(true);
         startAuto();
-      } else stopAuto();
+      } else {
+        stopAuto();
+      }
     }
 
     function startAuto() {
@@ -354,69 +374,149 @@
 
     async function loadSlides() {
       const dateValue = document.getElementById("dateInput").value;
-      if (!dateValue) return setStatus("Please choose a date.", true);
+      if (!dateValue) {
+        setStatus("Please choose a date.", true);
+        return;
+      }
 
       const [y, m, d] = dateValue.split("-");
       const mm = Number(m);
       const dd = Number(d);
 
       slideDateEl.textContent = `Date: ${y}-${m}-${d}`;
-      setStatus("Loading slides...");
+      setStatus("Loading coffee-time slides...");
       factTextEl.textContent = "Loading...";
       yearBadgeEl.textContent = "—";
       typeChipEl.textContent = "Loading";
 
       try {
         const urls = {
-          Events: `https://en.wikipedia.org/api/rest_v1/feed/onthisday/events/${mm}/${dd}`,
-          Births: `https://en.wikipedia.org/api/rest_v1/feed/onthisday/births/${mm}/${dd}`,
-          Deaths: `https://en.wikipedia.org/api/rest_v1/feed/onthisday/deaths/${mm}/${dd}`
+          births: `https://en.wikipedia.org/api/rest_v1/feed/onthisday/births/${mm}/${dd}`,
+          deaths: `https://en.wikipedia.org/api/rest_v1/feed/onthisday/deaths/${mm}/${dd}`,
+          events: `https://en.wikipedia.org/api/rest_v1/feed/onthisday/events/${mm}/${dd}`
         };
 
-        const [eventsRes, birthsRes, deathsRes] = await Promise.all([
-          fetch(urls.Events),
-          fetch(urls.Births),
-          fetch(urls.Deaths)
+        const [birthsRes, deathsRes, eventsRes] = await Promise.all([
+          fetch(urls.births),
+          fetch(urls.deaths),
+          fetch(urls.events)
         ]);
 
-        if (!eventsRes.ok || !birthsRes.ok || !deathsRes.ok) {
-          throw new Error("One or more endpoints failed");
+        if (!birthsRes.ok || !deathsRes.ok || !eventsRes.ok) {
+          throw new Error("Source fetch failed");
         }
 
-        const [eventsData, birthsData, deathsData] = await Promise.all([
-          eventsRes.json(),
+        const [birthsData, deathsData, eventsData] = await Promise.all([
           birthsRes.json(),
-          deathsRes.json()
+          deathsRes.json(),
+          eventsRes.json()
         ]);
 
-        const lightHistoryFacts = (eventsData.events || [])
-          .map(item => normalize("Light History", item))
-          .filter(s => s.text && s.text.length > 20);
+        const celebSlides = [];
 
-        const celebFacts = [
-          ...(birthsData.births || []).map(item => normalize("Celebrity Spotlight", item)),
-          ...(deathsData.deaths || []).map(item => normalize("Celebrity Spotlight", item))
-        ].filter(s => s.text && s.text.length > 20);
+        for (const item of (birthsData.births || [])) {
+          const text = normalizeText(item.text || item.description || "");
+          if (!text) continue;
+          if (includesBlockedTerm(text)) continue;
+          if (!looksFunCelebrity(text)) continue;
 
-        const topCelebs = pickTopFacts(celebFacts, LIMITS["Celebrity Spotlight"], 3);
-        const topLightHistory = pickTopFacts(lightHistoryFacts, LIMITS["Light History"], 2);
-        const priceSlides = buildPriceSlides(mm, dd, LIMITS["Then vs Now"]);
+          celebSlides.push({
+            type: "Celebrity Spotlight",
+            year: item.year || "—",
+            text
+          });
+        }
 
-        allSlides = [...topCelebs, ...topLightHistory, ...priceSlides];
-        shuffle(allSlides);
+        for (const item of (deathsData.deaths || [])) {
+          const text = normalizeText(item.text || item.description || "");
+          if (!text) continue;
+          if (includesBlockedTerm(text)) continue;
+          if (!looksFunCelebrity(text)) continue;
 
-        if (!allSlides.length) {
-          allSlides = buildOfflineSlides(mm, dd);
-          setStatus("Online facts were empty, showing backup history slides.", true);
+          celebSlides.push({
+            type: "Celebrity Spotlight",
+            year: item.year || "—",
+            text
+          });
+        }
+
+        const rememberSlides = [];
+
+        for (const item of (eventsData.events || [])) {
+          const text = normalizeText(item.text || item.description || "");
+          if (!text) continue;
+          if (includesBlockedTerm(text)) continue;
+          if (text.length < 25 || text.length > 180) continue;
+
+          const lower = text.toLowerCase();
+          const funKeywords = [
+            "opened", "launched", "premiered", "television", "movie", "music",
+            "disney", "broadway", "record", "first", "moon", "space", "radio"
+          ];
+
+          if (!funKeywords.some(word => lower.includes(word))) continue;
+
+          rememberSlides.push({
+            type: "Remember When",
+            year: item.year || "—",
+            text
+          });
+        }
+
+        const uniqueCelebs = [];
+        const seenCelebs = new Set();
+        for (const slide of celebSlides) {
+          const key = slide.text.toLowerCase();
+          if (seenCelebs.has(key)) continue;
+          seenCelebs.add(key);
+          uniqueCelebs.push(slide);
+        }
+
+        const uniqueRemember = [];
+        const seenRemember = new Set();
+        for (const slide of rememberSlides) {
+          const key = slide.text.toLowerCase();
+          if (seenRemember.has(key)) continue;
+          seenRemember.add(key);
+          uniqueRemember.push(slide);
+        }
+
+        shuffle(uniqueCelebs);
+        shuffle(uniqueRemember);
+
+        const priceSlides = makePriceSlides(mm, dd, 3);
+
+        allSlides = [
+          ...uniqueCelebs.slice(0, 5),
+          ...uniqueRemember.slice(0, 3),
+          ...priceSlides
+        ];
+
+        if (allSlides.length < 6) {
+          allSlides = makeOfflineSlides(mm, dd);
+          setStatus("Using built-in fun facts for a better morning coffee slideshow.", true);
+        } else {
+          shuffle(allSlides);
+          setStatus(`Loaded ${allSlides.length} slides for ${y}-${m}-${d}.`);
         }
 
         applyFilter();
-        setStatus(`Loaded ${allSlides.length} slides for ${y}-${m}-${d}.`);
-      } catch (e) {
-        console.error(e);
-        allSlides = buildOfflineSlides(mm, dd);
+
+        if (autoOn) startAuto();
+      } catch (error) {
+        console.error(error);
+        allSlides = makeOfflineSlides(mm, dd);
         applyFilter();
-        setStatus("Could not reach online history source. Showing backup slides instead.", true);
+        setStatus("Could not reach the online source. Showing built-in fun facts instead.", true);
+
+        if (autoOn) startAuto();
+      }
+    }
+
+    async function enterFullscreen() {
+      const docEl = document.documentElement;
+      if (docEl.requestFullscreen) {
+        await docEl.requestFullscreen();
       }
     }
 
@@ -425,16 +525,24 @@
     document.getElementById("prevBtn").addEventListener("click", prevSlide);
     document.getElementById("shuffleBtn").addEventListener("click", shuffleSlides);
     document.getElementById("autoBtn").addEventListener("click", toggleAuto);
+    document.getElementById("fullscreenBtn").addEventListener("click", enterFullscreen);
 
     document.addEventListener("keydown", (e) => {
       if (e.key === "ArrowRight") nextSlide();
       if (e.key === "ArrowLeft") prevSlide();
-      if (e.key.toLowerCase() === " ") { e.preventDefault(); toggleAuto(); }
+      if (e.key.toLowerCase() === " ") {
+        e.preventDefault();
+        toggleAuto();
+      }
+      if (e.key.toLowerCase() === "f") {
+        enterFullscreen();
+      }
     });
 
     setToday();
     renderFilters();
     slideDateEl.textContent = `Date: ${document.getElementById("dateInput").value}`;
+    loadSlides();
   </script>
 </body>
 </html>
