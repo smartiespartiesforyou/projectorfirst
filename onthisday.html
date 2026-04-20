@@ -26,7 +26,7 @@
   <div class="max-w-7xl mx-auto p-6 text-center">
     <h1 class="text-5xl md:text-6xl font-extrabold text-amber-700 mb-2">Morning Coffee — On This Day</h1>
     <p class="text-xl md:text-2xl text-slate-700 font-semibold mb-6">
-      Fun facts, famous faces, and a little nostalgia
+      Famous faces, fun memories, and prices from back then
     </p>
 
     <div class="flex justify-center mb-6">
@@ -132,40 +132,55 @@
       { thenYear: "1960s", item: "Haircut", thenCost: "$2.00", nowCost: "$25.00+" },
       { thenYear: "1950s", item: "Postage stamp", thenCost: "$0.03", nowCost: "$0.73" },
       { thenYear: "1960s", item: "Candy bar", thenCost: "$0.05", nowCost: "$1.50+" },
-      { thenYear: "1970s", item: "Dozen eggs", thenCost: "$0.60", nowCost: "$3.00+" }
+      { thenYear: "1970s", item: "Dozen eggs", thenCost: "$0.60", nowCost: "$3.00+" },
+      { thenYear: "1960s", item: "Hamburger", thenCost: "$0.20", nowCost: "$3.00+" }
     ];
 
     const OFFLINE_CELEBS = [
-      { year: "1934", text: "Doris Day was born — she became one of America’s best-loved singers and actresses." },
-      { year: "1940", text: "Ringo Starr was born — the Beatles drummer helped change music forever." },
-      { year: "1942", text: "Muhammad Ali was born — one of the most famous boxers in history." },
-      { year: "1946", text: "Dolly Parton was born — singer, songwriter, and country music legend." },
-      { year: "1963", text: "Michael Jordan was born — later known as one of basketball’s biggest stars." },
-      { year: "1926", text: "Queen Elizabeth II was born — one of the most recognized figures in the world." },
-      { year: "1935", text: "Elvis Presley made the charts and became one of the biggest stars in music." },
-      { year: "1958", text: "Prince was born — known for unforgettable music and style." }
+      { year: "1934", text: "Doris Day was born. She became one of America’s favorite singers and actresses." },
+      { year: "1940", text: "Ringo Starr was born. He became the drummer for the Beatles." },
+      { year: "1942", text: "Muhammad Ali was born. He became one of America’s most famous boxers." },
+      { year: "1946", text: "Dolly Parton was born. She became a country music legend." },
+      { year: "1963", text: "Michael Jordan was born. He became one of basketball’s biggest stars." },
+      { year: "1926", text: "Queen Elizabeth II was born. Americans followed her life for many years." },
+      { year: "1935", text: "Elvis Presley rose to fame and became one of the biggest names in music." },
+      { year: "1958", text: "Prince was born. He became one of America’s most unforgettable performers." },
+      { year: "1945", text: "Rod Stewart was born. His songs became familiar to generations of listeners." },
+      { year: "1941", text: "Ann-Margret was born. She became a well-known movie star." }
     ];
 
     const OFFLINE_REMEMBER_WHEN = [
-      { year: "1955", text: "Disneyland opened and families lined up to see the magic." },
-      { year: "1969", text: "Apollo 11 landed on the Moon and people watched in amazement." },
-      { year: "1981", text: "MTV launched and changed the way people watched music." },
-      { year: "1950s", text: "Black-and-white TV sets were the center of many living rooms." },
-      { year: "1960s", text: "Drive-in movies were a favorite night out for many families." },
+      { year: "1955", text: "Disneyland opened in California and families could not wait to visit." },
+      { year: "1962", text: "Walmart opened its first store in America." },
+      { year: "1971", text: "Walt Disney World opened in Florida." },
+      { year: "1981", text: "MTV launched and changed the way America watched music." },
+      { year: "1950s", text: "Black-and-white TV sets were the center of many American living rooms." },
+      { year: "1960s", text: "Drive-in movies were a favorite night out across America." },
       { year: "1970s", text: "Color televisions became more common in American homes." },
-      { year: "1980s", text: "Arcades were packed with people playing Pac-Man and other games." }
+      { year: "1980s", text: "Arcades were full of people playing Pac-Man and other games." },
+      { year: "1950s", text: "Many families gathered around the radio and television every evening." },
+      { year: "1960s", text: "More American homes were getting air conditioning and television." }
     ];
 
     const SAFE_FAMOUS_PEOPLE = [
-      "actor", "actress", "singer", "musician", "entertainer", "comedian",
+      "actor", "actress", "singer", "musician", "comedian", "entertainer",
       "television", "movie", "film", "hollywood", "broadway", "baseball",
-      "football", "basketball", "olympic", "grammy", "oscar", "artist"
+      "football", "basketball", "olympic", "grammy", "oscar", "artist",
+      "boxer", "country", "rock", "pop"
     ];
 
     const BLOCKED_TERMS = [
       "war", "battle", "massacre", "siege", "invasion", "treaty", "military",
       "politics", "government", "president", "election", "assassination",
-      "conflict", "attack", "killed", "execution", "riot"
+      "conflict", "attack", "killed", "execution", "riot", "lunar module",
+      "commanded by", "piloted by", "apollo program", "orion"
+    ];
+
+    const AMERICAN_FUN_KEYWORDS = [
+      "disney", "walmart", "television", "tv", "movie", "music", "radio",
+      "opened", "launched", "premiered", "broadway", "record", "hollywood",
+      "baseball", "basketball", "football", "store", "florida", "california",
+      "america", "american"
     ];
 
     function setToday() {
@@ -202,7 +217,31 @@
       return SAFE_FAMOUS_PEOPLE.some(term => lower.includes(term));
     }
 
-    function makePriceSlides(mm, dd, count = 3) {
+    function looksAmericanAndSimple(text) {
+      const lower = text.toLowerCase();
+      if (includesBlockedTerm(lower)) return false;
+      if (text.length < 25 || text.length > 140) return false;
+      return AMERICAN_FUN_KEYWORDS.some(word => lower.includes(word));
+    }
+
+    function simplifyText(text) {
+      let clean = normalizeText(text);
+
+      clean = clean.replace(/\s*\([^)]*\)/g, "");
+      clean = clean.replace(/\[[^\]]*\]/g, "");
+      clean = clean.replace(/;\s*/g, ". ");
+      clean = clean.replace(/:\s*/g, ". ");
+      clean = clean.replace(/\s{2,}/g, " ").trim();
+
+      if (clean.length > 140) {
+        const shorter = clean.split(".")[0].trim();
+        if (shorter.length >= 25) clean = shorter + ".";
+      }
+
+      return clean;
+    }
+
+    function makePriceSlides(mm, dd, count = 4) {
       const pool = [...FUN_PRICE_COMPARISONS];
       const seed = (mm * 100) + dd + 77;
       for (let i = pool.length - 1; i > 0; i--) {
@@ -238,13 +277,13 @@
         text: item.text
       }));
 
-      const rememberSlides = remember.slice(0, 3).map(item => ({
+      const rememberSlides = remember.slice(0, 4).map(item => ({
         type: "Remember When",
         year: item.year,
         text: item.text
       }));
 
-      const priceSlides = makePriceSlides(mm, dd, 3);
+      const priceSlides = makePriceSlides(mm, dd, 4);
 
       const pack = [...celebSlides, ...rememberSlides, ...priceSlides];
       shuffle(pack);
@@ -415,7 +454,7 @@
         const celebSlides = [];
 
         for (const item of (birthsData.births || [])) {
-          const text = normalizeText(item.text || item.description || "");
+          let text = simplifyText(item.text || item.description || "");
           if (!text) continue;
           if (includesBlockedTerm(text)) continue;
           if (!looksFunCelebrity(text)) continue;
@@ -428,7 +467,7 @@
         }
 
         for (const item of (deathsData.deaths || [])) {
-          const text = normalizeText(item.text || item.description || "");
+          let text = simplifyText(item.text || item.description || "");
           if (!text) continue;
           if (includesBlockedTerm(text)) continue;
           if (!looksFunCelebrity(text)) continue;
@@ -443,18 +482,9 @@
         const rememberSlides = [];
 
         for (const item of (eventsData.events || [])) {
-          const text = normalizeText(item.text || item.description || "");
+          let text = simplifyText(item.text || item.description || "");
           if (!text) continue;
-          if (includesBlockedTerm(text)) continue;
-          if (text.length < 25 || text.length > 180) continue;
-
-          const lower = text.toLowerCase();
-          const funKeywords = [
-            "opened", "launched", "premiered", "television", "movie", "music",
-            "disney", "broadway", "record", "first", "moon", "space", "radio"
-          ];
-
-          if (!funKeywords.some(word => lower.includes(word))) continue;
+          if (!looksAmericanAndSimple(text)) continue;
 
           rememberSlides.push({
             type: "Remember When",
@@ -484,17 +514,17 @@
         shuffle(uniqueCelebs);
         shuffle(uniqueRemember);
 
-        const priceSlides = makePriceSlides(mm, dd, 3);
+        const priceSlides = makePriceSlides(mm, dd, 4);
 
         allSlides = [
           ...uniqueCelebs.slice(0, 5),
-          ...uniqueRemember.slice(0, 3),
+          ...uniqueRemember.slice(0, 4),
           ...priceSlides
         ];
 
-        if (allSlides.length < 6) {
+        if (allSlides.length < 7) {
           allSlides = makeOfflineSlides(mm, dd);
-          setStatus("Using built-in fun facts for a better morning coffee slideshow.", true);
+          setStatus("Using built-in American fun facts for a better coffee-time slideshow.", true);
         } else {
           shuffle(allSlides);
           setStatus(`Loaded ${allSlides.length} slides for ${y}-${m}-${d}.`);
@@ -507,7 +537,7 @@
         console.error(error);
         allSlides = makeOfflineSlides(mm, dd);
         applyFilter();
-        setStatus("Could not reach the online source. Showing built-in fun facts instead.", true);
+        setStatus("Could not reach the online source. Showing built-in American fun facts instead.", true);
 
         if (autoOn) startAuto();
       }
