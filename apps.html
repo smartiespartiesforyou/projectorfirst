@@ -44,7 +44,9 @@
         return;
       }
 
+      console.log("✅ Access granted to:", member.auth.email);
     } catch (error) {
+      console.error("Auth check failed:", error);
       window.location.replace("index.html");
     }
   });
@@ -92,7 +94,6 @@
   <main class="max-w-5xl mx-auto px-4 pb-12">
     <div class="grid gap-5 sm:gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
 
-      <!-- FIRST APP -->
       <article class="card">
         <div>
           <div class="flex items-center gap-3 mb-3">
@@ -103,10 +104,9 @@
             Big, simple price comparisons — perfect for conversation and memories.
           </p>
         </div>
-        <a href="prices.html" class="btn">Open Prices</a>
+        <a href="prices.html" class="btn" aria-label="Open Prices">Open Prices</a>
       </article>
 
-      <!-- 🔥 YOUR DEVOTIONAL (MOVED TO TOP) -->
       <article class="card">
         <div>
           <div class="flex items-center gap-3 mb-3">
@@ -118,27 +118,25 @@
             Perfect for quiet reflection or group moments.
           </p>
         </div>
-        <a href="devotional.html" class="btn">Open Devotional</a>
+        <a href="devotional.html" class="btn" aria-label="Open Daily Devotional">Open Devotional</a>
       </article>
-
-      <!-- REST OF YOUR APPS (UNCHANGED) -->
 
       <article class="card">
         <div>
           <div class="flex items-center gap-3 mb-3"><span class="text-4xl">🎱</span>
             <h2 class="text-2xl font-extrabold text-blue-800">Bingo Caller</h2></div>
-          <p class="text-lg text-gray-800 mb-4">Classic 1–75 caller with big numbers and a Theme dropdown.</p>
+          <p class="text-lg text-gray-800 mb-4">Classic 1–75 caller with big numbers and a <span class="font-semibold">Theme</span> dropdown.</p>
         </div>
-        <a href="bingo.html" class="btn">Open Bingo</a>
+        <a href="bingo.html" class="btn" aria-label="Open Bingo">Open Bingo</a>
       </article>
 
       <article class="card">
         <div>
           <div class="flex items-center gap-3 mb-3"><span class="text-4xl">🎴</span>
             <h2 class="text-2xl font-extrabold text-blue-800">Pokeno</h2></div>
-          <p class="text-lg text-gray-800 mb-4">Classic mix of poker and bingo.</p>
+          <p class="text-lg text-gray-800 mb-4">Classic mix of poker and bingo. Flip giant cards; players mark their boards.</p>
         </div>
-        <a href="pokeno.html" class="btn">Open Pokeno</a>
+        <a href="pokeno.html" class="btn" aria-label="Open Pokeno">Open Pokeno</a>
       </article>
 
       <article class="card">
@@ -148,10 +146,13 @@
             <h2 class="text-2xl font-extrabold text-blue-800">Move & Groove</h2>
           </div>
           <p class="text-lg text-gray-800 mb-4">
-            Fun movement prompts for groups.
+            Roll fun movement prompts—stretch, shake, or dance along! Includes
+            <span class="font-semibold">Classic, Holiday, Silly, and Gentle Stretch</span> themes.
           </p>
         </div>
-        <a href="move-and-groove.html" class="btn">Open Move & Groove</a>
+        <a href="move-and-groove.html" class="btn" aria-label="Open Move & Groove">
+          Open Move & Groove
+        </a>
       </article>
 
       <article class="card">
@@ -161,28 +162,86 @@
             <h2 class="text-2xl font-extrabold text-blue-800">Finish the Phrase</h2>
           </div>
           <p class="text-lg text-gray-800 mb-4">
-            Call-and-answer phrase game.
+            A simple call-and-answer challenge. Read the prompt and let the group shout the ending!
+            Includes classic sayings, hymns, holidays, and fun themes.
           </p>
         </div>
-        <a href="finishphrase.html" class="btn">Open Finish the Phrase</a>
+        <a href="finishphrase.html" class="btn" aria-label="Open Finish the Phrase">Open Finish the Phrase</a>
       </article>
 
       <article class="card">
         <div>
           <div class="flex items-center gap-3 mb-3"><span class="text-4xl">🎲</span>
             <h2 class="text-2xl font-extrabold text-blue-800">Dice Roller</h2></div>
-          <p class="text-lg text-gray-800 mb-4">Big readable dice.</p>
+          <p class="text-lg text-gray-800 mb-4">Big, readable dice for group play and quick challenges.</p>
         </div>
-        <a href="dice.html" class="btn">Open Dice</a>
+        <a href="dice.html" class="btn" aria-label="Open Dice Roller">Open Dice</a>
       </article>
 
       <article class="card">
         <div>
           <div class="flex items-center gap-3 mb-3"><span class="text-4xl">❓</span>
-            <h2 class="text-2xl font-extrabold text-blue-800">Trivia</h2></div>
-          <p class="text-lg text-gray-800 mb-4">True or False trivia game.</p>
+            <h2 class="text-2xl font-extrabold text-blue-800">Trivia (True/False)</h2></div>
+          <p class="text-lg text-gray-800 mb-4">Huge questions, big buttons, and a <span class="font-semibold">Theme</span> picker.</p>
         </div>
-        <a href="trivia.html" class="btn">Open Trivia</a>
+        <a href="trivia.html" class="btn" aria-label="Open Trivia">Open Trivia</a>
+      </article>
+
+      <article class="card">
+        <div>
+          <div class="flex items-center gap-3 mb-3"><span class="text-4xl">🧩</span>
+            <h2 class="text-2xl font-extrabold text-blue-800">Memory Match</h2></div>
+          <p class="text-lg text-gray-800 mb-4">Match pairs of icons — animals, food, and holiday themes included.</p>
+        </div>
+        <a href="memory.html" class="btn" aria-label="Open Memory Match">Open Memory</a>
+      </article>
+
+      <article class="card">
+        <div>
+          <div class="flex items-center gap-3 mb-3"><span class="text-4xl">🎈</span>
+            <h2 class="text-2xl font-extrabold text-blue-800">Pop the Balloon</h2></div>
+          <p class="text-lg text-gray-800 mb-4">Word guessing with balloons—guess letters before they all pop. <span class="font-semibold">Themes</span> included.</p>
+        </div>
+        <a href="balloon.html" class="btn" aria-label="Open Pop the Balloon">Open Balloon Game</a>
+      </article>
+
+      <article class="card">
+        <div>
+          <div class="flex items-center gap-3 mb-3"><span class="text-4xl">🔤</span>
+            <h2 class="text-2xl font-extrabold text-blue-800">Word Scramble</h2></div>
+          <p class="text-lg text-gray-800 mb-4">Unscramble giant jumbled words on screen. Includes <span class="font-semibold">Animals, Food, Holidays</span>.</p>
+        </div>
+        <a href="word-scramble.html" class="btn" aria-label="Open Word Scramble">Open Scramble</a>
+      </article>
+
+      <article class="card">
+        <div>
+          <div class="flex items-center gap-3 mb-3">
+            <span class="text-4xl">🗺️</span>
+            <h2 class="text-2xl font-extrabold text-blue-800">Guess the State</h2>
+          </div>
+          <p class="text-lg text-gray-800 mb-4">
+            One state glows at a time — residents guess which state it is before you reveal the answer.
+          </p>
+        </div>
+        <a href="guess-the-state.html" class="btn" aria-label="Open Guess the State">
+          Open Guess the State
+        </a>
+      </article>
+
+      <article class="card">
+        <div>
+          <div class="flex items-center gap-3 mb-3">
+            <span class="text-4xl">🎡</span>
+            <h2 class="text-2xl font-extrabold text-blue-800">Fortune Spin</h2>
+          </div>
+          <p class="text-lg text-gray-800 mb-4">
+            Take turns guessing letters to reveal a hidden phrase. Big tiles, simple group play.
+          </p>
+        </div>
+        <a href="fortune-spin.html" class="btn" aria-label="Open Fortune Spin">
+          Open Fortune Spin
+        </a>
       </article>
 
     </div>
