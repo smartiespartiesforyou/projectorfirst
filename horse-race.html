@@ -3,7 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Horse Race Game | ProjectorFirst</title>
+
+<title>Horse Race | ProjectorFirst</title>
 
 <script src="https://cdn.tailwindcss.com"></script>
 
@@ -13,25 +14,28 @@ body {
 }
 
 .track {
-  height: 80px;
-  border: 3px solid #333;
-  margin-bottom: 15px;
+  height: 90px;
+  border: 4px solid #1f2937;
+  margin-bottom: 14px;
   position: relative;
   background: repeating-linear-gradient(
     90deg,
-    #f1f5f9,
-    #f1f5f9 40px,
-    #e2e8f0 40px,
-    #e2e8f0 80px
+    #f8fafc,
+    #f8fafc 45px,
+    #e2e8f0 45px,
+    #e2e8f0 90px
   );
+  border-radius: 16px;
+  overflow: hidden;
 }
 
 .horse {
   position: absolute;
   top: 50%;
-  transform: translateY(-50%);
-  font-size: 40px;
-  transition: left 0.5s ease;
+  transform: translateY(-50%) scaleX(-1);
+  font-size: 52px;
+  transition: left 0.6s ease;
+  left: 0%;
 }
 
 .finish-line {
@@ -39,57 +43,102 @@ body {
   right: 0;
   top: 0;
   bottom: 0;
-  width: 10px;
-  background: black;
+  width: 16px;
+  background: repeating-linear-gradient(
+    45deg,
+    black,
+    black 10px,
+    white 10px,
+    white 20px
+  );
+}
+
+.label {
+  position: absolute;
+  left: 12px;
+  top: 6px;
+  font-size: 20px;
+  font-weight: bold;
+  background: white;
+  padding: 2px 10px;
+  border-radius: 999px;
 }
 </style>
 </head>
 
-<body class="bg-gray-100 text-center p-6">
+<body class="bg-slate-100 text-center p-6">
 
-<h1 class="text-4xl font-bold mb-6">🐎 Horse Race</h1>
+<h1 class="text-5xl font-extrabold mb-3">🐎 Horse Race</h1>
 
-<div id="raceTrack" class="max-w-4xl mx-auto mb-6"></div>
+<p class="text-2xl mb-6">Roll the dice and cheer for your horse!</p>
 
-<button onclick="rollDice()" class="bg-blue-600 text-white text-2xl px-8 py-4 rounded-xl shadow-lg">
+<div id="diceDisplay" class="text-8xl font-extrabold bg-white rounded-3xl shadow-lg inline-block px-12 py-6 mb-6">
+🎲
+</div>
+
+<div id="message" class="text-3xl font-bold mb-6 text-blue-900">
+Ready to race!
+</div>
+
+<div id="raceTrack" class="max-w-6xl mx-auto mb-8"></div>
+
+<button onclick="rollDice()" class="bg-blue-700 hover:bg-blue-800 text-white text-3xl font-bold px-10 py-5 rounded-2xl shadow-lg">
 🎲 Roll Dice
 </button>
 
-<button onclick="resetRace()" class="bg-red-500 text-white text-2xl px-8 py-4 rounded-xl ml-4">
-Reset
+<button onclick="resetRace()" class="bg-red-600 hover:bg-red-700 text-white text-3xl font-bold px-10 py-5 rounded-2xl shadow-lg ml-4">
+Reset Race
 </button>
-
-<p id="result" class="text-3xl font-bold mt-6"></p>
 
 <script>
 const horses = [
-  { color: "red", position: 0 },
-  { color: "blue", position: 0 },
-  { color: "green", position: 0 },
-  { color: "yellow", position: 0 },
-  { color: "purple", position: 0 }
+  { name: "Red Horse", color: "#dc2626", position: 0 },
+  { name: "Blue Horse", color: "#2563eb", position: 0 },
+  { name: "Green Horse", color: "#16a34a", position: 0 },
+  { name: "Purple Horse", color: "#9333ea", position: 0 },
+  { name: "Orange Horse", color: "#f97316", position: 0 },
+  { name: "Pink Horse", color: "#db2777", position: 0 }
 ];
 
-const trackLength = 90; // % to win
-
+const finishLine = 88;
 const raceTrack = document.getElementById("raceTrack");
+const diceDisplay = document.getElementById("diceDisplay");
+const message = document.getElementById("message");
+
+let raceOver = false;
+
+const diceFaces = {
+  1: "⚀",
+  2: "⚁",
+  3: "⚂",
+  4: "⚃",
+  5: "⚄",
+  6: "⚅"
+};
 
 function createTracks() {
   raceTrack.innerHTML = "";
+
   horses.forEach((horse, index) => {
     const track = document.createElement("div");
     track.className = "track";
 
-    const finish = document.createElement("div");
-    finish.className = "finish-line";
+    const label = document.createElement("div");
+    label.className = "label";
+    label.style.color = horse.color;
+    label.innerText = horse.name;
 
     const horseEl = document.createElement("div");
     horseEl.className = "horse";
     horseEl.id = "horse-" + index;
     horseEl.innerHTML = "🐎";
     horseEl.style.color = horse.color;
-    horseEl.style.left = "0%";
+    horseEl.style.left = horse.position + "%";
 
+    const finish = document.createElement("div");
+    finish.className = "finish-line";
+
+    track.appendChild(label);
     track.appendChild(horseEl);
     track.appendChild(finish);
     raceTrack.appendChild(track);
@@ -97,33 +146,40 @@ function createTracks() {
 }
 
 function rollDice() {
-  const roll = Math.floor(Math.random() * 6) + 1;
+  if (raceOver) return;
 
-  // pick random horse
+  const roll = Math.floor(Math.random() * 6) + 1;
   const horseIndex = Math.floor(Math.random() * horses.length);
   const horse = horses[horseIndex];
 
-  horse.position += roll * 2;
+  diceDisplay.innerText = diceFaces[roll];
 
-  const horseEl = document.getElementById("horse-" + horseIndex);
-  horseEl.style.left = horse.position + "%";
+  horse.position += roll * 3;
 
-  document.getElementById("result").innerText =
-    horse.color.toUpperCase() + " horse moves " + roll + "!";
+  if (horse.position > finishLine) {
+    horse.position = finishLine;
+  }
 
-  if (horse.position >= trackLength) {
-    document.getElementById("result").innerText =
-      "🏆 " + horse.color.toUpperCase() + " HORSE WINS!";
+  document.getElementById("horse-" + horseIndex).style.left = horse.position + "%";
+
+  message.innerText = horse.name + " moves " + roll + " spaces!";
+
+  if (horse.position >= finishLine) {
+    raceOver = true;
+    message.innerText = "🏆 " + horse.name + " WINS THE RACE!";
   }
 }
 
 function resetRace() {
-  horses.forEach((horse, index) => {
+  raceOver = false;
+  diceDisplay.innerText = "🎲";
+  message.innerText = "Ready to race!";
+
+  horses.forEach((horse) => {
     horse.position = 0;
-    document.getElementById("horse-" + index).style.left = "0%";
   });
 
-  document.getElementById("result").innerText = "";
+  createTracks();
 }
 
 createTracks();
