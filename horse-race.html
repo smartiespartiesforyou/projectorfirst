@@ -1,49 +1,70 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Horse Race | ProjectorFirst</title>
-
 <script src="https://cdn.tailwindcss.com"></script>
 
 <style>
 body {
   font-family: Arial, sans-serif;
+  background: linear-gradient(to bottom, #064e3b, #166534);
+  color: white;
 }
 
 .track {
-  height: 90px;
-  border: 4px solid #1f2937;
-  margin-bottom: 14px;
+  height: 105px;
   position: relative;
+  margin-bottom: 16px;
+  border-radius: 24px;
+  overflow: hidden;
+  background: linear-gradient(to right, #15803d, #22c55e);
+  border: 4px solid rgba(255,255,255,.5);
+  box-shadow: inset 0 0 18px rgba(0,0,0,.35);
+}
+
+.track::before {
+  content: "";
+  position: absolute;
+  inset: 0;
   background: repeating-linear-gradient(
     90deg,
-    #f8fafc,
-    #f8fafc 45px,
-    #e2e8f0 45px,
-    #e2e8f0 90px
+    rgba(255,255,255,.12),
+    rgba(255,255,255,.12) 4px,
+    transparent 4px,
+    transparent 80px
   );
-  border-radius: 16px;
-  overflow: hidden;
 }
 
 .horse {
   position: absolute;
-  top: 50%;
+  top: 48%;
   transform: translateY(-50%) scaleX(-1);
-  font-size: 52px;
-  transition: left 0.6s ease;
-  left: 0%;
+  font-size: 62px;
+  transition: left .7s ease;
+  z-index: 2;
 }
 
-.finish-line {
+.name-tag {
+  position: absolute;
+  left: 14px;
+  top: 10px;
+  z-index: 3;
+  font-size: 22px;
+  font-weight: bold;
+  padding: 6px 16px;
+  border-radius: 999px;
+  background: white;
+  color: black;
+}
+
+.finish {
   position: absolute;
   right: 0;
   top: 0;
   bottom: 0;
-  width: 16px;
+  width: 22px;
   background: repeating-linear-gradient(
     45deg,
     black,
@@ -51,82 +72,122 @@ body {
     white 10px,
     white 20px
   );
+  z-index: 4;
 }
 
-.label {
-  position: absolute;
-  left: 12px;
-  top: 6px;
-  font-size: 20px;
-  font-weight: bold;
-  background: white;
-  padding: 2px 10px;
-  border-radius: 999px;
+.winner-screen {
+  animation: pop .6s ease-in-out;
+}
+
+@keyframes pop {
+  0% { transform: scale(.8); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.shake {
+  animation: shake .35s;
+}
+
+@keyframes shake {
+  0% { transform: rotate(0); }
+  25% { transform: rotate(10deg); }
+  50% { transform: rotate(-10deg); }
+  75% { transform: rotate(10deg); }
+  100% { transform: rotate(0); }
 }
 </style>
 </head>
 
-<body class="bg-slate-100 text-center p-6">
+<body class="p-6 text-center">
 
-<h1 class="text-5xl font-extrabold mb-3">🐎 Horse Race</h1>
+<h1 class="text-6xl font-extrabold mb-2">🐎 Horse Race</h1>
+<p class="text-2xl mb-6">Name the horses after residents and cheer them on!</p>
 
-<p class="text-2xl mb-6">Roll the dice and cheer for your horse!</p>
+<div id="setupBox" class="bg-white text-black rounded-3xl shadow-2xl p-6 max-w-5xl mx-auto mb-8">
+  <h2 class="text-3xl font-extrabold mb-4">Enter Resident Names</h2>
 
-<div id="diceDisplay" class="text-8xl font-extrabold bg-white rounded-3xl shadow-lg inline-block px-12 py-6 mb-6">
-🎲
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+    <input id="name0" class="text-2xl border-4 rounded-xl p-3" placeholder="Red Horse Name">
+    <input id="name1" class="text-2xl border-4 rounded-xl p-3" placeholder="Blue Horse Name">
+    <input id="name2" class="text-2xl border-4 rounded-xl p-3" placeholder="Green Horse Name">
+    <input id="name3" class="text-2xl border-4 rounded-xl p-3" placeholder="Purple Horse Name">
+    <input id="name4" class="text-2xl border-4 rounded-xl p-3" placeholder="Orange Horse Name">
+    <input id="name5" class="text-2xl border-4 rounded-xl p-3" placeholder="Pink Horse Name">
+  </div>
+
+  <button onclick="startRace()" class="bg-green-700 text-white text-3xl font-bold px-10 py-4 rounded-2xl shadow-lg">
+    Start Race
+  </button>
 </div>
 
-<div id="message" class="text-3xl font-bold mb-6 text-blue-900">
-Ready to race!
+<div id="gameBox" class="hidden">
+
+  <div id="diceDisplay" class="text-9xl bg-white text-black inline-block rounded-3xl px-12 py-5 shadow-2xl mb-4">
+    🎲
+  </div>
+
+  <div id="message" class="text-4xl font-extrabold mb-6">
+    Ready to race!
+  </div>
+
+  <div id="raceTrack" class="max-w-7xl mx-auto mb-8"></div>
+
+  <button onclick="rollDice()" class="bg-yellow-400 text-black text-4xl font-extrabold px-12 py-6 rounded-3xl shadow-2xl">
+    🎲 Roll Dice
+  </button>
+
+  <button onclick="resetRace()" class="bg-red-600 text-white text-4xl font-extrabold px-12 py-6 rounded-3xl shadow-2xl ml-4">
+    Reset
+  </button>
+
 </div>
 
-<div id="raceTrack" class="max-w-6xl mx-auto mb-8"></div>
-
-<button onclick="rollDice()" class="bg-blue-700 hover:bg-blue-800 text-white text-3xl font-bold px-10 py-5 rounded-2xl shadow-lg">
-🎲 Roll Dice
-</button>
-
-<button onclick="resetRace()" class="bg-red-600 hover:bg-red-700 text-white text-3xl font-bold px-10 py-5 rounded-2xl shadow-lg ml-4">
-Reset Race
-</button>
+<div id="winnerBox" class="hidden winner-screen bg-yellow-300 text-black rounded-3xl shadow-2xl p-8 max-w-4xl mx-auto mt-8">
+  <div class="text-7xl mb-4">🏆🎉</div>
+  <div id="winnerText" class="text-5xl font-extrabold"></div>
+</div>
 
 <script>
 const horses = [
-  { name: "Red Horse", color: "#dc2626", position: 0 },
-  { name: "Blue Horse", color: "#2563eb", position: 0 },
-  { name: "Green Horse", color: "#16a34a", position: 0 },
-  { name: "Purple Horse", color: "#9333ea", position: 0 },
-  { name: "Orange Horse", color: "#f97316", position: 0 },
-  { name: "Pink Horse", color: "#db2777", position: 0 }
+  { colorName: "Red", color: "#dc2626", name: "Red Horse", position: 0 },
+  { colorName: "Blue", color: "#2563eb", name: "Blue Horse", position: 0 },
+  { colorName: "Green", color: "#16a34a", name: "Green Horse", position: 0 },
+  { colorName: "Purple", color: "#9333ea", name: "Purple Horse", position: 0 },
+  { colorName: "Orange", color: "#f97316", name: "Orange Horse", position: 0 },
+  { colorName: "Pink", color: "#db2777", name: "Pink Horse", position: 0 }
 ];
 
+const diceFaces = ["", "⚀", "⚁", "⚂", "⚃", "⚄", "⚅"];
 const finishLine = 88;
-const raceTrack = document.getElementById("raceTrack");
-const diceDisplay = document.getElementById("diceDisplay");
-const message = document.getElementById("message");
-
 let raceOver = false;
 
-const diceFaces = {
-  1: "⚀",
-  2: "⚁",
-  3: "⚂",
-  4: "⚃",
-  5: "⚄",
-  6: "⚅"
-};
+function startRace() {
+  horses.forEach((horse, index) => {
+    const typedName = document.getElementById("name" + index).value.trim();
+    horse.name = typedName || horse.colorName + " Horse";
+    horse.position = 0;
+  });
+
+  document.getElementById("setupBox").classList.add("hidden");
+  document.getElementById("gameBox").classList.remove("hidden");
+  document.getElementById("winnerBox").classList.add("hidden");
+
+  raceOver = false;
+  createTracks();
+}
 
 function createTracks() {
-  raceTrack.innerHTML = "";
+  const container = document.getElementById("raceTrack");
+  container.innerHTML = "";
 
   horses.forEach((horse, index) => {
     const track = document.createElement("div");
     track.className = "track";
 
-    const label = document.createElement("div");
-    label.className = "label";
-    label.style.color = horse.color;
-    label.innerText = horse.name;
+    const tag = document.createElement("div");
+    tag.className = "name-tag";
+    tag.innerText = horse.name;
+    tag.style.border = "5px solid " + horse.color;
 
     const horseEl = document.createElement("div");
     horseEl.className = "horse";
@@ -136,53 +197,68 @@ function createTracks() {
     horseEl.style.left = horse.position + "%";
 
     const finish = document.createElement("div");
-    finish.className = "finish-line";
+    finish.className = "finish";
 
-    track.appendChild(label);
+    track.appendChild(tag);
     track.appendChild(horseEl);
     track.appendChild(finish);
-    raceTrack.appendChild(track);
+    container.appendChild(track);
   });
 }
 
 function rollDice() {
   if (raceOver) return;
 
-  const roll = Math.floor(Math.random() * 6) + 1;
-  const horseIndex = Math.floor(Math.random() * horses.length);
-  const horse = horses[horseIndex];
+  const dice = document.getElementById("diceDisplay");
+  dice.classList.add("shake");
 
-  diceDisplay.innerText = diceFaces[roll];
+  setTimeout(() => {
+    dice.classList.remove("shake");
 
-  horse.position += roll * 3;
+    const roll = Math.floor(Math.random() * 6) + 1;
+    const index = Math.floor(Math.random() * horses.length);
+    const horse = horses[index];
 
-  if (horse.position > finishLine) {
-    horse.position = finishLine;
-  }
+    dice.innerText = diceFaces[roll];
 
-  document.getElementById("horse-" + horseIndex).style.left = horse.position + "%";
+    horse.position += roll * 3.5;
+    if (horse.position > finishLine) horse.position = finishLine;
 
-  message.innerText = horse.name + " moves " + roll + " spaces!";
+    document.getElementById("horse-" + index).style.left = horse.position + "%";
 
-  if (horse.position >= finishLine) {
-    raceOver = true;
-    message.innerText = "🏆 " + horse.name + " WINS THE RACE!";
-  }
+    const sayings = [
+      horse.name + " is moving fast!",
+      "Here comes " + horse.name + "!",
+      horse.name + " moves " + roll + " spaces!",
+      "The crowd is cheering for " + horse.name + "!",
+      horse.name + " is making a run for it!"
+    ];
+
+    document.getElementById("message").innerText =
+      sayings[Math.floor(Math.random() * sayings.length)];
+
+    if (horse.position >= finishLine) {
+      raceOver = true;
+      document.getElementById("message").innerText = "🏆 We have a winner!";
+      document.getElementById("winnerText").innerText = horse.name + " wins the race!";
+      document.getElementById("winnerBox").classList.remove("hidden");
+    }
+  }, 350);
 }
 
 function resetRace() {
   raceOver = false;
-  diceDisplay.innerText = "🎲";
-  message.innerText = "Ready to race!";
 
-  horses.forEach((horse) => {
+  horses.forEach(horse => {
     horse.position = 0;
   });
 
+  document.getElementById("diceDisplay").innerText = "🎲";
+  document.getElementById("message").innerText = "Ready to race!";
+  document.getElementById("winnerBox").classList.add("hidden");
+
   createTracks();
 }
-
-createTracks();
 </script>
 
 </body>
