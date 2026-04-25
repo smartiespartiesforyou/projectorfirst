@@ -15,10 +15,37 @@ body {
   text-align: center;
 }
 
+.race-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 12px;
+}
+
+.name-box {
+  width: 250px;
+  min-width: 250px;
+  font-size: 26px;
+  font-weight: 900;
+  text-align: right;
+  background: white;
+  color: black;
+  padding: 12px 16px;
+  border-radius: 18px;
+  box-shadow: 0 6px 18px rgba(0,0,0,.35);
+}
+
+.current-name {
+  background: #fde047;
+  color: black;
+  transform: scale(1.05);
+  box-shadow: 0 0 30px gold;
+}
+
 .lane {
   height: 95px;
+  flex: 1;
   position: relative;
-  margin-bottom: 12px;
   border-radius: 24px;
   overflow: hidden;
   background: linear-gradient(to right, #15803d, #22c55e);
@@ -37,19 +64,6 @@ body {
     transparent 4px,
     transparent 70px
   );
-}
-
-.name-tag {
-  position: absolute;
-  left: 14px;
-  top: 10px;
-  z-index: 3;
-  font-size: 22px;
-  font-weight: 900;
-  padding: 6px 16px;
-  border-radius: 999px;
-  background: white;
-  color: black;
 }
 
 .horse {
@@ -102,6 +116,19 @@ body {
   0% { transform: scale(.7); opacity: 0; }
   100% { transform: scale(1); opacity: 1; }
 }
+
+@media (max-width: 900px) {
+  .race-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .name-box {
+    width: 100%;
+    min-width: 100%;
+    text-align: center;
+  }
+}
 </style>
 </head>
 
@@ -128,6 +155,12 @@ body {
 </div>
 
 <div id="game" class="hidden">
+
+  <div id="turnBox" class="text-4xl font-extrabold bg-yellow-300 text-black inline-block px-8 py-4 rounded-3xl shadow-2xl mb-4">
+    Current Turn
+  </div>
+
+  <br>
 
   <div id="dice" class="text-9xl bg-white text-black inline-block rounded-3xl px-12 py-5 shadow-2xl mb-4">
     🎲
@@ -182,11 +215,13 @@ const diceFaces = ["", "⚀", "⚁", "⚂", "⚃", "⚄", "⚅"];
 let horses = [];
 let raceOver = false;
 let lastMoved = null;
+let currentTurn = 0;
 
 function startRace() {
   horses = [];
   raceOver = false;
   lastMoved = null;
+  currentTurn = 0;
 
   for (let i = 0; i < 6; i++) {
     const typedName = document.getElementById("name" + i).value.trim();
@@ -202,10 +237,20 @@ function startRace() {
   document.getElementById("setup").classList.add("hidden");
   document.getElementById("game").classList.remove("hidden");
   document.getElementById("winnerBox").classList.add("hidden");
-  document.getElementById("message").innerText = "Ready to race!";
   document.getElementById("dice").innerText = "🎲";
 
+  updateTurnMessage();
   drawTrack();
+}
+
+function updateTurnMessage() {
+  if (!horses.length) return;
+
+  document.getElementById("turnBox").innerText =
+    "Current Turn: #" + (currentTurn + 1) + " " + horses[currentTurn].name;
+
+  document.getElementById("message").innerText =
+    horses[currentTurn].name.toUpperCase() + " is up!";
 }
 
 function drawTrack() {
@@ -213,6 +258,18 @@ function drawTrack() {
   track.innerHTML = "";
 
   horses.forEach((horse, index) => {
+    const row = document.createElement("div");
+    row.className = "race-row";
+
+    const nameBox = document.createElement("div");
+    nameBox.className = "name-box";
+    nameBox.innerText = "#" + (index + 1) + " " + horse.name;
+    nameBox.style.border = "6px solid " + horse.color;
+
+    if (index === currentTurn && !raceOver) {
+      nameBox.classList.add("current-name");
+    }
+
     const lane = document.createElement("div");
     lane.className = "lane";
     lane.id = "lane-" + index;
@@ -220,11 +277,6 @@ function drawTrack() {
     if (lastMoved === index) {
       lane.classList.add("active-lane");
     }
-
-    const tag = document.createElement("div");
-    tag.className = "name-tag";
-    tag.innerText = "#" + (index + 1) + " " + horse.name;
-    tag.style.border = "5px solid " + horse.color;
 
     const horseEl = document.createElement("div");
     horseEl.className = "horse";
@@ -236,10 +288,13 @@ function drawTrack() {
     const finish = document.createElement("div");
     finish.className = "finish-line";
 
-    lane.appendChild(tag);
     lane.appendChild(horseEl);
     lane.appendChild(finish);
-    track.appendChild(lane);
+
+    row.appendChild(nameBox);
+    row.appendChild(lane);
+
+    track.appendChild(row);
   });
 }
 
@@ -257,7 +312,7 @@ function rollDice() {
     dice.classList.remove("shake");
 
     const roll = Math.floor(Math.random() * 6) + 1;
-    const pickedHorse = Math.floor(Math.random() * horses.length);
+    const pickedHorse = currentTurn;
     const horse = horses[pickedHorse];
 
     dice.innerText = diceFaces[roll];
@@ -287,35 +342,48 @@ function rollDice() {
     document.getElementById("message").innerText =
       announcerLines[Math.floor(Math.random() * announcerLines.length)];
 
-    drawTrack();
-
     if (horse.position >= 88) {
       raceOver = true;
+
+      drawTrack();
 
       const winSound = document.getElementById("winSound");
       winSound.currentTime = 0;
       winSound.play();
 
+      document.getElementById("turnBox").innerText = "Race Complete!";
       document.getElementById("message").innerText = "🏆 We have a winner!";
       document.getElementById("winnerText").innerText =
         horse.name + " wins the Derby Day Race!";
       document.getElementById("winnerBox").classList.remove("hidden");
+      return;
     }
+
+    currentTurn = (currentTurn + 1) % horses.length;
+
+    drawTrack();
+
+    setTimeout(() => {
+      updateTurnMessage();
+      drawTrack();
+    }, 900);
+
   }, 350);
 }
 
 function resetRace() {
   raceOver = false;
   lastMoved = null;
+  currentTurn = 0;
 
   horses.forEach(horse => {
     horse.position = 0;
   });
 
   document.getElementById("dice").innerText = "🎲";
-  document.getElementById("message").innerText = "Ready to race!";
   document.getElementById("winnerBox").classList.add("hidden");
 
+  updateTurnMessage();
   drawTrack();
 }
 </script>
