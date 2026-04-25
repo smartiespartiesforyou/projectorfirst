@@ -150,7 +150,7 @@ body {
   </div>
 
   <button onclick="startRace()" class="bg-green-700 text-white text-3xl font-extrabold px-10 py-4 rounded-2xl shadow-lg">
-    Start Race
+    🎺 Start Derby Race
   </button>
 </div>
 
@@ -183,13 +183,9 @@ body {
 </div>
 
 <div id="winnerBox" class="hidden winner-pop bg-yellow-300 text-black rounded-3xl shadow-2xl p-10 max-w-5xl mx-auto mt-8">
-  <div class="text-7xl mb-4">🏆🎉</div>
+  <div class="text-7xl mb-4">🏆🌹🎉</div>
   <div id="winnerText" class="text-6xl font-extrabold"></div>
 </div>
-
-<audio id="rollSound" src="https://cdn.pixabay.com/audio/2022/03/15/audio_9c2d6f6e1c.mp3"></audio>
-<audio id="moveSound" src="https://cdn.pixabay.com/audio/2022/03/10/audio_0f8f64b44c.mp3"></audio>
-<audio id="winSound" src="https://cdn.pixabay.com/audio/2022/03/15/audio_4f6c0f5f5f.mp3"></audio>
 
 <script>
 const colors = [
@@ -216,8 +212,73 @@ let horses = [];
 let raceOver = false;
 let lastMoved = null;
 let currentTurn = 0;
+let audioCtx = null;
+
+function getAudioContext() {
+  if (!audioCtx) {
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  }
+
+  if (audioCtx.state === "suspended") {
+    audioCtx.resume();
+  }
+
+  return audioCtx;
+}
+
+function playTone(freq, duration, type = "square", volume = 0.08) {
+  const ctx = getAudioContext();
+  const osc = ctx.createOscillator();
+  const gain = ctx.createGain();
+
+  osc.type = type;
+  osc.frequency.value = freq;
+
+  gain.gain.setValueAtTime(volume, ctx.currentTime);
+  gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration);
+
+  osc.connect(gain);
+  gain.connect(ctx.destination);
+
+  osc.start();
+  osc.stop(ctx.currentTime + duration);
+}
+
+function playTrumpetIntro() {
+  const notes = [523, 659, 784, 1046];
+  notes.forEach((note, i) => {
+    setTimeout(() => playTone(note, 0.22, "square", 0.09), i * 180);
+  });
+}
+
+function playDiceSound() {
+  playTone(220, 0.08, "square", 0.08);
+  setTimeout(() => playTone(260, 0.08, "square", 0.08), 90);
+  setTimeout(() => playTone(190, 0.08, "square", 0.08), 180);
+}
+
+function playGallopSound() {
+  playTone(120, 0.07, "triangle", 0.12);
+  setTimeout(() => playTone(95, 0.07, "triangle", 0.12), 120);
+  setTimeout(() => playTone(120, 0.07, "triangle", 0.12), 240);
+  setTimeout(() => playTone(95, 0.07, "triangle", 0.12), 360);
+}
+
+function playCrowdCheer() {
+  const notes = [523, 659, 784, 880, 1046, 784, 1046];
+
+  notes.forEach((note, i) => {
+    setTimeout(() => playTone(note, 0.18, "sawtooth", 0.07), i * 120);
+  });
+
+  setTimeout(() => playTone(1200, 0.3, "square", 0.05), 700);
+  setTimeout(() => playTone(900, 0.3, "square", 0.05), 850);
+}
 
 function startRace() {
+  getAudioContext();
+  playTrumpetIntro();
+
   horses = [];
   raceOver = false;
   lastMoved = null;
@@ -301,12 +362,12 @@ function drawTrack() {
 function rollDice() {
   if (raceOver) return;
 
+  getAudioContext();
+
   const dice = document.getElementById("dice");
   dice.classList.add("shake");
 
-  const rollSound = document.getElementById("rollSound");
-  rollSound.currentTime = 0;
-  rollSound.play();
+  playDiceSound();
 
   setTimeout(() => {
     dice.classList.remove("shake");
@@ -326,9 +387,7 @@ function rollDice() {
 
     lastMoved = pickedHorse;
 
-    const moveSound = document.getElementById("moveSound");
-    moveSound.currentTime = 0;
-    moveSound.play();
+    playGallopSound();
 
     const announcerLines = [
       "AND HERE COMES " + horse.name.toUpperCase() + "!",
@@ -336,7 +395,8 @@ function rollDice() {
       "THE CROWD IS CHEERING FOR " + horse.name.toUpperCase() + "!",
       horse.name.toUpperCase() + " MOVES " + roll + " SPACES!",
       "LOOK AT " + horse.name.toUpperCase() + " GO!",
-      horse.name.toUpperCase() + " IS STILL IN THIS RACE!"
+      horse.name.toUpperCase() + " IS STILL IN THIS RACE!",
+      horse.name.toUpperCase() + " IS CHASING THE FINISH LINE!"
     ];
 
     document.getElementById("message").innerText =
@@ -347,9 +407,7 @@ function rollDice() {
 
       drawTrack();
 
-      const winSound = document.getElementById("winSound");
-      winSound.currentTime = 0;
-      winSound.play();
+      playCrowdCheer();
 
       document.getElementById("turnBox").innerText = "Race Complete!";
       document.getElementById("message").innerText = "🏆 We have a winner!";
@@ -372,6 +430,8 @@ function rollDice() {
 }
 
 function resetRace() {
+  getAudioContext();
+
   raceOver = false;
   lastMoved = null;
   currentTurn = 0;
@@ -383,6 +443,7 @@ function resetRace() {
   document.getElementById("dice").innerText = "🎲";
   document.getElementById("winnerBox").classList.add("hidden");
 
+  playTrumpetIntro();
   updateTurnMessage();
   drawTrack();
 }
