@@ -6,6 +6,7 @@
 
 <title>Derby Day Race | ProjectorFirst</title>
 
+<title>Thunder Derby Race | ProjectorFirst</title>
 <script src="https://cdn.tailwindcss.com"></script>
 
 <style>
@@ -74,49 +75,126 @@ Ready to race!
 </div>
 
 <div id="board" class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto mb-8"></div>
+  :root {
+    --track-bg: #0f172a;
+    --rail: #fde68a;
+    --lane: rgba(255, 255, 255, 0.1);
+    --finish: #fef08a;
+  }
 
 <button onclick="roll()" class="bg-yellow-400 text-black text-4xl px-12 py-5 rounded-2xl">
 ROLL DICE
 </button>
+  body {
+    font-family: "Trebuchet MS", "Segoe UI", sans-serif;
+    background: radial-gradient(circle at top, #14532d 0%, #0f172a 55%, #020617 100%);
+    color: #fff;
+    min-height: 100vh;
+  }
 
 </div>
+  .glass {
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(6px);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 1.25rem;
+  }
 
 <div id="winner" class="hidden text-black bg-yellow-300 p-10 rounded-3xl text-6xl font-extrabold">
 🏆 WINNER!
 </div>
+  .race-track {
+    position: relative;
+    border-radius: 1rem;
+    overflow: hidden;
+    border: 4px solid var(--rail);
+    background: linear-gradient(180deg, #166534, #14532d);
+  }
 
 <audio id="rollSound" src="https://cdn.pixabay.com/audio/2022/03/15/audio_9c2d6f6e1c.mp3"></audio>
 <audio id="moveSound" src="https://cdn.pixabay.com/audio/2022/03/10/audio_0f8f64b44c.mp3"></audio>
 <audio id="winSound" src="https://cdn.pixabay.com/audio/2022/03/15/audio_4f6c0f5f5f.mp3"></audio>
+  .finish-line {
+    position: absolute;
+    right: 2%;
+    top: 0;
+    height: 100%;
+    width: 18px;
+    background:
+      repeating-linear-gradient(
+        180deg,
+        var(--finish) 0 12px,
+        #0f172a 12px 24px
+      );
+    box-shadow: 0 0 18px rgba(255, 255, 170, 0.8);
+    z-index: 2;
+  }
 
 <script>
 const colors = ["#ef4444","#3b82f6","#22c55e","#a855f7","#f97316","#ec4899"];
 let horses = [];
 let over = false;
+  .lane {
+    position: relative;
+    height: 78px;
+    border-bottom: 2px dashed var(--lane);
+    display: flex;
+    align-items: center;
+    padding-left: 0.75rem;
+  }
 
 function start(){
   horses = [];
   over = false;
+  .lane:last-child {
+    border-bottom: none;
+  }
 
   for(let i=0;i<6;i++){
     const name = document.getElementById("n"+i).value || "Horse "+(i+1);
     horses.push({name:name,pos:0});
+  .horse {
+    position: absolute;
+    left: 0.5rem;
+    transform: translateX(0);
+    transition: transform 360ms cubic-bezier(.2,.95,.32,1);
+    font-size: 2rem;
+    z-index: 3;
+    filter: drop-shadow(0 0 8px rgba(255,255,255,.5));
   }
 
   document.getElementById("setup").classList.add("hidden");
   document.getElementById("game").classList.remove("hidden");
+  .horse.active {
+    animation: bounce 450ms ease;
+  }
 
   draw();
 }
+  @keyframes bounce {
+    0% { transform: translateY(0) scale(1); }
+    40% { transform: translateY(-8px) scale(1.12); }
+    100% { transform: translateY(0) scale(1); }
+  }
 
 function draw(){
   const board = document.getElementById("board");
   board.innerHTML = "";
+  .name-tag {
+    position: absolute;
+    left: 3.2rem;
+    font-weight: 700;
+    font-size: 1.05rem;
+    text-shadow: 0 2px 6px rgba(0,0,0,.5);
+  }
 
   horses.forEach((h,i)=>{
     const div = document.createElement("div");
     div.className = "card";
     div.style.background = colors[i];
+  .sparkle {
+    animation: pulse 1s ease-in-out infinite;
+  }
 
     div.innerHTML = `
       #${i+1}<br>
@@ -124,6 +202,50 @@ function draw(){
       ${h.name}
       <div class="progress">
         <div class="bar" style="width:${h.pos}%; background:white;"></div>
+  @keyframes pulse {
+    0%, 100% { opacity: 0.6; }
+    50% { opacity: 1; }
+  }
+</style>
+</head>
+<body class="p-4 md:p-8">
+  <main class="max-w-6xl mx-auto space-y-6">
+    <header class="text-center">
+      <h1 class="text-4xl md:text-6xl font-black tracking-wide">🏇 Thunder Derby Race</h1>
+      <p class="text-lg md:text-2xl mt-2 text-emerald-100">Pick your favorites, roll the dice, and watch the stampede!</p>
+    </header>
+
+    <section id="setup" class="glass p-5 md:p-7 space-y-4">
+      <h2 class="text-2xl md:text-3xl font-extrabold">Name Your Horses</h2>
+      <p class="text-emerald-100">Tip: Use resident names, fun nicknames, or team names.</p>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+        <input id="n0" class="p-3 rounded-xl text-xl text-slate-900" placeholder="Horse #1 (e.g. Lightning Lou)">
+        <input id="n1" class="p-3 rounded-xl text-xl text-slate-900" placeholder="Horse #2">
+        <input id="n2" class="p-3 rounded-xl text-xl text-slate-900" placeholder="Horse #3">
+        <input id="n3" class="p-3 rounded-xl text-xl text-slate-900" placeholder="Horse #4">
+        <input id="n4" class="p-3 rounded-xl text-xl text-slate-900" placeholder="Horse #5">
+        <input id="n5" class="p-3 rounded-xl text-xl text-slate-900" placeholder="Horse #6">
+      </div>
+      <div class="flex flex-wrap justify-center gap-3 pt-2">
+        <button id="startBtn" onclick="startRace()" class="bg-yellow-300 hover:bg-yellow-200 text-slate-950 text-2xl font-black px-8 py-3 rounded-2xl">🎺 Start Race</button>
+        <button onclick="quickFill()" class="bg-sky-600 hover:bg-sky-500 text-white text-xl font-bold px-6 py-3 rounded-2xl">⚡ Quick Fill Names</button>
+      </div>
+    </section>
+
+    <section id="game" class="hidden space-y-4">
+      <div class="glass p-4 md:p-5 grid md:grid-cols-4 gap-4 items-center">
+        <div class="text-center md:text-left">
+          <div class="text-sm uppercase tracking-wider text-emerald-200">Dice Roll</div>
+          <div id="dice" class="text-6xl md:text-7xl">🎲</div>
+        </div>
+        <div class="md:col-span-2 text-center">
+          <div class="text-sm uppercase tracking-wider text-emerald-200">Race Commentator</div>
+          <p id="msg" class="text-2xl md:text-3xl font-black">The horses are at the gate...</p>
+        </div>
+        <div class="text-center md:text-right">
+          <div class="text-sm uppercase tracking-wider text-emerald-200">Round</div>
+          <div id="round" class="text-4xl font-black">0</div>
+        </div>
       </div>
     `;
 
@@ -168,6 +290,181 @@ function roll(){
   }
 }
 </script>
+      <div class="race-track" id="track">
+        <div class="finish-line" aria-hidden="true"></div>
+      </div>
 
+      <div class="flex flex-wrap gap-3 justify-center">
+        <button id="rollBtn" onclick="takeTurn()" class="bg-rose-500 hover:bg-rose-400 text-white text-3xl font-black px-10 py-4 rounded-2xl">🎲 Roll Dice</button>
+        <button id="autoBtn" onclick="toggleAutoRace()" class="bg-indigo-500 hover:bg-indigo-400 text-white text-2xl font-bold px-8 py-4 rounded-2xl">▶️ Auto Race</button>
+        <button onclick="resetRace()" class="bg-slate-100 hover:bg-white text-slate-900 text-2xl font-bold px-8 py-4 rounded-2xl">🔄 New Race</button>
+      </div>
+    </section>
+
+    <section id="winner" class="hidden glass p-6 text-center">
+      <h2 class="text-4xl md:text-6xl font-black">🏆 Winner!</h2>
+      <p id="winnerText" class="text-3xl md:text-5xl font-extrabold mt-2"></p>
+      <p class="text-xl text-yellow-100 mt-2 sparkle">🎉 Crowd goes wild! 🎉</p>
+    </section>
+  </main>
+
+  <audio id="rollSound" src="https://cdn.pixabay.com/audio/2022/03/15/audio_9c2d6f6e1c.mp3"></audio>
+  <audio id="moveSound" src="https://cdn.pixabay.com/audio/2022/03/10/audio_0f8f64b44c.mp3"></audio>
+  <audio id="winSound" src="https://cdn.pixabay.com/audio/2022/03/15/audio_4f6c0f5f5f.mp3"></audio>
+
+  <script>
+    const horseIcons = ["🐎", "🏇", "🐴", "🦄", "🐎", "🏇"];
+    const randomNames = ["Lightning Lou", "Rose Rocket", "Silver Socks", "Turbo Tina", "Midnight Dash", "Grandma Gallop"];
+
+    let horses = [];
+    let raceOver = false;
+    let round = 0;
+    let autoId = null;
+
+    const commentatorLines = [
+      "What a thunderous start!",
+      "The crowd is stomping and cheering!",
+      "A surprise move from the back!",
+      "This one is too close to call!",
+      "They are neck and neck!",
+      "An incredible burst of speed!"
+    ];
+
+    function quickFill() {
+      for (let i = 0; i < 6; i++) {
+        document.getElementById(`n${i}`).value = randomNames[i];
+      }
+    }
+
+    function startRace() {
+      horses = [];
+      raceOver = false;
+      round = 0;
+      stopAutoRace();
+      document.getElementById("winner").classList.add("hidden");
+      document.getElementById("round").textContent = "0";
+
+      for (let i = 0; i < 6; i++) {
+        const entered = document.getElementById(`n${i}`).value.trim();
+        horses.push({
+          id: i,
+          name: entered || `Horse ${i + 1}`,
+          icon: horseIcons[i],
+          progress: 0
+        });
+      }
+
+      document.getElementById("setup").classList.add("hidden");
+      document.getElementById("game").classList.remove("hidden");
+      document.getElementById("msg").textContent = "And they're off!";
+      renderTrack();
+    }
+
+    function renderTrack(activeHorseId = null) {
+      const track = document.getElementById("track");
+      track.querySelectorAll(".lane").forEach(node => node.remove());
+
+      horses.forEach(horse => {
+        const lane = document.createElement("div");
+        lane.className = "lane";
+
+        const emoji = document.createElement("div");
+        emoji.className = "horse" + (activeHorseId === horse.id ? " active" : "");
+        emoji.textContent = horse.icon;
+        emoji.style.transform = `translateX(calc(${horse.progress}% * 0.9))`;
+
+        const tag = document.createElement("div");
+        tag.className = "name-tag";
+        tag.textContent = `${horse.name} — ${horse.progress}%`;
+
+        lane.appendChild(emoji);
+        lane.appendChild(tag);
+        track.appendChild(lane);
+      });
+    }
+
+    function randomStep() {
+      const dice = Math.floor(Math.random() * 6) + 1;
+      const bonus = Math.random() < 0.2 ? 6 : 0; // 20% chance turbo burst
+      return { dice, distance: dice * 4 + bonus, bonus };
+    }
+
+    function takeTurn() {
+      if (raceOver || horses.length === 0) return;
+
+      const rollSound = document.getElementById("rollSound");
+      const moveSound = document.getElementById("moveSound");
+      rollSound.currentTime = 0;
+      moveSound.currentTime = 0;
+      rollSound.play().catch(() => {});
+
+      round += 1;
+      document.getElementById("round").textContent = String(round);
+
+      const pickedHorse = horses[Math.floor(Math.random() * horses.length)];
+      const turn = randomStep();
+      pickedHorse.progress = Math.min(100, pickedHorse.progress + turn.distance);
+
+      document.getElementById("dice").textContent = ["", "⚀", "⚁", "⚂", "⚃", "⚄", "⚅"][turn.dice];
+
+      let line = `${pickedHorse.name} charges +${turn.distance}%!`;
+      if (turn.bonus) {
+        line = `💨 TURBO BOOST! ${pickedHorse.name} explodes forward +${turn.distance}%!`;
+      } else if (Math.random() < 0.45) {
+        line = commentatorLines[Math.floor(Math.random() * commentatorLines.length)] + ` ${pickedHorse.name} gains ground!`;
+      }
+
+      document.getElementById("msg").textContent = line;
+      moveSound.play().catch(() => {});
+      renderTrack(pickedHorse.id);
+
+      if (pickedHorse.progress >= 100) {
+        finishRace(pickedHorse);
+      }
+    }
+
+    function finishRace(winner) {
+      raceOver = true;
+      stopAutoRace();
+      document.getElementById("msg").textContent = `${winner.name} crosses the finish line!`;
+      document.getElementById("winnerText").textContent = `${winner.icon} ${winner.name}`;
+      document.getElementById("winner").classList.remove("hidden");
+      document.getElementById("winSound").play().catch(() => {});
+    }
+
+    function toggleAutoRace() {
+      if (autoId) {
+        stopAutoRace();
+      } else {
+        if (raceOver) return;
+        document.getElementById("autoBtn").textContent = "⏸️ Pause Auto";
+        autoId = setInterval(() => {
+          if (!raceOver) takeTurn();
+        }, 950);
+      }
+    }
+
+    function stopAutoRace() {
+      if (autoId) {
+        clearInterval(autoId);
+        autoId = null;
+      }
+      const autoBtn = document.getElementById("autoBtn");
+      if (autoBtn) autoBtn.textContent = "▶️ Auto Race";
+    }
+
+    function resetRace() {
+      stopAutoRace();
+      horses = [];
+      raceOver = false;
+      round = 0;
+      document.getElementById("game").classList.add("hidden");
+      document.getElementById("setup").classList.remove("hidden");
+      document.getElementById("winner").classList.add("hidden");
+      document.getElementById("dice").textContent = "🎲";
+      document.getElementById("msg").textContent = "The horses are at the gate...";
+      document.getElementById("round").textContent = "0";
+    }
+  </script>
 </body>
 </html>
