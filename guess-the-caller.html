@@ -1,272 +1,150 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Guess the Caller | ProjectorFirst</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Guess the Caller</title>
 
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: linear-gradient(135deg, #0f172a, #1e3a8a);
-      color: white;
-      text-align: center;
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
+<style>
+body {
+  margin: 0;
+  font-family: Arial;
+  background: linear-gradient(135deg,#0f172a,#1e3a8a);
+  color: white;
+  text-align: center;
+}
 
-    .game {
-      max-width: 1000px;
-      padding: 40px;
-    }
+.container {
+  padding: 40px;
+}
 
-    h1 {
-      font-size: 72px;
-      margin-bottom: 10px;
-    }
+h1 {
+  font-size: 60px;
+}
 
-    .subtitle {
-      font-size: 34px;
-      margin-bottom: 40px;
-    }
+.phone {
+  font-size: 120px;
+  display: none;
+}
 
-    .phone {
-      font-size: 140px;
-      margin: 20px 0;
-      animation: ring 0.8s infinite;
-    }
+.ringing {
+  display: block;
+  animation: shake 0.6s infinite;
+}
 
-    @keyframes ring {
-      0% { transform: rotate(0deg); }
-      25% { transform: rotate(8deg); }
-      50% { transform: rotate(0deg); }
-      75% { transform: rotate(-8deg); }
-      100% { transform: rotate(0deg); }
-    }
+@keyframes shake {
+  0% { transform: rotate(0deg); }
+  25% { transform: rotate(10deg); }
+  50% { transform: rotate(0deg); }
+  75% { transform: rotate(-10deg); }
+  100% { transform: rotate(0deg); }
+}
 
-    .message-box {
-      background: rgba(255,255,255,0.12);
-      border-radius: 24px;
-      padding: 35px;
-      margin: 30px auto;
-      font-size: 38px;
-      line-height: 1.4;
-      min-height: 120px;
-    }
+.message {
+  font-size: 32px;
+  margin: 30px;
+}
 
-    .answer {
-      font-size: 52px;
-      font-weight: bold;
-      color: #fde68a;
-      margin-top: 25px;
-    }
+.answer {
+  font-size: 44px;
+  color: gold;
+  display: none;
+}
 
-    button {
-      font-size: 34px;
-      padding: 22px 40px;
-      margin: 15px;
-      border: none;
-      border-radius: 18px;
-      cursor: pointer;
-      font-weight: bold;
-    }
+button {
+  font-size: 26px;
+  padding: 15px 25px;
+  margin: 10px;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+}
 
-    .start {
-      background: #22c55e;
-      color: white;
-    }
+.start { background: green; color:white; }
+.reveal { background: orange; }
+.next { background: skyblue; }
 
-    .reveal {
-      background: #f59e0b;
-      color: #111827;
-    }
-
-    .next {
-      background: #38bdf8;
-      color: #0f172a;
-    }
-
-    .small {
-      font-size: 22px;
-      opacity: 0.85;
-      margin-top: 30px;
-    }
-
-    .hidden {
-      display: none;
-    }
-  </style>
+</style>
 </head>
 
 <body>
-  <div class="game">
-    <h1>📞 Guess the Caller</h1>
-    <div class="subtitle">Listen to the call. Guess who it is!</div>
 
-    <div id="phone" class="phone hidden">☎️</div>
+<div class="container">
+  <h1>📞 Guess the Caller</h1>
 
-    <div id="messageBox" class="message-box">
-      Press Start Call to begin.
-    </div>
+  <div id="phone" class="phone">☎️</div>
 
-    <div id="answer" class="answer hidden"></div>
-
-    <button class="start" onclick="startCall()">▶ Start Call</button>
-    <button id="revealBtn" class="reveal hidden" onclick="revealAnswer()">👀 Reveal Answer</button>
-    <button id="nextBtn" class="next hidden" onclick="nextCall()">➡ Next Caller</button>
-
-    <div class="small">
-      ProjectorFirst Activity Game
-    </div>
+  <div id="message" class="message">
+    Press Start Call
   </div>
 
-  <script>
-    const callers = [
-      {
-        caller: "Santa Claus",
-        clueName: "Jolly North Pole Visitor",
-        text: "Ho ho ho. I checked my list, and somebody in this room has been acting a little too quiet.",
-        pitch: 0.7,
-        rate: 0.82
-      },
-      {
-        caller: "The King of Rock and Roll",
-        clueName: "Rock & Roll Legend",
-        text: "Thank you. Thank you very much. I heard there was a room full of good looking people playing a game.",
-        pitch: 0.8,
-        rate: 0.85
-      },
-      {
-        caller: "Country Music Queen",
-        clueName: "Country Music Queen",
-        text: "Well sugar, if y’all are not smiling yet, we are going to fix that real quick.",
-        pitch: 1.25,
-        rate: 0.9
-      },
-      {
-        caller: "Game Show Host",
-        clueName: "Excited Game Show Host",
-        text: "Congratulations. You have been selected to win absolutely nothing, but you do get to keep playing.",
-        pitch: 1.15,
-        rate: 1.05
-      },
-      {
-        caller: "The President",
-        clueName: "Serious President Voice",
-        text: "My fellow Americans, it has come to my attention that someone in this room needs to guess this caller.",
-        pitch: 0.75,
-        rate: 0.82
-      },
-      {
-        caller: "Sassy Grandma",
-        clueName: "Sassy Grandma",
-        text: "Don’t make me come in there. I raised better guessers than this.",
-        pitch: 1.1,
-        rate: 0.88
-      },
-      {
-        caller: "Coffee",
-        clueName: "Cup of Coffee",
-        text: "You said one cup. That was a lie. I am ready for round three.",
-        pitch: 0.95,
-        rate: 0.9
-      },
-      {
-        caller: "The Couch",
-        clueName: "Lazy Couch",
-        text: "This is your couch. I noticed you left me earlier. That hurt.",
-        pitch: 0.65,
-        rate: 0.75
-      },
-      {
-        caller: "Old-Time Radio Announcer",
-        clueName: "Old-Time Radio Announcer",
-        text: "Ladies and gentlemen, gather around for a most exciting guessing game.",
-        pitch: 0.9,
-        rate: 0.95
-      },
-      {
-        caller: "Motivational Speaker",
-        clueName: "Motivational Speaker",
-        text: "You can guess this caller. You have the power. You have the wisdom. You have no excuses.",
-        pitch: 1.0,
-        rate: 0.9
-      }
-    ];
+  <div id="answer" class="answer"></div>
 
-    let currentIndex = 0;
-    let currentCaller = null;
+  <button class="start" onclick="startCall()">Start Call</button>
+  <button id="revealBtn" class="reveal" onclick="reveal()" style="display:none;">Reveal</button>
+  <button id="nextBtn" class="next" onclick="next()" style="display:none;">Next</button>
+</div>
 
-    function startCall() {
-      document.getElementById("answer").classList.add("hidden");
-      document.getElementById("revealBtn").classList.add("hidden");
-      document.getElementById("nextBtn").classList.add("hidden");
+<script>
+let index = 0;
 
-      currentCaller = callers[currentIndex];
+const callers = [
+  {name:"Santa", text:"Ho ho ho... I checked my list and someone here has been acting a little too quiet.", pitch:0.7, rate:0.8},
+  {name:"Rock Star", text:"Thank you... thank you very much... I heard y’all are having some fun in there.", pitch:0.8, rate:0.85},
+  {name:"Country Singer", text:"Well sugar, if y’all ain’t smiling yet, we’re about to fix that.", pitch:1.2, rate:0.9},
+  {name:"Game Show Host", text:"Congratulations! You’ve been selected to win absolutely nothing!", pitch:1.1, rate:1},
+  {name:"President", text:"My fellow Americans, it is time to guess this caller.", pitch:0.75, rate:0.85},
+  {name:"Grandma", text:"Don’t make me come in there... I raised better guessers than this.", pitch:1.1, rate:0.9}
+];
 
-      const phone = document.getElementById("phone");
-      const messageBox = document.getElementById("messageBox");
+function startCall(){
+  const phone = document.getElementById("phone");
+  const msg = document.getElementById("message");
 
-      phone.classList.remove("hidden");
-      messageBox.innerText = "Ring... ring... Who is calling?";
+  document.getElementById("answer").style.display = "none";
+  document.getElementById("revealBtn").style.display = "none";
+  document.getElementById("nextBtn").style.display = "none";
 
-      setTimeout(() => {
-        phone.classList.add("hidden");
-        messageBox.innerText = "🎧 Listen carefully...";
+  phone.classList.add("ringing");
+  msg.innerText = "Ring... Ring...";
 
-        speak(currentCaller.text, currentCaller.pitch, currentCaller.rate);
+  setTimeout(()=>{
+    phone.classList.remove("ringing");
+    msg.innerText = "Listen carefully...";
 
-        setTimeout(() => {
-          messageBox.innerText = "Who is calling?";
-          document.getElementById("revealBtn").classList.remove("hidden");
-        }, 4500);
+    speak(callers[index].text, callers[index].pitch, callers[index].rate);
 
-      }, 2500);
-    }
+    setTimeout(()=>{
+      msg.innerText = "Who is calling?";
+      document.getElementById("revealBtn").style.display = "inline-block";
+    },4000);
 
-    function speak(text, pitch, rate) {
-      speechSynthesis.cancel();
+  },2000);
+}
 
-      const voice = new SpeechSynthesisUtterance(text);
-      voice.pitch = pitch;
-      voice.rate = rate;
-      voice.volume = 1;
+function speak(text,pitch,rate){
+  speechSynthesis.cancel();
+  let msg = new SpeechSynthesisUtterance(text);
+  msg.pitch = pitch;
+  msg.rate = rate;
+  speechSynthesis.speak(msg);
+}
 
-      const voices = speechSynthesis.getVoices();
-      if (voices.length > 0) {
-        voice.voice = voices.find(v => v.lang.includes("en")) || voices[0];
-      }
+function reveal(){
+  document.getElementById("answer").innerText = "Caller: " + callers[index].name;
+  document.getElementById("answer").style.display = "block";
+  document.getElementById("nextBtn").style.display = "inline-block";
+}
 
-      speechSynthesis.speak(voice);
-    }
+function next(){
+  index++;
+  if(index >= callers.length){ index = 0; }
+  document.getElementById("message").innerText = "Press Start Call";
+  document.getElementById("answer").style.display = "none";
+  document.getElementById("revealBtn").style.display = "none";
+  document.getElementById("nextBtn").style.display = "none";
+}
+</script>
 
-    function revealAnswer() {
-      document.getElementById("answer").innerText =
-        "Caller: " + currentCaller.clueName;
-
-      document.getElementById("answer").classList.remove("hidden");
-      document.getElementById("nextBtn").classList.remove("hidden");
-    }
-
-    function nextCall() {
-      currentIndex++;
-
-      if (currentIndex >= callers.length) {
-        currentIndex = 0;
-      }
-
-      document.getElementById("answer").classList.add("hidden");
-      document.getElementById("revealBtn").classList.add("hidden");
-      document.getElementById("nextBtn").classList.add("hidden");
-      document.getElementById("messageBox").innerText = "Press Start Call for the next caller.";
-    }
-
-    window.speechSynthesis.onvoiceschanged = () => {
-      speechSynthesis.getVoices();
-    };
-  </script>
 </body>
 </html>
