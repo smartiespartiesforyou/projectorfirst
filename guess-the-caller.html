@@ -168,6 +168,7 @@ function startCall() {
   const ringAudio = document.getElementById("ringAudio");
   const voiceAudio = document.getElementById("voiceAudio");
 
+  // Reset UI
   answer.style.display = "none";
   revealBtn.style.display = "none";
   nextBtn.style.display = "none";
@@ -175,19 +176,18 @@ function startCall() {
   message.innerText = "Ring... ring...";
   phone.classList.add("ringing");
 
-  // FORCE reset audio
+  // Reset audio
   ringAudio.pause();
   ringAudio.currentTime = 0;
+  voiceAudio.pause();
+  voiceAudio.currentTime = 0;
 
-  // This makes browser allow sound (because button was clicked)
-  ringAudio.muted = false;
-
-  ringAudio.play().then(() => {
-    console.log("Ringtone playing");
-  }).catch(err => {
+  // Play ringtone
+  ringAudio.play().catch(err => {
     console.log("Ringtone blocked:", err);
   });
 
+  // After ringing → play voice
   setTimeout(() => {
     ringAudio.pause();
     ringAudio.currentTime = 0;
@@ -196,9 +196,11 @@ function startCall() {
     message.innerText = "Listen carefully...";
 
     voiceAudio.src = callers[index].file;
-    voiceAudio.currentTime = 0;
 
-    voiceAudio.play();
+    voiceAudio.play().catch(err => {
+      console.log("Voice blocked:", err);
+      message.innerText = "Click Start Call again if you don’t hear sound.";
+    });
 
     voiceAudio.onended = function() {
       message.innerText = "Who is calling?";
