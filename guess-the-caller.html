@@ -165,25 +165,27 @@ function startCall() {
   const revealBtn = document.getElementById("revealBtn");
   const nextBtn = document.getElementById("nextBtn");
 
+  const ringAudio = document.getElementById("ringAudio");
+  const voiceAudio = document.getElementById("voiceAudio");
+
   answer.style.display = "none";
   revealBtn.style.display = "none";
   nextBtn.style.display = "none";
 
   message.innerText = "Ring... ring...";
-
   phone.classList.add("ringing");
 
-  const ringAudio = document.getElementById("ringAudio");
-  const voiceAudio = document.getElementById("voiceAudio");
-
+  // FORCE reset audio
   ringAudio.pause();
   ringAudio.currentTime = 0;
 
-  voiceAudio.pause();
-  voiceAudio.currentTime = 0;
+  // This makes browser allow sound (because button was clicked)
+  ringAudio.muted = false;
 
-  ringAudio.play().catch(() => {
-    console.log("Ringtone blocked until user clicks.");
+  ringAudio.play().then(() => {
+    console.log("Ringtone playing");
+  }).catch(err => {
+    console.log("Ringtone blocked:", err);
   });
 
   setTimeout(() => {
@@ -196,9 +198,7 @@ function startCall() {
     voiceAudio.src = callers[index].file;
     voiceAudio.currentTime = 0;
 
-    voiceAudio.play().catch(() => {
-      message.innerText = "Voice did not play. Check the MP3 file name.";
-    });
+    voiceAudio.play();
 
     voiceAudio.onended = function() {
       message.innerText = "Who is calling?";
