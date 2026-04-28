@@ -125,7 +125,7 @@ button {
   <div class="footer">ProjectorFirst Activity Game</div>
 </div>
 
-<audio id="ringAudio" src="ringtone.mp3"></audio>
+<audio id="ringAudio" src="mp3/ringtone.mp3"></audio>
 <audio id="voiceAudio"></audio>
 
 <script>
@@ -134,27 +134,27 @@ let index = 0;
 const callers = [
   {
     answer: "Santa Claus",
-    file: "santa.mp3"
+    file: "mp3/santa.mp3"
   },
   {
     answer: "Ms. Sarah",
-    file: "sarah.mp3"
+    file: "mp3/sarah.mp3"
   },
   {
     answer: "Mr. John",
-    file: "john.mp3"
+    file: "mp3/john.mp3"
   },
   {
     answer: "Sassy Grandma",
-    file: "grandma.mp3"
+    file: "mp3/grandma.mp3"
   },
   {
     answer: "Administrator",
-    file: "admin.mp3"
+    file: "mp3/admin.mp3"
   },
   {
     answer: "Activity Director",
-    file: "activity-director.mp3"
+    file: "mp3/activity-director.mp3"
   }
 ];
 
@@ -197,7 +197,7 @@ function startCall() {
     voiceAudio.currentTime = 0;
 
     voiceAudio.play().catch(() => {
-      message.innerText = "Click Start Call again if the voice did not play.";
+      message.innerText = "Voice did not play. Check the MP3 file name.";
     });
 
     voiceAudio.onended = function() {
