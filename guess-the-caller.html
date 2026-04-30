@@ -132,7 +132,6 @@ button {
 let index = 0;
 
 const callers = [
-const sounds = [
   {
     answer: "Andy Griffith",
     file: "sounds/andy griffith.mp3"
@@ -201,7 +200,6 @@ function startCall() {
   const ringAudio = document.getElementById("ringAudio");
   const voiceAudio = document.getElementById("voiceAudio");
 
-  // Reset UI
   answer.style.display = "none";
   revealBtn.style.display = "none";
   nextBtn.style.display = "none";
@@ -209,18 +207,16 @@ function startCall() {
   message.innerText = "Ring... ring...";
   phone.classList.add("ringing");
 
-  // Reset audio
   ringAudio.pause();
   ringAudio.currentTime = 0;
+
   voiceAudio.pause();
   voiceAudio.currentTime = 0;
 
-  // Play ringtone
   ringAudio.play().catch(err => {
     console.log("Ringtone blocked:", err);
   });
 
-  // After ringing → play voice
   setTimeout(() => {
     ringAudio.pause();
     ringAudio.currentTime = 0;
