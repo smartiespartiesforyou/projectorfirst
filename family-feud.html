@@ -4,7 +4,16 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Family Feud - ProjectorFirst</title>
-  <script src="https://cdn.tailwindcss.com"></script>
+  
+<!-- Membership gate (paywall-test) -->
+<script
+  data-memberstack-app="app_cmgnwpg8y00x10suih4pua785"
+  src="https://static.memberstack.com/scripts/v2/memberstack.js"
+  type="text/javascript">
+</script>
+<script src="/guard.js"></script>
+
+<script src="https://cdn.tailwindcss.com"></script>
   <script>
     /* --------- QUESTIONS (with point values) --------- */
     const questions = [
@@ -130,9 +139,7 @@
     };
   </script>
 </head>
-<body class="bg-white text-slate-900 min-h-screen flex flex-col items-center p-6"><script src="lock-check.js"></script>
-
-  <!-- Title + Back to Apps (Bingo/Dice style) -->
+<body class="bg-white text-slate-900 min-h-screen flex flex-col items-center p-6"><!-- Title + Back to Apps (Bingo/Dice style) -->
   <h1 class="text-5xl font-extrabold mb-4 text-blue-900 text-center">Family Feud</h1>
   <a href="apps.html"
      class="inline-flex items-center gap-2 px-6 py-3 bg-blue-900 text-white rounded-xl font-extrabold text-xl shadow hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 mb-6">

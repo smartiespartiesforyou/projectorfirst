@@ -4,7 +4,16 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Pictionary — ProjectorFirst</title>
-  <script src="https://cdn.tailwindcss.com"></script>
+  
+<!-- Membership gate (paywall-test) -->
+<script
+  data-memberstack-app="app_cmgnwpg8y00x10suih4pua785"
+  src="https://static.memberstack.com/scripts/v2/memberstack.js"
+  type="text/javascript">
+</script>
+<script src="/guard.js"></script>
+
+<script src="https://cdn.tailwindcss.com"></script>
 
   <style>
     /* Custom Blue Color for Consistency */
@@ -30,47 +39,7 @@
     }
   </style>
 
-  <script data-memberstack-app="app_cmgnwpg8y00x10suih4pua785"
-          src="https://static.memberstack.com/scripts/v2/memberstack.js"
-          type="text/javascript"></script>
-
-  <script>
-    document.addEventListener("DOMContentLoaded", async () => {
-      // Safest wait for Memberstack to ensure it's loaded
-      const waitForMemberstack = () =>
-        new Promise((resolve) => {
-          const check = () => {
-            if (window.$memberstackDom) resolve(window.$memberstackDom);
-            else setTimeout(check, 100);
-          };
-          check();
-        });
-
-      const memberstack = await waitForMemberstack();
-
-      try {
-        const { data: member } = await memberstack.getCurrentMember();
-        // Redirect if not logged in
-        if (!member) {
-          window.location.replace("index.html"); // Redirect to home/login
-          return;
-        }
-
-        // Check for active plan (or trial plan if applicable)
-        const hasAccess = Array.isArray(member.planConnections) &&
-          member.planConnections.some(plan => plan.status === "ACTIVE" || plan.planId === "pln_trial30-gpte0tfl");
-
-        if (!hasAccess) {
-          window.location.replace("checkout.html"); // Redirect if subscription lapsed
-          return;
-        }
-      } catch (e) {
-        console.error("Auth check failed:", e);
-        window.location.replace("index.html");
-      }
-    });
-  </script>
-</head>
+  </head>
 
 <body class="bg-white text-gray-900 min-h-screen unselectable">
   

@@ -4,7 +4,16 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>How Much Does It Cost?</title>
-  <script src="https://cdn.tailwindcss.com"></script>
+  
+<!-- Membership gate (paywall-test) -->
+<script
+  data-memberstack-app="app_cmgnwpg8y00x10suih4pua785"
+  src="https://static.memberstack.com/scripts/v2/memberstack.js"
+  type="text/javascript">
+</script>
+<script src="/guard.js"></script>
+
+<script src="https://cdn.tailwindcss.com"></script>
   <script>
     // ------- DATA: add or edit items here -------
     // price in cents (to avoid decimals). e.g., $2.99 = 299
@@ -127,9 +136,7 @@
   </script>
 </head>
 
-<body class="bg-white text-slate-900 min-h-screen flex flex-col items-center p-6"><script src="lock-check.js"></script>
-
-  <h1 class="text-5xl font-extrabold text-blue-900 mb-4 text-center">How Much Does It Cost?</h1>
+<body class="bg-white text-slate-900 min-h-screen flex flex-col items-center p-6"><h1 class="text-5xl font-extrabold text-blue-900 mb-4 text-center">How Much Does It Cost?</h1>
 
   <!-- Score + Controls -->
   <div class="w-full max-w-2xl mb-4">
