@@ -36,8 +36,10 @@
   // TRIALING = inside the 30-day free trial window
   var GOOD_STATUSES = ["ACTIVE", "TRIALING"];
 
-  // If Memberstack hasn't loaded after this many milliseconds, treat the
-  // visitor as not logged in (fail closed rather than leaving the game open).
+  // If Memberstack hasn't loaded after this many milliseconds, LET THE PAGE
+  // LOAD (fail open). Owner decision 2026-07-05: never lock out a paying
+  // member due to a network/CDN hiccup; reliability for members outweighs
+  // stopping the rare visitor who deliberately blocks Memberstack.
   var LOAD_TIMEOUT_MS = 10000;
 
   // ---- Gate logic ---------------------------------------------------------
@@ -87,9 +89,11 @@
         // Member in good standing: do nothing. The game plays normally.
       })
       .catch(function () {
-        // Memberstack failed to load or the check errored → lock the door.
-        
-        redirect(NOT_LOGGED_IN_URL);
+        // Memberstack failed to load or the check errored.
+        // FAIL OPEN: do nothing — the game stays playable.
+        // A member's scheduled activity must never break because of a
+        // third-party outage. (Normal visitors without membership still
+        // get redirected whenever Memberstack loads normally.)
       });
   });
 })();
