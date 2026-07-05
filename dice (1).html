@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>🎲 Dice Roller — ProjectorFirst</title>
+
+<!-- Membership gate (paywall-test) -->
+<script
+  data-memberstack-app="app_cmgnwpg8y00x10suih4pua785"
+  src="https://static.memberstack.com/scripts/v2/memberstack.js"
+  type="text/javascript">
+</script>
+<script src="/guard.js"></script>
+<script src="https://cdn.tailwindcss.com"></script>
+
+<style>
+  body {
+    background: #ffffff;
+    font-family: ui-sans-serif, system-ui, sans-serif;
+    text-align: center;
+    padding: 20px;
+    color: #000;
+  }
+
+  h1 {
+    font-size: clamp(2rem, 6vw, 4rem);
+    font-weight: 800;
+    color: #1e3a8a;
+    margin-top: 20px;
+  }
+
+  .dice-area {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 5vw;
+    margin-top: 5vh;
+    margin-bottom: 5vh;
+  }
+
+  .die {
+    width: clamp(150px, 30vw, 400px);
+    height: clamp(150px, 30vw, 400px);
+    background: #fff;
+    border: clamp(6px, 1vw, 12px) solid #000;
+    border-radius: 20px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    padding: clamp(10px, 2vw, 30px);
+    box-shadow: 0 10px 0 rgba(0,0,0,0.2);
+  }
+
+  .pip {
+    width: clamp(20px, 4vw, 60px);
+    height: clamp(20px, 4vw, 60px);
+    background: #000;
+    border-radius: 50%;
+    justify-self: center;
+    align-self: center;
+  }
+
+  .bounce {
+    animation: bounce 0.3s ease;
+  }
+
+  @keyframes bounce {
+    0% { transform: scale(1); }
+    40% { transform: scale(1.2); }
+    100% { transform: scale(1); }
+  }
+</style>
+</head>
+
+<body>
+  <!-- Header -->
+  <div class="max-w-6xl mx-auto flex justify-between items-center p-6 border-b border-gray-200">
+    <a href="apps.html" class="bg-blue-900 text-white text-xl font-bold px-5 py-3 rounded-xl hover:bg-blue-800">← Back to Apps</a>
+  </div>
+
+  <h1>🎲 Dice Roller</h1>
+
+  <div class="dice-area">
+    <div id="die1" class="die"></div>
+    <div id="die2" class="die"></div>
+  </div>
+
+  <div class="flex justify-center gap-4 mt-6 flex-wrap">
+    <button id="rollBtn" class="px-8 py-5 bg-blue-900 text-white rounded-2xl text-3xl font-bold shadow hover:bg-blue-800">
+      ROLL 🎲
+    </button>
+
+    <button id="fsBtn" class="px-8 py-5 bg-green-700 text-white rounded-2xl text-3xl font-bold shadow hover:bg-green-600">
+      FULLSCREEN ⛶
+    </button>
+  </div>
+
+  <!-- 🎵 Dice Roll Sound -->
+  <audio id="diceSound" src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_0b3f8b75e9.mp3?filename=dice-roll-1.mp3" preload="auto"></audio>
+
+<script>
+  const die1 = document.getElementById("die1");
+  const die2 = document.getElementById("die2");
+  const rollBtn = document.getElementById("rollBtn");
+  const fsBtn = document.getElementById("fsBtn");
+  const sound = document.getElementById("diceSound");
+
+  const pipLayout = {
+    1: [5],
+    2: [1, 9],
+    3: [1, 5, 9],
+    4: [1, 3, 7, 9],
+    5: [1, 3, 5, 7, 9],
+    6: [1, 3, 4, 6, 7, 9],
+  };
+
+  function drawDie(dieEl, number) {
+    dieEl.innerHTML = "";
+    dieEl.classList.add("bounce");
+    setTimeout(() => dieEl.classList.remove("bounce"), 300);
+
+    for (let i = 1; i <= 9; i++) {
+      const spot = document.createElement("div");
+      if (pipLayout[number].includes(i)) spot.className = "pip";
+      dieEl.appendChild(spot);
+    }
+  }
+
+  function rollDice() {
+    // Play sound on user interaction (mobile-safe)
+    try {
+      sound.currentTime = 0;
+      sound.play().catch(() => {});
+    } catch {}
+
+    let shakeCount = 6;
+    const shakeInterval = setInterval(() => {
+      const n1 = Math.floor(Math.random() * 6) + 1;
+      const n2 = Math.floor(Math.random() * 6) + 1;
+      drawDie(die1, n1);
+      drawDie(die2, n2);
+      shakeCount--;
+
+      if (shakeCount === 0) {
+        clearInterval(shakeInterval);
+        const final1 = Math.floor(Math.random() * 6) + 1;
+        const final2 = Math.floor(Math.random() * 6) + 1;
+        drawDie(die1, final1);
+        drawDie(die2, final2);
+      }
+    }, 200);
+  }
+// Unlock audio on first tap for iPhones / Android
+document.body.addEventListener("touchstart", () => {
+  sound.play().then(() => sound.pause());
+}, { once: true });
+
+  rollBtn.addEventListener("click", rollDice);
+
+  document.addEventListener("keydown", (e) => {
+    if (e.code === "Space") {
+      e.preventDefault();
+      rollDice();
+    }
+  });
+
+  fsBtn.addEventListener("click", () => {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen();
+    } else {
+      document.exitFullscreen();
+    }
+  });
+
+  rollDice();
+</script>
+</body>
+</html>
