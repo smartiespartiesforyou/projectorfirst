@@ -88,6 +88,7 @@
       })
       .catch(function () {
         // Memberstack failed to load or the check errored → lock the door.
+        
         redirect(NOT_LOGGED_IN_URL);
       });
   });
