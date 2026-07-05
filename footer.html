@@ -6,34 +6,3 @@
 <script>
   document.getElementById('year').textContent = new Date().getFullYear();
 </script>
-
-<script>
-let memberPlanId = "pln_trial30-gpte0tfl"; // <-- **CORRECTED PLAN ID for 'Trial30'**
-let expiredRedirect = "/free-trial-expired"; // The page you successfully updated
-
-document.addEventListener("DOMContentLoaded", async function() {
-  const memberstack = window.$memberstackDom;
-  const member = await memberstack.getMemberJSON();
-  
-  // Check if the member has the Trial30 plan
-  const planConnections = member.planConnections || [];
-  let hasPlan = planConnections.some(planConnection => planConnection.planId === memberPlanId);
-
-  if (hasPlan) {
-    // Check the free-trial-date field set 30 days ago
-    let oneTimeDate = new Date(member.data['free-trial-date']);
-    let currentDate = new Date();
-
-    if (currentDate > oneTimeDate) {
-      // 🚨 Trial has expired! Remove the plan and redirect
-      memberstack.removePlan({ planId: memberPlanId })
-        .then(() => {
-          window.location.href = expiredRedirect;
-        })
-        .catch(error => {
-          console.error("Error removing plan:", error);
-        });
-    }
-  }
-});
-</script>
