@@ -1,3 +1,9 @@
 /signup    /signup.html    200
 /login     /signup.html    200
 /subscribe /checkout.html  200
+
+# Internal project docs — not public pages
+/PROJECT-LOG.md          /404.html  404
+/DESIGN-SYSTEM.md        /404.html  404
+/CLEANUP-CANDIDATES.md   /404.html  404
+/GUARD-TEST-PLAN.md      /404.html  404
