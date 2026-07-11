@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>🎰 Casino Night — ProjectorFirst</title>
+
+<!-- Membership gate -->
+<script
+  data-memberstack-app="app_cmgnwpg8y00x10suih4pua785"
+  src="https://static.memberstack.com/scripts/v2/memberstack.js"
+  type="text/javascript">
+</script>
+<script src="/guard.js"></script>
+
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  body {
+    background: #ffffff;
+    font-family: ui-sans-serif, system-ui, sans-serif;
+    color: #000;
+  }
+  .btn {
+    background: #1e3a8a; color: #fff; font-weight: 800; font-size: 1.4rem;
+    padding: 0.9rem 1.6rem; border-radius: 1rem;
+    box-shadow: 0 2px 6px rgba(0,0,0,.15); transition: background .15s;
+  }
+  .btn:hover { background: #1e40af; }
+  .btn:focus { outline: 4px solid #60a5fa; outline-offset: 2px; }
+  .btn-gold { background: #facc15; color: #111827; }
+  .btn-gold:hover { background: #fde047; }
+  .btn-gold[aria-pressed="true"] { outline: 5px solid #1e3a8a; }
+
+  .felt {
+    background: radial-gradient(ellipse at center, #1e7a3c 0%, #14532d 100%);
+    border: 10px solid #7c4a1e;
+    border-radius: 2rem;
+    box-shadow: inset 0 0 40px rgba(0,0,0,.35), 0 6px 14px rgba(0,0,0,.25);
+  }
+  .playing-card {
+    background: #fff; border-radius: 0.9rem; border: 3px solid #d1d5db;
+    box-shadow: 0 4px 10px rgba(0,0,0,.35);
+    width: clamp(84px, 12vw, 150px); height: clamp(118px, 16.8vw, 210px);
+    display: flex; flex-direction: column; justify-content: space-between;
+    padding: .4em .5em; font-weight: 800; line-height: 1;
+  }
+  .playing-card .corner { font-size: clamp(1.3rem, 2.6vw, 2.2rem); }
+  .playing-card .pip { font-size: clamp(2.4rem, 6vw, 5rem); text-align: center; }
+  .card-red { color: #dc2626; } .card-black { color: #111827; }
+  .card-back {
+    background: repeating-linear-gradient(45deg, #1e3a8a, #1e3a8a 12px, #3b5bd0 12px, #3b5bd0 24px);
+    border-color: #fff;
+  }
+  .banner { font-weight: 800; font-size: clamp(1.6rem, 4vw, 2.6rem); }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+</style>
+</head>
+
+<body class="min-h-screen flex flex-col items-center px-4 py-6">
+
+  <!-- Top bar -->
+  <div class="w-full max-w-6xl flex items-center justify-between mb-4">
+    <a href="apps.html" class="btn text-xl" aria-label="Back to all apps">⬅ All Apps</a>
+    <span class="text-2xl font-extrabold text-blue-900 hidden sm:block">ProjectorFirst</span>
+  </div>
+
+  <h1 class="text-4xl sm:text-6xl font-extrabold text-blue-900 text-center leading-snug mb-4">
+    🎰 Casino Night
+  </h1>
+
+  <!-- Mode picker: two yellow buttons -->
+  <div class="flex flex-wrap justify-center gap-4 mb-6">
+    <button id="modeHL" class="btn btn-gold text-2xl" aria-pressed="true" aria-label="Play Higher or Lower">🔺 Higher or Lower</button>
+    <button id="modeBJ" class="btn btn-gold text-2xl" aria-pressed="false" aria-label="Play Blackjack twenty one">♠ Blackjack 21</button>
+  </div>
+
+  <!-- The table -->
+  <div class="felt w-full max-w-5xl p-6 sm:p-10 text-center text-white">
+
+    <!-- ===== Higher or Lower ===== -->
+    <section id="hlGame">
+      <p class="text-2xl sm:text-3xl font-bold mb-1">Will the next card be higher or lower?</p>
+      <p class="text-xl sm:text-2xl mb-5">Winning streak: <span id="hlStreak" class="font-extrabold text-yellow-300 text-3xl">0</span>
+        &nbsp;•&nbsp; Best today: <span id="hlBest" class="font-extrabold text-yellow-300 text-3xl">0</span></p>
+      <div class="flex justify-center items-center gap-6 mb-6">
+        <div id="hlCard"></div>
+        <div id="hlNextCard"></div>
+      </div>
+      <p id="hlBanner" class="banner mb-6" aria-live="polite">&nbsp;</p>
+      <div class="flex flex-wrap justify-center gap-4">
+        <button id="hlHigher" class="btn text-2xl">⬆ Higher</button>
+        <button id="hlLower" class="btn text-2xl">⬇ Lower</button>
+      </div>
+    </section>
+
+    <!-- ===== Blackjack ===== -->
+    <section id="bjGame" hidden>
+      <div class="mb-4">
+        <p class="text-2xl font-bold mb-2">Dealer <span id="bjDealerTotal" class="text-yellow-300 font-extrabold"></span></p>
+        <div id="bjDealerCards" class="flex justify-center gap-3 flex-wrap"></div>
+      </div>
+      <p id="bjBanner" class="banner my-4" aria-live="polite">&nbsp;</p>
+      <div class="mb-6">
+        <p class="text-2xl font-bold mb-2">Our Hand <span id="bjPlayerTotal" class="text-yellow-300 font-extrabold text-3xl"></span></p>
+        <div id="bjPlayerCards" class="flex justify-center gap-3 flex-wrap"></div>
+      </div>
+      <div class="flex flex-wrap justify-center gap-4">
+        <button id="bjHit" class="btn text-2xl">🃏 Hit</button>
+        <button id="bjStand" class="btn text-2xl">✋ Stand</button>
+        <button id="bjNew" class="btn bg-green-700 hover:bg-green-800 text-2xl">🔄 New Hand</button>
+      </div>
+    </section>
+  </div>
+
+<script>
+(function () {
+  "use strict";
+  const $ = (id) => document.getElementById(id);
+
+  // ---------- Cards ----------
+  const SUITS = [
+    { s: "♥", red: true }, { s: "♦", red: true },
+    { s: "♠", red: false }, { s: "♣", red: false }
+  ];
+  const RANKS = [
+    { r: "A", v: 11, hl: 14 }, { r: "2", v: 2, hl: 2 }, { r: "3", v: 3, hl: 3 },
+    { r: "4", v: 4, hl: 4 }, { r: "5", v: 5, hl: 5 }, { r: "6", v: 6, hl: 6 },
+    { r: "7", v: 7, hl: 7 }, { r: "8", v: 8, hl: 8 }, { r: "9", v: 9, hl: 9 },
+    { r: "10", v: 10, hl: 10 }, { r: "J", v: 10, hl: 11 }, { r: "Q", v: 10, hl: 12 },
+    { r: "K", v: 10, hl: 13 }
+  ];
+
+  let deck = [];
+  function shuffle() {
+    deck = [];
+    for (const su of SUITS) for (const ra of RANKS) deck.push({ ...ra, suit: su.s, red: su.red });
+    for (let i = deck.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [deck[i], deck[j]] = [deck[j], deck[i]];
+    }
+  }
+  function draw() { if (deck.length < 10) shuffle(); return deck.pop(); }
+
+  function cardHTML(c, faceDown) {
+    if (faceDown) return '<div class="playing-card card-back" aria-label="Face-down card"></div>';
+    const color = c.red ? "card-red" : "card-black";
+    return '<div class="playing-card ' + color + '" aria-label="' + c.r + ' of ' + c.suit + '">' +
+      '<div class="corner text-left">' + c.r + c.suit + '</div>' +
+      '<div class="pip">' + c.suit + '</div>' +
+      '<div class="corner text-right" style="transform:rotate(180deg)">' + c.r + c.suit + '</div></div>';
+  }
+
+  // ---------- Mode switching ----------
+  function setMode(mode) {
+    const hl = mode === "hl";
+    $("hlGame").hidden = !hl;
+    $("bjGame").hidden = hl;
+    $("modeHL").setAttribute("aria-pressed", hl);
+    $("modeBJ").setAttribute("aria-pressed", !hl);
+    if (hl) hlStart(); else bjNewHand();
+  }
+  $("modeHL").addEventListener("click", () => setMode("hl"));
+  $("modeBJ").addEventListener("click", () => setMode("bj"));
+
+  // ---------- Higher or Lower ----------
+  let hlCurrent = null, streak = 0, best = 0, hlBusy = false;
+
+  function hlStart() {
+    shuffle();
+    hlCurrent = draw();
+    streak = 0;
+    $("hlStreak").textContent = "0";
+    $("hlBanner").innerHTML = "&nbsp;";
+    $("hlCard").innerHTML = cardHTML(hlCurrent);
+    $("hlNextCard").innerHTML = cardHTML(null, true);
+  }
+
+  function hlGuess(higher) {
+    if (hlBusy) return;
+    hlBusy = true;
+    const next = draw();
+    $("hlNextCard").innerHTML = cardHTML(next);
+    let msg, win;
+    if (next.hl === hlCurrent.hl) { win = true; msg = "A tie — everybody wins! 🎉"; }
+    else {
+      win = higher ? next.hl > hlCurrent.hl : next.hl < hlCurrent.hl;
+      msg = win ? "That's right! 🎉" : "Oh no — the streak ends!";
+    }
+    if (win) { streak++; if (streak > best) best = streak; }
+    else streak = 0;
+    $("hlStreak").textContent = streak;
+    $("hlBest").textContent = best;
+    $("hlBanner").textContent = msg;
+    setTimeout(() => {
+      hlCurrent = next;
+      $("hlCard").innerHTML = cardHTML(hlCurrent);
+      $("hlNextCard").innerHTML = cardHTML(null, true);
+      $("hlBanner").innerHTML = streak > 0 ? streak + " in a row — keep going!" : "&nbsp;";
+      hlBusy = false;
+    }, 2200);
+  }
+  $("hlHigher").addEventListener("click", () => hlGuess(true));
+  $("hlLower").addEventListener("click", () => hlGuess(false));
+
+  // ---------- Blackjack ----------
+  let pHand = [], dHand = [], bjOver = false;
+
+  function total(hand) {
+    let t = hand.reduce((a, c) => a + c.v, 0);
+    let aces = hand.filter((c) => c.r === "A").length;
+    while (t > 21 && aces > 0) { t -= 10; aces--; }
+    return t;
+  }
+
+  function bjRender(revealDealer) {
+    $("bjPlayerCards").innerHTML = pHand.map((c) => cardHTML(c)).join("");
+    $("bjPlayerTotal").textContent = total(pHand);
+    if (revealDealer) {
+      $("bjDealerCards").innerHTML = dHand.map((c) => cardHTML(c)).join("");
+      $("bjDealerTotal").textContent = total(dHand);
+    } else {
+      $("bjDealerCards").innerHTML = cardHTML(dHand[0]) + cardHTML(null, true);
+      $("bjDealerTotal").textContent = "shows " + total([dHand[0]]);
+    }
+  }
+
+  function bjNewHand() {
+    shuffle();
+    pHand = [draw(), draw()];
+    dHand = [draw(), draw()];
+    bjOver = false;
+    $("bjBanner").innerHTML = "&nbsp;";
+    bjRender(false);
+    if (total(pHand) === 21) bjStand();
+  }
+
+  function bjEnd(msg) { bjOver = true; $("bjBanner").textContent = msg; bjRender(true); }
+
+  $("bjHit").addEventListener("click", () => {
+    if (bjOver) return;
+    pHand.push(draw());
+    bjRender(false);
+    if (total(pHand) > 21) bjEnd("Bust! Over 21 — dealer wins this one.");
+    else if (total(pHand) === 21) bjStand();
+  });
+
+  function bjStand() {
+    if (bjOver) return;
+    while (total(dHand) < 17) dHand.push(draw());
+    const p = total(pHand), d = total(dHand);
+    if (p === 21 && pHand.length === 2) bjEnd("BLACKJACK! 🎉 We win!");
+    else if (d > 21) bjEnd("Dealer busts — WE WIN! 🎉");
+    else if (p > d) bjEnd("We win, " + p + " beats " + d + "! 🎉");
+    else if (p < d) bjEnd("Dealer wins, " + d + " beats " + p + ".");
+    else bjEnd("It's a push — a tie at " + p + "!");
+  }
+  $("bjStand").addEventListener("click", bjStand);
+  $("bjNew").addEventListener("click", bjNewHand);
+
+  // ---------- Start ----------
+  shuffle();
+  hlStart();
+})();
+</script>
+</body>
+</html>
