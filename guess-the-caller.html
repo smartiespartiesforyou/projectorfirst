@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Guess the Caller | ProjectorFirst</title>
+
+
+<!-- Membership gate (paywall-test) -->
+<script
+  data-memberstack-app="app_cmgnwpg8y00x10suih4pua785"
+  src="https://static.memberstack.com/scripts/v2/memberstack.js"
+  type="text/javascript">
+</script>
+<script src="/guard.js"></script>
+
+<style>
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: linear-gradient(135deg, #0f172a, #1e3a8a);
+  color: white;
+  text-align: center;
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+.topbar {
+  display: flex;
+  justify-content: flex-start;
+  padding: 16px 20px 0;
+}
+.back-btn {
+  background: #1e3a8a;
+  border: 2px solid rgba(255,255,255,0.5);
+  color: #fff;
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 22px;
+  padding: 12px 22px;
+  border-radius: 14px;
+}
+.back-btn:hover { background: #1e40af; }
+
+.container {
+  padding: 10px 20px 40px;
+  max-width: 1100px;
+  margin: auto;
+}
+
+h1 {
+  font-size: clamp(44px, 7vw, 70px);
+  margin: 10px 0;
+}
+
+.subtitle {
+  font-size: clamp(22px, 3.5vw, 34px);
+  margin-bottom: 20px;
+}
+
+.phone {
+  font-size: clamp(90px, 16vw, 150px);
+  display: none;
+  margin: 10px 0;
+}
+
+.ringing {
+  display: block;
+  animation: ring 0.45s infinite;
+}
+
+@keyframes ring {
+  0% { transform: rotate(0deg) scale(1); }
+  20% { transform: rotate(12deg) scale(1.05); }
+  40% { transform: rotate(-12deg) scale(1.05); }
+  60% { transform: rotate(10deg) scale(1.05); }
+  80% { transform: rotate(-10deg) scale(1.05); }
+  100% { transform: rotate(0deg) scale(1); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ringing { animation: none; }
+}
+
+.message {
+  background: rgba(255,255,255,0.14);
+  border-radius: 24px;
+  padding: 30px;
+  margin: 20px auto;
+  font-size: clamp(28px, 4vw, 42px);
+  line-height: 1.3;
+  min-height: 90px;
+}
+
+.answer {
+  font-size: clamp(36px, 5vw, 56px);
+  color: #fde68a;
+  font-weight: bold;
+  margin: 20px 0;
+  display: none;
+}
+
+button {
+  font-size: clamp(24px, 3.2vw, 34px);
+  padding: 18px 30px;
+  margin: 10px;
+  border-radius: 18px;
+  border: none;
+  cursor: pointer;
+  font-weight: bold;
+}
+button:focus-visible { outline: 4px solid #fde68a; outline-offset: 2px; }
+
+.start  { background: #22c55e; color: white; }
+.replay { background: #e2e8f0; color: #0f172a; display: none; }
+.reveal { background: #f59e0b; color: #111827; display: none; }
+.next   { background: #38bdf8; color: #0f172a; display: none; }
+
+.progress {
+  margin-top: 20px;
+  font-size: clamp(18px, 2.5vw, 24px);
+  opacity: 0.85;
+}
+.footer {
+  margin-top: 10px;
+  font-size: 20px;
+  opacity: 0.7;
+}
+</style>
+</head>
+
+<body>
+
+<div class="topbar">
+  <a href="apps.html" class="back-btn">← Back to Apps</a>
+</div>
+
+<div class="container">
+  <h1>📞 Guess the Caller</h1>
+  <div class="subtitle">Listen carefully. Guess who is calling!</div>
+
+  <div id="phone" class="phone">☎️</div>
+
+  <div id="message" class="message">
+    Press Start Call.
+  </div>
+
+  <div id="answer" class="answer"></div>
+
+  <button id="startBtn" class="start" onclick="startCall()">▶ Start Call</button>
+  <button id="replayBtn" class="replay" onclick="replayVoice()">🔁 Play Voice Again</button>
+  <button id="revealBtn" class="reveal" onclick="revealAnswer()">👀 Reveal Answer</button>
+  <button id="nextBtn" class="next" onclick="nextCaller()">➡ Next Caller</button>
+
+  <div id="progress" class="progress"></div>
+  <div class="footer">ProjectorFirst Activity Game</div>
+</div>
+
+<audio id="ringAudio" src="sounds/ringtone.mp3"></audio>
+<audio id="voiceAudio"></audio>
+
+<script>
+"use strict";
+
+/* All 17 voices in the sounds library.
+   NOTE: two files live under unusual names/locations in the repo —
+   the paths below point at where the files ACTUALLY are. */
+const CALLERS = [
+  { answer: "Andy Griffith",      file: "sounds/andy griffith.mp3" },
+  { answer: "John Wayne",         file: "sounds/john wayne.mp3" },
+  { answer: "Bill Clinton",       file: "sounds/bill clinton.mp3" },
+  { answer: "Lucille Ball",       file: "sounds/lucille ball.mp3" },
+  { answer: "Frank Sinatra",      file: "frank sinatra.mp3" },
+  { answer: "Yoda",               file: "sounds/yoda.mp3" },
+  { answer: "Michelle Obama",     file: "sounds/michelle obama (2).mp3" },
+  { answer: "Johnny Cash",        file: "sounds/johnny cash.mp3" },
+  { answer: "Hillary Clinton",    file: "sounds/hillary clinton.mp3" },
+  { answer: "Dolly Parton",       file: "sounds/dolly.mp3" },
+  { answer: "Elvis Presley",      file: "sounds/elvis.mp3" },
+  { answer: "Donald Trump",       file: "sounds/donald trump.mp3" },
+  { answer: "Martin Luther King", file: "sounds/martin luther king.mp3" },
+  { answer: "Michael Jackson",    file: "sounds/michael jackson.mp3" },
+  { answer: "Oprah Winfrey",      file: "sounds/Oprah Winfrey.mp3" },
+  { answer: "Barack Obama",       file: "sounds/barack obama.mp3" },
+  { answer: "John F. Kennedy",    file: "sounds/john f kennedy.mp3" }
+];
+
+let deck = [];
+let index = 0;
+
+const phone = document.getElementById("phone");
+const message = document.getElementById("message");
+const answer = document.getElementById("answer");
+const startBtn = document.getElementById("startBtn");
+const replayBtn = document.getElementById("replayBtn");
+const revealBtn = document.getElementById("revealBtn");
+const nextBtn = document.getElementById("nextBtn");
+const progress = document.getElementById("progress");
+const ringAudio = document.getElementById("ringAudio");
+const voiceAudio = document.getElementById("voiceAudio");
+
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function showGuessButtons() {
+  message.innerText = "Who is calling?";
+  replayBtn.style.display = "inline-block";
+  revealBtn.style.display = "inline-block";
+}
+
+function startCall() {
+  answer.style.display = "none";
+  replayBtn.style.display = "none";
+  revealBtn.style.display = "none";
+  nextBtn.style.display = "none";
+  startBtn.style.display = "none";
+
+  message.innerText = "Ring... ring...";
+  phone.classList.add("ringing");
+  progress.innerText = "Caller " + (index + 1) + " of " + deck.length;
+
+  ringAudio.pause();
+  ringAudio.currentTime = 0;
+  voiceAudio.pause();
+  voiceAudio.currentTime = 0;
+
+  ringAudio.play().catch(() => {});
+
+  setTimeout(() => {
+    ringAudio.pause();
+    ringAudio.currentTime = 0;
+    phone.classList.remove("ringing");
+    message.innerText = "Listen carefully...";
+    playVoice();
+  }, 3000);
+}
+
+function playVoice() {
+  voiceAudio.src = deck[index].file;
+  voiceAudio.currentTime = 0;
+
+  voiceAudio.onended = showGuessButtons;
+
+  /* If a recording is missing or won't play, NEVER stall the game —
+     tell the director and let them reveal / move on. */
+  voiceAudio.onerror = () => {
+    message.innerText = "This recording won't play — reveal or skip to the next caller.";
+    replayBtn.style.display = "none";
+    revealBtn.style.display = "inline-block";
+    nextBtn.style.display = "inline-block";
+  };
+
+  voiceAudio.play().catch(() => {
+    message.innerText = "Tap 🔁 Play Voice Again to hear the caller.";
+    replayBtn.style.display = "inline-block";
+    revealBtn.style.display = "inline-block";
+  });
+}
+
+function replayVoice() {
+  voiceAudio.currentTime = 0;
+  voiceAudio.play().catch(() => {});
+}
+
+function revealAnswer() {
+  answer.innerText = "Caller: " + deck[index].answer;
+  answer.style.display = "block";
+  nextBtn.style.display = "inline-block";
+}
+
+function nextCaller() {
+  index++;
+  if (index >= deck.length) {
+    deck = shuffle(CALLERS);
+    index = 0;
+  }
+  /* jump straight into the next ring — one less click for the director */
+  startCall();
+}
+
+deck = shuffle(CALLERS);
+index = 0;
+progress.innerText = deck.length + " mystery callers ready";
+</script>
+
+</body>
+</html>
