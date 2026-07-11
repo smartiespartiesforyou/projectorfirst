@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>📅 This Day in History — ProjectorFirst</title>
+
+<!-- Membership gate -->
+<script
+  data-memberstack-app="app_cmgnwpg8y00x10suih4pua785"
+  src="https://static.memberstack.com/scripts/v2/memberstack.js"
+  type="text/javascript">
+</script>
+<script src="/guard.js"></script>
+
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  body {
+    background: #ffffff;
+    font-family: ui-sans-serif, system-ui, sans-serif;
+    color: #000;
+  }
+  .btn {
+    background: #1e3a8a;
+    color: #fff;
+    font-weight: 800;
+    font-size: 1.4rem;
+    padding: 0.9rem 1.6rem;
+    border-radius: 1rem;
+    box-shadow: 0 2px 6px rgba(0,0,0,.15);
+    transition: background .15s;
+  }
+  .btn:hover { background: #1e40af; }
+  .btn:focus { outline: 4px solid #60a5fa; outline-offset: 2px; }
+  .btn-gold { background: #facc15; color: #111827; }
+  .btn-gold:hover { background: #fde047; }
+  @media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; animation: none !important; }
+  }
+</style>
+</head>
+
+<body class="min-h-screen flex flex-col items-center px-4 py-6">
+
+  <!-- Top bar -->
+  <div class="w-full max-w-6xl flex items-center justify-between mb-4">
+    <a href="apps.html" class="btn text-xl" aria-label="Back to all apps">⬅ All Apps</a>
+    <span class="text-2xl font-extrabold text-blue-900 hidden sm:block">ProjectorFirst</span>
+  </div>
+
+  <!-- Title + date -->
+  <h1 class="text-4xl sm:text-6xl font-extrabold text-blue-900 text-center leading-snug">
+    📅 This Day in History
+  </h1>
+  <p id="today" class="text-2xl sm:text-4xl font-bold text-gray-800 mt-2 mb-6 text-center"></p>
+
+  <!-- Event card -->
+  <div class="w-full max-w-5xl bg-white border-4 border-blue-900 rounded-2xl shadow-lg p-6 sm:p-10 text-center">
+    <div id="yearBadge"
+         class="inline-block bg-blue-900 text-white font-extrabold rounded-2xl px-8 py-3 mb-6"
+         style="font-size: clamp(2.5rem, 7vw, 5rem); letter-spacing: .05em;">
+      &nbsp;
+    </div>
+    <p id="eventText" aria-live="polite"
+       class="font-bold leading-snug text-gray-900"
+       style="font-size: clamp(1.6rem, 4.5vw, 3rem);">
+      Loading today’s history…
+    </p>
+  </div>
+
+  <!-- Controls -->
+  <div class="flex flex-wrap justify-center gap-4 mt-8">
+    <button id="prevDay" class="btn" aria-label="Show yesterday">◀ Yesterday</button>
+    <button id="nextEvent" class="btn btn-gold text-2xl" aria-label="Show another event">Show Another Event</button>
+    <button id="nextDay" class="btn" aria-label="Show tomorrow">Tomorrow ▶</button>
+  </div>
+  <div class="mt-4">
+    <button id="memoryBtn" class="btn bg-green-700 hover:bg-green-800" aria-label="Ask the group a memory question">💭 Ask a Memory Question</button>
+  </div>
+
+<script>
+(function () {
+  "use strict";
+
+  const MONTHS = ["January","February","March","April","May","June",
+                  "July","August","September","October","November","December"];
+
+  // ---- Reminisce prompts (shown on demand — great for group discussion) ----
+  const PROMPTS = [
+    "What was your first car, and how much did it cost?",
+    "What did a night at the movies cost when you were young?",
+    "What song always got you on the dance floor?",
+    "What was dinner like at your house on Sundays?",
+    "Who was your favorite singer growing up?",
+    "What was your first job, and what did it pay?",
+    "What did you do on summer evenings before television?",
+    "What's a smell that takes you right back to childhood?",
+    "What was your school like? How did you get there?",
+    "Who was the best cook in your family? What was their famous dish?",
+    "What was your wedding day like — or the best wedding you attended?",
+    "What did your hometown look like back then?",
+    "What radio or TV show did your family never miss?",
+    "What games did you play as a child?",
+    "What was the biggest news story you remember hearing as a young person?",
+    "What did you wear for special occasions?",
+    "What was your favorite holiday tradition?",
+    "Did you ever meet anyone famous?",
+    "What's the best advice your parents ever gave you?",
+    "What did a soda or ice cream cost at the counter?"
+  ];
+
+  // ---- Small built-in fallback so the game never shows an empty screen ----
+  const FALLBACK = [
+    { year: 1927, text: "Charles Lindbergh completed the first solo flight across the Atlantic Ocean in the Spirit of St. Louis." },
+    { year: 1955, text: "Disneyland opened its gates for the first time in Anaheim, California." },
+    { year: 1969, text: "Apollo 11 astronauts Neil Armstrong and Buzz Aldrin walked on the Moon." },
+    { year: 1956, text: "Elvis Presley appeared on The Ed Sullivan Show, watched by a record television audience." },
+    { year: 1947, text: "Jackie Robinson broke baseball's color barrier with the Brooklyn Dodgers." },
+    { year: 1963, text: "Dr. Martin Luther King Jr. delivered his famous 'I Have a Dream' speech in Washington." },
+    { year: 1939, text: "The Wizard of Oz premiered, dazzling audiences with Technicolor." },
+    { year: 1953, text: "Queen Elizabeth II was crowned in a ceremony televised around the world." }
+  ];
+
+  let current = new Date();
+  let events = [];
+  let idx = 0;
+  let promptIdx = Math.floor(Math.random() * PROMPTS.length);
+
+  const $ = (id) => document.getElementById(id);
+
+  function showDate() {
+    $("today").textContent = MONTHS[current.getMonth()] + " " + current.getDate();
+  }
+
+  function showEvent() {
+    if (!events.length) {
+      const f = FALLBACK[Math.floor(Math.random() * FALLBACK.length)];
+      $("yearBadge").textContent = f.year;
+      $("eventText").textContent = f.text;
+      return;
+    }
+    const ev = events[idx % events.length];
+    $("yearBadge").textContent = ev.year;
+    $("eventText").textContent = ev.text;
+  }
+
+  async function loadDay() {
+    $("yearBadge").innerHTML = "&nbsp;";
+    $("eventText").textContent = "Loading…";
+    showDate();
+    const mm = String(current.getMonth() + 1).padStart(2, "0");
+    const dd = String(current.getDate()).padStart(2, "0");
+    try {
+      const res = await fetch(
+        "https://api.wikimedia.org/feed/v1/wikipedia/en/onthisday/events/" + mm + "/" + dd
+      );
+      const data = await res.json();
+      events = (data.events || [])
+        .filter((e) => e.year >= 1900 && e.year <= 1999)
+        .sort((a, b) => a.year - b.year)
+        .map((e) => ({ year: e.year, text: e.text }));
+      // Start somewhere mid-century when possible — the years residents remember best.
+      idx = Math.max(0, events.findIndex((e) => e.year >= 1940));
+    } catch (err) {
+      events = [];
+    }
+    showEvent();
+  }
+
+  $("nextEvent").addEventListener("click", () => { idx++; showEvent(); });
+  $("prevDay").addEventListener("click", () => { current.setDate(current.getDate() - 1); loadDay(); });
+  $("nextDay").addEventListener("click", () => { current.setDate(current.getDate() + 1); loadDay(); });
+  $("memoryBtn").addEventListener("click", () => {
+    promptIdx = (promptIdx + 1) % PROMPTS.length;
+    $("yearBadge").textContent = "💭";
+    $("eventText").textContent = PROMPTS[promptIdx];
+  });
+
+  loadDay();
+})();
+</script>
+</body>
+</html>
