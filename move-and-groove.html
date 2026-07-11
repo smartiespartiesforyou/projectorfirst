@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>💃 Move & Groove — ProjectorFirst</title>
+  
+<!-- Membership gate (paywall-test) -->
+<script
+  data-memberstack-app="app_cmgnwpg8y00x10suih4pua785"
+  src="https://static.memberstack.com/scripts/v2/memberstack.js"
+  type="text/javascript">
+</script>
+<script src="/guard.js"></script>
+
+<script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    body {
+      background: #fff;
+      color: #111;
+      font-family: ui-sans-serif, system-ui, -apple-system, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      min-height: 100vh;
+      min-height: 100dvh;
+      padding: 1rem;
+    }
+    .display-box {
+      background: #000;
+      color: #fff;
+      font-size: clamp(2.2rem, 6vw, 4rem);
+      font-weight: 700;
+      padding: 2.5rem;
+      border-radius: 1.25rem;
+      margin-top: 1rem;
+      box-shadow: 0 0 20px rgba(0,0,0,0.3);
+      min-height: 220px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      line-height: 1.25;
+    }
+    .big-btn {
+      font-size: clamp(1.4rem, 3vw, 1.75rem);
+      font-weight: bold;
+      padding: 1.25rem 2.5rem;
+      border-radius: 1rem;
+      cursor: pointer;
+      transition: transform 0.1s;
+      border: none;
+    }
+    .big-btn:hover { transform: scale(1.05); }
+    .big-btn:focus-visible { outline: 4px solid #facc15; outline-offset: 2px; }
+    .pf-blue { background: #1e3a8a; color: white; }
+    .pf-blue:hover { background: #1d4ed8; }
+    .pf-outline { background: #fff; color: #1e3a8a; border: 3px solid #1e3a8a; }
+  </style>
+</head>
+
+<body>
+  <div class="w-full max-w-6xl flex justify-between items-center p-4 border-b border-gray-200 flex-wrap gap-3">
+    <a href="apps.html" class="pf-blue text-white text-xl font-bold px-5 py-3 rounded-xl">
+      ← Back to Apps
+    </a>
+    <h1 class="text-3xl md:text-5xl font-extrabold text-blue-800">💃 Move &amp; Groove</h1>
+    <button id="voiceBtn" class="pf-outline text-xl font-bold px-5 py-3 rounded-xl">🔊 Voice On</button>
+  </div>
+
+  <div class="text-center mt-6 px-4 max-w-6xl mx-auto w-full">
+    <p class="text-xl md:text-2xl font-semibold text-gray-600 mb-2">
+      Every move can be done seated. Follow along and have fun!
+    </p>
+
+    <div id="moveDisplay" class="display-box">Press “Next Move” to begin!</div>
+
+    <button id="nextMoveBtn" class="big-btn pf-blue mt-8">Next Move</button>
+
+    <div id="progress" class="mt-6 text-xl md:text-2xl font-bold text-gray-500"></div>
+  </div>
+
+<script>
+"use strict";
+
+/* 120 gentle, seated-friendly movements — safe for chairs AND wheelchairs,
+   so one game works for the whole room. */
+const MOVES = [
+  /* --- Warm-up & posture --- */
+  "Sit up tall like someone just took your picture.",
+  "Take 3 slow, deep breaths (in… and out…).",
+  "Roll your shoulders forward 5 times.",
+  "Roll your shoulders backward 5 times.",
+  "Shrug your shoulders up… and let them drop (6 times).",
+  "Turn your head gently left… then right (4 times).",
+  "Nod your head yes (4 times).",
+  "Tilt your ear toward your shoulder… then switch sides.",
+  "Stretch like a cat waking up from a nap.",
+  "Yawn big and stretch your arms up tall.",
+  /* --- Arms & hands --- */
+  "Clap your hands 5 times.",
+  "Clap high above your head 5 times.",
+  "Raise both arms up high like a touchdown!",
+  "Stretch your arms out like airplane wings.",
+  "Make big circles with your shoulders (5 times).",
+  "Roll your wrists in circles (6 times).",
+  "Open and close your hands like squeezing a sponge (10 times).",
+  "Wiggle your fingers like you're playing the piano.",
+  "Make jazz hands and wiggle for 8 seconds!",
+  "Snap your fingers 8 times — or give it a good try!",
+  "Give two big thumbs up and hold them high.",
+  "Bring your hands to your shoulders and back down (5 times).",
+  "Point to the ceiling… then point to the floor (5 times).",
+  "Draw a big circle in the air with each arm.",
+  "Write your name in the air with your finger.",
+  "Trace a big star in the air.",
+  "Paint a rainbow across the sky with one arm… now the other.",
+  "Push your palms together and press gently (hold 5 seconds).",
+  /* --- Legs & feet --- */
+  "March in place for 10 seconds.",
+  "Tap your toes 10 times.",
+  "Stomp your feet 6 times.",
+  "Heel digs: tap your heel forward (6 times each side).",
+  "Kick one foot out gently (5 times each side).",
+  "Lift one knee up gently (5 times each side).",
+  "Lift one foot slightly and set it back down (5 times each foot).",
+  "Slide your feet forward and back (6 times).",
+  "Step to the right… step to the left (6 times).",
+  "Tap your heels on the floor (10 taps).",
+  "Circle one ankle 5 times… then the other.",
+  "Pretend to pedal a bicycle slowly (10 seconds).",
+  /* --- Crossing & core --- */
+  "Touch your right hand to your left knee (3 times).",
+  "Touch your left hand to your right knee (3 times).",
+  "Reach across your body and pat the opposite shoulder.",
+  "Gently twist your body left… then right (6 times).",
+  "Reach down toward your toes (or knees) and sit back up (4 times).",
+  "Hug a big imaginary beach ball.",
+  "Pass an imaginary ball around your waist.",
+  "Give yourself a big hug… then open your arms wide (4 times).",
+  /* --- Around the house --- */
+  "Pretend to brush your hair slowly (5 strokes).",
+  "Pretend to wash your hands at the sink (10 seconds).",
+  "Reach up like you're changing a lightbulb.",
+  "Screw in a lightbulb with each hand at the same time!",
+  "Reach forward like you're grabbing a cookie from the jar.",
+  "Reach up to the top shelf for the good dishes.",
+  "Pretend to wipe a table in front of you (6 wipes).",
+  "Pretend to wash a window in big circles (6 circles).",
+  "Pretend to fold laundry on your lap.",
+  "Pretend to hang laundry up on the line.",
+  "Pretend to sweep the floor side to side.",
+  "Pretend to mop in big circles.",
+  "Pretend to open heavy curtains and let the sun in.",
+  "Pretend to button up a shirt, top to bottom.",
+  "Pretend to zip a jacket up and down.",
+  "Pretend to brush crumbs off your lap.",
+  "Wind up a big old clock (6 turns).",
+  "Dial a rotary phone… and say hello!",
+  "Pretend to type a letter on a typewriter.",
+  /* --- In the kitchen --- */
+  "Stir a big pot of soup (8 stirs).",
+  "Knead some bread dough (8 squeezes).",
+  "Roll out a pie crust with a rolling pin.",
+  "Crack an egg and whisk it up!",
+  "Squeeze some lemons for lemonade (5 squeezes each hand).",
+  "Pretend to peel an orange.",
+  "Flip a pancake — don't drop it!",
+  "Sprinkle salt over your shoulder for good luck.",
+  "Pretend to lick a big ice cream cone.",
+  "Blow on some hot soup to cool it down (3 gentle blows).",
+  /* --- Out & about --- */
+  "Pretend to row a boat (8 pulls).",
+  "Paddle a canoe on the left… now the right.",
+  "Cast a fishing line… and reel in a big one!",
+  "Pretend to swim (6 big strokes).",
+  "Plant some seeds in the garden.",
+  "Water the flowers with a watering can.",
+  "Pick apples and put them in your basket (5 apples).",
+  "Rake the autumn leaves (6 rakes).",
+  "Pretend to push a shopping cart down the aisle.",
+  "Pretend to pull a rope, hand over hand (6 pulls).",
+  "Push open a heavy door (6 pushes).",
+  "Climb a ladder with your arms (6 steps).",
+  "Saw a log back and forth (6 saws).",
+  "Hammer a nail gently (8 taps).",
+  "Paint a fence: up and down (8 strokes).",
+  "Hold a steering wheel and turn left… then right.",
+  "Wave at a parade going by!",
+  "Fan yourself like it's a hot summer day.",
+  "Swat away a pesky fly!",
+  "Catch a butterfly gently… now let it go and wave goodbye.",
+  /* --- Sports corner --- */
+  "Dribble a basketball (8 dribbles).",
+  "Shoot a free throw — swish!",
+  "Swing a golf club nice and easy.",
+  "Swing a baseball bat — home run!",
+  "Bowl an imaginary ball… strike!",
+  "Toss a horseshoe (3 tosses).",
+  "Pretend to toss a ball gently to a friend (6 tosses).",
+  "Throw a lasso like a cowboy (5 circles).",
+  "Gallop your hands on your thighs like horses.",
+  "Ski down the mountain with both arms.",
+  "Ice skate with graceful arm swings.",
+  "Lift the trophy over your head — you won!",
+  /* --- Music & dance --- */
+  "Drum on your knees (10 beats).",
+  "Play the piano in the air.",
+  "Strum a guitar like a country star.",
+  "Play the trombone: slide it out and in.",
+  "Shake your maracas (8 shakes).",
+  "Tap a tambourine on your hip (8 taps).",
+  "Conduct the orchestra with big arm waves (8 beats).",
+  "Ring the big church bells with both arms.",
+  "Twirl an imaginary baton.",
+  "Do the Twist — nice and gentle!",
+  "Do the swim dance move from the 60s.",
+  "Hitchhike with your thumbs: left… right… left.",
+  "Disco point: up to the sky, down to the floor (5 times).",
+  "Hula with your arms like ocean waves.",
+  "Shimmy your shoulders (8 counts).",
+  "Sway side to side like a slow dance.",
+  "Do the wave with both arms.",
+  "Flutter your fingers down like falling snow.",
+  "Tap raindrops on your knees with your fingertips.",
+  "Blow a kiss to someone across the room.",
+  "Wave like a beauty queen on a float.",
+  "Salute like a proud soldier.",
+  "Take a big bow — you're a star!",
+  "Make a big smile and lift your cheeks (yes, it counts!).",
+  "Finish with your hands on your heart and one deep breath."
+];
+
+const moveDisplay = document.getElementById("moveDisplay");
+const nextMoveBtn = document.getElementById("nextMoveBtn");
+const voiceBtn = document.getElementById("voiceBtn");
+const progress = document.getElementById("progress");
+
+let deck = [];
+let idx = -1;
+let voiceOn = true;
+
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function nextMove() {
+  idx++;
+  if (idx >= deck.length) {
+    deck = shuffle(MOVES);
+    idx = 0;
+  }
+  const move = deck[idx];
+  moveDisplay.textContent = move;
+  progress.textContent = "Move " + (idx + 1) + " — " + deck.length + " in the mix, no repeats!";
+  if (voiceOn) speak(move);
+}
+
+function speak(text) {
+  speechSynthesis.cancel();
+  const utter = new SpeechSynthesisUtterance(text);
+  utter.rate = 0.95;
+  speechSynthesis.speak(utter);
+}
+
+voiceBtn.onclick = () => {
+  voiceOn = !voiceOn;
+  voiceBtn.textContent = voiceOn ? "🔊 Voice On" : "🔇 Voice Off";
+  if (!voiceOn) speechSynthesis.cancel();
+};
+
+nextMoveBtn.onclick = nextMove;
+document.addEventListener("keydown", (e) => {
+  if (e.code === "Space") { e.preventDefault(); nextMove(); }
+});
+
+deck = shuffle(MOVES);
+</script>
+
+</body>
+</html>
