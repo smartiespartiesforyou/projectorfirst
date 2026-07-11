@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>💬 Let's Chat — ProjectorFirst</title>
+
+<!-- Membership gate -->
+<script
+  data-memberstack-app="app_cmgnwpg8y00x10suih4pua785"
+  src="https://static.memberstack.com/scripts/v2/memberstack.js"
+  type="text/javascript">
+</script>
+<script src="/guard.js"></script>
+
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  body {
+    background: #ffffff;
+    font-family: ui-sans-serif, system-ui, sans-serif;
+    color: #000;
+  }
+  .btn {
+    background: #1e3a8a;
+    color: #fff;
+    font-weight: 800;
+    font-size: 1.4rem;
+    padding: 0.9rem 1.6rem;
+    border-radius: 1rem;
+    box-shadow: 0 2px 6px rgba(0,0,0,.15);
+    transition: background .15s;
+  }
+  .btn:hover { background: #1e40af; }
+  .btn:focus { outline: 4px solid #60a5fa; outline-offset: 2px; }
+  .btn-gold { background: #facc15; color: #111827; }
+  .btn-gold:hover { background: #fde047; }
+  @media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; animation: none !important; }
+  }
+</style>
+</head>
+
+<body class="min-h-screen flex flex-col items-center px-4 py-6">
+
+  <!-- Top bar -->
+  <div class="w-full max-w-6xl flex items-center justify-between mb-4">
+    <a href="apps.html" class="btn text-xl" aria-label="Back to all apps">⬅ All Apps</a>
+    <span class="text-2xl font-extrabold text-blue-900 hidden sm:block">ProjectorFirst</span>
+  </div>
+
+  <!-- Title + date -->
+  <h1 class="text-4xl sm:text-6xl font-extrabold text-blue-900 text-center leading-snug">
+    💬 Let&rsquo;s Chat
+  </h1>
+  <p id="today" class="text-2xl sm:text-4xl font-bold text-gray-800 mt-2 mb-6 text-center"></p>
+
+  <!-- Event card -->
+  <div class="w-full max-w-5xl bg-white border-4 border-blue-900 rounded-2xl shadow-lg p-6 sm:p-10 text-center">
+    <div id="yearBadge"
+         class="inline-block bg-blue-900 text-white font-extrabold rounded-2xl px-8 py-3 mb-6"
+         style="font-size: clamp(2.5rem, 7vw, 5rem); letter-spacing: .05em;">
+      &nbsp;
+    </div>
+    <p id="eventText" aria-live="polite"
+       class="font-bold leading-snug text-gray-900"
+       style="font-size: clamp(1.6rem, 4.5vw, 3rem);">
+      Loading today’s history…
+    </p>
+  </div>
+
+  <!-- Controls: three big yellow buttons -->
+  <div class="flex flex-wrap justify-center gap-4 mt-8">
+    <button id="nextEvent" class="btn btn-gold text-2xl" aria-label="Show an event from history">📅 An Event</button>
+    <button id="easyBtn" class="btn btn-gold text-2xl" aria-label="Ask an easy question anyone can answer">💛 Easy Question</button>
+    <button id="memoryBtn" class="btn btn-gold text-2xl" aria-label="Ask the group a memory question">💭 Memory Question</button>
+  </div>
+
+<script>
+(function () {
+  "use strict";
+
+  const MONTHS = ["January","February","March","April","May","June",
+                  "July","August","September","October","November","December"];
+
+  // ---- Reminisce prompts (shown on demand — great for group discussion) ----
+  // ---- Memory questions: gentle reminiscing (independent/assisted living) ----
+  const PROMPTS = [
+    "What kind of music did you like to listen to?",
+    "Did your family have any Sunday traditions?",
+    "What's a food that reminds you of home?",
+    "Did you ever have a pet? Tell us about it.",
+    "What did you like to do on a summer evening?",
+    "Was there a song everyone sang along to?",
+    "What was your favorite holiday, and why?",
+    "Did you like to dance? What kind of dancing?",
+    "What's something your mother or father used to say?",
+    "Did you grow up in the city or the country?",
+    "What games did children play back then?",
+    "Was there a special meal in your house for birthdays?",
+    "Did you ever go to the county fair? What was it like?",
+    "What did people do before television?",
+    "Tell us about a good neighbor you remember.",
+    "Did you have a garden? What grew in it?",
+    "What was your favorite season of the year?",
+    "Did you ever ride a train? Where did it take you?",
+    "What did your family do at Christmastime?",
+    "Was there a swimming hole or a pool in the summer?",
+    "What chores did children do around the house?",
+    "Did you ever make homemade ice cream?",
+    "What did you like to wear when you dressed up?",
+    "Was there a store you loved to visit in town?",
+    "Did your family say grace before supper?",
+    "What kind of car do you remember riding in?",
+    "Did you ever catch fireflies in a jar?",
+    "Was there a porch where people sat in the evening?",
+    "What smells remind you of your mother's kitchen?",
+    "Did you have a favorite teacher? What made them special?",
+    "What did you do on rainy days?",
+    "Did anyone in your family play an instrument?",
+    "What was the church or gathering place like in your town?",
+    "Did you ever go to a drive-in movie?",
+    "What candy did you love as a child?",
+    "Did you write letters? Who did you write to?",
+    "Was there a family story that got told again and again?",
+    "What did you drink on a hot day?",
+    "Did you ever sleep outside under the stars?",
+    "Who taught you to cook, or to fix things?",
+    "What was your favorite thing about school?",
+    "Did your town have a parade? What was it like?",
+    "What did Saturday mornings look like at your house?",
+    "Did you ever pick berries or fruit in the summer?",
+    "Was there a dog or cat in the neighborhood everyone knew?",
+    "What songs did people sing while working?",
+    "Did you have a favorite radio program?",
+    "What was the kitchen table like at your house?",
+    "Did you ever go dancing on a Saturday night?",
+    "What's one thing from those days you wish we still had?"
+  ];
+
+  // ---- Easy questions: no-fail prompts (memory care / Alzheimer's friendly) ----
+  // Every one can be answered with a feeling, a choice, or a smile — nothing to recall.
+  const EASY = [
+    "Chocolate or vanilla — which do you like better?",
+    "Cake or pie?",
+    "Do you like dogs or cats better?",
+    "Beach day or snowy day — which sounds nicer?",
+    "Doesn't fresh bread smell wonderful? What's the best smell?",
+    "Coffee or tea?",
+    "Is it nicer to be warm or cool?",
+    "Let's finish the song: 'You are my sunshine, my only...'",
+    "Let's finish the song: 'Take me out to the...'",
+    "Do you like the sound of rain?",
+    "Roses or daisies — which are prettier?",
+    "Have you ever danced in the kitchen?",
+    "What color makes you happy?",
+    "Pancakes or eggs for breakfast?",
+    "Is a hug a good thing? Who wants one?",
+    "Do babies make you smile?",
+    "Sunshine or stars — which do you like more?",
+    "Ice cream in a cone or in a bowl?",
+    "Let's finish the song: 'Oh, when the saints go marching...'",
+    "Does music make you want to tap your feet?",
+    "Apples or oranges?",
+    "Is soup good on a cold day?",
+    "Do you like the smell of coffee in the morning?",
+    "Big city or small town — which is nicer?",
+    "Let's finish the song: 'Row, row, row your...'",
+    "Do kittens make you smile?",
+    "Popcorn at the movies — yes or yes?",
+    "Is a rainbow a happy thing to see?",
+    "Warm cookies or cold ice cream?",
+    "Do you like to watch birds?",
+    "Let's finish the song: 'Twinkle, twinkle, little...'",
+    "Is Friday a good day?",
+    "Spring flowers or fall leaves?",
+    "Does a campfire smell good?",
+    "Would you rather hear a piano or a fiddle?",
+    "Is fresh laundry one of the best smells?",
+    "Let's finish the song: 'She'll be comin' round the...'",
+    "Do you like thunderstorms — exciting or too loud?",
+    "Biscuits or cornbread?",
+    "Is holding hands a nice feeling?",
+    "Do you like watermelon in the summer?",
+    "Red or blue — which color do you like more?",
+    "Let's finish the song: 'Happy birthday to...'",
+    "Is a nap in the afternoon a wonderful thing?",
+    "Do you like parades?",
+    "Peach or apple pie?",
+    "Is the ocean beautiful?",
+    "Do you like the sound of church bells?",
+    "Hot chocolate — with or without marshmallows?",
+    "Let's finish the song: 'Jesus loves me, this I...'"
+  ];
+
+  const SIMPLE_EVENTS = [
+    { year: 1927, text: "Charles Lindbergh flew alone across the Atlantic Ocean." },
+    { year: 1955, text: "Disneyland opened in California." },
+    { year: 1969, text: "Astronauts walked on the Moon for the first time." },
+    { year: 1956, text: "Elvis Presley sang on The Ed Sullivan Show." },
+    { year: 1947, text: "Jackie Robinson played his first game with the Brooklyn Dodgers." },
+    { year: 1939, text: "The Wizard of Oz came to movie theaters." },
+    { year: 1953, text: "Queen Elizabeth was crowned. People watched on television." },
+    { year: 1908, text: "Henry Ford built the first Model T car." },
+    { year: 1920, text: "Women in America voted for the first time." },
+    { year: 1930, text: "Sliced bread became popular — 'the best thing since sliced bread!'" },
+    { year: 1937, text: "The Golden Gate Bridge opened in San Francisco." },
+    { year: 1941, text: "Mount Rushmore was finished after 14 years of carving." },
+    { year: 1946, text: "The first Cannes Film Festival celebrated the movies." },
+    { year: 1950, text: "The comic strip Peanuts, with Charlie Brown and Snoopy, began." },
+    { year: 1952, text: "Lucille Ball made America laugh on I Love Lucy." },
+    { year: 1954, text: "The first color television sets went on sale." },
+    { year: 1957, text: "American Bandstand started playing music on TV." },
+    { year: 1959, text: "The Barbie doll was introduced." },
+    { year: 1960, text: "The first weather satellite took pictures of Earth." },
+    { year: 1962, text: "John Glenn orbited the Earth in a spaceship." },
+    { year: 1964, text: "The Beatles came to America and played on TV." },
+    { year: 1965, text: "The Sound of Music filled theaters with song." },
+    { year: 1971, text: "Walt Disney World opened in Florida." },
+    { year: 1974, text: "Hank Aaron hit his 715th home run." },
+    { year: 1976, text: "America celebrated its 200th birthday." }
+  ];
+
+  let current = new Date();
+  let events = [];
+  let idx = 0;
+  let promptIdx = Math.floor(Math.random() * PROMPTS.length);
+  let easyIdx = Math.floor(Math.random() * EASY.length);
+
+  const $ = (id) => document.getElementById(id);
+
+  function showDate() {
+    $("today").textContent = MONTHS[current.getMonth()] + " " + current.getDate();
+  }
+
+  function showEvent() {
+    const ev = events[idx % events.length];
+    $("yearBadge").textContent = ev.year;
+    $("eventText").textContent = ev.text;
+  }
+
+  async function loadDay() {
+    showDate();
+    // Start with the curated simple events, shuffled, so the button always works.
+    events = SIMPLE_EVENTS.slice().sort(() => Math.random() - 0.5);
+    idx = 0;
+    const mm = String(current.getMonth() + 1).padStart(2, "0");
+    const dd = String(current.getDate()).padStart(2, "0");
+    try {
+      const res = await fetch(
+        "https://api.wikimedia.org/feed/v1/wikipedia/en/onthisday/events/" + mm + "/" + dd
+      );
+      const data = await res.json();
+      // Keep only SHORT, plain sentences from the 1900s — no long encyclopedia text.
+      const todays = (data.events || [])
+        .filter((e) => e.year >= 1900 && e.year <= 1999)
+        .filter((e) => e.text.length <= 110 && !/treaty|parliament|coup|regime|constitution/i.test(e.text))
+        .sort((a, b) => a.text.length - b.text.length)
+        .slice(0, 10)
+        .map((e) => ({ year: e.year, text: e.text }));
+      // Today's real events first, easy classics after.
+      if (todays.length) events = todays.concat(events);
+    } catch (err) { /* curated events already loaded — nothing to do */ }
+    showEvent();
+  }
+
+  $("nextEvent").addEventListener("click", () => { idx++; showEvent(); });
+  $("memoryBtn").addEventListener("click", () => {
+    promptIdx = (promptIdx + 1) % PROMPTS.length;
+    $("yearBadge").textContent = "💭";
+    $("eventText").textContent = PROMPTS[promptIdx];
+  });
+  $("easyBtn").addEventListener("click", () => {
+    easyIdx = (easyIdx + 1) % EASY.length;
+    $("yearBadge").textContent = "💛";
+    $("eventText").textContent = EASY[easyIdx];
+  });
+
+  loadDay();
+})();
+</script>
+</body>
+</html>
