@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Then vs Now — Guess Today's Price</title>
+
+<!-- Membership gate (paywall-test) -->
+<script
+  data-memberstack-app="app_cmgnwpg8y00x10suih4pua785"
+  src="https://static.memberstack.com/scripts/v2/memberstack.js"
+  type="text/javascript">
+</script>
+<script src="/guard.js"></script>
+<script src="https://cdn.tailwindcss.com"></script>
+
+<style>
+  /* Vintage price tag: yellow tag with a punched hole, like an old store tag */
+  .price-tag {
+    position: relative;
+    background: #fde047;
+    color: #1e3a8a;
+    border-radius: 1rem;
+    box-shadow: 0 6px 0 rgba(0,0,0,.15);
+  }
+  .price-tag::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 1rem;
+    transform: translateY(-50%);
+    width: 1.1rem;
+    height: 1.1rem;
+    background: #f8fafc;
+    border: 3px solid #1e3a8a;
+    border-radius: 9999px;
+  }
+  /* TODAY reveal: a rubber-stamp slam */
+  .stamp {
+    display: inline-block;
+    background: #dc2626;
+    color: #fff;
+    border: 6px solid #fff;
+    border-radius: 1rem;
+    transform: rotate(-4deg);
+    box-shadow: 0 8px 20px rgba(0,0,0,.35);
+  }
+  @keyframes slamIn {
+    0%   { transform: rotate(-4deg) scale(2.4); opacity: 0; }
+    70%  { transform: rotate(-4deg) scale(.95); opacity: 1; }
+    100% { transform: rotate(-4deg) scale(1); opacity: 1; }
+  }
+  .stamp.slam { animation: slamIn .45s ease-out both; }
+  @media (prefers-reduced-motion: reduce) {
+    .stamp.slam { animation: none; }
+  }
+  button:focus-visible, a:focus-visible {
+    outline: 4px solid #fde047;
+    outline-offset: 3px;
+  }
+</style>
+</head>
+
+<body class="bg-slate-100 text-slate-900 min-h-screen">
+
+<div class="max-w-6xl mx-auto p-4 md:p-6">
+
+  <!-- Header: Back to Apps / Title / Fullscreen -->
+  <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
+    <a href="apps.html"
+       class="bg-blue-900 text-white text-lg md:text-xl font-bold px-5 py-3 rounded-xl hover:bg-blue-800">
+      ← Back to Apps
+    </a>
+    <h1 class="text-3xl md:text-5xl font-extrabold text-blue-900 text-center">
+      Then <span class="text-yellow-500">vs</span> Now
+    </h1>
+    <button id="fullscreenBtn"
+       class="bg-blue-900 text-white text-lg md:text-xl font-bold px-5 py-3 rounded-xl hover:bg-blue-800">
+      Full Screen
+    </button>
+  </div>
+
+  <p class="text-center text-lg md:text-2xl font-semibold text-slate-600 mb-4">
+    It cost <em>that</em> back then… so what does it cost <strong>today</strong>? Shout your guess!
+  </p>
+
+  <!-- Game card -->
+  <div id="stage"
+    class="rounded-3xl shadow-2xl border-8 border-white bg-blue-900 text-white
+           flex flex-col items-center justify-center text-center
+           px-4 py-8 md:px-10 md:py-12 min-h-[26rem] md:min-h-[30rem]">
+
+    <div id="eraBadge"
+      class="text-2xl md:text-3xl font-black bg-white text-blue-900 px-6 py-2 rounded-full mb-4">
+      1950s
+    </div>
+
+    <div id="productEmoji" class="text-8xl md:text-9xl leading-none mb-3" role="img" aria-label="">☕</div>
+
+    <div id="itemName" class="text-4xl md:text-6xl font-extrabold mb-6">
+      Cup of coffee
+    </div>
+
+    <!-- THEN price on the vintage tag -->
+    <div class="price-tag pl-12 pr-8 py-3 md:py-4 mb-6">
+      <span class="text-2xl md:text-3xl font-bold mr-3">THEN:</span>
+      <span id="thenPrice" class="text-4xl md:text-6xl font-black">10¢</span>
+    </div>
+
+    <!-- Hidden until revealed -->
+    <div id="revealBlock" class="hidden">
+      <div class="stamp px-8 py-3 md:py-4 mb-4">
+        <span class="text-2xl md:text-3xl font-bold mr-3">TODAY:</span>
+        <span id="nowPrice" class="text-4xl md:text-6xl font-black">$3.50</span>
+      </div>
+      <div id="shockLine" class="text-2xl md:text-4xl font-extrabold text-yellow-300">
+        That's about 35 times the price!
+      </div>
+    </div>
+
+    <div id="promptLine" class="text-3xl md:text-4xl font-extrabold text-yellow-300">
+      What does it cost today?
+    </div>
+
+  </div>
+
+  <!-- Controls -->
+  <div class="flex flex-wrap justify-center items-center gap-4 mt-6">
+    <button id="revealBtn"
+      class="bg-yellow-400 text-blue-900 text-2xl md:text-3xl font-extrabold px-10 py-4 rounded-2xl shadow hover:bg-yellow-300">
+      Reveal Today's Price
+    </button>
+    <button id="nextBtn"
+      class="bg-blue-900 text-white text-2xl md:text-3xl font-extrabold px-10 py-4 rounded-2xl shadow hover:bg-blue-800">
+      Next Item →
+    </button>
+    <div id="progress" class="text-xl md:text-2xl font-bold text-slate-600 w-full text-center md:w-auto">
+      1 of 76
+    </div>
+  </div>
+
+  <p class="text-center text-slate-500 mt-3 text-base md:text-lg">
+    Tip: the space bar reveals, then advances — handy with a clicker.
+  </p>
+
+</div>
+
+<script>
+"use strict";
+
+/* Each item: product visual, name, era, then/now display prices,
+   and numeric values so the shock line writes itself. */
+const ITEMS = [
+  /* ---- Original 24 ---- */
+  { e:"☕",  item:"Cup of coffee",          era:"1950s", then:"10¢",     now:"$3.50",    t:0.10,  n:3.50 },
+  { e:"🏠",  item:"A new house",            era:"1960s", then:"$12,000", now:"$420,000", t:12000, n:420000 },
+  { e:"🎟️", item:"Movie ticket",           era:"1960s", then:"$1.00",   now:"$13.00",   t:1.00,  n:13.00 },
+  { e:"⛽",  item:"Gallon of gas",          era:"1970s", then:"36¢",     now:"$3.25",    t:0.36,  n:3.25 },
+  { e:"🚗",  item:"Brand-new car",          era:"1980s", then:"$7,200",  now:"$48,000",  t:7200,  n:48000 },
+  { e:"🍞",  item:"Loaf of bread",          era:"1970s", then:"25¢",     now:"$2.50",    t:0.25,  n:2.50 },
+  { e:"💈",  item:"Haircut",                era:"1960s", then:"$2.00",   now:"$30.00",   t:2.00,  n:30.00 },
+  { e:"📮",  item:"Postage stamp",          era:"1950s", then:"3¢",      now:"78¢",      t:0.03,  n:0.78 },
+  { e:"🍫",  item:"Candy bar",              era:"1960s", then:"5¢",      now:"$1.75",    t:0.05,  n:1.75 },
+  { e:"🥚",  item:"Dozen eggs",             era:"1970s", then:"60¢",     now:"$3.50",    t:0.60,  n:3.50 },
+  { e:"🍔",  item:"Hamburger",              era:"1950s", then:"15¢",     now:"$3.00",    t:0.15,  n:3.00 },
+  { e:"🥛",  item:"Gallon of milk",         era:"1970s", then:"$1.30",   now:"$4.00",    t:1.30,  n:4.00 },
+  { e:"🥤",  item:"Bottle of soda",         era:"1960s", then:"10¢",     now:"$2.00",    t:0.10,  n:2.00 },
+  { e:"👖",  item:"Pair of blue jeans",     era:"1950s", then:"$5.00",   now:"$50.00",   t:5.00,  n:50.00 },
+  { e:"🍕",  item:"Whole pizza",            era:"1960s", then:"$1.50",   now:"$18.00",   t:1.50,  n:18.00 },
+  { e:"🎓",  item:"Year of college",        era:"1970s", then:"$500",    now:"$11,000",  t:500,   n:11000 },
+  { e:"🌭",  item:"Hot dog",                era:"1960s", then:"15¢",     now:"$3.50",    t:0.15,  n:3.50 },
+  { e:"🍿",  item:"Movie popcorn",          era:"1970s", then:"50¢",     now:"$9.00",    t:0.50,  n:9.00 },
+  { e:"📰",  item:"Daily newspaper",        era:"1960s", then:"5¢",      now:"$3.00",    t:0.05,  n:3.00 },
+  { e:"🍦",  item:"Ice cream cone",         era:"1950s", then:"10¢",     now:"$4.00",    t:0.10,  n:4.00 },
+  { e:"🚌",  item:"Bus fare",               era:"1960s", then:"20¢",     now:"$2.75",    t:0.20,  n:2.75 },
+  { e:"💿",  item:"Record album",           era:"1960s", then:"$3.00",   now:"$30.00",   t:3.00,  n:30.00 },
+  /* ---- Food & drink ---- */
+  { e:"🍨",  item:"Milkshake",              era:"1950s", then:"25¢",     now:"$6.00",    t:0.25,  n:6.00 },
+  { e:"🍌",  item:"Banana split",           era:"1950s", then:"39¢",     now:"$8.00",    t:0.39,  n:8.00 },
+  { e:"🥣",  item:"Box of cereal",          era:"1960s", then:"30¢",     now:"$5.00",    t:0.30,  n:5.00 },
+  { e:"🥓",  item:"Pound of bacon",         era:"1960s", then:"60¢",     now:"$7.00",    t:0.60,  n:7.00 },
+  { e:"🫘",  item:"Pound of coffee",        era:"1950s", then:"80¢",     now:"$8.00",    t:0.80,  n:8.00 },
+  { e:"🧈",  item:"Stick of butter",        era:"1960s", then:"20¢",     now:"$1.50",    t:0.20,  n:1.50 },
+  { e:"🥩",  item:"Pound of ground beef",   era:"1960s", then:"45¢",     now:"$5.50",    t:0.45,  n:5.50 },
+  { e:"🍺",  item:"Six-pack of beer",       era:"1960s", then:"$1.20",   now:"$11.00",   t:1.20,  n:11.00 },
+  { e:"🍅",  item:"Bottle of ketchup",      era:"1960s", then:"20¢",     now:"$4.00",    t:0.20,  n:4.00 },
+  { e:"🍱",  item:"School lunch",           era:"1960s", then:"25¢",     now:"$3.25",    t:0.25,  n:3.25 },
+  { e:"🍳",  item:"Diner breakfast",        era:"1950s", then:"50¢",     now:"$12.00",   t:0.50,  n:12.00 },
+  { e:"🥜",  item:"Box of Cracker Jack",    era:"1950s", then:"5¢",      now:"$2.00",    t:0.05,  n:2.00 },
+  { e:"🍬",  item:"Pack of gum",            era:"1950s", then:"5¢",      now:"$1.50",    t:0.05,  n:1.50 },
+  { e:"🍽️", item:"TV dinner",              era:"1950s", then:"98¢",     now:"$4.50",    t:0.98,  n:4.50 },
+  /* ---- Around the house ---- */
+  { e:"🧊",  item:"Refrigerator",           era:"1950s", then:"$350",    now:"$1,200",   t:350,   n:1200 },
+  { e:"🧺",  item:"Washing machine",        era:"1950s", then:"$200",    now:"$800",     t:200,   n:800 },
+  { e:"🧹",  item:"Vacuum cleaner",         era:"1950s", then:"$75",     now:"$200",     t:75,    n:200 },
+  { e:"🧵",  item:"Sewing machine",         era:"1950s", then:"$100",    now:"$250",     t:100,   n:250 },
+  { e:"🧼",  item:"Bar of soap",            era:"1950s", then:"10¢",     now:"$1.50",    t:0.10,  n:1.50 },
+  { e:"🪥",  item:"Tube of toothpaste",     era:"1950s", then:"25¢",     now:"$3.50",    t:0.25,  n:3.50 },
+  { e:"🧴",  item:"Box of laundry detergent", era:"1960s", then:"35¢",   now:"$12.00",   t:0.35,  n:12.00 },
+  { e:"💡",  item:"Monthly electric bill",  era:"1960s", then:"$5.00",   now:"$140.00",  t:5.00,  n:140.00 },
+  { e:"🛒",  item:"Week of groceries",      era:"1960s", then:"$20.00",  now:"$150.00",  t:20.00, n:150.00 },
+  /* ---- Getting around ---- */
+  { e:"🪪",  item:"Driver's license",       era:"1960s", then:"$1.00",   now:"$35.00",   t:1.00,  n:35.00 },
+  { e:"🛞",  item:"Set of four tires",      era:"1960s", then:"$100",    now:"$700",     t:100,   n:700 },
+  { e:"🛢️", item:"Oil change",             era:"1960s", then:"$5.00",   now:"$60.00",   t:5.00,  n:60.00 },
+  { e:"🚲",  item:"Bicycle",                era:"1950s", then:"$40.00",  now:"$300.00",  t:40.00, n:300.00 },
+  { e:"✈️",  item:"Flight across the country", era:"1960s", then:"$150", now:"$350",     t:150,   n:350 },
+  { e:"🚕",  item:"Taxi ride across town",  era:"1960s", then:"$1.00",   now:"$20.00",   t:1.00,  n:20.00 },
+  { e:"🅿️", item:"Hour at a parking meter", era:"1950s", then:"5¢",     now:"$2.00",    t:0.05,  n:2.00 },
+  /* ---- Fun & fashion ---- */
+  { e:"👗",  item:"Ladies' dress",          era:"1950s", then:"$9.00",   now:"$60.00",   t:9.00,  n:60.00 },
+  { e:"👔",  item:"Men's suit",             era:"1950s", then:"$40.00",  now:"$400.00",  t:40.00, n:400.00 },
+  { e:"👞",  item:"Pair of shoes",          era:"1950s", then:"$8.00",   now:"$80.00",   t:8.00,  n:80.00 },
+  { e:"💄",  item:"Lipstick",               era:"1950s", then:"$1.00",   now:"$12.00",   t:1.00,  n:12.00 },
+  { e:"⌚",  item:"Wristwatch",             era:"1950s", then:"$10.00",  now:"$150.00",  t:10.00, n:150.00 },
+  { e:"⚾",  item:"Baseball game ticket",   era:"1960s", then:"$2.00",   now:"$40.00",   t:2.00,  n:40.00 },
+  { e:"🦸",  item:"Comic book",             era:"1950s", then:"10¢",     now:"$5.00",    t:0.10,  n:5.00 },
+  { e:"🧸",  item:"Child's toy",            era:"1950s", then:"$3.00",   now:"$25.00",   t:3.00,  n:25.00 },
+  { e:"📷",  item:"Roll of film, developed", era:"1960s", then:"$2.00",  now:"$25.00",   t:2.00,  n:25.00 },
+  { e:"🎵",  item:"Song on the jukebox",    era:"1950s", then:"5¢",      now:"$1.00",    t:0.05,  n:1.00 },
+  { e:"🎳",  item:"Game of bowling",        era:"1950s", then:"35¢",     now:"$6.00",    t:0.35,  n:6.00 },
+  { e:"🎡",  item:"County fair admission",  era:"1950s", then:"50¢",     now:"$12.00",   t:0.50,  n:12.00 },
+  /* ---- Big-ticket & life events ---- */
+  { e:"💒",  item:"Wedding",                era:"1960s", then:"$1,000",  now:"$30,000",  t:1000,  n:30000 },
+  { e:"🔑",  item:"Month's rent",           era:"1960s", then:"$100",    now:"$1,400",   t:100,   n:1400 },
+  { e:"🏥",  item:"Hospital stay (one day)", era:"1960s", then:"$40",    now:"$3,000",   t:40,    n:3000 },
+  { e:"👶",  item:"Having a baby",          era:"1950s", then:"$150",    now:"$12,000",  t:150,   n:12000 },
+  { e:"💍",  item:"Diamond ring",           era:"1950s", then:"$400",    now:"$5,500",   t:400,   n:5500 },
+  { e:"🎹",  item:"Piano",                  era:"1950s", then:"$500",    now:"$5,000",   t:500,   n:5000 },
+  /* ---- Reversals: technology got CHEAPER ---- */
+  { e:"📺",  item:"Color TV set",           era:"1970s", then:"$500",    now:"$400",     t:500,   n:400,  line:"Believe it or not — TVs got cheaper!" },
+  { e:"📼",  item:"VCR",                    era:"1980s", then:"$1,000",  now:"$50",      t:1000,  n:50,   line:"Nobody even wants one anymore!" },
+  { e:"☎️",  item:"Long-distance call (per minute)", era:"1950s", then:"$2.00", now:"FREE", t:2.00, n:0, line:"Now you can talk all day for free!" },
+  { e:"🔢",  item:"Pocket calculator",      era:"1970s", then:"$100",    now:"FREE",     t:100,   n:0,   line:"It's free on your phone now!" },
+  { e:"📚",  item:"Encyclopedia set",       era:"1960s", then:"$500",    now:"FREE",     t:500,   n:0,   line:"The whole world's knowledge — free online!" },
+  { e:"⏲️",  item:"Microwave oven",         era:"1970s", then:"$500",    now:"$80",      t:500,   n:80,  line:"Another one that got cheaper!" }
+];
+
+let deck = [];
+let idx = 0;
+let revealed = false;
+
+const $ = id => document.getElementById(id);
+
+function shuffle(arr){
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function shockLine(it){
+  if (it.line) return it.line;
+  const mult = it.n / it.t;
+  if (mult >= 2) {
+    const rounded = mult >= 20 ? Math.round(mult / 5) * 5 : Math.round(mult);
+    return `That's about ${rounded} times the price!`;
+  }
+  return "Not as big a jump as you'd think!";
+}
+
+function showItem(){
+  const it = deck[idx];
+  revealed = false;
+
+  $("eraBadge").textContent = it.era;
+  $("productEmoji").textContent = it.e;
+  $("productEmoji").setAttribute("aria-label", it.item);
+  $("itemName").textContent = it.item;
+  $("thenPrice").textContent = it.then;
+  $("nowPrice").textContent = it.now;
+  $("shockLine").textContent = shockLine(it);
+
+  $("revealBlock").classList.add("hidden");
+  $("promptLine").classList.remove("hidden");
+  $("revealBtn").disabled = false;
+  $("revealBtn").classList.remove("opacity-40");
+  $("progress").textContent = `${idx + 1} of ${deck.length}`;
+  $("nextBtn").textContent = (idx === deck.length - 1) ? "Play Again ↻" : "Next Item →";
+}
+
+function reveal(){
+  if (revealed) return;
+  revealed = true;
+  $("promptLine").classList.add("hidden");
+  const block = $("revealBlock");
+  block.classList.remove("hidden");
+  const stamp = block.querySelector(".stamp");
+  stamp.classList.remove("slam");
+  void stamp.offsetWidth; /* restart animation */
+  stamp.classList.add("slam");
+  $("revealBtn").disabled = true;
+  $("revealBtn").classList.add("opacity-40");
+}
+
+function next(){
+  idx++;
+  if (idx >= deck.length) {
+    deck = shuffle(ITEMS);
+    idx = 0;
+  }
+  showItem();
+}
+
+$("revealBtn").onclick = reveal;
+$("nextBtn").onclick = next;
+$("fullscreenBtn").onclick = () => document.documentElement.requestFullscreen();
+
+/* Space or Enter: reveal first, advance second — works with presentation clickers */
+document.addEventListener("keydown", (ev) => {
+  if (ev.code === "Space" || ev.code === "Enter") {
+    if (ev.target.tagName === "BUTTON" || ev.target.tagName === "A") return;
+    ev.preventDefault();
+    revealed ? next() : reveal();
+  }
+});
+
+deck = shuffle(ITEMS);
+idx = 0;
+showItem();
+</script>
+
+</body>
+</html>
