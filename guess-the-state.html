@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Guess the State — ProjectorFirst</title>
+  
+<!-- Membership gate (paywall-test) -->
+<script
+  data-memberstack-app="app_cmgnwpg8y00x10suih4pua785"
+  src="https://static.memberstack.com/scripts/v2/memberstack.js"
+  type="text/javascript">
+</script>
+<script src="/guard.js"></script>
+
+<script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body { min-height: 100vh; min-height: 100dvh; }
+    .clue-line { font-size: clamp(1.6rem, 3.5vw, 2.4rem); font-weight: 700; line-height: 1.35; }
+    .answer-text { font-size: clamp(3rem, 8vw, 5.5rem); font-weight: 900; letter-spacing: 2px; }
+    button:focus-visible, a:focus-visible { outline: 4px solid #fde047; outline-offset: 3px; }
+    @keyframes popIn { from { transform: scale(.6); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+    .pop { animation: popIn .35s ease-out both; }
+    @media (prefers-reduced-motion: reduce) { .pop { animation: none; } }
+  </style>
+</head>
+
+<body class="bg-blue-900 text-white flex flex-col items-center p-4 md:p-6">
+
+  <!-- Header: consistent with the other games -->
+  <div class="w-full max-w-6xl flex flex-wrap justify-between items-center gap-3 mb-4">
+    <a href="apps.html" class="bg-blue-700 px-5 py-3 rounded-xl font-bold text-lg md:text-xl hover:bg-blue-800">← Back to Apps</a>
+    <h1 class="text-3xl md:text-5xl font-extrabold">🗺️ Guess the State</h1>
+    <button onclick="toggleFullScreen()" class="bg-blue-700 px-5 py-3 rounded-xl font-bold text-lg md:text-xl hover:bg-blue-800">⛶ Full Screen</button>
+  </div>
+
+  <p class="text-lg md:text-2xl font-semibold text-blue-200 mb-4 text-center">
+    Three clues, hardest first. How fast can the room guess it?
+  </p>
+
+  <!-- Clue Display -->
+  <div id="clueBox" class="bg-blue-800 rounded-2xl shadow-xl w-full max-w-4xl px-6 py-8 md:px-10">
+    <div id="clueLabel" class="text-yellow-300 font-extrabold text-xl md:text-2xl mb-4">CLUE 1</div>
+    <div id="clueList" class="space-y-4"></div>
+  </div>
+
+  <!-- Reveal Display -->
+  <div id="answer" class="answer-text text-yellow-300 mt-6 text-center hidden pop">
+  </div>
+  <div id="capital" class="text-xl md:text-3xl font-bold text-blue-200 mt-2 hidden"></div>
+
+  <!-- Controls -->
+  <div class="flex flex-wrap justify-center gap-4 mt-6">
+    <button id="clueBtn" onclick="nextClue()" class="bg-yellow-400 text-blue-900 px-8 py-4 rounded-2xl font-extrabold text-xl md:text-2xl hover:bg-yellow-300">Another Clue</button>
+    <button id="revealBtn" onclick="revealState()" class="bg-green-600 px-8 py-4 rounded-2xl font-extrabold text-xl md:text-2xl hover:bg-green-700">Reveal State</button>
+    <button id="nextBtn" onclick="nextState()" class="bg-indigo-500 px-8 py-4 rounded-2xl font-extrabold text-xl md:text-2xl hover:bg-indigo-600">Next State →</button>
+  </div>
+
+  <div id="progress" class="mt-5 text-lg md:text-xl font-bold text-blue-300"></div>
+
+<script>
+"use strict";
+
+/* All 50 states. Clues run hard → medium → easy. */
+const STATES = [
+  { name:"ALABAMA", capital:"Montgomery", clues:["The Saturn V moon rocket was built in its 'Rocket City' of Huntsville.","Rosa Parks made history on a city bus in its capital.","It's known as the Heart of Dixie — 'Sweet Home…'"]},
+  { name:"ALASKA", capital:"Juneau", clues:["The U.S. bought it from Russia in 1867 — critics called it a 'folly.'","It has the tallest mountain in North America, Denali.","It's the biggest state of all — the Last Frontier."]},
+  { name:"ARIZONA", capital:"Phoenix", clues:["The giant saguaro cactus grows almost nowhere else on Earth.","Its capital city is named after a mythical bird that rises from ashes.","It's home to the Grand Canyon."]},
+  { name:"ARKANSAS", capital:"Little Rock", clues:["It has the only diamond mine in America where visitors can keep what they find.","President Bill Clinton was born and raised here.","It's called the Natural State, famous for Hot Springs."]},
+  { name:"CALIFORNIA", capital:"Sacramento", clues:["The world's tallest trees, the coastal redwoods, grow here.","In 1849, thousands rushed here hoping to strike gold.","It's home to Hollywood and the Golden Gate Bridge."]},
+  { name:"COLORADO", capital:"Denver", clues:["The song 'America the Beautiful' was inspired by the view from its Pikes Peak.","Its capital city sits exactly one mile above sea level.","It's the heart of the Rocky Mountains."]},
+  { name:"CONNECTICUT", capital:"Hartford", clues:["Mark Twain wrote Tom Sawyer while living in its capital city.","Yale University has called it home since 1701.","It's the Constitution State, just south of Massachusetts."]},
+  { name:"DELAWARE", capital:"Dover", clues:["The DuPont company started here making gunpowder in 1802.","It's the second-smallest state in the country.","It's called the First State — first to ratify the Constitution."]},
+  { name:"FLORIDA", capital:"Tallahassee", clues:["Spanish explorer Ponce de León arrived here searching for the Fountain of Youth.","Alligators roam its famous Everglades.","It's the Sunshine State, home of Disney World."]},
+  { name:"GEORGIA", capital:"Atlanta", clues:["Coca-Cola was invented in its capital city in 1886.","'Gone with the Wind' is set here.","It's the Peach State."]},
+  { name:"HAWAII", capital:"Honolulu", clues:["It's the only state that grows coffee commercially.","Pearl Harbor is located here.","It's our only island state — home of the hula."]},
+  { name:"IDAHO", capital:"Boise", clues:["Lewis and Clark crossed its rugged Bitterroot Mountains in 1805.","Evel Knievel tried to jump its Snake River Canyon on a rocket cycle.","It's world-famous for its potatoes."]},
+  { name:"ILLINOIS", capital:"Springfield", clues:["Historic Route 66 begins in its biggest city.","Abraham Lincoln practiced law in its capital.","Its biggest city is Chicago, the Windy City."]},
+  { name:"INDIANA", capital:"Indianapolis", clues:["Its people have been called 'Hoosiers' for nearly 200 years — and nobody's sure why!","High school basketball is practically a religion here.","Every May, race cars run 500 miles in its capital city."]},
+  { name:"IOWA", capital:"Des Moines", clues:["Every four years, its caucuses kick off the presidential race.","The movie 'Field of Dreams' was set and filmed here.","It grows more corn than any other state."]},
+  { name:"KANSAS", capital:"Topeka", clues:["Cowboys drove cattle to its wild frontier town of Dodge City.","Amelia Earhart was born here.","Dorothy and Toto were from here — 'we're not in ___ anymore!'"]},
+  { name:"KENTUCKY", capital:"Frankfort", clues:["Nearly all of the world's bourbon is made here.","Colonel Sanders started frying chicken here.","Every May, it hosts the most famous horse race in America."]},
+  { name:"LOUISIANA", capital:"Baton Rouge", clues:["Its counties aren't called counties — they're called parishes.","Jazz music was born in its most famous city.","It's home to Mardi Gras and gumbo."]},
+  { name:"MAINE", capital:"Augusta", clues:["It's the easternmost state — the first to see the sunrise.","Author Stephen King lives here and sets many stories here.","It's famous for lobster and lighthouses."]},
+  { name:"MARYLAND", capital:"Annapolis", clues:["Francis Scott Key wrote 'The Star-Spangled Banner' watching a battle here.","The U.S. Naval Academy is in its capital.","It's famous for Chesapeake Bay blue crabs."]},
+  { name:"MASSACHUSETTS", capital:"Boston", clues:["The Pilgrims landed here at Plymouth Rock in 1620.","Colonists dumped British tea into its harbor in 1773.","The Red Sox play at its famous Fenway Park."]},
+  { name:"MICHIGAN", capital:"Lansing", clues:["It touches four of the five Great Lakes.","Motown music was born in its biggest city.","It's shaped like a mitten and famous for making cars."]},
+  { name:"MINNESOTA", capital:"St. Paul", clues:["Legend says the lumberjack giant Paul Bunyan roamed its north woods.","The Mississippi River begins here as a small stream.","It's the Land of 10,000 Lakes."]},
+  { name:"MISSISSIPPI", capital:"Jackson", clues:["Elvis Presley was born here in a two-room house in Tupelo.","Teddy Roosevelt's hunting trip here inspired the teddy bear.","It shares its name with America's mightiest river."]},
+  { name:"MISSOURI", capital:"Jefferson City", clues:["Mark Twain grew up here along the Mississippi in Hannibal.","The ice cream cone became famous at its 1904 World's Fair.","The Gateway Arch stands in its city of St. Louis."]},
+  { name:"MONTANA", capital:"Helena", clues:["Custer made his last stand here at Little Bighorn.","Grizzly bears roam its Glacier National Park.","It's called Big Sky Country."]},
+  { name:"NEBRASKA", capital:"Lincoln", clues:["Pioneers on the Oregon Trail steered by its Chimney Rock.","Billionaire Warren Buffett has lived in the same house here since 1958.","Its college football team is the Cornhuskers."]},
+  { name:"NEVADA", capital:"Carson City", clues:["A silver strike in 1859 put it on the map.","The Hoover Dam was built here during the Depression.","What happens in its most famous city stays there."]},
+  { name:"NEW HAMPSHIRE", capital:"Concord", clues:["Its state motto is 'Live Free or Die.'","Every four years it holds the first presidential primary.","It's the Granite State, in northern New England."]},
+  { name:"NEW JERSEY", capital:"Trenton", clues:["The street names in Monopoly come from its Atlantic City.","Frank Sinatra was born in its city of Hoboken.","It's called the Garden State."]},
+  { name:"NEW MEXICO", capital:"Santa Fe", clues:["Something mysterious supposedly crashed near its town of Roswell in 1947.","Hundreds of hot air balloons fill its skies every October.","It's the Land of Enchantment."]},
+  { name:"NEW YORK", capital:"Albany", clues:["Niagara Falls thunders on its border with Canada.","The Statue of Liberty stands in its harbor.","It's the Empire State — home of Broadway."]},
+  { name:"NORTH CAROLINA", capital:"Raleigh", clues:["The Lost Colony of Roanoke vanished from its shores in the 1580s.","The Wright brothers made the first airplane flight here.","It's the Tar Heel State."]},
+  { name:"NORTH DAKOTA", capital:"Bismarck", clues:["Teddy Roosevelt ranched here as a young man and loved it forever.","Its capital is named after a German leader.","It sits above South Dakota, on the Canadian border."]},
+  { name:"OHIO", capital:"Columbus", clues:["Both Neil Armstrong and John Glenn were born here.","Seven presidents were born here — more than almost any state.","It's the Buckeye State, home of the Rock and Roll Hall of Fame."]},
+  { name:"OKLAHOMA", capital:"Oklahoma City", clues:["In 1889, settlers raced to claim free land here — some snuck in 'sooner.'","Cowboy humorist Will Rogers was its favorite son.","A famous musical says the wind comes sweepin' down its plain."]},
+  { name:"OREGON", capital:"Salem", clues:["Crater Lake, the deepest lake in America, fills one of its old volcanoes.","Pioneers walked 2,000 miles on a famous trail to get here.","It's the Beaver State, home to Portland's rose gardens."]},
+  { name:"PENNSYLVANIA", capital:"Harrisburg", clues:["A groundhog named Phil predicts the weather here every February.","Hershey built his chocolate empire here.","The Liberty Bell rings — well, sits — in its biggest city."]},
+  { name:"RHODE ISLAND", capital:"Providence", clues:["Roger Williams founded it seeking religious freedom in 1636.","The Gilded Age rich built summer 'cottages' — really mansions — in its Newport.","It's the smallest state in the country."]},
+  { name:"SOUTH CAROLINA", capital:"Columbia", clues:["The first shots of the Civil War were fired at its Fort Sumter.","Its historic city of Charleston is famous for charm and cobblestones.","A palmetto tree stands on its state flag."]},
+  { name:"SOUTH DAKOTA", capital:"Pierre", clues:["Wild Bill Hickok was playing poker in its town of Deadwood when his luck ran out.","Its Badlands look like the surface of the moon.","Four presidents' faces are carved into its Mount Rushmore."]},
+  { name:"TENNESSEE", capital:"Nashville", clues:["The Great Smoky Mountains rise along its eastern border.","Elvis called its Graceland mansion home.","Country music's Grand Ole Opry plays in its capital."]},
+  { name:"TEXAS", capital:"Austin", clues:["It was its own independent country for nine years.","'Remember the Alamo!' was shouted here.","Everything's bigger in the Lone Star State."]},
+  { name:"UTAH", capital:"Salt Lake City", clues:["The golden spike joining the transcontinental railroad was driven here in 1869.","Mormon pioneers pulled handcarts a thousand miles to settle here.","Its capital is named for a giant salty lake."]},
+  { name:"VERMONT", capital:"Montpelier", clues:["Ben & Jerry started their ice cream empire in an old gas station here.","It makes more maple syrup than any other state.","It's the Green Mountain State."]},
+  { name:"VIRGINIA", capital:"Richmond", clues:["Jamestown, the first permanent English colony, was founded here in 1607.","Eight presidents were born here — the most of any state.","Its slogan says it's 'for lovers.'"]},
+  { name:"WASHINGTON", capital:"Olympia", clues:["It grows more apples than any other state.","The Space Needle rises over its biggest city.","It's the Evergreen State — the only one named for a president."]},
+  { name:"WEST VIRGINIA", capital:"Charleston", clues:["It split away from its neighbor during the Civil War.","Coal mining shaped its history and its people.","John Denver sang 'Country Roads' about it — 'almost heaven.'"]},
+  { name:"WISCONSIN", capital:"Madison", clues:["Harley-Davidson motorcycles have been built here since 1903.","Its football fans proudly wear foam cheese on their heads.","It's America's Dairyland, home of the Green Bay Packers."]},
+  { name:"WYOMING", capital:"Cheyenne", clues:["It was the first place in the nation where women could vote.","Old Faithful erupts here in the world's first national park.","It has the fewest people of any state — pure cowboy country."]}
+];
+
+let deck = [];
+let idx = 0;
+let clueCount = 1;
+let revealed = false;
+
+const $ = id => document.getElementById(id);
+
+function shuffle(arr){
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function renderClues(){
+  const s = deck[idx];
+  $("clueList").innerHTML = "";
+  for (let i = 0; i < clueCount; i++) {
+    const div = document.createElement("div");
+    div.className = "clue-line" + (i === clueCount - 1 ? " pop" : " opacity-60");
+    div.textContent = (i + 1) + ". " + s.clues[i];
+    $("clueList").appendChild(div);
+  }
+  $("clueLabel").textContent = clueCount < 3 ? "CLUE " + clueCount : "FINAL CLUE";
+  $("clueBtn").style.display = clueCount < 3 ? "inline-block" : "none";
+}
+
+function loadState(){
+  clueCount = 1;
+  revealed = false;
+  $("answer").classList.add("hidden");
+  $("capital").classList.add("hidden");
+  $("revealBtn").style.display = "inline-block";
+  renderClues();
+  $("progress").textContent = "State " + (idx + 1) + " of " + deck.length;
+}
+
+function nextClue(){
+  if (clueCount < 3) { clueCount++; renderClues(); }
+}
+
+function revealState(){
+  const s = deck[idx];
+  revealed = true;
+  $("answer").textContent = s.name;
+  $("answer").classList.remove("hidden");
+  $("capital").textContent = "Capital: " + s.capital;
+  $("capital").classList.remove("hidden");
+  $("revealBtn").style.display = "none";
+  $("clueBtn").style.display = "none";
+}
+
+function nextState(){
+  idx++;
+  if (idx >= deck.length) { deck = shuffle(STATES); idx = 0; }
+  loadState();
+}
+
+function toggleFullScreen(){
+  if (!document.fullscreenElement) document.documentElement.requestFullscreen();
+  else document.exitFullscreen();
+}
+
+/* Space bar walks the natural flow: clue → clue → reveal → next */
+document.addEventListener("keydown", (e) => {
+  if (e.code !== "Space") return;
+  if (e.target.tagName === "BUTTON" || e.target.tagName === "A") return;
+  e.preventDefault();
+  if (revealed) nextState();
+  else if (clueCount < 3) nextClue();
+  else revealState();
+});
+
+deck = shuffle(STATES);
+idx = 0;
+loadState();
+</script>
+
+</body>
+</html>
