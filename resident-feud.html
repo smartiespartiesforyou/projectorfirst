@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Resident Feud — ProjectorFirst</title>
+
+
+<!-- Membership gate (paywall-test) -->
+<script
+  data-memberstack-app="app_cmgnwpg8y00x10suih4pua785"
+  src="https://static.memberstack.com/scripts/v2/memberstack.js"
+  type="text/javascript">
+</script>
+<script src="/guard.js"></script>
+
+<style>
+:root{ --pf-blue:#1e3a8a; --pf-gold:#facc15; }
+*{ box-sizing:border-box; }
+html, body { height:100%; }
+body{
+  margin:0;
+  padding:12px 16px;
+  font-family:system-ui, sans-serif;
+  background:#fff;
+  color:#000;
+  min-height:100vh;
+  min-height:100dvh;
+}
+.page{ max-width:1600px; margin:0 auto; display:flex; flex-direction:column; gap:14px; }
+
+/* Header */
+.header{
+  display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;
+}
+.header h1{ margin:0; font-size:clamp(26px,4vw,44px); font-weight:900; color:var(--pf-blue); }
+.nav-btn{
+  background:var(--pf-blue); color:#fff; text-decoration:none;
+  font-weight:900; font-size:clamp(16px,2vw,22px);
+  padding:12px 20px; border-radius:14px; border:none; cursor:pointer;
+}
+.nav-btn:hover{ background:#1e40af; }
+
+/* Scoreboard */
+.top{ display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; }
+.score{ font-size:clamp(24px,3vw,44px); font-weight:900; color:var(--pf-blue); }
+.team-btn{
+  padding:12px 18px; font-size:clamp(16px,2vw,26px); font-weight:900;
+  border-radius:14px; border:3px solid #000; cursor:pointer; background:#fff;
+}
+.team-btn.active{ background:#000; color:#fff; }
+
+/* Question */
+.question{
+  font-size:clamp(24px,3.2vw,48px); font-weight:900; text-align:center;
+  border:4px solid #000; border-radius:18px; padding:16px;
+  background:var(--pf-gold);
+}
+
+/* Board */
+.board{ display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+.answer-card{
+  border:4px solid #000; border-radius:18px; padding:16px; min-height:96px;
+  display:flex; justify-content:space-between; align-items:center;
+  background:var(--pf-blue); color:#fff;
+  font-size:clamp(20px,2.4vw,34px); font-weight:900;
+  cursor:pointer; user-select:none;
+  transition: transform .12s;
+}
+.answer-card:hover{ transform:scale(1.015); }
+.answer-card .num{
+  width:1.6em; height:1.6em; border-radius:50%;
+  background:#fff; color:var(--pf-blue);
+  display:flex; align-items:center; justify-content:center;
+  margin:0 auto;
+}
+.answer-card.revealed{ background:#fff; color:#000; cursor:default; }
+.answer-card.revealed:hover{ transform:none; }
+.answer-score{ font-size:clamp(24px,3vw,42px); color:var(--pf-blue); }
+
+/* Strikes */
+.strikes{ font-size:clamp(28px,4vw,52px); font-weight:900; color:#dc2626; min-width:150px; text-align:center; letter-spacing:6px; }
+#bigX{
+  position:fixed; inset:0; display:none; align-items:center; justify-content:center;
+  background:rgba(0,0,0,.55); z-index:50;
+  font-size:clamp(160px,40vw,420px); font-weight:900; color:#dc2626;
+  text-shadow:0 0 40px rgba(0,0,0,.8);
+}
+
+/* Peek strip (director's answer key — small on purpose) */
+.peek{
+  display:none; font-size:14px; color:#64748b; text-align:center;
+  border:2px dashed #cbd5e1; border-radius:10px; padding:6px;
+}
+.peek.show{ display:block; }
+
+/* Controls */
+.controls{ display:flex; justify-content:center; gap:10px; flex-wrap:wrap; }
+.btn{
+  padding:14px 20px; font-size:clamp(16px,2vw,26px); font-weight:900;
+  border-radius:14px; border:3px solid #000; cursor:pointer; background:#fff;
+}
+.btn:hover{ transform:scale(1.03); }
+.btn-blue{ background:var(--pf-blue); color:#fff; }
+.btn-red{ background:#dc2626; color:#fff; }
+.btn:focus-visible, .nav-btn:focus-visible, .team-btn:focus-visible{ outline:4px solid var(--pf-gold); outline-offset:2px; }
+
+.progress{ text-align:center; font-weight:900; color:#64748b; font-size:clamp(14px,1.8vw,20px); }
+
+@media (max-width:700px){
+  .board{ grid-template-columns:1fr; }
+}
+</style>
+</head>
+
+<body>
+<div class="page">
+
+  <div class="header">
+    <a href="apps.html" class="nav-btn">← Back to Apps</a>
+    <h1>🎤 Resident Feud</h1>
+    <button class="nav-btn" onclick="toggleFullScreen()">⛶ Full Screen</button>
+  </div>
+
+  <div class="top">
+    <div class="score" id="scoreA">TABLE A: 0</div>
+    <div>
+      <button class="team-btn" id="btnA" onclick="setTeam('A')">Table A</button>
+      <button class="team-btn" id="btnB" onclick="setTeam('B')">Table B</button>
+    </div>
+    <div class="strikes" id="strikes"></div>
+    <div class="score" id="scoreB">TABLE B: 0</div>
+  </div>
+
+  <div class="question" id="question"></div>
+
+  <div class="board" id="board"></div>
+
+  <div id="peek" class="peek"></div>
+
+  <div class="controls">
+    <button class="btn btn-red" onclick="strike()">❌ Strike</button>
+    <button class="btn" onclick="togglePeek()">👁 Peek</button>
+    <a class="btn" href="resident-feud-host-key.html" target="_blank" style="text-decoration:none; display:inline-flex; align-items:center;">🖨 Host Key</a>
+    <button class="btn" onclick="revealAll()">Show Remaining</button>
+    <button class="btn btn-blue" onclick="nextQuestion()">Next Question →</button>
+  </div>
+
+  <div class="progress" id="progress"></div>
+
+</div>
+
+<div id="bigX">❌</div>
+
+<script>
+"use strict";
+
+/* 30 survey questions written for the folks in the room.
+   Tap the active table, tap a card when they guess it — points go to that table. */
+const QUESTIONS = [
+  { q:"Name something you'd find in Grandma's purse", a:[["TISSUES",34],["HARD CANDY",26],["COIN PURSE",15],["LIPSTICK",11],["PHOTOS",8],["PRAYER CARD",6]]},
+  { q:"Name a chore kids did on the farm", a:[["FEEDING CHICKENS",30],["MILKING COWS",25],["COLLECTING EGGS",18],["WEEDING THE GARDEN",13],["HAULING WATER",9],["SLOPPING HOGS",5]]},
+  { q:"Name something people did on Sunday after church", a:[["BIG FAMILY DINNER",38],["VISITED RELATIVES",24],["TOOK A NAP",17],["WENT FOR A DRIVE",12],["LISTENED TO THE RADIO",9]]},
+  { q:"Name a famous crooner", a:[["FRANK SINATRA",36],["BING CROSBY",27],["DEAN MARTIN",16],["PERRY COMO",12],["NAT KING COLE",9]]},
+  { q:"Name something you'd see at a drive-in movie", a:[["THE BIG SCREEN",28],["WINDOW SPEAKERS",24],["POPCORN",18],["TEENAGERS",14],["THE SNACK BAR",10],["MOSQUITOES",6]]},
+  { q:"Name a food you'd find at a church potluck", a:[["FRIED CHICKEN",32],["CASSEROLE",25],["DEVILED EGGS",17],["JELLO SALAD",13],["HOMEMADE PIE",9],["DINNER ROLLS",4]]},
+  { q:"Name something families did before television", a:[["LISTENED TO THE RADIO",35],["PLAYED CARDS",23],["READ BOOKS",16],["PLAYED BOARD GAMES",12],["SANG AROUND THE PIANO",9],["TOLD STORIES",5]]},
+  { q:"Name a place you went on a first date", a:[["THE MOVIES",33],["THE SODA FOUNTAIN",24],["A DANCE",18],["THE DINER",13],["THE DRIVE-IN",12]]},
+  { q:"Name something in a 1950s kitchen", a:[["COFFEE PERCOLATOR",27],["COOKIE JAR",23],["BREAD BOX",19],["APRON",14],["ICEBOX",10],["FLOUR SIFTER",7]]},
+  { q:"Name a game kids played outside", a:[["HIDE AND SEEK",30],["HOPSCOTCH",22],["TAG",17],["JUMP ROPE",14],["MARBLES",10],["KICK THE CAN",7]]},
+  { q:"Name something the milkman delivered", a:[["MILK",42],["BUTTER",22],["EGGS",16],["CREAM",12],["CHEESE",8]]},
+  { q:"Name a reason kids got sent to the principal's office", a:[["TALKING IN CLASS",31],["CHEWING GUM",25],["PASSING NOTES",18],["FIGHTING",14],["BEING TARDY",12]]},
+  { q:"Name something you could win at the county fair", a:[["BLUE RIBBON",33],["STUFFED ANIMAL",26],["GOLDFISH",18],["KEWPIE DOLL",13],["CAKE PRIZE",10]]},
+  { q:"Name a famous TV western", a:[["GUNSMOKE",34],["BONANZA",28],["THE LONE RANGER",16],["RAWHIDE",12],["WAGON TRAIN",10]]},
+  { q:"Name something Mom made from scratch", a:[["BREAD",29],["PIE",24],["OUR CLOTHES",17],["JAM",13],["BISCUITS",10],["BIRTHDAY CAKES",7]]},
+  { q:"Name a way kids earned pocket money", a:[["PAPER ROUTE",32],["BABYSITTING",25],["MOWING LAWNS",19],["SHOVELING SNOW",13],["RETURNING BOTTLES",11]]},
+  { q:"Name something found in Dad's garage", a:[["TOOLS",36],["WORKBENCH",22],["JARS OF NAILS",15],["FISHING GEAR",13],["OIL CANS",9],["THE GOOD FLASHLIGHT",5]]},
+  { q:"Name a dance from back in the day", a:[["THE JITTERBUG",30],["THE WALTZ",23],["THE TWIST",19],["THE FOXTROT",15],["SWING",13]]},
+  { q:"Name something people put on their Christmas tree", a:[["TINSEL",31],["GLASS ORNAMENTS",25],["POPCORN STRINGS",17],["AN ANGEL ON TOP",14],["COLORED LIGHTS",13]]},
+  { q:"Name a flavor at the old soda fountain", a:[["CHOCOLATE",33],["VANILLA",26],["STRAWBERRY",17],["CHERRY",14],["ROOT BEER",10]]},
+  { q:"Name something you did at a sock hop", a:[["DANCED",40],["DRANK PUNCH",21],["LISTENED TO RECORDS",16],["MET A SWEETHEART",13],["STOOD BY THE WALL",10]]},
+  { q:"Name something you could order from the Sears catalog", a:[["CLOTHES",30],["TOOLS",22],["APPLIANCES",18],["TOYS",15],["A WHOLE HOUSE!",15]]},
+  { q:"Name something people canned or preserved", a:[["TOMATOES",29],["GREEN BEANS",24],["PEACHES",18],["PICKLES",16],["JAM",13]]},
+  { q:"Name a classic TV funny man", a:[["JACKIE GLEASON",28],["RED SKELTON",24],["BOB HOPE",20],["MILTON BERLE",15],["JACK BENNY",13]]},
+  { q:"Name something in a one-room schoolhouse", a:[["CHALKBOARD",33],["WOOD STOVE",23],["SCHOOL BELL",18],["INKWELLS",14],["McGUFFEY READERS",12]]},
+  { q:"Name something you needed for a picnic", a:[["PICNIC BASKET",31],["BLANKET",24],["FRIED CHICKEN",19],["LEMONADE",14],["WATERMELON",12]]},
+  { q:"Name a way people kept cool before air conditioning", a:[["ELECTRIC FAN",29],["SAT ON THE PORCH",24],["THE SWIMMING HOLE",18],["SHADE TREE",15],["BLOCK OF ICE",14]]},
+  { q:"Name something a 1950s teenager saved up for", a:[["A CAR",34],["RECORD PLAYER",23],["RECORDS",17],["TRANSISTOR RADIO",14],["PROM CLOTHES",12]]},
+  { q:"Name a sound you'd hear on an old farm", a:[["ROOSTER CROWING",34],["COWS MOOING",24],["THE TRACTOR",16],["SCREEN DOOR SLAM",14],["THE WINDMILL",12]]},
+  { q:"Name something people did by hand before machines", a:[["WASHED CLOTHES",30],["SEWED CLOTHES",23],["CHURNED BUTTER",18],["KNEADED BREAD",15],["WROTE LETTERS",14]]}
+];
+
+let deck = [];
+let qIdx = 0;
+let team = "A";
+let scoreA = 0, scoreB = 0;
+let strikeCount = 0;
+let audioCtx = null;
+
+const $ = id => document.getElementById(id);
+
+function shuffle(arr){
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+/* Tiny built-in sounds — no audio files to break */
+function tone(freq, dur, type){
+  try {
+    audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+    const o = audioCtx.createOscillator();
+    const g = audioCtx.createGain();
+    o.type = type; o.frequency.value = freq;
+    g.gain.setValueAtTime(0.25, audioCtx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + dur);
+    o.connect(g); g.connect(audioCtx.destination);
+    o.start(); o.stop(audioCtx.currentTime + dur);
+  } catch(e) {}
+}
+const ding = () => { tone(880, .35, "sine"); setTimeout(() => tone(1320, .4, "sine"), 90); };
+const buzzer = () => tone(110, .8, "sawtooth");
+
+function loadQuestion(){
+  const q = deck[qIdx];
+  strikeCount = 0;
+  $("strikes").textContent = "";
+  $("question").textContent = q.q;
+  $("peek").classList.remove("show");
+  $("peek").textContent = "Answers: " + q.a.map(x => x[0]).join("  •  ");
+  $("progress").textContent = "Question " + (qIdx + 1) + " of " + deck.length;
+
+  const board = $("board");
+  board.innerHTML = "";
+  q.a.forEach((ans, i) => {
+    const card = document.createElement("div");
+    card.className = "answer-card";
+    card.innerHTML = '<div class="num">' + (i + 1) + '</div>';
+    card.onclick = () => reveal(card, i);
+    board.appendChild(card);
+  });
+}
+
+function reveal(card, i){
+  if (card.classList.contains("revealed")) return;
+  const [text, points] = deck[qIdx].a[i];
+  card.classList.add("revealed");
+  card.innerHTML = '<div>' + (i + 1) + '. ' + text + '</div><div class="answer-score">' + points + '</div>';
+  if (team === "A") scoreA += points; else scoreB += points;
+  updateScores();
+  ding();
+}
+
+function revealAll(){
+  /* end of round — show what's left WITHOUT giving points */
+  const q = deck[qIdx];
+  document.querySelectorAll(".answer-card").forEach((card, i) => {
+    if (!card.classList.contains("revealed")) {
+      const [text, points] = q.a[i];
+      card.classList.add("revealed");
+      card.innerHTML = '<div>' + (i + 1) + '. ' + text + '</div><div class="answer-score">' + points + '</div>';
+    }
+  });
+}
+
+function strike(){
+  if (strikeCount >= 3) return;
+  strikeCount++;
+  $("strikes").textContent = "❌".repeat(strikeCount);
+  buzzer();
+  const x = $("bigX");
+  x.style.display = "flex";
+  setTimeout(() => { x.style.display = "none"; }, 900);
+}
+
+function setTeam(t){
+  team = t;
+  $("btnA").classList.toggle("active", t === "A");
+  $("btnB").classList.toggle("active", t === "B");
+}
+
+function updateScores(){
+  $("scoreA").textContent = "TABLE A: " + scoreA;
+  $("scoreB").textContent = "TABLE B: " + scoreB;
+}
+
+function togglePeek(){
+  $("peek").classList.toggle("show");
+}
+
+function nextQuestion(){
+  qIdx++;
+  if (qIdx >= deck.length) { deck = shuffle(QUESTIONS); qIdx = 0; }
+  loadQuestion();
+}
+
+function toggleFullScreen(){
+  if (!document.fullscreenElement) document.documentElement.requestFullscreen();
+  else document.exitFullscreen();
+}
+
+deck = shuffle(QUESTIONS);
+qIdx = 0;
+setTeam("A");
+updateScores();
+loadQuestion();
+</script>
+</body>
+</html>
