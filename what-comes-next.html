@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>What Comes Next? — ProjectorFirst</title>
+
+<!-- Membership gate (paywall-test) -->
+<script
+  data-memberstack-app="app_cmgnwpg8y00x10suih4pua785"
+  src="https://static.memberstack.com/scripts/v2/memberstack.js"
+  type="text/javascript">
+</script>
+<script src="/guard.js"></script>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    html, body {
+      height: 100vh;
+      height: 100dvh;
+      margin: 0;
+      overflow: hidden;
+      background: #1e3a8a;
+      font-family: ui-rounded, system-ui, -apple-system, "Segoe UI", sans-serif;
+    }
+    .screen { height: 100vh; height: 100dvh; display: flex; flex-direction: column; }
+    .btn-big {
+      font-weight: 900;
+      border-radius: 1.25rem;
+      border: 4px solid #0f265f;
+      box-shadow: 0 6px 0 #0f265f;
+      transition: transform .08s ease, box-shadow .08s ease;
+      cursor: pointer;
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: manipulation;
+    }
+    .btn-big:active { transform: translateY(4px); box-shadow: 0 2px 0 #0f265f; }
+    .pat-item {
+      font-size: clamp(2.6rem, 10vw, 6.5rem);
+      line-height: 1.1;
+    }
+    .mystery {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: clamp(3.2rem, 12vw, 7.5rem);
+      height: clamp(3.2rem, 12vw, 7.5rem);
+      background: #facc15;
+      border: 4px dashed #fff;
+      border-radius: 1rem;
+      font-size: clamp(2rem, 8vw, 5rem);
+      font-weight: 900;
+      color: #1e3a8a;
+      animation: pulse 1.2s ease infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.08); }
+    }
+    .mystery.solved {
+      border-style: solid;
+      animation: popIn .5s cubic-bezier(.2,1.6,.4,1) both;
+      background: #fff;
+    }
+    .choice-btn {
+      background: #fff;
+      border: 4px solid #0f265f;
+      border-radius: 1.25rem;
+      box-shadow: 0 6px 0 #0f265f;
+      font-size: clamp(2.2rem, 8vw, 4.5rem);
+      padding: .4rem 1.2rem;
+      cursor: pointer;
+      touch-action: manipulation;
+      transition: transform .08s ease;
+      line-height: 1.2;
+    }
+    .choice-btn:active { transform: translateY(4px); box-shadow: 0 2px 0 #0f265f; }
+    .choice-btn.dimmed { opacity: .35; }
+    .choice-btn.winner {
+      background: #facc15;
+      border-color: #fff;
+      box-shadow: 0 0 24px #facc15aa;
+    }
+    .choice-btn.wobble { animation: wobble .4s ease; }
+    @keyframes wobble {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-8px); }
+      75% { transform: translateX(8px); }
+    }
+    @keyframes popIn {
+      0% { transform: scale(.3); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    .confetti {
+      position: fixed;
+      top: -20px;
+      pointer-events: none;
+      z-index: 50;
+      font-size: clamp(1.2rem, 3vw, 2rem);
+      animation: fall linear forwards;
+    }
+    @keyframes fall { to { transform: translateY(110vh) rotate(720deg); opacity: .9; } }
+    @media (prefers-reduced-motion: reduce) {
+      .mystery, .mystery.solved, .choice-btn.wobble { animation: none; }
+      .confetti { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ===== START SCREEN ===== -->
+  <div id="startScreen" class="screen">
+    <header class="flex items-center justify-between px-4 pt-4 pb-2">
+      <a href="apps.html" class="btn-big bg-white text-blue-900 text-lg md:text-xl px-4 py-2 no-underline">← Back to Apps</a>
+      <label class="flex items-center gap-2 text-white font-bold text-lg md:text-xl cursor-pointer select-none">
+        <input type="checkbox" id="voiceToggle" class="w-6 h-6 accent-yellow-400" checked>
+        🔊 Voice
+      </label>
+    </header>
+    <main class="flex-1 flex flex-col items-center justify-center px-4 gap-5 overflow-y-auto">
+      <div class="text-center">
+        <div style="font-size: clamp(2.6rem, 8vw, 4.5rem); line-height:1;">🔴🔵🔴🔵❓</div>
+        <h1 class="text-yellow-300 font-black" style="font-size: clamp(2rem, 7vw, 4.4rem); text-shadow: 4px 4px 0 #0f265f;">WHAT COMES NEXT?</h1>
+        <p class="text-white font-bold max-w-2xl mx-auto" style="font-size: clamp(1rem, 2.8vw, 1.5rem);">Look at the pattern, then pick what comes next! Made with love for memory care.</p>
+      </div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full max-w-2xl pb-4">
+        <button class="btn-big bg-yellow-400 text-blue-900 px-6 py-5" style="font-size: clamp(1.3rem, 4vw, 2rem); border-color:#b45309; box-shadow: 0 6px 0 #b45309;" onclick="startGame('easy')">🌱 Easy Patterns<br><span class="text-base md:text-lg font-bold">A-B-A-B</span></button>
+        <button class="btn-big bg-white text-blue-900 px-6 py-5" style="font-size: clamp(1.3rem, 4vw, 2rem);" onclick="startGame('mixed')">🌼 Mixed Patterns<br><span class="text-base md:text-lg font-bold">A little trickier</span></button>
+      </div>
+    </main>
+  </div>
+
+  <!-- ===== GAME SCREEN ===== -->
+  <div id="gameScreen" class="screen" style="display:none;">
+    <header class="flex items-center justify-between px-4 pt-4 pb-1 gap-2 flex-wrap">
+      <a href="apps.html" class="btn-big bg-white text-blue-900 text-base md:text-xl px-3 py-2 no-underline">← Back to Apps</a>
+      <h1 class="text-yellow-300 font-black" style="font-size: clamp(1.2rem, 4vw, 2.2rem); text-shadow: 3px 3px 0 #0f265f;">❓ WHAT COMES NEXT?</h1>
+      <button class="btn-big bg-white text-blue-900 text-base md:text-xl px-3 py-2" onclick="goHome()">☰ Levels</button>
+    </header>
+
+    <div class="text-center text-white font-black" style="font-size: clamp(1.1rem, 3.4vw, 1.9rem);" id="hostLine">What comes next in the pattern?</div>
+    <div class="text-center text-blue-200 font-bold" style="font-size: clamp(.9rem, 2.4vw, 1.2rem);" id="roundLabel"></div>
+
+    <main class="flex-1 flex flex-col items-center justify-center px-3 min-h-0 gap-4">
+      <div id="pattern" class="flex flex-wrap items-center justify-center gap-2 md:gap-4 max-w-5xl"></div>
+
+      <div class="text-blue-200 font-black" style="font-size: clamp(1rem, 2.8vw, 1.5rem);">Pick one:</div>
+      <div id="choices" class="flex flex-wrap justify-center gap-3 md:gap-6"></div>
+    </main>
+
+    <footer class="px-4 pb-5 pt-1">
+      <div class="flex justify-center gap-3 md:gap-5 flex-wrap max-w-2xl mx-auto">
+        <button id="revealBtn" class="btn-big bg-yellow-400 text-blue-900 px-5 py-4 flex-1 min-w-[10rem]" style="font-size: clamp(1.2rem, 3.8vw, 2rem); border-color:#b45309; box-shadow: 0 6px 0 #b45309;" onclick="reveal()">✨ Show the Answer!</button>
+        <button id="nextBtn" class="btn-big bg-white text-blue-900 px-5 py-4 flex-1 min-w-[10rem]" style="font-size: clamp(1.2rem, 3.8vw, 2rem);" onclick="nextRound()">Next ➡️</button>
+      </div>
+      <div class="text-center text-blue-300 font-semibold mt-2 hidden md:block" style="font-size: clamp(.85rem, 2vw, 1.05rem);">Tap the right answer, or press SPACE to reveal, then advance</div>
+    </footer>
+  </div>
+
+<script>
+// ============ ITEM SETS: friendly, high-contrast pairs ============
+const SETS = [
+  ["🔴", "🔵"], ["⭐", "🌙"], ["🍎", "🍌"], ["🐶", "🐱"], ["🌹", "🌻"],
+  ["❤️", "💛"], ["🟡", "🟢"], ["🐦", "🐟"], ["☀️", "☁️"], ["🍪", "🧁"],
+  ["🦆", "🐰"], ["⚾", "🏀"], ["🎈", "🎁"], ["🌷", "🍀"], ["🚗", "🚂"],
+];
+const THIRDS = ["🟣", "🍇", "🐢", "🌈", "💙", "🍊", "🦋", "⭐"];
+
+// Pattern templates by level. Repeat the unit enough times, then hide the next item.
+const EASY_TEMPLATES = [ [0,1], [0,0,1] ];
+const MIXED_TEMPLATES = [ [0,1], [0,0,1], [0,1,1], [0,1,2] ];
+
+// ============ STATE ============
+let level = "easy";
+let round = 0;
+let answer = null;
+let choices = [];
+let revealed = false;
+
+// ============ AUDIO ============
+let audioCtx = null;
+function getCtx() {
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  if (audioCtx.state === "suspended") audioCtx.resume();
+  return audioCtx;
+}
+function tone(freq, start, dur, type, vol) {
+  const ctx = getCtx();
+  const o = ctx.createOscillator();
+  const g = ctx.createGain();
+  o.type = type || "triangle";
+  o.frequency.value = freq;
+  g.gain.setValueAtTime(0.0001, ctx.currentTime + start);
+  g.gain.exponentialRampToValueAtTime(vol || 0.25, ctx.currentTime + start + 0.02);
+  g.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + start + dur);
+  o.connect(g).connect(ctx.destination);
+  o.start(ctx.currentTime + start);
+  o.stop(ctx.currentTime + start + dur + 0.05);
+}
+function popSound() { tone(520, 0, 0.12, "triangle", 0.2); }
+function softNote() { tone(330, 0, 0.18, "sine", 0.15); }
+function fanfare() {
+  tone(523, 0.00, 0.18, "triangle", 0.28);
+  tone(659, 0.14, 0.18, "triangle", 0.28);
+  tone(784, 0.28, 0.18, "triangle", 0.28);
+  tone(1047, 0.42, 0.45, "triangle", 0.32);
+}
+
+// ============ VOICE ============
+function speakText(text) {
+  if (!document.getElementById("voiceToggle").checked) return;
+  if (!("speechSynthesis" in window)) return;
+  window.speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text);
+  u.rate = 0.9;
+  window.speechSynthesis.speak(u);
+}
+
+// ============ SCREENS ============
+function show(id) {
+  for (const s of ["startScreen", "gameScreen"]) {
+    document.getElementById(s).style.display = (s === id) ? "flex" : "none";
+  }
+}
+function goHome() {
+  window.speechSynthesis && window.speechSynthesis.cancel();
+  show("startScreen");
+}
+
+// ============ ROUNDS ============
+function shuffle(arr) {
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+function startGame(lvl) {
+  level = lvl;
+  round = 0;
+  show("gameScreen");
+  nextRound();
+}
+function buildRound() {
+  const templates = level === "easy" ? EASY_TEMPLATES : MIXED_TEMPLATES;
+  const template = templates[Math.floor(Math.random() * templates.length)];
+  const pair = SETS[Math.floor(Math.random() * SETS.length)];
+  let items = pair.slice();
+  if (template.indexOf(2) !== -1) {
+    let third;
+    do { third = THIRDS[Math.floor(Math.random() * THIRDS.length)]; }
+    while (items.indexOf(third) !== -1);
+    items.push(third);
+  }
+  // Build the visible sequence: repeat the unit, then cut so the mystery item is the answer.
+  const unitLen = template.length;
+  const repeats = unitLen === 2 ? 3 : 2; // 6 items for AB, 6 for AAB/ABB/ABC
+  const full = [];
+  for (let r = 0; r <= repeats; r++) {
+    for (const idx of template) full.push(items[idx]);
+  }
+  const visibleCount = unitLen * repeats;
+  const visible = full.slice(0, visibleCount);
+  const ans = full[visibleCount];
+  // Choices: the answer plus the other item(s) in the pattern, shuffled.
+  const opts = shuffle(items.slice());
+  return { visible: visible, answer: ans, options: opts };
+}
+function nextRound() {
+  window.speechSynthesis && window.speechSynthesis.cancel();
+  revealed = false;
+  round++;
+  const data = buildRound();
+  answer = data.answer;
+  choices = data.options;
+
+  document.getElementById("roundLabel").textContent = "Pattern " + round;
+  document.getElementById("hostLine").textContent = "What comes next in the pattern?";
+
+  const pat = document.getElementById("pattern");
+  pat.innerHTML = "";
+  data.visible.forEach(it => {
+    const s = document.createElement("span");
+    s.className = "pat-item";
+    s.textContent = it;
+    pat.appendChild(s);
+  });
+  const q = document.createElement("span");
+  q.className = "mystery";
+  q.id = "mystery";
+  q.textContent = "?";
+  pat.appendChild(q);
+
+  const ch = document.getElementById("choices");
+  ch.innerHTML = "";
+  choices.forEach((c, i) => {
+    const b = document.createElement("button");
+    b.className = "choice-btn";
+    b.id = "opt" + i;
+    b.textContent = c;
+    b.onclick = function () { pick(i); };
+    ch.appendChild(b);
+  });
+
+  document.getElementById("revealBtn").style.visibility = "visible";
+  popSound();
+  speakText("What comes next in the pattern?");
+}
+function pick(i) {
+  if (revealed) return;
+  if (choices[i] === answer) {
+    reveal();
+  } else {
+    const el = document.getElementById("opt" + i);
+    el.classList.remove("wobble");
+    void el.offsetWidth;
+    el.classList.add("wobble");
+    softNote();
+  }
+}
+function reveal() {
+  if (revealed) return;
+  revealed = true;
+  const m = document.getElementById("mystery");
+  m.textContent = answer;
+  m.classList.add("solved");
+  choices.forEach((c, i) => {
+    const el = document.getElementById("opt" + i);
+    if (c === answer) el.classList.add("winner");
+    else el.classList.add("dimmed");
+  });
+  document.getElementById("hostLine").textContent = "That's it! Great pattern spotting!";
+  document.getElementById("revealBtn").style.visibility = "hidden";
+  fanfare();
+  throwConfetti(14);
+  speakText("That's it! Great job!");
+}
+
+// ============ CONFETTI ============
+const CONFETTI_EMOJI = ["🎉", "✨", "⭐", "🎊", "💛", "💙"];
+function throwConfetti(count) {
+  const n = count || 14;
+  for (let i = 0; i < n; i++) {
+    const el = document.createElement("div");
+    el.className = "confetti";
+    el.textContent = CONFETTI_EMOJI[Math.floor(Math.random() * CONFETTI_EMOJI.length)];
+    el.style.left = Math.random() * 100 + "vw";
+    el.style.animationDuration = (1.8 + Math.random() * 1.6) + "s";
+    el.style.animationDelay = (Math.random() * 0.4) + "s";
+    document.body.appendChild(el);
+    setTimeout(() => el.remove(), 4200);
+  }
+}
+
+// ============ SPACE BAR ============
+document.addEventListener("keydown", function (ev) {
+  if (ev.code !== "Space" && ev.key !== " ") return;
+  if (document.getElementById("gameScreen").style.display === "none") return;
+  ev.preventDefault();
+  if (!revealed) reveal();
+  else nextRound();
+});
+</script>
+</body>
+</html>

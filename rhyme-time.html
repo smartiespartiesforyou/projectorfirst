@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Rhyme Time — ProjectorFirst</title>
+
+<!-- Membership gate (paywall-test) -->
+<script
+  data-memberstack-app="app_cmgnwpg8y00x10suih4pua785"
+  src="https://static.memberstack.com/scripts/v2/memberstack.js"
+  type="text/javascript">
+</script>
+<script src="/guard.js"></script>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    html, body {
+      height: 100vh;
+      height: 100dvh;
+      margin: 0;
+      overflow: hidden;
+      background: #1e3a8a;
+      font-family: ui-rounded, system-ui, -apple-system, "Segoe UI", sans-serif;
+    }
+    .screen { height: 100vh; height: 100dvh; display: flex; flex-direction: column; }
+    .btn-big {
+      font-weight: 900;
+      border-radius: 1.25rem;
+      border: 4px solid #0f265f;
+      box-shadow: 0 6px 0 #0f265f;
+      transition: transform .08s ease, box-shadow .08s ease;
+      cursor: pointer;
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: manipulation;
+    }
+    .btn-big:active { transform: translateY(4px); box-shadow: 0 2px 0 #0f265f; }
+    .rhyme-chip {
+      background: #facc15;
+      color: #1e3a8a;
+      font-weight: 900;
+      border: 3px solid #fff;
+      border-radius: 1rem;
+      padding: .4rem 1rem;
+      font-size: clamp(1.2rem, 4vw, 2.4rem);
+      animation: popIn .4s cubic-bezier(.2,1.6,.4,1) both;
+      box-shadow: 0 4px 0 #b45309;
+    }
+    @keyframes popIn {
+      0% { transform: scale(.3); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    .confetti {
+      position: fixed;
+      top: -20px;
+      pointer-events: none;
+      z-index: 50;
+      font-size: clamp(1.2rem, 3vw, 2rem);
+      animation: fall linear forwards;
+    }
+    @keyframes fall { to { transform: translateY(110vh) rotate(720deg); opacity: .9; } }
+    @media (prefers-reduced-motion: reduce) {
+      .rhyme-chip { animation: none; }
+      .confetti { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <div id="gameScreen" class="screen">
+    <header class="flex items-center justify-between px-4 pt-4 pb-1 gap-2 flex-wrap">
+      <a href="apps.html" class="btn-big bg-white text-blue-900 text-base md:text-xl px-3 py-2 no-underline">← Back to Apps</a>
+      <h1 class="text-yellow-300 font-black" style="font-size: clamp(1.3rem, 4.5vw, 2.4rem); text-shadow: 3px 3px 0 #0f265f;">🎶 RHYME TIME</h1>
+      <label class="flex items-center gap-2 text-white font-bold text-sm md:text-lg cursor-pointer select-none">
+        <input type="checkbox" id="voiceToggle" class="w-5 h-5 md:w-6 md:h-6 accent-yellow-400" checked>
+        🔊 Voice
+      </label>
+    </header>
+
+    <div class="text-center text-white font-black" style="font-size: clamp(1.1rem, 3.4vw, 1.9rem);">What rhymes with...</div>
+    <div class="text-center text-blue-200 font-bold" style="font-size: clamp(.9rem, 2.4vw, 1.2rem);" id="progressLabel"></div>
+
+    <main class="flex-1 flex flex-col items-center justify-center px-3 min-h-0 gap-2">
+      <div id="wordEmoji" class="text-center" style="font-size: clamp(3.5rem, 13vw, 8rem); line-height: 1;"></div>
+      <div id="bigWord" class="text-yellow-300 font-black text-center" style="font-size: clamp(3.5rem, 14vw, 9rem); line-height: 1; text-shadow: 5px 5px 0 #0f265f; letter-spacing: .05em;"></div>
+
+      <div id="rhymes" class="flex flex-wrap justify-center gap-2 md:gap-3 max-w-4xl min-h-[4rem] px-2"></div>
+    </main>
+
+    <footer class="px-4 pb-5 pt-1">
+      <div class="flex justify-center gap-3 md:gap-5 flex-wrap max-w-2xl mx-auto">
+        <button id="revealBtn" class="btn-big bg-yellow-400 text-blue-900 px-5 py-4 flex-1 min-w-[10rem]" style="font-size: clamp(1.2rem, 3.8vw, 2rem); border-color:#b45309; box-shadow: 0 6px 0 #b45309;" onclick="reveal()">✨ Show Rhymes!</button>
+        <button id="nextBtn" class="btn-big bg-white text-blue-900 px-5 py-4 flex-1 min-w-[10rem]" style="font-size: clamp(1.2rem, 3.8vw, 2rem);" onclick="nextWord()">Next Word ➡️</button>
+      </div>
+      <div class="text-center text-blue-300 font-semibold mt-2 hidden md:block" style="font-size: clamp(.85rem, 2vw, 1.05rem);">Shout out rhymes first, then reveal! SPACE = reveal, then advance</div>
+    </footer>
+  </div>
+
+<script>
+// ============ WORDS: easy one-syllable words with rich rhyme lists ============
+const WORDS = [
+  { e: "🐱", w: "CAT", r: ["HAT","BAT","MAT","RAT","SAT","FLAT","PAT"] },
+  { e: "🐶", w: "DOG", r: ["LOG","FROG","FOG","HOG","JOG"] },
+  { e: "☀️", w: "SUN", r: ["FUN","RUN","BUN","ONE","DONE","WON"] },
+  { e: "⭐", w: "STAR", r: ["CAR","FAR","JAR","BAR"] },
+  { e: "🍰", w: "CAKE", r: ["BAKE","LAKE","RAKE","SNAKE","MAKE","TAKE","SHAKE"] },
+  { e: "🌙", w: "MOON", r: ["SPOON","SOON","TUNE","NOON","BALLOON"] },
+  { e: "🐝", w: "BEE", r: ["TREE","SEE","KEY","FREE","THREE","KNEE"] },
+  { e: "🌞", w: "DAY", r: ["WAY","SAY","PLAY","STAY","HAY","GRAY","TRAY"] },
+  { e: "🌃", w: "NIGHT", r: ["LIGHT","BRIGHT","KITE","RIGHT","SIGHT","FLIGHT"] },
+  { e: "💍", w: "RING", r: ["KING","SING","WING","SPRING","THING","SWING"] },
+  { e: "⚾", w: "BALL", r: ["TALL","WALL","FALL","CALL","HALL","SMALL"] },
+  { e: "🥧", w: "PIE", r: ["SKY","TIE","FLY","EYE","MY","HIGH"] },
+  { e: "🌹", w: "ROSE", r: ["NOSE","TOES","HOSE","BOWS","GOES"] },
+  { e: "⛵", w: "BOAT", r: ["COAT","GOAT","FLOAT","NOTE","VOTE"] },
+  { e: "🚂", w: "TRAIN", r: ["RAIN","PLANE","BRAIN","CHAIN","CANE","MAIN"] },
+  { e: "❄️", w: "SNOW", r: ["GO","SLOW","GROW","SHOW","BLOW","CROW","ROW"] },
+  { e: "🐻", w: "BEAR", r: ["CHAIR","HAIR","PEAR","SHARE","STAIR","AIR"] },
+  { e: "🐟", w: "FISH", r: ["DISH","WISH","SWISH"] },
+  { e: "🕰️", w: "CLOCK", r: ["SOCK","ROCK","BLOCK","LOCK","KNOCK"] },
+  { e: "👞", w: "SHOE", r: ["BLUE","TWO","GLUE","NEW","TRUE","MOO"] },
+  { e: "👒", w: "HAT", r: ["CAT","BAT","MAT","RAT","FLAT","PAT"] },
+  { e: "🍳", w: "PAN", r: ["MAN","CAN","FAN","VAN","PLAN","TAN"] },
+  { e: "🐷", w: "PIG", r: ["BIG","DIG","WIG","FIG","TWIG"] },
+  { e: "🐔", w: "HEN", r: ["PEN","TEN","MEN","DEN","WHEN"] },
+  { e: "🐮", w: "COW", r: ["HOW","NOW","WOW","PLOW"] },
+  { e: "🦆", w: "DUCK", r: ["TRUCK","LUCK","CLUCK","STUCK"] },
+  { e: "🐐", w: "GOAT", r: ["BOAT","COAT","NOTE","FLOAT"] },
+  { e: "🧹", w: "MOP", r: ["TOP","HOP","POP","STOP","SHOP","DROP"] },
+  { e: "🛏️", w: "BED", r: ["RED","HEAD","BREAD","SLED","THREAD"] },
+  { e: "🍵", w: "TEA", r: ["BEE","SEA","KEY","THREE","FREE","ME"] },
+  { e: "🌽", w: "CORN", r: ["HORN","BORN","WORN","TORN"] },
+  { e: "🍑", w: "PEACH", r: ["BEACH","REACH","TEACH","EACH"] },
+  { e: "🍐", w: "PEAR", r: ["BEAR","CHAIR","HAIR","SHARE","AIR"] },
+  { e: "🥁", w: "DRUM", r: ["GUM","SUM","THUMB","HUM","PLUM"] },
+  { e: "🍞", w: "BREAD", r: ["BED","RED","HEAD","SLED","SAID"] },
+  { e: "🧀", w: "CHEESE", r: ["PLEASE","BEES","KEYS","TREES","SNEEZE","BREEZE"] },
+  { e: "🍚", w: "RICE", r: ["MICE","NICE","DICE","ICE","TWICE","SPICE"] },
+  { e: "🫘", w: "BEAN", r: ["GREEN","QUEEN","CLEAN","SEEN","MEAN"] },
+  { e: "🍖", w: "HAM", r: ["JAM","LAMB","CLAM","SLAM","GRAM"] },
+  { e: "🥄", w: "SPOON", r: ["MOON","SOON","NOON","TUNE","BALLOON"] },
+  { e: "🧹", w: "BROOM", r: ["ROOM","ZOOM","BLOOM","GROOM"] },
+  { e: "🪮", w: "COMB", r: ["HOME","FOAM","ROAM","GNOME"] },
+  { e: "💡", w: "LAMP", r: ["CAMP","STAMP","DAMP","CHAMP"] },
+  { e: "🚪", w: "DOOR", r: ["FLOOR","FOUR","MORE","STORE","SNORE"] },
+  { e: "🧱", w: "WALL", r: ["BALL","TALL","FALL","CALL","SMALL","HALL"] },
+  { e: "🐛", w: "BUG", r: ["HUG","MUG","JUG","TUG","SNUG","RUG"] },
+  { e: "🌳", w: "TREE", r: ["BEE","SEE","KEY","FREE","THREE","KNEE"] },
+  { e: "🌱", w: "SEED", r: ["NEED","FEED","WEED","READ","BEAD"] },
+  { e: "🌧️", w: "RAIN", r: ["TRAIN","PLANE","BRAIN","CHAIN","CANE"] },
+  { e: "☁️", w: "CLOUD", r: ["LOUD","PROUD","CROWD"] },
+  { e: "🏞️", w: "LAKE", r: ["CAKE","BAKE","RAKE","SNAKE","TAKE","MAKE"] },
+  { e: "⛰️", w: "HILL", r: ["BILL","FILL","MILL","PILL","SPILL","STILL"] },
+  { e: "🪨", w: "ROCK", r: ["SOCK","CLOCK","BLOCK","LOCK","KNOCK"] },
+  { e: "🐭", w: "MOUSE", r: ["HOUSE","BLOUSE"] },
+  { e: "🚗", w: "CAR", r: ["STAR","FAR","JAR","BAR"] },
+  { e: "🧦", w: "SOCK", r: ["ROCK","CLOCK","BLOCK","LOCK","KNOCK"] },
+];
+
+// ============ STATE ============
+let deck = [];
+let deckIndex = 0;
+let revealed = false;
+
+// ============ AUDIO ============
+let audioCtx = null;
+function getCtx() {
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  if (audioCtx.state === "suspended") audioCtx.resume();
+  return audioCtx;
+}
+function tone(freq, start, dur, type, vol) {
+  const ctx = getCtx();
+  const o = ctx.createOscillator();
+  const g = ctx.createGain();
+  o.type = type || "triangle";
+  o.frequency.value = freq;
+  g.gain.setValueAtTime(0.0001, ctx.currentTime + start);
+  g.gain.exponentialRampToValueAtTime(vol || 0.25, ctx.currentTime + start + 0.02);
+  g.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + start + dur);
+  o.connect(g).connect(ctx.destination);
+  o.start(ctx.currentTime + start);
+  o.stop(ctx.currentTime + start + dur + 0.05);
+}
+function popSound() { tone(520, 0, 0.12, "triangle", 0.2); }
+function ding(i) { tone(700 + i * 70, 0, 0.2, "triangle", 0.22); }
+function fanfare() {
+  tone(523, 0.00, 0.18, "triangle", 0.28);
+  tone(659, 0.14, 0.18, "triangle", 0.28);
+  tone(784, 0.28, 0.18, "triangle", 0.28);
+  tone(1047, 0.42, 0.45, "triangle", 0.32);
+}
+
+// ============ VOICE ============
+function speakText(text) {
+  if (!document.getElementById("voiceToggle").checked) return;
+  if (!("speechSynthesis" in window)) return;
+  window.speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text);
+  u.rate = 0.9;
+  window.speechSynthesis.speak(u);
+}
+
+// ============ DECK ============
+function shuffle(arr) {
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+// ============ GAME ============
+function renderWord() {
+  revealed = false;
+  const it = deck[deckIndex];
+  document.getElementById("wordEmoji").textContent = it.e;
+  document.getElementById("bigWord").textContent = it.w;
+  document.getElementById("progressLabel").textContent = "Word " + (deckIndex + 1) + " of " + deck.length;
+  document.getElementById("rhymes").innerHTML = "";
+  document.getElementById("revealBtn").style.visibility = "visible";
+  speakText("What rhymes with " + it.w + "?");
+}
+function reveal() {
+  if (revealed) return;
+  revealed = true;
+  const it = deck[deckIndex];
+  const wrap = document.getElementById("rhymes");
+  it.r.forEach((r, i) => {
+    setTimeout(function () {
+      const chip = document.createElement("div");
+      chip.className = "rhyme-chip";
+      chip.textContent = r;
+      wrap.appendChild(chip);
+      ding(i);
+    }, i * 450);
+  });
+  document.getElementById("revealBtn").style.visibility = "hidden";
+  setTimeout(function () {
+    fanfare();
+    throwConfetti(14);
+  }, it.r.length * 450 + 200);
+}
+function nextWord() {
+  window.speechSynthesis && window.speechSynthesis.cancel();
+  deckIndex++;
+  if (deckIndex >= deck.length) {
+    deck = shuffle(WORDS);
+    deckIndex = 0;
+  }
+  renderWord();
+  popSound();
+}
+
+// ============ CONFETTI ============
+const CONFETTI_EMOJI = ["🎉", "✨", "⭐", "🎊", "💛", "💙"];
+function throwConfetti(count) {
+  const n = count || 14;
+  for (let i = 0; i < n; i++) {
+    const el = document.createElement("div");
+    el.className = "confetti";
+    el.textContent = CONFETTI_EMOJI[Math.floor(Math.random() * CONFETTI_EMOJI.length)];
+    el.style.left = Math.random() * 100 + "vw";
+    el.style.animationDuration = (1.8 + Math.random() * 1.6) + "s";
+    el.style.animationDelay = (Math.random() * 0.4) + "s";
+    document.body.appendChild(el);
+    setTimeout(() => el.remove(), 4200);
+  }
+}
+
+// ============ SPACE BAR ============
+document.addEventListener("keydown", function (ev) {
+  if (ev.code !== "Space" && ev.key !== " ") return;
+  ev.preventDefault();
+  if (!revealed) reveal();
+  else nextWord();
+});
+
+deck = shuffle(WORDS);
+renderWord();
+</script>
+</body>
+</html>
