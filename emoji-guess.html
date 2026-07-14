@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Emoji Guess — ProjectorFirst</title>
+
+<!-- Membership gate (paywall-test) -->
+<script
+  data-memberstack-app="app_cmgnwpg8y00x10suih4pua785"
+  src="https://static.memberstack.com/scripts/v2/memberstack.js"
+  type="text/javascript">
+</script>
+<script src="/guard.js"></script>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    html, body {
+      height: 100vh;
+      height: 100dvh;
+      margin: 0;
+      overflow: hidden;
+      background: #1e3a8a;
+      font-family: ui-rounded, system-ui, -apple-system, "Segoe UI", sans-serif;
+    }
+    .screen {
+      height: 100vh;
+      height: 100dvh;
+      display: flex;
+      flex-direction: column;
+    }
+    .btn-big {
+      font-weight: 900;
+      border-radius: 1.25rem;
+      border: 4px solid #0f265f;
+      box-shadow: 0 6px 0 #0f265f;
+      transition: transform .08s ease, box-shadow .08s ease;
+      cursor: pointer;
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: manipulation;
+    }
+    .btn-big:active {
+      transform: translateY(4px);
+      box-shadow: 0 2px 0 #0f265f;
+    }
+    .cat-btn {
+      background: #fff;
+      color: #1e3a8a;
+      font-weight: 900;
+      border: 4px solid #facc15;
+      border-radius: 1.5rem;
+      box-shadow: 0 8px 0 #b45309;
+      transition: transform .08s ease, box-shadow .08s ease;
+      cursor: pointer;
+      touch-action: manipulation;
+    }
+    .cat-btn:active {
+      transform: translateY(5px);
+      box-shadow: 0 3px 0 #b45309;
+    }
+    .emoji-display {
+      font-size: clamp(4rem, 16vw, 11rem);
+      line-height: 1.15;
+      letter-spacing: .05em;
+      text-align: center;
+      word-break: keep-all;
+    }
+    .answer-banner {
+      background: #facc15;
+      color: #1e3a8a;
+      border: 6px solid #fff;
+      border-radius: 1.5rem;
+      box-shadow: 0 10px 30px rgba(0,0,0,.4);
+      animation: popIn .45s cubic-bezier(.2,1.6,.4,1) both;
+    }
+    @keyframes popIn {
+      0% { transform: scale(.3); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    .hint-chip {
+      animation: popIn .3s ease both;
+    }
+    .confetti {
+      position: fixed;
+      top: -20px;
+      pointer-events: none;
+      z-index: 50;
+      font-size: clamp(1.2rem, 3vw, 2rem);
+      animation: fall linear forwards;
+    }
+    @keyframes fall {
+      to { transform: translateY(110vh) rotate(720deg); opacity: .9; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .answer-banner, .hint-chip { animation: none; }
+      .confetti { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ===== START SCREEN ===== -->
+  <div id="startScreen" class="screen">
+    <header class="flex items-center justify-between px-4 pt-4 pb-2">
+      <a href="apps.html" class="btn-big bg-white text-blue-900 text-lg md:text-xl px-4 py-2 no-underline">← Back to Apps</a>
+      <label class="flex items-center gap-2 text-white font-bold text-lg md:text-xl cursor-pointer select-none">
+        <input type="checkbox" id="voiceToggle" class="w-6 h-6 accent-yellow-400" checked>
+        🔊 Read answers aloud
+      </label>
+    </header>
+
+    <main class="flex-1 flex flex-col items-center justify-center px-4 gap-4 overflow-y-auto">
+      <div class="text-center">
+        <div style="font-size: clamp(3rem, 9vw, 5.5rem); line-height:1;">🤔💭❓</div>
+        <h1 class="text-yellow-300 font-black" style="font-size: clamp(2.4rem, 8vw, 5rem); text-shadow: 4px 4px 0 #0f265f;">EMOJI GUESS</h1>
+        <p class="text-white font-bold" style="font-size: clamp(1.1rem, 3vw, 1.6rem);">Can your group crack the emoji code? Pick a category!</p>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full max-w-3xl pb-4">
+        <button class="cat-btn px-6 py-5" style="font-size: clamp(1.3rem, 4vw, 2rem);" onclick="startGame('movies')">🎬 Classic Movies</button>
+        <button class="cat-btn px-6 py-5" style="font-size: clamp(1.3rem, 4vw, 2rem);" onclick="startGame('songs')">🎵 Golden Oldies</button>
+        <button class="cat-btn px-6 py-5" style="font-size: clamp(1.3rem, 4vw, 2rem);" onclick="startGame('sayings')">💬 Old Sayings</button>
+        <button class="cat-btn px-6 py-5" style="font-size: clamp(1.3rem, 4vw, 2rem);" onclick="startGame('tv')">📺 TV Classics</button>
+        <button class="cat-btn px-6 py-5 sm:col-span-2" style="font-size: clamp(1.3rem, 4vw, 2rem); background:#facc15; border-color:#fff;" onclick="startGame('all')">🎲 Mix Everything!</button>
+      </div>
+    </main>
+  </div>
+
+  <!-- ===== GAME SCREEN ===== -->
+  <div id="gameScreen" class="screen" style="display:none;">
+    <header class="flex items-center justify-between px-4 pt-4 pb-1 gap-2 flex-wrap">
+      <a href="apps.html" class="btn-big bg-white text-blue-900 text-base md:text-xl px-3 py-2 no-underline">← Back to Apps</a>
+      <div class="text-yellow-300 font-black text-center" style="font-size: clamp(1.1rem, 3.5vw, 1.8rem);" id="categoryLabel"></div>
+      <button class="btn-big bg-white text-blue-900 text-base md:text-xl px-3 py-2" onclick="goHome()">☰ Categories</button>
+    </header>
+
+    <div class="text-center text-blue-200 font-bold" style="font-size: clamp(.95rem, 2.5vw, 1.3rem);" id="progressLabel"></div>
+
+    <main class="flex-1 flex flex-col items-center justify-center px-4 min-h-0 gap-3">
+      <div id="emojiDisplay" class="emoji-display text-white"></div>
+
+      <div id="hintArea" class="min-h-[2.5rem] flex items-center justify-center">
+        <div id="hintChip" class="hint-chip bg-white text-blue-900 font-extrabold rounded-full px-6 py-2 hidden" style="font-size: clamp(1.1rem, 3vw, 1.7rem);"></div>
+      </div>
+
+      <div id="answerArea" class="w-full max-w-4xl flex items-center justify-center min-h-[6rem]">
+        <div id="answerBanner" class="answer-banner px-6 py-4 text-center font-black hidden" style="font-size: clamp(1.6rem, 6vw, 3.6rem);"></div>
+      </div>
+    </main>
+
+    <footer class="px-4 pb-5 pt-1">
+      <div class="flex justify-center gap-3 md:gap-5 flex-wrap max-w-3xl mx-auto">
+        <button id="hintBtn" class="btn-big bg-white text-blue-900 px-5 py-4 flex-1 min-w-[8rem]" style="font-size: clamp(1.2rem, 3.5vw, 1.9rem);" onclick="showHint()">💡 Hint</button>
+        <button id="revealBtn" class="btn-big bg-yellow-400 text-blue-900 px-5 py-4 flex-1 min-w-[8rem]" style="font-size: clamp(1.2rem, 3.5vw, 1.9rem); border-color:#b45309; box-shadow: 0 6px 0 #b45309;" onclick="reveal()">✨ Reveal!</button>
+        <button id="nextBtn" class="btn-big bg-white text-blue-900 px-5 py-4 flex-1 min-w-[8rem]" style="font-size: clamp(1.2rem, 3.5vw, 1.9rem);" onclick="nextPuzzle()">Next ➡️</button>
+      </div>
+      <div class="text-center text-blue-300 font-semibold mt-2 hidden md:block" style="font-size: clamp(.85rem, 2vw, 1.05rem);">Tip: press the SPACE BAR to reveal, then advance</div>
+    </footer>
+  </div>
+
+  <!-- ===== FINISHED SCREEN ===== -->
+  <div id="doneScreen" class="screen" style="display:none;">
+    <main class="flex-1 flex flex-col items-center justify-center px-4 gap-5 text-center">
+      <div style="font-size: clamp(4rem, 14vw, 8rem);">🎉🏆🎉</div>
+      <h2 class="text-yellow-300 font-black" style="font-size: clamp(2rem, 7vw, 4.5rem); text-shadow: 4px 4px 0 #0f265f;">YOU DID THEM ALL!</h2>
+      <p class="text-white font-bold" style="font-size: clamp(1.1rem, 3vw, 1.6rem);">Every puzzle in this category — solved. Give yourselves a hand!</p>
+      <div class="flex gap-4 flex-wrap justify-center">
+        <button class="btn-big bg-yellow-400 text-blue-900 px-8 py-4" style="font-size: clamp(1.2rem, 4vw, 2rem); border-color:#b45309; box-shadow: 0 6px 0 #b45309;" onclick="replayCategory()">🔄 Play Again</button>
+        <button class="btn-big bg-white text-blue-900 px-8 py-4" style="font-size: clamp(1.2rem, 4vw, 2rem);" onclick="goHome()">☰ Pick a Category</button>
+      </div>
+    </main>
+  </div>
+
+<script>
+// ============ PUZZLE DATA ============
+// Titles and common sayings only — no lyrics, no copyrighted text.
+const PUZZLES = {
+  movies: [
+    { e: "🌪️👠🌈", a: "The Wizard of Oz", h: "Follow the yellow brick road" },
+    { e: "💨🔥👗", a: "Gone with the Wind", h: "Scarlett and Rhett" },
+    { e: "🎤🌧️☂️", a: "Singin' in the Rain", h: "Gene Kelly and an umbrella" },
+    { e: "🦈🏖️😱", a: "Jaws", h: "Stay out of the water!" },
+    { e: "🎶⛰️👨‍👩‍👧‍👦", a: "The Sound of Music", h: "The hills are alive..." },
+    { e: "☂️👜✨", a: "Mary Poppins", h: "A magical nanny floats in" },
+    { e: "🍎👸😴", a: "Snow White", h: "One bite of a poisoned apple" },
+    { e: "👠🎃🕛", a: "Cinderella", h: "Home by midnight!" },
+    { e: "🦍🏙️✈️", a: "King Kong", h: "A giant ape climbs a skyscraper" },
+    { e: "🚢🧊💔", a: "Titanic", h: "An unsinkable ship" },
+    { e: "🎹✈️🇲🇦", a: "Casablanca", h: "Bogart, Bergman, and a piano" },
+    { e: "🐦🐦🐦😱", a: "The Birds", h: "Hitchcock's feathered fright" },
+    { e: "🕛🤠🔫", a: "High Noon", h: "A sheriff waits for the clock" },
+    { e: "🐕🏠🗺️", a: "Lassie Come Home", h: "A very loyal collie" },
+    { e: "🚀🧑‍🚀🦴", a: "2001: A Space Odyssey", h: "A space station waltz" },
+    { e: "🍫🏭🎫", a: "Willy Wonka & the Chocolate Factory", h: "Find a golden ticket" },
+    { e: "🚿🔪🏨", a: "Psycho", h: "Never shower at the Bates Motel" },
+    { e: "⛵🐋🦵", a: "Moby Dick", h: "Captain Ahab's white whale" },
+    { e: "🧛🏰🦇", a: "Dracula", h: "A count from Transylvania" },
+    { e: "🐘🎪👂", a: "Dumbo", h: "An elephant who can fly" },
+  ],
+  songs: [
+    { e: "❓⬆️🌈", a: "Somewhere Over the Rainbow", h: "Judy Garland's signature song" },
+    { e: "☀️❤️😊", a: "You Are My Sunshine", h: "You make me happy when skies are gray... oops, that's a hint!" },
+    { e: "🔵👞👞", a: "Blue Suede Shoes", h: "Don't step on Elvis's footwear" },
+    { e: "🌙🏞️", a: "Moon River", h: "From Breakfast at Tiffany's" },
+    { e: "✈️👉🌙", a: "Fly Me to the Moon", h: "Frank Sinatra takes a trip" },
+    { e: "💙🎄", a: "Blue Christmas", h: "Elvis has a sad holiday" },
+    { e: "🌧️💧⬇️👨‍🦲", a: "Raindrops Keep Fallin' on My Head", h: "B.J. Thomas forgot his umbrella" },
+    { e: "🏠🐃🦌", a: "Home on the Range", h: "Where the deer and the antelope play" },
+    { e: "🚂🚂🎺", a: "Chattanooga Choo Choo", h: "Glenn Miller's famous train" },
+    { e: "🎸🕐🕑🕒", a: "Rock Around the Clock", h: "Bill Haley & His Comets" },
+    { e: "🌀📣", a: "Twist and Shout", h: "A Beatles dance-floor favorite" },
+    { e: "💛🌊🚢⬇️", a: "Yellow Submarine", h: "The Beatles go underwater" },
+    { e: "🐕🎸😢", a: "Hound Dog", h: "Elvis says it's cryin' all the time" },
+    { e: "🔥⚪⚪❗", a: "Great Balls of Fire", h: "Goodness gracious! Jerry Lee Lewis" },
+    { e: "🔔🔔🛷", a: "Jingle Bells", h: "Dashing through the snow" },
+    { e: "⚪🎄🎤", a: "White Christmas", h: "Bing Crosby's dream" },
+    { e: "⚾🥜🎶", a: "Take Me Out to the Ball Game", h: "Sing it at the 7th-inning stretch" },
+    { e: "❤️🌉🌁", a: "I Left My Heart in San Francisco", h: "Tony Bennett misses a city" },
+    { e: "👑🛣️", a: "King of the Road", h: "Roger Miller's traveling man" },
+    { e: "👢👢🚶‍♀️", a: "These Boots Are Made for Walkin'", h: "Nancy Sinatra struts" },
+  ],
+  sayings: [
+    { e: "🌧️🐱🐶", a: "It's raining cats and dogs", h: "A very heavy downpour" },
+    { e: "🍰😌", a: "Piece of cake", h: "Something very easy" },
+    { e: "🌅🐦🪱", a: "The early bird gets the worm", h: "It pays to start your day first" },
+    { e: "😢🥛", a: "Don't cry over spilled milk", h: "What's done is done" },
+    { e: "🪙💭", a: "A penny for your thoughts", h: "Tell me what you're thinking" },
+    { e: "🐷✈️", a: "When pigs fly", h: "It's never going to happen" },
+    { e: "🛏️🐜🦷", a: "Don't let the bed bugs bite", h: "Said at tuck-in time" },
+    { e: "🍎👨‍⚕️🚫", a: "An apple a day keeps the doctor away", h: "Healthy eating advice" },
+    { e: "🐦🐦🪨", a: "Kill two birds with one stone", h: "Get two things done at once" },
+    { e: "🤒⬇️🌦️", a: "Under the weather", h: "Feeling a little sick" },
+    { e: "🦵💥🎭", a: "Break a leg", h: "Good luck on stage!" },
+    { e: "👊🌾🛏️", a: "Hit the hay", h: "Time for bed" },
+    { e: "🐱👅❓", a: "Cat got your tongue?", h: "Why so quiet?" },
+    { e: "9️⃣📏💯", a: "The whole nine yards", h: "Everything — all of it" },
+    { e: "😎🥒", a: "Cool as a cucumber", h: "Calm under pressure" },
+    { e: "🐝🦵", a: "The bee's knees", h: "Something truly wonderful" },
+    { e: "1️⃣🔵🌙", a: "Once in a blue moon", h: "Very, very rarely" },
+    { e: "🐕🌳❌", a: "Barking up the wrong tree", h: "Looking in the wrong place" },
+    { e: "🫘🤭💦", a: "Spill the beans", h: "Give away the secret" },
+    { e: "🪡⏰9️⃣", a: "A stitch in time saves nine", h: "Fix it early, save trouble later" },
+  ],
+  tv: [
+    { e: "❤️👩‍🦰🍬", a: "I Love Lucy", h: "A redhead and a chocolate factory" },
+    { e: "🐴🐴🐴🗺️🔥", a: "Bonanza", h: "The Cartwrights of the Ponderosa" },
+    { e: "🔫💨🤠", a: "Gunsmoke", h: "Marshal Dillon of Dodge City" },
+    { e: "🫧🎶🪗", a: "The Lawrence Welk Show", h: "Champagne music and bubbles" },
+    { e: "💲✅🎯", a: "The Price Is Right", h: "Come on down!" },
+    { e: "🎡💰🔤", a: "Wheel of Fortune", h: "Buy a vowel?" },
+    { e: "❗❓💵", a: "Jeopardy!", h: "Answer in the form of a question" },
+    { e: "💭🧞‍♀️👨‍🚀", a: "I Dream of Jeannie", h: "An astronaut finds a bottle" },
+    { e: "👃✨👩", a: "Bewitched", h: "A twitch of the nose" },
+    { e: "🏝️⛵3️⃣🕐", a: "Gilligan's Island", h: "A three-hour tour" },
+    { e: "🌙🚌👊", a: "The Honeymooners", h: "Bang, zoom — to the moon!" },
+    { e: "🦫👦👦", a: "Leave It to Beaver", h: "Wally and the Beav" },
+    { e: "🐴💬", a: "Mister Ed", h: "A horse is a horse, of course" },
+    { e: "🌆❓🌀", a: "The Twilight Zone", h: "Rod Serling's strange stories" },
+    { e: "🏥⛺🚁", a: "M*A*S*H", h: "Army doctors in Korea" },
+    { e: "😀📅👍", a: "Happy Days", h: "The Fonz says ayyy!" },
+    { e: "👨‍👩‍👧‍👦3️⃣➕3️⃣", a: "The Brady Bunch", h: "Here's the story of a lovely lady..." },
+    { e: "⚖️🕵️🏆", a: "Perry Mason", h: "A lawyer who never loses" },
+    { e: "👮📋🚔", a: "Dragnet", h: "Just the facts, ma'am" },
+    { e: "🤠🎭🐎🥈", a: "The Lone Ranger", h: "Hi-yo, Silver, away!" },
+  ],
+};
+
+const CATEGORY_NAMES = {
+  movies: "🎬 Classic Movies",
+  songs: "🎵 Golden Oldies",
+  sayings: "💬 Old Sayings",
+  tv: "📺 TV Classics",
+  all: "🎲 Mix of Everything",
+};
+
+// ============ STATE ============
+let deck = [];
+let deckIndex = 0;
+let currentCategory = null;
+let revealed = false;
+
+// ============ AUDIO (WebAudio — no files needed) ============
+let audioCtx = null;
+function getCtx() {
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  if (audioCtx.state === "suspended") audioCtx.resume();
+  return audioCtx;
+}
+function tone(freq, start, dur, type, vol) {
+  const ctx = getCtx();
+  const o = ctx.createOscillator();
+  const g = ctx.createGain();
+  o.type = type || "triangle";
+  o.frequency.value = freq;
+  g.gain.setValueAtTime(0.0001, ctx.currentTime + start);
+  g.gain.exponentialRampToValueAtTime(vol || 0.25, ctx.currentTime + start + 0.02);
+  g.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + start + dur);
+  o.connect(g).connect(ctx.destination);
+  o.start(ctx.currentTime + start);
+  o.stop(ctx.currentTime + start + dur + 0.05);
+}
+function popSound() { tone(520, 0, 0.12, "triangle", 0.2); }
+function hintSound() { tone(660, 0, 0.1, "sine", 0.18); tone(880, 0.1, 0.12, "sine", 0.18); }
+function fanfare() {
+  tone(523, 0.00, 0.18, "triangle", 0.28); // C5
+  tone(659, 0.14, 0.18, "triangle", 0.28); // E5
+  tone(784, 0.28, 0.18, "triangle", 0.28); // G5
+  tone(1047, 0.42, 0.45, "triangle", 0.32); // C6
+}
+
+// ============ VOICE ============
+function speakAnswer(text) {
+  if (!document.getElementById("voiceToggle").checked) return;
+  if (!("speechSynthesis" in window)) return;
+  window.speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text);
+  u.rate = 0.9;
+  u.pitch = 1.0;
+  window.speechSynthesis.speak(u);
+}
+
+// ============ DECK ============
+function shuffle(arr) {
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+function buildDeck(cat) {
+  if (cat === "all") {
+    let all = [];
+    for (const k of Object.keys(PUZZLES)) all = all.concat(PUZZLES[k]);
+    return shuffle(all);
+  }
+  return shuffle(PUZZLES[cat]);
+}
+
+// ============ SCREENS ============
+function show(id) {
+  for (const s of ["startScreen", "gameScreen", "doneScreen"]) {
+    document.getElementById(s).style.display = (s === id) ? "flex" : "none";
+  }
+}
+function goHome() {
+  window.speechSynthesis && window.speechSynthesis.cancel();
+  show("startScreen");
+}
+
+// ============ GAME FLOW ============
+function startGame(cat) {
+  currentCategory = cat;
+  deck = buildDeck(cat);
+  deckIndex = 0;
+  document.getElementById("categoryLabel").textContent = CATEGORY_NAMES[cat];
+  show("gameScreen");
+  renderPuzzle();
+  popSound();
+}
+function replayCategory() {
+  startGame(currentCategory);
+}
+function renderPuzzle() {
+  revealed = false;
+  const p = deck[deckIndex];
+  document.getElementById("emojiDisplay").textContent = p.e;
+  document.getElementById("progressLabel").textContent = "Puzzle " + (deckIndex + 1) + " of " + deck.length;
+  const banner = document.getElementById("answerBanner");
+  banner.classList.add("hidden");
+  banner.textContent = "";
+  const chip = document.getElementById("hintChip");
+  chip.classList.add("hidden");
+  chip.textContent = "";
+  document.getElementById("revealBtn").style.visibility = "visible";
+  document.getElementById("hintBtn").style.visibility = "visible";
+}
+function showHint() {
+  if (revealed) return;
+  const p = deck[deckIndex];
+  const chip = document.getElementById("hintChip");
+  chip.textContent = "💡 " + p.h;
+  chip.classList.remove("hidden");
+  hintSound();
+}
+function reveal() {
+  if (revealed) return;
+  revealed = true;
+  const p = deck[deckIndex];
+  const banner = document.getElementById("answerBanner");
+  banner.textContent = p.a;
+  banner.classList.remove("hidden");
+  document.getElementById("revealBtn").style.visibility = "hidden";
+  document.getElementById("hintBtn").style.visibility = "hidden";
+  fanfare();
+  throwConfetti();
+  speakAnswer(p.a);
+}
+function nextPuzzle() {
+  window.speechSynthesis && window.speechSynthesis.cancel();
+  deckIndex++;
+  if (deckIndex >= deck.length) {
+    fanfare();
+    setTimeout(fanfare, 500);
+    throwConfetti(40);
+    show("doneScreen");
+    return;
+  }
+  renderPuzzle();
+  popSound();
+}
+
+// ============ CONFETTI ============
+const CONFETTI_EMOJI = ["🎉", "✨", "⭐", "🎊", "💛", "💙"];
+function throwConfetti(count) {
+  const n = count || 18;
+  for (let i = 0; i < n; i++) {
+    const el = document.createElement("div");
+    el.className = "confetti";
+    el.textContent = CONFETTI_EMOJI[Math.floor(Math.random() * CONFETTI_EMOJI.length)];
+    el.style.left = Math.random() * 100 + "vw";
+    el.style.animationDuration = (1.8 + Math.random() * 1.6) + "s";
+    el.style.animationDelay = (Math.random() * 0.4) + "s";
+    document.body.appendChild(el);
+    setTimeout(() => el.remove(), 4200);
+  }
+}
+
+// ============ SPACE BAR: reveal, then advance ============
+document.addEventListener("keydown", function (ev) {
+  if (ev.code !== "Space" && ev.key !== " ") return;
+  if (document.getElementById("gameScreen").style.display === "none") return;
+  ev.preventDefault();
+  if (!revealed) reveal();
+  else nextPuzzle();
+});
+</script>
+</body>
+</html>
