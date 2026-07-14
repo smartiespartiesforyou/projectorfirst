@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Let's Make a Deal — ProjectorFirst</title>
+
+<!-- Membership gate (paywall-test) -->
+<script
+  data-memberstack-app="app_cmgnwpg8y00x10suih4pua785"
+  src="https://static.memberstack.com/scripts/v2/memberstack.js"
+  type="text/javascript">
+</script>
+<script src="/guard.js"></script>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    html, body {
+      height: 100vh;
+      height: 100dvh;
+      margin: 0;
+      overflow: hidden;
+      background: #1e3a8a;
+      font-family: ui-rounded, system-ui, -apple-system, "Segoe UI", sans-serif;
+    }
+    .screen {
+      height: 100vh;
+      height: 100dvh;
+      display: flex;
+      flex-direction: column;
+    }
+    .btn-big {
+      font-weight: 900;
+      border-radius: 1.25rem;
+      border: 4px solid #0f265f;
+      box-shadow: 0 6px 0 #0f265f;
+      transition: transform .08s ease, box-shadow .08s ease;
+      cursor: pointer;
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: manipulation;
+    }
+    .btn-big:active { transform: translateY(4px); box-shadow: 0 2px 0 #0f265f; }
+    .prize-check {
+      background: #fff;
+      border: 3px solid #1e3a8a;
+      border-radius: 1rem;
+      padding: .6rem .9rem;
+      display: flex;
+      align-items: center;
+      gap: .6rem;
+      cursor: pointer;
+      font-weight: 800;
+      color: #1e3a8a;
+      font-size: clamp(.95rem, 2.6vw, 1.25rem);
+    }
+    /* Doors */
+    .door-wrap {
+      perspective: 1200px;
+      width: clamp(90px, 26vw, 260px);
+    }
+    .door-frame {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 3 / 4.6;
+      background: #0f265f;
+      border: 5px solid #facc15;
+      border-radius: 1rem;
+      overflow: visible;
+    }
+    .door-prize {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: .3rem;
+      background: #fff;
+      border-radius: .6rem;
+      padding: .4rem;
+      text-align: center;
+    }
+    .door-prize .p-emoji { font-size: clamp(2.2rem, 9vw, 5.5rem); line-height: 1; }
+    .door-prize .p-name { font-weight: 900; color: #1e3a8a; font-size: clamp(.85rem, 2.6vw, 1.4rem); line-height: 1.15; }
+    .door {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, #2b52c7, #1e3a8a);
+      border-radius: .6rem;
+      border: 3px solid #facc15;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: .5rem;
+      transform-origin: left center;
+      transition: transform 1s cubic-bezier(.6,.05,.3,1);
+      backface-visibility: hidden;
+      cursor: pointer;
+      z-index: 2;
+    }
+    .door .knob {
+      position: absolute;
+      right: 10%;
+      top: 50%;
+      width: clamp(8px, 2vw, 16px);
+      height: clamp(8px, 2vw, 16px);
+      background: #facc15;
+      border-radius: 50%;
+      box-shadow: 0 0 6px #facc15aa;
+    }
+    .door .door-num {
+      color: #facc15;
+      font-weight: 900;
+      font-size: clamp(2.5rem, 10vw, 6.5rem);
+      text-shadow: 3px 3px 0 #0f265f;
+    }
+    .door.open { transform: rotateY(-108deg); }
+    .door.wiggle { animation: wiggle .5s ease infinite; }
+    @keyframes wiggle {
+      0%, 100% { transform: rotateY(0deg); }
+      25% { transform: rotateY(-6deg); }
+      75% { transform: rotateY(3deg); }
+    }
+    .door-label {
+      text-align: center;
+      color: #dbeafe;
+      font-weight: 900;
+      margin-top: .4rem;
+      font-size: clamp(.9rem, 2.6vw, 1.4rem);
+    }
+    .prize-banner {
+      background: #facc15;
+      color: #1e3a8a;
+      border: 6px solid #fff;
+      border-radius: 1.5rem;
+      box-shadow: 0 10px 30px rgba(0,0,0,.4);
+      animation: popIn .45s cubic-bezier(.2,1.6,.4,1) both;
+    }
+    @keyframes popIn {
+      0% { transform: scale(.3); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    .confetti {
+      position: fixed;
+      top: -20px;
+      pointer-events: none;
+      z-index: 50;
+      font-size: clamp(1.2rem, 3vw, 2rem);
+      animation: fall linear forwards;
+    }
+    @keyframes fall {
+      to { transform: translateY(110vh) rotate(720deg); opacity: .9; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .prize-banner { animation: none; }
+      .confetti { display: none; }
+      .door { transition: none; }
+      .door.wiggle { animation: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ===== SETUP SCREEN ===== -->
+  <div id="setupScreen" class="screen">
+    <header class="flex items-center justify-between px-4 pt-4 pb-2">
+      <a href="apps.html" class="btn-big bg-white text-blue-900 text-lg md:text-xl px-4 py-2 no-underline">← Back to Apps</a>
+      <label class="flex items-center gap-2 text-white font-bold text-lg md:text-xl cursor-pointer select-none">
+        <input type="checkbox" id="voiceToggle" class="w-6 h-6 accent-yellow-400" checked>
+        🔊 Announcer voice
+      </label>
+    </header>
+
+    <main class="flex-1 flex flex-col items-center px-4 gap-3 overflow-y-auto pb-4">
+      <div class="text-center">
+        <div style="font-size: clamp(2.6rem, 8vw, 4.5rem); line-height:1;">🚪🚪🚪</div>
+        <h1 class="text-yellow-300 font-black" style="font-size: clamp(2rem, 7vw, 4.4rem); text-shadow: 4px 4px 0 #0f265f;">LET'S MAKE A DEAL!</h1>
+        <p class="text-white font-bold max-w-2xl mx-auto" style="font-size: clamp(1rem, 2.8vw, 1.5rem);">Check off the prizes you have on hand today, then start the show!</p>
+      </div>
+
+      <div id="prizeList" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 w-full max-w-4xl"></div>
+
+      <div class="w-full max-w-4xl flex flex-col items-center gap-3">
+        <div class="flex flex-wrap justify-center gap-2 w-full">
+          <input id="newPrizeInput" type="text" maxlength="40" placeholder="Type your own prize (like Fuzzy Blanket)"
+            class="flex-1 min-w-[14rem] rounded-xl border-4 border-blue-900 px-4 py-3 font-bold text-blue-900"
+            style="font-size: clamp(1rem, 2.8vw, 1.3rem);">
+          <button class="btn-big bg-white text-blue-900 px-5 py-3" style="font-size: clamp(1rem, 2.8vw, 1.4rem);" onclick="addPrize()">➕ Add My Prize</button>
+        </div>
+
+        <div class="bg-white text-blue-900 border-4 border-yellow-400 rounded-2xl px-4 py-3 font-bold w-full" style="font-size: clamp(.95rem, 2.6vw, 1.2rem);">
+          💡 <span class="font-black">Good to know:</span> your prize list saves on <span class="font-black underline">this device only</span>.
+          If you set it up here on the iPad, it will NOT be on the laptop in the activity room.
+          To move your list to another device, tap the button below, then open that link on the other device.
+        </div>
+
+        <button class="btn-big bg-white text-blue-900 px-6 py-3" style="font-size: clamp(1rem, 2.8vw, 1.4rem);" onclick="copyPrizeLink()">🔗 Copy My Prize List Link</button>
+        <div id="copyMsg" class="text-yellow-300 font-black hidden" style="font-size: clamp(.95rem, 2.6vw, 1.2rem);">✅ Link copied! Open it on your other device and your prizes will be there.</div>
+      </div>
+
+      <button class="btn-big bg-yellow-400 text-blue-900 px-10 py-4" style="font-size: clamp(1.4rem, 4.5vw, 2.3rem); border-color:#b45309; box-shadow: 0 8px 0 #b45309;" onclick="startShow()">🎬 Start the Show!</button>
+    </main>
+  </div>
+
+  <!-- ===== GAME SCREEN ===== -->
+  <div id="gameScreen" class="screen" style="display:none;">
+    <header class="flex items-center justify-between px-3 pt-3 pb-1 gap-2 flex-wrap">
+      <a href="apps.html" class="btn-big bg-white text-blue-900 text-sm md:text-lg px-3 py-2 no-underline">← Back to Apps</a>
+      <div class="text-yellow-300 font-black" style="font-size: clamp(1.2rem, 4vw, 2.2rem); text-shadow: 2px 2px 0 #0f265f;">🚪 LET'S MAKE A DEAL!</div>
+      <button class="btn-big bg-white text-blue-900 text-sm md:text-lg px-3 py-2" onclick="backToSetup()">⚙️ Prizes</button>
+    </header>
+
+    <div class="text-center text-white font-black" style="font-size: clamp(1.1rem, 3.4vw, 1.9rem);" id="hostLine">Pick a door — 1, 2, or 3!</div>
+
+    <main class="flex-1 flex flex-col items-center justify-center px-2 min-h-0 gap-2">
+      <div class="flex items-start justify-center gap-3 md:gap-8 w-full">
+        <div class="door-wrap">
+          <div class="door-frame">
+            <div class="door-prize" id="prize0"></div>
+            <div class="door wiggle" id="door0" onclick="pickDoor(0)"><span class="door-num">1</span><span class="knob"></span></div>
+          </div>
+          <div class="door-label">DOOR ONE</div>
+        </div>
+        <div class="door-wrap">
+          <div class="door-frame">
+            <div class="door-prize" id="prize1"></div>
+            <div class="door wiggle" id="door1" onclick="pickDoor(1)"><span class="door-num">2</span><span class="knob"></span></div>
+          </div>
+          <div class="door-label">DOOR TWO</div>
+        </div>
+        <div class="door-wrap">
+          <div class="door-frame">
+            <div class="door-prize" id="prize2"></div>
+            <div class="door wiggle" id="door2" onclick="pickDoor(2)"><span class="door-num">3</span><span class="knob"></span></div>
+          </div>
+          <div class="door-label">DOOR THREE</div>
+        </div>
+      </div>
+
+      <div class="w-full max-w-4xl flex items-center justify-center min-h-[5rem] px-2">
+        <div id="prizeBanner" class="prize-banner px-6 py-3 text-center font-black hidden" style="font-size: clamp(1.3rem, 4.5vw, 2.6rem);"></div>
+      </div>
+    </main>
+
+    <footer class="px-4 pb-4 pt-1">
+      <div class="flex justify-center gap-3 md:gap-5 flex-wrap max-w-2xl mx-auto">
+        <button id="showOthersBtn" class="btn-big bg-white text-blue-900 px-5 py-3 flex-1 min-w-[10rem] hidden" style="font-size: clamp(1.1rem, 3.4vw, 1.7rem);" onclick="showOthers()">👀 Show the Other Doors</button>
+        <button id="nextBtn" class="btn-big bg-yellow-400 text-blue-900 px-5 py-3 flex-1 min-w-[10rem] hidden" style="font-size: clamp(1.1rem, 3.4vw, 1.7rem); border-color:#b45309; box-shadow: 0 6px 0 #b45309;" onclick="nextPlayer()">Next Player ➡️</button>
+      </div>
+    </footer>
+  </div>
+
+<script>
+// ============ PRIZES ============
+// Cheap, real-world prizes the director hands out. 'zonk' prizes are silly consolations.
+const ALL_PRIZES = [
+  { e: "🍭", name: "A Lollipop!", on: true },
+  { e: "🍬", name: "A Peppermint!", on: true },
+  { e: "🤗", name: "A Big Hug!", on: true },
+  { e: "🥔", name: "A Bag of Chips!", on: true },
+  { e: "🍫", name: "A Chocolate!", on: true },
+  { e: "🍪", name: "A Cookie!", on: true },
+  { e: "🧃", name: "A Juice Box!", on: true },
+  { e: "☕", name: "First in Line for Coffee!", on: true },
+  { e: "🖐️", name: "A High Five!", on: true },
+  { e: "🍊", name: "A Piece of Fruit!", on: true },
+  { e: "🍿", name: "A Bag of Popcorn!", on: true },
+  { e: "🎵", name: "You Pick the Next Song!", on: true },
+  { e: "🪑", name: "Best Seat in the House!", on: true },
+  { e: "📸", name: "Star of the Day Photo!", on: true },
+  { e: "🧦", name: "A Pair of Fuzzy Socks!", on: false },
+  { e: "🎩", name: "You Wear the Fancy Hat!", on: false },
+  { e: "👏", name: "ZONK! A Round of Applause!", on: true },
+  { e: "🐐", name: "ZONK! An Imaginary Goat!", on: true },
+  { e: "❤️", name: "ZONK! Nothing... But Our Love!", on: true },
+];
+
+// ============ STATE ============
+// Prize list saves on THIS DEVICE ONLY (browser storage). The share-link button
+// lets a director move her list to another device.
+const STORAGE_KEY = "lmad-prizes-v1";
+let prizes = ALL_PRIZES.map(p => Object.assign({ custom: false }, p));
+let doorPrizes = [];
+let picked = -1;
+let revealed = false;
+let busy = false;
+
+function saveState() {
+  try {
+    const data = {
+      defaultsOn: prizes.filter(p => !p.custom).map(p => p.on),
+      custom: prizes.filter(p => p.custom).map(p => ({ name: p.name, on: p.on })),
+    };
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  } catch (err) { /* storage unavailable — game still works, list just won't save */ }
+}
+function applyState(data) {
+  if (!data) return;
+  if (Array.isArray(data.defaultsOn)) {
+    const defaults = prizes.filter(p => !p.custom);
+    data.defaultsOn.forEach((on, i) => { if (defaults[i]) defaults[i].on = !!on; });
+  }
+  if (Array.isArray(data.custom)) {
+    prizes = prizes.filter(p => !p.custom);
+    data.custom.forEach(c => {
+      if (c && typeof c.name === "string" && c.name.trim()) {
+        prizes.push({ e: "🎁", name: c.name.slice(0, 40), on: c.on !== false, custom: true });
+      }
+    });
+  }
+}
+function loadState() {
+  // 1) A shared link wins: ?prizes=... in the address
+  try {
+    const params = new URLSearchParams(window.location.search);
+    if (params.has("prizes")) {
+      applyState(JSON.parse(decodeURIComponent(params.get("prizes"))));
+      saveState(); // adopt the shared list onto this device too
+      return;
+    }
+  } catch (err) { /* bad link — fall through to saved list */ }
+  // 2) Otherwise use what this device saved last time
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) applyState(JSON.parse(raw));
+  } catch (err) { /* no saved list — defaults are fine */ }
+}
+function addPrize() {
+  const input = document.getElementById("newPrizeInput");
+  const name = input.value.trim();
+  if (!name) return;
+  prizes.push({ e: "🎁", name: name + "!", on: true, custom: true });
+  input.value = "";
+  saveState();
+  buildPrizeList();
+  popSound();
+}
+function removePrize(i) {
+  prizes.splice(i, 1);
+  saveState();
+  buildPrizeList();
+}
+function copyPrizeLink() {
+  const data = {
+    defaultsOn: prizes.filter(p => !p.custom).map(p => p.on),
+    custom: prizes.filter(p => p.custom).map(p => ({ name: p.name, on: p.on })),
+  };
+  const url = window.location.origin + window.location.pathname + "?prizes=" + encodeURIComponent(JSON.stringify(data));
+  function done() {
+    const msg = document.getElementById("copyMsg");
+    msg.classList.remove("hidden");
+    setTimeout(function () { msg.classList.add("hidden"); }, 6000);
+  }
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(url).then(done).catch(function () {
+      window.prompt("Copy this link, then open it on your other device:", url);
+    });
+  } else {
+    window.prompt("Copy this link, then open it on your other device:", url);
+  }
+}
+
+// ============ AUDIO ============
+let audioCtx = null;
+function getCtx() {
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  if (audioCtx.state === "suspended") audioCtx.resume();
+  return audioCtx;
+}
+function tone(freq, start, dur, type, vol) {
+  const ctx = getCtx();
+  const o = ctx.createOscillator();
+  const g = ctx.createGain();
+  o.type = type || "triangle";
+  o.frequency.value = freq;
+  g.gain.setValueAtTime(0.0001, ctx.currentTime + start);
+  g.gain.exponentialRampToValueAtTime(vol || 0.25, ctx.currentTime + start + 0.02);
+  g.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + start + dur);
+  o.connect(g).connect(ctx.destination);
+  o.start(ctx.currentTime + start);
+  o.stop(ctx.currentTime + start + dur + 0.05);
+}
+function popSound() { tone(520, 0, 0.12, "triangle", 0.2); }
+function drumroll(durS) {
+  const hits = Math.floor(durS / 0.07);
+  for (let i = 0; i < hits; i++) {
+    tone(150 + Math.random() * 40, i * 0.07, 0.05, "square", 0.10);
+  }
+}
+function fanfare() {
+  tone(523, 0.00, 0.18, "triangle", 0.28);
+  tone(659, 0.14, 0.18, "triangle", 0.28);
+  tone(784, 0.28, 0.18, "triangle", 0.28);
+  tone(1047, 0.42, 0.45, "triangle", 0.32);
+}
+function zonkSound() {
+  tone(300, 0, 0.25, "sawtooth", 0.15);
+  tone(240, 0.25, 0.3, "sawtooth", 0.15);
+  tone(180, 0.55, 0.5, "sawtooth", 0.15);
+}
+
+// ============ VOICE ============
+function speakText(text) {
+  if (!document.getElementById("voiceToggle").checked) return;
+  if (!("speechSynthesis" in window)) return;
+  window.speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text);
+  u.rate = 0.95;
+  u.pitch = 1.05;
+  window.speechSynthesis.speak(u);
+}
+
+// ============ SETUP ============
+function buildPrizeList() {
+  const wrap = document.getElementById("prizeList");
+  wrap.innerHTML = "";
+  prizes.forEach((p, i) => {
+    const lab = document.createElement("label");
+    lab.className = "prize-check";
+    const cb = document.createElement("input");
+    cb.type = "checkbox";
+    cb.checked = p.on;
+    cb.className = "w-5 h-5 accent-blue-800";
+    cb.onchange = function () { prizes[i].on = cb.checked; saveState(); };
+    lab.appendChild(cb);
+    const span = document.createElement("span");
+    span.textContent = p.e + " " + p.name;
+    span.style.flex = "1";
+    lab.appendChild(span);
+    if (p.custom) {
+      const x = document.createElement("button");
+      x.textContent = "✖";
+      x.title = "Remove this prize";
+      x.style.cssText = "color:#b91c1c;font-weight:900;background:none;border:none;cursor:pointer;font-size:1.1rem;";
+      x.onclick = function (ev) { ev.preventDefault(); removePrize(i); };
+      lab.appendChild(x);
+    }
+    wrap.appendChild(lab);
+  });
+}
+function enabledPrizes() { return prizes.filter(p => p.on); }
+function startShow() {
+  if (enabledPrizes().length < 3) {
+    alert("Please check at least 3 prizes so every door has something behind it!");
+    return;
+  }
+  document.getElementById("setupScreen").style.display = "none";
+  document.getElementById("gameScreen").style.display = "flex";
+  newRound();
+  popSound();
+}
+function backToSetup() {
+  window.speechSynthesis && window.speechSynthesis.cancel();
+  document.getElementById("gameScreen").style.display = "none";
+  document.getElementById("setupScreen").style.display = "flex";
+}
+
+// ============ GAME ============
+function shuffle(arr) {
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+function newRound() {
+  busy = false;
+  revealed = false;
+  picked = -1;
+  doorPrizes = shuffle(enabledPrizes()).slice(0, 3);
+  for (let i = 0; i < 3; i++) {
+    const pz = document.getElementById("prize" + i);
+    pz.innerHTML = "<div class='p-emoji'>" + doorPrizes[i].e + "</div><div class='p-name'>" + doorPrizes[i].name + "</div>";
+    const d = document.getElementById("door" + i);
+    d.classList.remove("open");
+    d.classList.add("wiggle");
+  }
+  document.getElementById("hostLine").textContent = "Pick a door — 1, 2, or 3!";
+  const banner = document.getElementById("prizeBanner");
+  banner.classList.add("hidden");
+  banner.textContent = "";
+  document.getElementById("showOthersBtn").classList.add("hidden");
+  document.getElementById("nextBtn").classList.add("hidden");
+  speakText("Pick a door! One, two, or three!");
+}
+function pickDoor(i) {
+  if (busy || revealed) return;
+  busy = true;
+  picked = i;
+  window.speechSynthesis && window.speechSynthesis.cancel();
+  // stop all wiggles, suspense on the chosen one
+  for (let k = 0; k < 3; k++) document.getElementById("door" + k).classList.remove("wiggle");
+  document.getElementById("hostLine").textContent = "Door number " + (i + 1) + "! Let's see what's behind it...";
+  speakText("Door number " + (i + 1) + "! Let's see...");
+  drumroll(1.6);
+  setTimeout(function () {
+    document.getElementById("door" + i).classList.add("open");
+    setTimeout(function () { revealPrize(i); }, 700);
+  }, 1700);
+}
+function revealPrize(i) {
+  revealed = true;
+  busy = false;
+  const p = doorPrizes[i];
+  const isZonk = p.name.indexOf("ZONK") === 0;
+  const banner = document.getElementById("prizeBanner");
+  banner.textContent = p.e + " " + p.name + " " + p.e;
+  banner.classList.remove("hidden");
+  document.getElementById("hostLine").textContent = isZonk ? "Awww! But what a good sport!" : "WINNER, WINNER!";
+  if (isZonk) {
+    zonkSound();
+    setTimeout(fanfare, 900); // consolation cheer
+    throwConfetti(10);
+  } else {
+    fanfare();
+    setTimeout(fanfare, 400);
+    throwConfetti(26);
+  }
+  speakText(p.name.replace("ZONK!", "Zonk!"));
+  document.getElementById("showOthersBtn").classList.remove("hidden");
+  document.getElementById("nextBtn").classList.remove("hidden");
+}
+function showOthers() {
+  for (let k = 0; k < 3; k++) document.getElementById("door" + k).classList.add("open");
+  document.getElementById("showOthersBtn").classList.add("hidden");
+  document.getElementById("hostLine").textContent = "And here's what you COULD have won!";
+  popSound();
+  speakText("And here's what you could have won!");
+}
+function nextPlayer() {
+  window.speechSynthesis && window.speechSynthesis.cancel();
+  newRound();
+  popSound();
+}
+
+// ============ CONFETTI ============
+const CONFETTI_EMOJI = ["🎉", "✨", "⭐", "🎊", "💛", "💙"];
+function throwConfetti(count) {
+  const n = count || 14;
+  for (let i = 0; i < n; i++) {
+    const el = document.createElement("div");
+    el.className = "confetti";
+    el.textContent = CONFETTI_EMOJI[Math.floor(Math.random() * CONFETTI_EMOJI.length)];
+    el.style.left = Math.random() * 100 + "vw";
+    el.style.animationDuration = (1.8 + Math.random() * 1.6) + "s";
+    el.style.animationDelay = (Math.random() * 0.4) + "s";
+    document.body.appendChild(el);
+    setTimeout(() => el.remove(), 4200);
+  }
+}
+
+// ============ KEYS: 1/2/3 pick doors, space = next player after reveal ============
+document.addEventListener("keydown", function (ev) {
+  if (document.getElementById("gameScreen").style.display === "none") return;
+  if (ev.key === "1") pickDoor(0);
+  if (ev.key === "2") pickDoor(1);
+  if (ev.key === "3") pickDoor(2);
+  if ((ev.code === "Space" || ev.key === " ") && revealed) {
+    ev.preventDefault();
+    nextPlayer();
+  }
+});
+
+loadState();
+buildPrizeList();
+</script>
+</body>
+</html>
