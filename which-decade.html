@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Which Decade? — ProjectorFirst</title>
+
+<!-- Membership gate (paywall-test) -->
+<script
+  data-memberstack-app="app_cmgnwpg8y00x10suih4pua785"
+  src="https://static.memberstack.com/scripts/v2/memberstack.js"
+  type="text/javascript">
+</script>
+<script src="/guard.js"></script>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    html, body {
+      height: 100vh;
+      height: 100dvh;
+      margin: 0;
+      overflow: hidden;
+      background: #1e3a8a;
+      font-family: ui-rounded, system-ui, -apple-system, "Segoe UI", sans-serif;
+    }
+    .screen {
+      height: 100vh;
+      height: 100dvh;
+      display: flex;
+      flex-direction: column;
+    }
+    .btn-big {
+      font-weight: 900;
+      border-radius: 1.25rem;
+      border: 4px solid #0f265f;
+      box-shadow: 0 6px 0 #0f265f;
+      transition: transform .08s ease, box-shadow .08s ease;
+      cursor: pointer;
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: manipulation;
+    }
+    .btn-big:active {
+      transform: translateY(4px);
+      box-shadow: 0 2px 0 #0f265f;
+    }
+    .decade-chip {
+      background: #ffffff22;
+      color: #dbeafe;
+      border: 3px solid #ffffff44;
+      border-radius: 1rem;
+      font-weight: 900;
+      padding: .4rem .8rem;
+      font-size: clamp(1rem, 2.8vw, 1.6rem);
+      transition: transform .25s ease, background .25s ease, color .25s ease;
+    }
+    .decade-chip.winner {
+      background: #facc15;
+      color: #1e3a8a;
+      border-color: #fff;
+      transform: scale(1.18);
+      box-shadow: 0 0 24px #facc15aa;
+    }
+    .fact-banner {
+      background: #facc15;
+      color: #1e3a8a;
+      border: 6px solid #fff;
+      border-radius: 1.5rem;
+      box-shadow: 0 10px 30px rgba(0,0,0,.4);
+      animation: popIn .45s cubic-bezier(.2,1.6,.4,1) both;
+    }
+    @keyframes popIn {
+      0% { transform: scale(.3); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    .confetti {
+      position: fixed;
+      top: -20px;
+      pointer-events: none;
+      z-index: 50;
+      font-size: clamp(1.2rem, 3vw, 2rem);
+      animation: fall linear forwards;
+    }
+    @keyframes fall {
+      to { transform: translateY(110vh) rotate(720deg); opacity: .9; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .fact-banner { animation: none; }
+      .confetti { display: none; }
+      .decade-chip { transition: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ===== START SCREEN ===== -->
+  <div id="startScreen" class="screen">
+    <header class="flex items-center justify-between px-4 pt-4 pb-2">
+      <a href="apps.html" class="btn-big bg-white text-blue-900 text-lg md:text-xl px-4 py-2 no-underline">← Back to Apps</a>
+      <label class="flex items-center gap-2 text-white font-bold text-lg md:text-xl cursor-pointer select-none">
+        <input type="checkbox" id="voiceToggle" class="w-6 h-6 accent-yellow-400" checked>
+        🔊 Read answers aloud
+      </label>
+    </header>
+
+    <main class="flex-1 flex flex-col items-center justify-center px-4 gap-5 overflow-y-auto">
+      <div class="text-center">
+        <div style="font-size: clamp(3rem, 9vw, 5.5rem); line-height:1;">🕰️📻🎸</div>
+        <h1 class="text-yellow-300 font-black" style="font-size: clamp(2.4rem, 8vw, 5rem); text-shadow: 4px 4px 0 #0f265f;">WHICH DECADE?</h1>
+        <p class="text-white font-bold max-w-2xl mx-auto" style="font-size: clamp(1.1rem, 3vw, 1.6rem);">Hula hoops, moon landings, disco fever... shout out the decade you remember it from!</p>
+      </div>
+      <button class="btn-big bg-yellow-400 text-blue-900 px-10 py-5" style="font-size: clamp(1.5rem, 5vw, 2.5rem); border-color:#b45309; box-shadow: 0 8px 0 #b45309;" onclick="startGame()">▶️ Let's Play!</button>
+      <p class="text-blue-200 font-bold" style="font-size: clamp(1rem, 2.5vw, 1.3rem);">80 memories from the 1920s to the 1990s</p>
+    </main>
+  </div>
+
+  <!-- ===== GAME SCREEN ===== -->
+  <div id="gameScreen" class="screen" style="display:none;">
+    <header class="flex items-center justify-between px-4 pt-4 pb-1 gap-2 flex-wrap">
+      <a href="apps.html" class="btn-big bg-white text-blue-900 text-base md:text-xl px-3 py-2 no-underline">← Back to Apps</a>
+      <div class="text-center text-blue-200 font-bold" style="font-size: clamp(.95rem, 2.5vw, 1.3rem);" id="progressLabel"></div>
+      <button class="btn-big bg-white text-blue-900 text-base md:text-xl px-3 py-2" onclick="goHome()">🏠 Menu</button>
+    </header>
+
+    <main class="flex-1 flex flex-col items-center justify-center px-4 min-h-0 gap-4">
+      <div id="itemEmoji" class="text-center" style="font-size: clamp(4rem, 15vw, 9rem); line-height: 1.1;"></div>
+      <div id="itemText" class="text-white font-black text-center max-w-4xl" style="font-size: clamp(1.6rem, 5.5vw, 3.4rem); line-height: 1.2;"></div>
+
+      <div class="flex flex-wrap justify-center gap-2 md:gap-3" id="decadeStrip">
+        <span class="decade-chip" data-d="1920s">1920s</span>
+        <span class="decade-chip" data-d="1930s">1930s</span>
+        <span class="decade-chip" data-d="1940s">1940s</span>
+        <span class="decade-chip" data-d="1950s">1950s</span>
+        <span class="decade-chip" data-d="1960s">1960s</span>
+        <span class="decade-chip" data-d="1970s">1970s</span>
+        <span class="decade-chip" data-d="1980s">1980s</span>
+        <span class="decade-chip" data-d="1990s">1990s</span>
+      </div>
+
+      <div class="w-full max-w-4xl flex items-center justify-center min-h-[6rem]">
+        <div id="factBanner" class="fact-banner px-6 py-4 text-center font-black hidden" style="font-size: clamp(1.2rem, 4vw, 2.2rem);"></div>
+      </div>
+    </main>
+
+    <footer class="px-4 pb-5 pt-1">
+      <div class="flex justify-center gap-3 md:gap-5 flex-wrap max-w-2xl mx-auto">
+        <button id="revealBtn" class="btn-big bg-yellow-400 text-blue-900 px-5 py-4 flex-1 min-w-[10rem]" style="font-size: clamp(1.3rem, 4vw, 2.1rem); border-color:#b45309; box-shadow: 0 6px 0 #b45309;" onclick="reveal()">✨ Reveal Decade!</button>
+        <button id="nextBtn" class="btn-big bg-white text-blue-900 px-5 py-4 flex-1 min-w-[10rem]" style="font-size: clamp(1.3rem, 4vw, 2.1rem);" onclick="nextItem()">Next ➡️</button>
+      </div>
+      <div class="text-center text-blue-300 font-semibold mt-2 hidden md:block" style="font-size: clamp(.85rem, 2vw, 1.05rem);">Tip: press the SPACE BAR to reveal, then advance</div>
+    </footer>
+  </div>
+
+  <!-- ===== FINISHED SCREEN ===== -->
+  <div id="doneScreen" class="screen" style="display:none;">
+    <main class="flex-1 flex flex-col items-center justify-center px-4 gap-5 text-center">
+      <div style="font-size: clamp(4rem, 14vw, 8rem);">🎉🏆🎉</div>
+      <h2 class="text-yellow-300 font-black" style="font-size: clamp(2rem, 7vw, 4.5rem); text-shadow: 4px 4px 0 #0f265f;">WHAT A TRIP THROUGH TIME!</h2>
+      <p class="text-white font-bold" style="font-size: clamp(1.1rem, 3vw, 1.6rem);">All 80 memories — you remembered them all!</p>
+      <div class="flex gap-4 flex-wrap justify-center">
+        <button class="btn-big bg-yellow-400 text-blue-900 px-8 py-4" style="font-size: clamp(1.2rem, 4vw, 2rem); border-color:#b45309; box-shadow: 0 6px 0 #b45309;" onclick="startGame()">🔄 Play Again</button>
+        <a href="apps.html" class="btn-big bg-white text-blue-900 px-8 py-4 no-underline inline-block" style="font-size: clamp(1.2rem, 4vw, 2rem);">← Back to Apps</a>
+      </div>
+    </main>
+  </div>
+
+<script>
+// ============ DATA: 80 easy, iconic memories ============
+const ITEMS = [
+  // --- 1920s (8) ---
+  { e: "💃🎺", q: "The Charleston dance craze", a: "1920s", f: "Everybody was doing the Charleston in the Roaring Twenties!" },
+  { e: "🎬🔊", q: "The first 'talkie' movies", a: "1920s", f: "The Jazz Singer brought sound to the movies in 1927." },
+  { e: "👗📿", q: "Flapper dresses and long pearls", a: "1920s", f: "Flappers bobbed their hair and danced all night." },
+  { e: "🚗🖤", q: "Model T Fords fill the roads", a: "1920s", f: "Henry Ford said you could have any color — as long as it was black!" },
+  { e: "✈️🌊", q: "Lindbergh flies solo across the Atlantic", a: "1920s", f: "Lucky Lindy made it from New York to Paris in 1927." },
+  { e: "📻👨‍👩‍👧‍👦", q: "The radio becomes the family entertainment", a: "1920s", f: "Families gathered around the radio every evening." },
+  { e: "⚾6️⃣0️⃣", q: "Babe Ruth hits 60 home runs", a: "1920s", f: "The Sultan of Swat set the record in 1927." },
+  { e: "🚫🍺", q: "Prohibition begins", a: "1920s", f: "From 1920 to 1933, selling alcohol was against the law." },
+  // --- 1930s (9) ---
+  { e: "📉🍞", q: "The Great Depression", a: "1930s", f: "Hard times — but neighbors helped neighbors through it." },
+  { e: "🎲🏠", q: "The board game Monopoly hits stores", a: "1930s", f: "Monopoly arrived in 1935 — do not pass Go!" },
+  { e: "🌈👠", q: "The Wizard of Oz premieres", a: "1930s", f: "1939 — there's no place like home!" },
+  { e: "🎬🔥", q: "Gone with the Wind premieres", a: "1930s", f: "Also 1939 — Hollywood's biggest year ever." },
+  { e: "📜🇺🇸", q: "Social Security begins", a: "1930s", f: "President Roosevelt signed it into law in 1935." },
+  { e: "🌉🌁", q: "The Golden Gate Bridge opens", a: "1930s", f: "San Francisco's famous bridge opened in 1937." },
+  { e: "✈️👩", q: "Amelia Earhart flies the Atlantic solo", a: "1930s", f: "The first woman to do it — in 1932." },
+  { e: "👧🍭", q: "Shirley Temple is America's sweetheart", a: "1930s", f: "The curly-haired star sang On the Good Ship Lollipop." },
+  { e: "🎺🎷", q: "Big Band swing music takes off", a: "1930s", f: "Benny Goodman was crowned the King of Swing." },
+  // --- 1940s (10) ---
+  { e: "🎉⚓", q: "World War II ends", a: "1940s", f: "V-J Day, 1945 — sailors kissed strangers in Times Square!" },
+  { e: "💪👩‍🏭", q: "Rosie the Riveter", a: "1940s", f: "We Can Do It! Women kept the factories running." },
+  { e: "🥕🌱", q: "Victory gardens in every backyard", a: "1940s", f: "Families grew their own vegetables for the war effort." },
+  { e: "🎤😍", q: "Young Frank Sinatra makes the girls swoon", a: "1940s", f: "The bobby-soxers screamed for Ol' Blue Eyes." },
+  { e: "🌀🪜", q: "The Slinky toy is invented", a: "1940s", f: "1945 — it walks down stairs, alone or in pairs!" },
+  { e: "⚾🚪", q: "Jackie Robinson breaks the color barrier", a: "1940s", f: "Number 42 joined the Brooklyn Dodgers in 1947." },
+  { e: "📷⚡", q: "The Polaroid instant camera debuts", a: "1940s", f: "1948 — pictures in a minute, like magic!" },
+  { e: "💃🕺", q: "The Jitterbug fills the dance halls", a: "1940s", f: "Swing dancing at its wildest!" },
+  { e: "📖🎟️", q: "Ration books for sugar, gas, and shoes", a: "1940s", f: "Everyone pitched in during the war years." },
+  { e: "🎬😇", q: "It's a Wonderful Life premieres", a: "1940s", f: "1946 — every time a bell rings..." },
+  // --- 1950s (12) ---
+  { e: "🌀🙆", q: "The hula hoop craze", a: "1950s", f: "1958 — 25 million sold in just four months!" },
+  { e: "🎸📺", q: "Elvis appears on The Ed Sullivan Show", a: "1950s", f: "1956 — and television was never the same." },
+  { e: "❤️👩‍🦰", q: "I Love Lucy is the top show on TV", a: "1950s", f: "Lucy and Desi made all of America laugh." },
+  { e: "🚗🎬", q: "The heyday of drive-in movies", a: "1950s", f: "Load up the car — the show starts at sunset!" },
+  { e: "👗🐩", q: "Poodle skirts and saddle shoes", a: "1950s", f: "The look of every sock hop." },
+  { e: "🍽️📺", q: "The TV dinner is invented", a: "1950s", f: "1953 — turkey and mashed potatoes in a tray!" },
+  { e: "👱‍♀️🎀", q: "The Barbie doll debuts", a: "1950s", f: "1959 — she's been dressed up ever since." },
+  { e: "🎢🏰", q: "Disneyland opens in California", a: "1950s", f: "1955 — the happiest place on Earth." },
+  { e: "💉🙏", q: "The polio vaccine arrives", a: "1950s", f: "Dr. Salk's vaccine — 1955 — a miracle for parents everywhere." },
+  { e: "🎸🎶", q: "Rock and roll is born", a: "1950s", f: "One, two, three o'clock, four o'clock rock!" },
+  { e: "🧦💃", q: "Sock hops in the school gym", a: "1950s", f: "Shoes off — you can't scuff the gym floor!" },
+  { e: "🌺❄️", q: "Hawaii and Alaska become states", a: "1950s", f: "1959 — the flag got its 49th and 50th stars." },
+  // --- 1960s (12) ---
+  { e: "🌙👨‍🚀", q: "Man walks on the moon", a: "1960s", f: "July 1969 — one giant leap for mankind." },
+  { e: "🎸🇬🇧", q: "The Beatles arrive in America", a: "1960s", f: "1964 — 73 million people watched them on Ed Sullivan." },
+  { e: "🎶🌼", q: "The Woodstock music festival", a: "1960s", f: "1969 — three days of peace and music." },
+  { e: "🇺🇸🗳️", q: "John F. Kennedy is elected president", a: "1960s", f: "1960 — the youngest president ever elected." },
+  { e: "💃🌀", q: "The Twist dance craze", a: "1960s", f: "Chubby Checker had everybody twisting in 1960." },
+  { e: "💡🌋", q: "Lava lamps light up living rooms", a: "1960s", f: "Groovy, baby!" },
+  { e: "👖🔔", q: "Bell-bottom jeans come into style", a: "1960s", f: "The wider the better!" },
+  { e: "🚀🖖", q: "Star Trek premieres on TV", a: "1960s", f: "1966 — to boldly go where no man has gone before." },
+  { e: "📺🔤", q: "Sesame Street debuts", a: "1960s", f: "1969 — can you tell me how to get to Sesame Street?" },
+  { e: "🥊🏆", q: "Muhammad Ali becomes heavyweight champ", a: "1960s", f: "1964 — float like a butterfly, sting like a bee!" },
+  { e: "✌️☮️", q: "Peace signs everywhere", a: "1960s", f: "The symbol of a generation." },
+  { e: "🏈1️⃣", q: "The very first Super Bowl", a: "1960s", f: "1967 — Green Bay beat Kansas City." },
+  // --- 1970s (12) ---
+  { e: "🕺🪩", q: "Disco fever sweeps the nation", a: "1970s", f: "Saturday Night Fever, 1977 — everybody hit the dance floor." },
+  { e: "🪨📦", q: "The Pet Rock craze", a: "1970s", f: "1975 — a rock in a box, and it sold millions!" },
+  { e: "💍🌈", q: "Mood rings tell your feelings", a: "1970s", f: "1975 — blue meant calm, black meant look out!" },
+  { e: "🚀⚔️", q: "Star Wars premieres", a: "1970s", f: "1977 — lines wrapped around the block all summer." },
+  { e: "📼📺", q: "VCRs come into the home", a: "1970s", f: "Now you could record your shows — amazing!" },
+  { e: "🏛️📰", q: "The Watergate scandal", a: "1970s", f: "It led to President Nixon's resignation in 1974." },
+  { e: "🎵🚗", q: "8-track tapes in every car", a: "1970s", f: "Ka-CHUNK — the sound of changing tracks." },
+  { e: "🕹️🏓", q: "Pong, the first hit video game", a: "1970s", f: "1972 — two paddles, one dot, hours of fun." },
+  { e: "📻🚛", q: "CB radios — '10-4, good buddy!'", a: "1970s", f: "Everybody had a handle and talked like a trucker." },
+  { e: "🎆🇺🇸", q: "America's Bicentennial celebration", a: "1970s", f: "1976 — 200 years of independence, fireworks everywhere!" },
+  { e: "👠📏", q: "Platform shoes reach new heights", a: "1970s", f: "The taller the shoe, the better the outfit." },
+  { e: "♨️🍽️", q: "Microwave ovens go mainstream", a: "1970s", f: "Dinner in minutes — what will they think of next?" },
+  // --- 1980s (10) ---
+  { e: "🎲🌈", q: "The Rubik's Cube craze", a: "1980s", f: "1980 — millions twisted, few ever solved it!" },
+  { e: "📺🎸", q: "MTV goes on the air", a: "1980s", f: "1981 — video killed the radio star." },
+  { e: "🕹️🟡", q: "Pac-Man fever", a: "1980s", f: "1980 — waka waka waka!" },
+  { e: "👶🥬", q: "The Cabbage Patch Kids frenzy", a: "1980s", f: "1983 — parents lined up for blocks to adopt one." },
+  { e: "👽🚲", q: "E.T. phones home", a: "1980s", f: "1982 — the little alien stole America's heart." },
+  { e: "💇‍♀️📐", q: "Big hair and shoulder pads", a: "1980s", f: "The bigger the hair, the closer to heaven!" },
+  { e: "🧱🔨", q: "The Berlin Wall comes down", a: "1980s", f: "1989 — the whole world watched and cheered." },
+  { e: "🎧🚶", q: "The Walkman goes everywhere", a: "1980s", f: "Music in your pocket — a marvel!" },
+  { e: "🤸‍♀️🧦", q: "Aerobics and leg warmers", a: "1980s", f: "Feel the burn!" },
+  { e: "💻🏠", q: "Personal computers arrive at home", a: "1980s", f: "A computer in the house — imagine that!" },
+  // --- 1990s (7) ---
+  { e: "💻🌐", q: "The internet comes home", a: "1990s", f: "That screechy dial-up sound — you've got mail!" },
+  { e: "🧸💰", q: "The Beanie Babies craze", a: "1990s", f: "People thought those little bears would pay for college!" },
+  { e: "🚢💔", q: "Titanic breaks every box office record", a: "1990s", f: "1997 — everyone saw it at least twice." },
+  { e: "📱📞", q: "Cell phones get small enough to carry", a: "1990s", f: "No more being tied to the wall cord!" },
+  { e: "💃🙌", q: "The Macarena dance craze", a: "1990s", f: "1996 — even grandma knew the moves. Heeey Macarena!" },
+  { e: "📺☕", q: "Seinfeld is the top show on TV", a: "1990s", f: "A show about nothing — that everybody watched." },
+  { e: "🗓️😬", q: "The Y2K computer worry", a: "1990s", f: "1999 — would the computers survive midnight? (They did.)" },
+];
+
+// ============ STATE ============
+let deck = [];
+let deckIndex = 0;
+let revealed = false;
+
+// ============ AUDIO ============
+let audioCtx = null;
+function getCtx() {
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  if (audioCtx.state === "suspended") audioCtx.resume();
+  return audioCtx;
+}
+function tone(freq, start, dur, type, vol) {
+  const ctx = getCtx();
+  const o = ctx.createOscillator();
+  const g = ctx.createGain();
+  o.type = type || "triangle";
+  o.frequency.value = freq;
+  g.gain.setValueAtTime(0.0001, ctx.currentTime + start);
+  g.gain.exponentialRampToValueAtTime(vol || 0.25, ctx.currentTime + start + 0.02);
+  g.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + start + dur);
+  o.connect(g).connect(ctx.destination);
+  o.start(ctx.currentTime + start);
+  o.stop(ctx.currentTime + start + dur + 0.05);
+}
+function popSound() { tone(520, 0, 0.12, "triangle", 0.2); }
+function fanfare() {
+  tone(523, 0.00, 0.18, "triangle", 0.28);
+  tone(659, 0.14, 0.18, "triangle", 0.28);
+  tone(784, 0.28, 0.18, "triangle", 0.28);
+  tone(1047, 0.42, 0.45, "triangle", 0.32);
+}
+
+// ============ VOICE ============
+function speakAnswer(text) {
+  if (!document.getElementById("voiceToggle").checked) return;
+  if (!("speechSynthesis" in window)) return;
+  window.speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text);
+  u.rate = 0.9;
+  window.speechSynthesis.speak(u);
+}
+
+// ============ DECK ============
+function shuffle(arr) {
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+// ============ SCREENS ============
+function show(id) {
+  for (const s of ["startScreen", "gameScreen", "doneScreen"]) {
+    document.getElementById(s).style.display = (s === id) ? "flex" : "none";
+  }
+}
+function goHome() {
+  window.speechSynthesis && window.speechSynthesis.cancel();
+  show("startScreen");
+}
+
+// ============ GAME FLOW ============
+function startGame() {
+  deck = shuffle(ITEMS);
+  deckIndex = 0;
+  show("gameScreen");
+  renderItem();
+  popSound();
+}
+function renderItem() {
+  revealed = false;
+  const it = deck[deckIndex];
+  document.getElementById("itemEmoji").textContent = it.e;
+  document.getElementById("itemText").textContent = it.q;
+  document.getElementById("progressLabel").textContent = "Memory " + (deckIndex + 1) + " of " + deck.length;
+  document.querySelectorAll(".decade-chip").forEach(c => c.classList.remove("winner"));
+  const banner = document.getElementById("factBanner");
+  banner.classList.add("hidden");
+  banner.textContent = "";
+  document.getElementById("revealBtn").style.visibility = "visible";
+}
+function reveal() {
+  if (revealed) return;
+  revealed = true;
+  const it = deck[deckIndex];
+  document.querySelectorAll(".decade-chip").forEach(c => {
+    if (c.dataset.d === it.a) c.classList.add("winner");
+  });
+  const banner = document.getElementById("factBanner");
+  banner.textContent = "The " + it.a + "! " + it.f;
+  banner.classList.remove("hidden");
+  document.getElementById("revealBtn").style.visibility = "hidden";
+  fanfare();
+  throwConfetti();
+  speakAnswer("The " + it.a + "! " + it.f);
+}
+function nextItem() {
+  window.speechSynthesis && window.speechSynthesis.cancel();
+  deckIndex++;
+  if (deckIndex >= deck.length) {
+    fanfare();
+    setTimeout(fanfare, 500);
+    throwConfetti(40);
+    show("doneScreen");
+    return;
+  }
+  renderItem();
+  popSound();
+}
+
+// ============ CONFETTI ============
+const CONFETTI_EMOJI = ["🎉", "✨", "⭐", "🎊", "💛", "💙"];
+function throwConfetti(count) {
+  const n = count || 16;
+  for (let i = 0; i < n; i++) {
+    const el = document.createElement("div");
+    el.className = "confetti";
+    el.textContent = CONFETTI_EMOJI[Math.floor(Math.random() * CONFETTI_EMOJI.length)];
+    el.style.left = Math.random() * 100 + "vw";
+    el.style.animationDuration = (1.8 + Math.random() * 1.6) + "s";
+    el.style.animationDelay = (Math.random() * 0.4) + "s";
+    document.body.appendChild(el);
+    setTimeout(() => el.remove(), 4200);
+  }
+}
+
+// ============ SPACE BAR ============
+document.addEventListener("keydown", function (ev) {
+  if (ev.code !== "Space" && ev.key !== " ") return;
+  if (document.getElementById("gameScreen").style.display === "none") return;
+  ev.preventDefault();
+  if (!revealed) reveal();
+  else nextItem();
+});
+</script>
+</body>
+</html>
