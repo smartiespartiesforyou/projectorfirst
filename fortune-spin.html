@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Fortune Spin — ProjectorFirst</title>
-  
+
 <!-- Membership gate (paywall-test) -->
 <script
   data-memberstack-app="app_cmgnwpg8y00x10suih4pua785"
@@ -13,461 +13,595 @@
 </script>
 <script src="/guard.js"></script>
 
-<meta name="description" content="Take turns guessing letters. Big, calm, projector-friendly."/>
-  <meta name="theme-color" content="#1e3a8a"/>
-  <link rel="icon" href="/logo.svg" type="image/svg+xml"/>
-
+  <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    :root{
-      --pf-blue:#1e3a8a;
-      --pf-purple:#7c3aed;
-      --pf-red:#dc2626;
-      --pf-light:#f3f4f6;
+    html, body {
+      height: 100vh;
+      height: 100dvh;
+      margin: 0;
+      overflow: hidden;
+      background: #1e3a8a;
+      font-family: ui-rounded, system-ui, -apple-system, "Segoe UI", sans-serif;
     }
-
-    *{ box-sizing:border-box; }
-
-    body{
-      margin:0;
-      padding:16px;
-      background:#ffffff;
-      color:#000;
-      font-family: ui-sans-serif, system-ui, -apple-system, sans-serif;
+    .screen {
+      height: 100vh;
+      height: 100dvh;
+      display: flex;
+      flex-direction: column;
     }
-
-    .page{
-      max-width:1600px;
-      margin:0 auto;
-      display:flex;
-      flex-direction:column;
-      gap:16px;
+    .btn-big {
+      font-weight: 900;
+      border-radius: 1.25rem;
+      border: 4px solid #0f265f;
+      box-shadow: 0 6px 0 #0f265f;
+      transition: transform .08s ease, box-shadow .08s ease;
+      cursor: pointer;
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: manipulation;
     }
-
-    /* Top */
-    .top{
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      gap:12px;
-      flex-wrap:wrap;
+    .btn-big:active {
+      transform: translateY(4px);
+      box-shadow: 0 2px 0 #0f265f;
     }
-
-    .score{
-      font-size:clamp(28px,3.2vw,54px);
-      font-weight:900;
-      color:var(--pf-blue);
-      letter-spacing:1px;
-      user-select:none;
+    .cat-btn {
+      background: #fff;
+      color: #1e3a8a;
+      font-weight: 900;
+      border: 4px solid #facc15;
+      border-radius: 1.5rem;
+      box-shadow: 0 8px 0 #b45309;
+      transition: transform .08s ease, box-shadow .08s ease;
+      cursor: pointer;
+      touch-action: manipulation;
     }
-
-    .topBtns{
-      display:flex;
-      gap:10px;
+    .cat-btn:active {
+      transform: translateY(5px);
+      box-shadow: 0 3px 0 #b45309;
     }
-
-    .btn{
-      font-size:clamp(18px,2vw,32px);
-      font-weight:900;
-      padding:12px 18px;
-      border-radius:14px;
-      border:3px solid #000;
-      cursor:pointer;
-      user-select:none;
-      transition:transform .08s;
+    /* Letter tiles on the puzzle board */
+    .word {
+      display: inline-flex;
+      gap: .3rem;
+      margin: .25rem .5rem;
     }
-    .btn:hover{ transform:scale(1.04); }
-
-    .btn-blue{ background:var(--pf-blue); color:#fff; }
-    .btn-purple{ background:var(--pf-purple); color:#fff; }
-    .btn-red{ background:var(--pf-red); color:#fff; }
-
-    /* Puzzle */
-    .puzzle{
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  gap:12px;
-  margin-top:10px;
-  width:100%;
-}
-
-
-    .row{
-      display:flex;
-      gap:10px;
-      justify-content:center;
-      flex-wrap:wrap;
+    .tile {
+      width: clamp(2rem, 6.2vw, 4.2rem);
+      height: clamp(2.7rem, 8vw, 5.4rem);
+      background: #fff;
+      border: 3px solid #0f265f;
+      border-radius: .5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      color: #1e3a8a;
+      font-size: clamp(1.5rem, 4.8vw, 3.2rem);
+      transition: background .3s ease, transform .3s ease;
     }
-
-    .tile{
-      width:clamp(56px,5.2vw,92px);
-      height:clamp(68px,6.2vw,108px);
-      border-radius:12px;
-      border:3px solid #000;
-      background:var(--pf-blue);
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      user-select:none;
+    .tile.hidden-letter { color: transparent; background: #93c5fd; }
+    .tile.just-revealed {
+      background: #facc15;
+      animation: flip .5s ease;
     }
-
-    .tile.revealed{
-      background:#fff;
+    .tile.punct { background: transparent; border-color: transparent; color: #fff; }
+    @keyframes flip {
+      0% { transform: rotateX(90deg); }
+      100% { transform: rotateX(0deg); }
     }
-
-    .ch{
-      font-size:clamp(28px,3.2vw,56px);
-      font-weight:1000;
-      line-height:1;
-      color:#000;
+    /* Alphabet buttons */
+    .letter-btn {
+      width: clamp(2.5rem, 7vw, 4rem);
+      height: clamp(2.5rem, 7vw, 4rem);
+      background: #fff;
+      color: #1e3a8a;
+      font-weight: 900;
+      font-size: clamp(1.2rem, 3.6vw, 2rem);
+      border: 3px solid #0f265f;
+      border-radius: .75rem;
+      box-shadow: 0 4px 0 #0f265f;
+      cursor: pointer;
+      touch-action: manipulation;
+      transition: transform .06s ease;
     }
-
-    .category{
-      padding:8px 20px;
-      border-radius:999px;
-      background:var(--pf-blue);
-      border:3px solid #000;
-      color:#fff;
-      font-weight:900;
-      font-size:clamp(18px,2vw,34px);
-      letter-spacing:1px;
-      user-select:none;
+    .letter-btn:active { transform: translateY(3px); box-shadow: 0 1px 0 #0f265f; }
+    .letter-btn:disabled {
+      background: #475f9e;
+      color: #1e3a8a;
+      border-color: #33507f;
+      box-shadow: none;
+      cursor: default;
+      opacity: .55;
     }
-
-    /* Letters */
-    .letters{
-      margin-top:18px;
-      display:grid;
-      grid-template-columns:repeat(13,minmax(0,1fr));
-      gap:10px;
+    .letter-btn.was-correct:disabled { background: #facc15; opacity: .9; color: #1e3a8a; }
+    /* Wheel */
+    #wheelSvg { transition: transform 4s cubic-bezier(.15,.6,.15,1); }
+    .solve-banner {
+      background: #facc15;
+      color: #1e3a8a;
+      border: 6px solid #fff;
+      border-radius: 1.5rem;
+      box-shadow: 0 10px 30px rgba(0,0,0,.4);
+      animation: popIn .45s cubic-bezier(.2,1.6,.4,1) both;
     }
-.lettersWrap{
-  width:100%;
-  display:flex;
-  justify-content:center;
-}
-
-    .letterBtn{
-      height:clamp(56px,4.8vw,88px);
-      border-radius:14px;
-      border:2px solid #000;
-      background:#fff;
-      font-size:clamp(20px,2.2vw,38px);
-      font-weight:1000;
-      cursor:pointer;
-      user-select:none;
-      transition:transform .08s,opacity .1s,background .1s;
+    @keyframes popIn {
+      0% { transform: scale(.3); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
     }
-    .letterBtn:hover{ transform:scale(1.04); }
-
-  .letterBtn.used{
-  background:#000;
-  color:#fff;
-  cursor:default;
-  transform:none;
-}
-.letterBtn.used:hover{
-  transform:none;
-}
-
-    .letterBtn.hit{ background:#dcfce7; }
-    .letterBtn.miss{ background:#fee2e2; }
-
-    /* Bottom */
-    .bottom{
-      display:flex;
-      justify-content:center;
-      gap:12px;
-      flex-wrap:wrap;
+    .confetti {
+      position: fixed;
+      top: -20px;
+      pointer-events: none;
+      z-index: 50;
+      font-size: clamp(1.2rem, 3vw, 2rem);
+      animation: fall linear forwards;
     }
-
-    .status{
-      text-align:center;
-      min-height:1.6em;
-      font-size:clamp(18px,1.8vw,30px);
-      font-weight:900;
-      user-select:none;
+    @keyframes fall {
+      to { transform: translateY(110vh) rotate(720deg); opacity: .9; }
     }
-
-    /* Overlay */
-    .overlay{
-      position:fixed;
-      inset:0;
-      background:rgba(0,0,0,.75);
-      display:none;
-      align-items:center;
-      justify-content:center;
-      padding:16px;
-      z-index:9999;
-    }
-
-    .overlayCard{
-      background:#fff;
-      border:4px solid #000;
-      border-radius:20px;
-      padding:20px;
-      max-width:900px;
-      text-align:center;
-    }
-
-    .overlayTitle{
-      font-size:clamp(26px,3vw,44px);
-      font-weight:1000;
-      color:var(--pf-blue);
-    }
-
-    .overlayText{
-      margin-top:10px;
-      font-size:clamp(18px,1.8vw,28px);
-      font-weight:800;
-      line-height:1.3;
-    }
-
-    .overlayHint{
-      margin-top:10px;
-      font-size:clamp(14px,1.4vw,22px);
-      font-weight:800;
-      opacity:.85;
-    }
-
-    @media(max-width:1100px){
-      .letters{ grid-template-columns:repeat(10,minmax(0,1fr)); }
+    @media (prefers-reduced-motion: reduce) {
+      .solve-banner { animation: none; }
+      .confetti { display: none; }
+      .tile.just-revealed { animation: none; }
+      #wheelSvg { transition: none; }
     }
   </style>
 </head>
-
 <body>
-  <div class="page">
 
-    <div class="top">
-      <div class="score" id="score">SCORE: 0</div>
-      <div class="topBtns">
-  <a href="apps.html" class="btn btn-blue">⬅ Apps</a>
-  <button class="btn btn-purple" id="fsBtn">Fullscreen</button>
+  <!-- ===== START SCREEN ===== -->
+  <div id="startScreen" class="screen">
+    <header class="flex items-center justify-between px-4 pt-4 pb-2">
+      <a href="apps.html" class="btn-big bg-white text-blue-900 text-lg md:text-xl px-4 py-2 no-underline">← Back to Apps</a>
+      <label class="flex items-center gap-2 text-white font-bold text-lg md:text-xl cursor-pointer select-none">
+        <input type="checkbox" id="voiceToggle" class="w-6 h-6 accent-yellow-400" checked>
+        🔊 Read answers aloud
+      </label>
+    </header>
 
-</div>
+    <main class="flex-1 flex flex-col items-center justify-center px-4 gap-4 overflow-y-auto">
+      <div class="text-center">
+        <div style="font-size: clamp(3rem, 9vw, 5rem); line-height:1;">🎡✨🔤</div>
+        <h1 class="text-yellow-300 font-black" style="font-size: clamp(2.4rem, 8vw, 5rem); text-shadow: 4px 4px 0 #0f265f;">FORTUNE SPIN</h1>
+        <p class="text-white font-bold max-w-2xl mx-auto" style="font-size: clamp(1.1rem, 3vw, 1.6rem);">Spin the wheel, call out letters, and solve the phrase together!</p>
       </div>
 
-
-
-    <div class="puzzle">
-      <div class="row" id="row"></div>
-      <div class="category" id="category"></div>
-    </div>
-
-   <div class="lettersWrap">
-  <div class="letters" id="letters"></div>
-</div>
-
-
-    <div class="bottom">
-      <button class="btn btn-blue" id="solveBtn">Solve</button>
-      <button class="btn btn-red" id="resetBtn">Reset</button>
-    </div>
-
-    <div class="status" id="status"></div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full max-w-3xl pb-4">
+        <button class="cat-btn px-6 py-5" style="font-size: clamp(1.2rem, 3.6vw, 1.9rem);" onclick="startGame('sayings')">💬 Old Sayings</button>
+        <button class="cat-btn px-6 py-5" style="font-size: clamp(1.2rem, 3.6vw, 1.9rem);" onclick="startGame('songs')">🎵 Songs We Know</button>
+        <button class="cat-btn px-6 py-5" style="font-size: clamp(1.2rem, 3.6vw, 1.9rem);" onclick="startGame('house')">🏠 Around the House</button>
+        <button class="cat-btn px-6 py-5" style="font-size: clamp(1.2rem, 3.6vw, 1.9rem);" onclick="startGame('food')">🍎 Food & Cooking</button>
+        <button class="cat-btn px-6 py-5" style="font-size: clamp(1.2rem, 3.6vw, 1.9rem);" onclick="startGame('holidays')">🎄 Holidays & Seasons</button>
+        <button class="cat-btn px-6 py-5" style="font-size: clamp(1.2rem, 3.6vw, 1.9rem); background:#facc15; border-color:#fff;" onclick="startGame('all')">🎲 Mix Everything!</button>
+      </div>
+    </main>
   </div>
 
-  <div class="overlay" id="overlay">
-    <div class="overlayCard">
-      <div class="overlayTitle">Fortune Spin</div>
-      <div class="overlayText">
-        Take turns guessing letters.<br/>
-        Vowels can be guessed anytime.
+  <!-- ===== GAME SCREEN ===== -->
+  <div id="gameScreen" class="screen" style="display:none;">
+    <header class="flex items-center justify-between px-3 pt-3 pb-1 gap-2 flex-wrap">
+      <a href="apps.html" class="btn-big bg-white text-blue-900 text-sm md:text-lg px-3 py-2 no-underline">← Back to Apps</a>
+      <div class="text-yellow-300 font-black text-center" style="font-size: clamp(1rem, 3vw, 1.6rem);" id="categoryLabel"></div>
+      <button class="btn-big bg-white text-blue-900 text-sm md:text-lg px-3 py-2" onclick="goHome()">☰ Categories</button>
+    </header>
+
+    <main class="flex-1 flex flex-col items-center justify-start px-2 min-h-0 gap-1 overflow-hidden">
+
+      <!-- Wheel + score row -->
+      <div class="flex items-center justify-center gap-3 md:gap-6 flex-wrap w-full">
+        <div class="relative" style="width: clamp(110px, 18vw, 190px); height: clamp(110px, 18vw, 190px);">
+          <svg id="wheelSvg" viewBox="0 0 200 200" style="width:100%; height:100%;"></svg>
+          <div style="position:absolute; top:-6px; left:50%; transform:translateX(-50%); width:0; height:0; border-left:12px solid transparent; border-right:12px solid transparent; border-top:20px solid #fff; filter: drop-shadow(0 2px 2px rgba(0,0,0,.4));"></div>
+        </div>
+        <div class="flex flex-col items-center gap-1">
+          <button id="spinBtn" class="btn-big bg-yellow-400 text-blue-900 px-5 py-3" style="font-size: clamp(1.1rem, 3.4vw, 1.7rem); border-color:#b45309; box-shadow: 0 6px 0 #b45309;" onclick="spinWheel()">🎡 SPIN!</button>
+          <div class="text-white font-black" style="font-size: clamp(1rem, 3vw, 1.5rem);">Letters worth: <span id="letterValue" class="text-yellow-300">100</span></div>
+          <div class="text-blue-200 font-black" style="font-size: clamp(1rem, 3vw, 1.5rem);">Room Score: <span id="score" class="text-yellow-300">0</span></div>
+        </div>
       </div>
-      <div class="overlayHint">
-        Keys: A–Z guess • Enter = Solve • R = Reset • F = Fullscreen
+
+      <div class="text-center text-blue-200 font-bold" style="font-size: clamp(.85rem, 2.2vw, 1.15rem);" id="progressLabel"></div>
+
+      <!-- Puzzle board -->
+      <div id="board" class="flex flex-wrap items-center justify-center max-w-6xl py-1"></div>
+
+      <!-- Solve banner -->
+      <div class="w-full max-w-4xl flex items-center justify-center min-h-[3.5rem]" id="bannerArea">
+        <div id="solveBanner" class="solve-banner px-6 py-3 text-center font-black hidden" style="font-size: clamp(1.2rem, 4vw, 2.2rem);"></div>
       </div>
-    </div>
+
+      <!-- Alphabet -->
+      <div id="alphabet" class="flex flex-wrap justify-center gap-1.5 md:gap-2 max-w-4xl pb-1"></div>
+    </main>
+
+    <footer class="px-4 pb-4 pt-1">
+      <div class="flex justify-center gap-3 md:gap-5 flex-wrap max-w-2xl mx-auto">
+        <button id="solveBtn" class="btn-big bg-white text-blue-900 px-5 py-3 flex-1 min-w-[9rem]" style="font-size: clamp(1.1rem, 3.4vw, 1.7rem);" onclick="solveIt()">✨ Solve It!</button>
+        <button id="nextBtn" class="btn-big bg-yellow-400 text-blue-900 px-5 py-3 flex-1 min-w-[9rem] hidden" style="font-size: clamp(1.1rem, 3.4vw, 1.7rem); border-color:#b45309; box-shadow: 0 6px 0 #b45309;" onclick="nextPhrase()">Next Phrase ➡️</button>
+      </div>
+    </footer>
   </div>
 
-  <script>
-const PUZZLES = [
+  <!-- ===== FINISHED SCREEN ===== -->
+  <div id="doneScreen" class="screen" style="display:none;">
+    <main class="flex-1 flex flex-col items-center justify-center px-4 gap-5 text-center">
+      <div style="font-size: clamp(4rem, 14vw, 8rem);">🎉🏆🎉</div>
+      <h2 class="text-yellow-300 font-black" style="font-size: clamp(2rem, 7vw, 4.5rem); text-shadow: 4px 4px 0 #0f265f;">YOU SOLVED THEM ALL!</h2>
+      <p class="text-white font-bold" style="font-size: clamp(1.1rem, 3vw, 1.6rem);">Final Room Score: <span id="finalScore" class="text-yellow-300 font-black"></span></p>
+      <div class="flex gap-4 flex-wrap justify-center">
+        <button class="btn-big bg-yellow-400 text-blue-900 px-8 py-4" style="font-size: clamp(1.2rem, 4vw, 2rem); border-color:#b45309; box-shadow: 0 6px 0 #b45309;" onclick="replayCategory()">🔄 Play Again</button>
+        <button class="btn-big bg-white text-blue-900 px-8 py-4" style="font-size: clamp(1.2rem, 4vw, 2rem);" onclick="goHome()">☰ Pick a Category</button>
+      </div>
+    </main>
+  </div>
 
-  // ===== PLACES =====
-  { category:"PLACE", phrase:"FRONT PORCH" },
-  { category:"PLACE", phrase:"BACKYARD" },
-  { category:"PLACE", phrase:"LIVING ROOM" },
-  { category:"PLACE", phrase:"DINING ROOM" },
-  { category:"PLACE", phrase:"GROCERY STORE" },
-  { category:"PLACE", phrase:"POST OFFICE" },
-  { category:"PLACE", phrase:"CHURCH PEW" },
-  { category:"PLACE", phrase:"TOWN SQUARE" },
-  { category:"PLACE", phrase:"COUNTRY ROAD" },
-  { category:"PLACE", phrase:"FARM HOUSE" },
+<script>
+// ============ PHRASES: 100 easy, familiar phrases ============
+const PHRASES = {
+  sayings: [
+    "HOME SWEET HOME", "EASY AS PIE", "THE MORE THE MERRIER", "BETTER LATE THAN NEVER",
+    "PRACTICE MAKES PERFECT", "GOOD AS GOLD", "HAPPY AS A CLAM", "SAFE AND SOUND",
+    "LOVE AT FIRST SIGHT", "TIME FLIES", "SWEET DREAMS", "RISE AND SHINE",
+    "A PIECE OF CAKE", "SAVED BY THE BELL", "THE APPLE OF MY EYE", "BIRDS OF A FEATHER",
+    "FIT AS A FIDDLE", "SNUG AS A BUG IN A RUG", "PENNY FOR YOUR THOUGHTS", "HOME IS WHERE THE HEART IS",
+  ],
+  songs: [
+    "SOMEWHERE OVER THE RAINBOW", "TAKE ME OUT TO THE BALL GAME", "YOU ARE MY SUNSHINE",
+    "MOON RIVER", "JINGLE BELLS", "AMAZING GRACE", "HOME ON THE RANGE", "OH SUSANNA",
+    "WHEN THE SAINTS GO MARCHING IN", "LET ME CALL YOU SWEETHEART", "A BICYCLE BUILT FOR TWO",
+    "SHINE ON HARVEST MOON", "MY WILD IRISH ROSE", "DANNY BOY", "SWING LOW SWEET CHARIOT",
+    "SILENT NIGHT", "AMERICA THE BEAUTIFUL", "MY BONNIE LIES OVER THE OCEAN",
+    "DOWN BY THE OLD MILL STREAM", "IN THE GOOD OLD SUMMERTIME",
+  ],
+  house: [
+    "ROCKING CHAIR", "KITCHEN TABLE", "FRONT PORCH SWING", "CUP OF COFFEE",
+    "SUNDAY NEWSPAPER", "PHOTO ALBUM", "SEWING MACHINE", "GARDEN HOSE",
+    "SCREEN DOOR", "COOKIE JAR", "TELEVISION SET", "READING GLASSES",
+    "WELCOME MAT", "PICKET FENCE", "CLOTHESLINE", "RECORD PLAYER",
+    "ALARM CLOCK", "FLOWER GARDEN", "BIRD FEEDER", "COMFY SLIPPERS",
+  ],
+  food: [
+    "APPLE PIE", "FRIED CHICKEN", "MASHED POTATOES", "CHICKEN NOODLE SOUP",
+    "PEANUT BUTTER AND JELLY", "ICE CREAM SUNDAE", "CHOCOLATE CHIP COOKIES", "SUNDAY POT ROAST",
+    "BISCUITS AND GRAVY", "LEMONADE STAND", "BANANA SPLIT", "CORN ON THE COB",
+    "GRILLED CHEESE SANDWICH", "PUMPKIN PIE", "SWEET TEA", "DEVILED EGGS",
+    "MACARONI AND CHEESE", "HOMEMADE BREAD", "STRAWBERRY SHORTCAKE", "HOT APPLE CIDER",
+  ],
+  holidays: [
+    "MERRY CHRISTMAS", "HAPPY NEW YEAR", "TRICK OR TREAT", "EASTER EGG HUNT",
+    "FOURTH OF JULY", "THANKSGIVING TURKEY", "CHRISTMAS CAROLS", "SNOW DAY",
+    "SPRING CLEANING", "SUMMER VACATION", "AUTUMN LEAVES", "FIREWORKS SHOW",
+    "CANDY CANES", "COUNTY FAIR", "FIRST DAY OF SPRING", "WINTER WONDERLAND",
+    "HARVEST MOON", "PUMPKIN PATCH", "MISTLETOE AND HOLLY", "NEW YEARS EVE",
+  ],
+};
 
-  // ===== THINGS =====
-  { category:"THING", phrase:"CRAFT GLUE" },
-  { category:"THING", phrase:"WOODEN SPOON" },
-  { category:"THING", phrase:"COFFEE CUP" },
-  { category:"THING", phrase:"ROCKING CHAIR" },
-  { category:"THING", phrase:"FAMILY BIBLE" },
-  { category:"THING", phrase:"PHOTO ALBUM" },
-  { category:"THING", phrase:"TELEVISION REMOTE" },
-  { category:"THING", phrase:"WASHING MACHINE" },
-  { category:"THING", phrase:"SEWING KIT" },
-  { category:"THING", phrase:"MAILBOX FLAG" },
+const CATEGORY_NAMES = {
+  sayings: "💬 Old Sayings",
+  songs: "🎵 Songs We Know",
+  house: "🏠 Around the House",
+  food: "🍎 Food & Cooking",
+  holidays: "🎄 Holidays & Seasons",
+  all: "🎲 Mix of Everything",
+};
 
-  // ===== FOOD =====
-  { category:"FOOD", phrase:"CHICKEN SOUP" },
-  { category:"FOOD", phrase:"MEATLOAF DINNER" },
-  { category:"FOOD", phrase:"MASHED POTATOES" },
-  { category:"FOOD", phrase:"GREEN BEANS" },
-  { category:"FOOD", phrase:"CORN BREAD" },
-  { category:"FOOD", phrase:"PEANUT BUTTER" },
-  { category:"FOOD", phrase:"APPLE PIE" },
-  { category:"FOOD", phrase:"FRIED CHICKEN" },
-  { category:"FOOD", phrase:"BISCUITS AND GRAVY" },
-  { category:"FOOD", phrase:"SWEET TEA" },
-
-  // ===== PHRASES =====
-  { category:"PHRASE", phrase:"TAKE IT ONE DAY AT A TIME" },
-  { category:"PHRASE", phrase:"HOME SWEET HOME" },
-  { category:"PHRASE", phrase:"BETTER LATE THAN NEVER" },
-  { category:"PHRASE", phrase:"MAKE HAY WHILE THE SUN SHINES" },
-  { category:"PHRASE", phrase:"A FRIEND IN NEED IS A FRIEND INDEED" },
-  { category:"PHRASE", phrase:"SLOW AND STEADY WINS THE RACE" },
-  { category:"PHRASE", phrase:"THE EARLY BIRD GETS THE WORM" },
-  { category:"PHRASE", phrase:"COUNT YOUR BLESSINGS" },
-  { category:"PHRASE", phrase:"EASY DOES IT" },
-  { category:"PHRASE", phrase:"JUST AROUND THE CORNER" },
-
-  // ===== HOLIDAYS =====
-  { category:"HOLIDAY", phrase:"MARDI GRAS PARADE" },
-  { category:"HOLIDAY", phrase:"CHRISTMAS MORNING" },
-  { category:"HOLIDAY", phrase:"EASTER SUNDAY" },
-  { category:"HOLIDAY", phrase:"THANKSGIVING DINNER" },
-  { category:"HOLIDAY", phrase:"FOURTH OF JULY" },
-  { category:"HOLIDAY", phrase:"HALLOWEEN NIGHT" },
-  { category:"HOLIDAY", phrase:"VALENTINES DAY" },
-  { category:"HOLIDAY", phrase:"NEW YEARS EVE" },
-
-  // ===== PEOPLE / ROLES =====
-  { category:"PERSON", phrase:"SUNDAY SCHOOL TEACHER" },
-  { category:"PERSON", phrase:"FAMILY DOCTOR" },
-  { category:"PERSON", phrase:"BUS DRIVER" },
-  { category:"PERSON", phrase:"FARMER JOHN" },
-  { category:"PERSON", phrase:"GRANDMA ROSE" },
-  { category:"PERSON", phrase:"HIGH SCHOOL COACH" }
-
+// Wheel wedges — all positive, no Bankrupt here!
+const WEDGES = [
+  { label: "100", value: 100, color: "#3b82f6" },
+  { label: "300", value: 300, color: "#facc15" },
+  { label: "200", value: 200, color: "#ef4444" },
+  { label: "500", value: 500, color: "#22c55e" },
+  { label: "250", value: 250, color: "#a855f7" },
+  { label: "750", value: 750, color: "#f97316" },
+  { label: "400", value: 400, color: "#06b6d4" },
+  { label: "1000", value: 1000, color: "#facc15" },
 ];
 
+// ============ STATE ============
+let deck = [];
+let deckIndex = 0;
+let currentCategory = null;
+let currentPhrase = "";
+let guessedLetters = new Set();
+let solved = false;
+let spinning = false;
+let letterValue = 100;
+let score = 0;
+let wheelAngle = 0;
 
+// ============ AUDIO ============
+let audioCtx = null;
+function getCtx() {
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  if (audioCtx.state === "suspended") audioCtx.resume();
+  return audioCtx;
+}
+function tone(freq, start, dur, type, vol) {
+  const ctx = getCtx();
+  const o = ctx.createOscillator();
+  const g = ctx.createGain();
+  o.type = type || "triangle";
+  o.frequency.value = freq;
+  g.gain.setValueAtTime(0.0001, ctx.currentTime + start);
+  g.gain.exponentialRampToValueAtTime(vol || 0.25, ctx.currentTime + start + 0.02);
+  g.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + start + dur);
+  o.connect(g).connect(ctx.destination);
+  o.start(ctx.currentTime + start);
+  o.stop(ctx.currentTime + start + dur + 0.05);
+}
+function ding(i) { tone(880 + i * 60, i * 0.18, 0.25, "triangle", 0.25); }
+function softMiss() { tone(220, 0, 0.25, "sine", 0.18); }
+function popSound() { tone(520, 0, 0.12, "triangle", 0.2); }
+function fanfare() {
+  tone(523, 0.00, 0.18, "triangle", 0.28);
+  tone(659, 0.14, 0.18, "triangle", 0.28);
+  tone(784, 0.28, 0.18, "triangle", 0.28);
+  tone(1047, 0.42, 0.45, "triangle", 0.32);
+}
+function spinTicks(durationMs) {
+  const ticks = 18;
+  for (let i = 0; i < ticks; i++) {
+    const t = (i / ticks);
+    const when = t * t * (durationMs / 1000); // ticks slow down
+    tone(600, when, 0.04, "square", 0.06);
+  }
+}
 
-    const ALPHA="ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
-    let puzzle,revealed,guessed,score;
+// ============ VOICE ============
+function speakText(text) {
+  if (!document.getElementById("voiceToggle").checked) return;
+  if (!("speechSynthesis" in window)) return;
+  window.speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text);
+  u.rate = 0.9;
+  window.speechSynthesis.speak(u);
+}
 
-    const row=document.getElementById("row");
-    const lettersDiv=document.getElementById("letters");
-    const categoryDiv=document.getElementById("category");
-    const status=document.getElementById("status");
-    const scoreDiv=document.getElementById("score");
-    const overlay=document.getElementById("overlay");
+// ============ WHEEL ============
+function buildWheel() {
+  const svg = document.getElementById("wheelSvg");
+  const n = WEDGES.length;
+  const cx = 100, cy = 100, r = 96;
+  let parts = "";
+  for (let i = 0; i < n; i++) {
+    const a0 = (i / n) * 2 * Math.PI - Math.PI / 2;
+    const a1 = ((i + 1) / n) * 2 * Math.PI - Math.PI / 2;
+    const x0 = cx + r * Math.cos(a0), y0 = cy + r * Math.sin(a0);
+    const x1 = cx + r * Math.cos(a1), y1 = cy + r * Math.sin(a1);
+    parts += "<path d='M" + cx + "," + cy + " L" + x0.toFixed(2) + "," + y0.toFixed(2) +
+      " A" + r + "," + r + " 0 0 1 " + x1.toFixed(2) + "," + y1.toFixed(2) + " Z' fill='" + WEDGES[i].color + "' stroke='#fff' stroke-width='2'/>";
+    const mid = (a0 + a1) / 2;
+    const tx = cx + r * 0.62 * Math.cos(mid), ty = cy + r * 0.62 * Math.sin(mid);
+    const rot = (mid * 180 / Math.PI) + 90;
+    parts += "<text x='" + tx.toFixed(2) + "' y='" + ty.toFixed(2) + "' fill='#1e3a8a' font-weight='900' font-size='16' text-anchor='middle' dominant-baseline='middle' transform='rotate(" + rot.toFixed(1) + " " + tx.toFixed(2) + " " + ty.toFixed(2) + ")'>" + WEDGES[i].label + "</text>";
+  }
+  parts += "<circle cx='100' cy='100' r='18' fill='#1e3a8a' stroke='#fff' stroke-width='3'/>";
+  svg.innerHTML = parts;
+}
+function spinWheel() {
+  if (spinning || solved) return;
+  spinning = true;
+  document.getElementById("spinBtn").disabled = true;
+  const n = WEDGES.length;
+  const target = Math.floor(Math.random() * n);
+  // Pointer is at top. Wedge i spans [i*45deg, (i+1)*45deg] from top going clockwise.
+  // Rotating wheel by A deg clockwise: wedge under pointer = floor(((360 - A%360)/45)) % n
+  // Choose final angle so target wedge center lands at pointer:
+  const wedgeDeg = 360 / n;
+  const desired = 360 - (target * wedgeDeg + wedgeDeg / 2);
+  const spins = 4 + Math.floor(Math.random() * 3);
+  const current = wheelAngle % 360;
+  const delta = (spins * 360) + ((desired - current + 360) % 360);
+  wheelAngle += delta;
+  const dur = 4000;
+  spinTicks(dur);
+  const svg = document.getElementById("wheelSvg");
+  svg.style.transform = "rotate(" + wheelAngle + "deg)";
+  setTimeout(function () {
+    spinning = false;
+    document.getElementById("spinBtn").disabled = false;
+    letterValue = WEDGES[target].value;
+    document.getElementById("letterValue").textContent = letterValue;
+    fanfare();
+    speakText("Letters are now worth " + letterValue + " points!");
+  }, dur + 100);
+}
 
-    const norm=s=>s.toUpperCase().replace(/[^A-Z\s]/g,"").replace(/\s+/g," ").trim();
+// ============ DECK ============
+function shuffle(arr) {
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+function buildDeck(cat) {
+  if (cat === "all") {
+    let all = [];
+    for (const k of Object.keys(PHRASES)) all = all.concat(PHRASES[k]);
+    return shuffle(all);
+  }
+  return shuffle(PHRASES[cat]);
+}
 
-    function start(){
-      puzzle=PUZZLES[Math.floor(Math.random()*PUZZLES.length)];
-      revealed=new Set();
-      guessed=new Set();
-      score=0;
-      buildRow();
-      buildLetters();
-      update();
-      status.textContent="";
-    }
+// ============ SCREENS ============
+function show(id) {
+  for (const s of ["startScreen", "gameScreen", "doneScreen"]) {
+    document.getElementById(s).style.display = (s === id) ? "flex" : "none";
+  }
+}
+function goHome() {
+  window.speechSynthesis && window.speechSynthesis.cancel();
+  show("startScreen");
+}
 
-    function buildRow(){
-      row.innerHTML="";
-      for(const ch of norm(puzzle.phrase)){
-        if(ch===" "){
-          const gap=document.createElement("div");
-          gap.style.width="24px";
-          row.appendChild(gap);
-        }else{
-          const t=document.createElement("div");
-          t.className="tile";
-          const s=document.createElement("div");
-          s.className="ch";
-          t.appendChild(s);
-          row.appendChild(t);
-        }
+// ============ GAME FLOW ============
+function startGame(cat) {
+  currentCategory = cat;
+  deck = buildDeck(cat);
+  deckIndex = 0;
+  score = 0;
+  document.getElementById("score").textContent = "0";
+  document.getElementById("categoryLabel").textContent = CATEGORY_NAMES[cat];
+  show("gameScreen");
+  buildAlphabet();
+  renderPhrase();
+  popSound();
+}
+function replayCategory() { startGame(currentCategory); }
+
+function buildAlphabet() {
+  const wrap = document.getElementById("alphabet");
+  wrap.innerHTML = "";
+  for (let i = 0; i < 26; i++) {
+    const L = String.fromCharCode(65 + i);
+    const b = document.createElement("button");
+    b.className = "letter-btn";
+    b.textContent = L;
+    b.id = "L_" + L;
+    b.onclick = function () { guessLetter(L); };
+    wrap.appendChild(b);
+  }
+}
+function renderPhrase() {
+  solved = false;
+  guessedLetters = new Set();
+  letterValue = 100;
+  document.getElementById("letterValue").textContent = "100";
+  currentPhrase = deck[deckIndex];
+  document.getElementById("progressLabel").textContent = "Phrase " + (deckIndex + 1) + " of " + deck.length;
+
+  // reset alphabet
+  document.querySelectorAll(".letter-btn").forEach(b => {
+    b.disabled = false;
+    b.classList.remove("was-correct");
+  });
+
+  // build board: words of tiles
+  const board = document.getElementById("board");
+  board.innerHTML = "";
+  const words = currentPhrase.split(" ");
+  for (const w of words) {
+    const wd = document.createElement("div");
+    wd.className = "word";
+    for (const ch of w) {
+      const t = document.createElement("div");
+      if (/[A-Z]/.test(ch)) {
+        t.className = "tile hidden-letter";
+        t.textContent = ch;
+        t.dataset.letter = ch;
+      } else {
+        t.className = "tile punct";
+        t.textContent = ch;
       }
-      categoryDiv.textContent=puzzle.category;
+      wd.appendChild(t);
     }
+    board.appendChild(wd);
+  }
 
-    function buildLetters(){
-      lettersDiv.innerHTML="";
-      for(const L of ALPHA){
-        const b=document.createElement("button");
-        b.className="letterBtn";
-        b.textContent=L;
-        b.onclick=()=>guess(L,b);
-        lettersDiv.appendChild(b);
-      }
-    }
+  const banner = document.getElementById("solveBanner");
+  banner.classList.add("hidden");
+  banner.textContent = "";
+  document.getElementById("solveBtn").classList.remove("hidden");
+  document.getElementById("nextBtn").classList.add("hidden");
+}
+function guessLetter(L) {
+  if (solved || spinning || guessedLetters.has(L)) return;
+  guessedLetters.add(L);
+  const btn = document.getElementById("L_" + L);
+  btn.disabled = true;
 
-    function update(){
-      scoreDiv.textContent="SCORE: "+score;
-      const tiles=[...row.querySelectorAll(".tile")];
-      let i=0;
-      for(const ch of norm(puzzle.phrase)){
-        if(ch===" ") continue;
-        const tile=tiles[i++];
-        tile.classList.toggle("revealed",revealed.has(ch));
-        tile.firstChild.textContent=revealed.has(ch)?ch:"";
-      }
-    }
-
-    function guess(L,btn){
-      if(guessed.has(L)) return;
-      guessed.add(L);
-
-      const phrase=norm(puzzle.phrase);
-      const hits=[...phrase].filter(c=>c===L).length;
-
-      btn.classList.add("used");
-      if(hits){
-        revealed.add(L);
-        btn.classList.add("hit");
-        score+=hits*100;
-        status.textContent=`${L} appears ${hits} time${hits>1?"s":""}`;
-      }else{
-        btn.classList.add("miss");
-        status.textContent=`${L} is not in the phrase`;
-      }
-      update();
-    }
-
-    document.getElementById("solveBtn").onclick=()=>{
-      const g=prompt("Type the full phrase:");
-      if(!g) return;
-      if(norm(g)===norm(puzzle.phrase)){
-        for(const ch of norm(puzzle.phrase)) if(ch!==" ") revealed.add(ch);
-        status.textContent="Correct! Solved!";
-        update();
-      }else status.textContent="Not quite. Try again.";
-    };
-
-    document.getElementById("resetBtn").onclick=start;
-
-    document.getElementById("fsBtn").onclick=()=>{
-      if(!document.fullscreenElement) document.documentElement.requestFullscreen();
-      else document.exitFullscreen();
-    };
-
-      document.addEventListener("keydown",e=>{
-      if(e.code==="Enter") document.getElementById("solveBtn").click();
-      if(e.code==="KeyR") start();
-      if(e.code==="KeyF") document.getElementById("fsBtn").click();
-      const k=e.key.toUpperCase();
-      if(k>="A"&&k<="Z"){
-        const btn=[...lettersDiv.children].find(b=>b.textContent===k);
-        if(btn) btn.click();
-      }
+  const tiles = Array.from(document.querySelectorAll("#board .tile[data-letter='" + L + "']"));
+  if (tiles.length > 0) {
+    btn.classList.add("was-correct");
+    tiles.forEach((t, i) => {
+      setTimeout(function () {
+        t.classList.remove("hidden-letter");
+        t.classList.add("just-revealed");
+      }, i * 180);
+      ding(i);
     });
+    score += letterValue * tiles.length;
+    document.getElementById("score").textContent = score;
+    // solved by letters?
+    if (allRevealed()) {
+      setTimeout(celebrate, tiles.length * 180 + 300);
+    }
+  } else {
+    softMiss();
+  }
+}
+function allRevealed() {
+  const letters = new Set(currentPhrase.replace(/[^A-Z]/g, "").split(""));
+  for (const l of letters) if (!guessedLetters.has(l)) return false;
+  return true;
+}
+function solveIt() {
+  if (solved) return;
+  document.querySelectorAll("#board .tile.hidden-letter").forEach((t, i) => {
+    setTimeout(function () {
+      t.classList.remove("hidden-letter");
+      t.classList.add("just-revealed");
+    }, i * 90);
+  });
+  setTimeout(celebrate, 500);
+}
+function celebrate() {
+  if (solved) return;
+  solved = true;
+  score += 500; // solve bonus
+  document.getElementById("score").textContent = score;
+  const banner = document.getElementById("solveBanner");
+  banner.textContent = "🎉 " + currentPhrase + " 🎉";
+  banner.classList.remove("hidden");
+  document.getElementById("solveBtn").classList.add("hidden");
+  document.getElementById("nextBtn").classList.remove("hidden");
+  fanfare();
+  setTimeout(fanfare, 400);
+  throwConfetti(24);
+  speakText(currentPhrase + "! Plus a 500 point solve bonus!");
+}
+function nextPhrase() {
+  window.speechSynthesis && window.speechSynthesis.cancel();
+  deckIndex++;
+  if (deckIndex >= deck.length) {
+    document.getElementById("finalScore").textContent = score;
+    fanfare();
+    setTimeout(fanfare, 500);
+    throwConfetti(40);
+    show("doneScreen");
+    return;
+  }
+  renderPhrase();
+  popSound();
+}
 
-    start();
-  </script>
+// ============ CONFETTI ============
+const CONFETTI_EMOJI = ["🎉", "✨", "⭐", "🎊", "💛", "💙"];
+function throwConfetti(count) {
+  const n = count || 14;
+  for (let i = 0; i < n; i++) {
+    const el = document.createElement("div");
+    el.className = "confetti";
+    el.textContent = CONFETTI_EMOJI[Math.floor(Math.random() * CONFETTI_EMOJI.length)];
+    el.style.left = Math.random() * 100 + "vw";
+    el.style.animationDuration = (1.8 + Math.random() * 1.6) + "s";
+    el.style.animationDelay = (Math.random() * 0.4) + "s";
+    document.body.appendChild(el);
+    setTimeout(() => el.remove(), 4200);
+  }
+}
+
+// ============ SPACE BAR: advances only after the phrase is solved ============
+document.addEventListener("keydown", function (ev) {
+  if (ev.code !== "Space" && ev.key !== " ") return;
+  if (document.getElementById("gameScreen").style.display === "none") return;
+  ev.preventDefault();
+  if (solved) nextPhrase();
+});
+
+buildWheel();
+</script>
 </body>
 </html>
