@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Wheel of Words — ProjectorFirst</title>
+
+<!-- Membership gate (paywall-test) -->
+<script
+  data-memberstack-app="app_cmgnwpg8y00x10suih4pua785"
+  src="https://static.memberstack.com/scripts/v2/memberstack.js"
+  type="text/javascript">
+</script>
+<script src="/guard.js"></script>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    html, body {
+      height: 100vh;
+      height: 100dvh;
+      margin: 0;
+      overflow: hidden;
+      background: #1e3a8a;
+      font-family: ui-rounded, system-ui, -apple-system, "Segoe UI", sans-serif;
+    }
+    .screen {
+      height: 100vh;
+      height: 100dvh;
+      display: flex;
+      flex-direction: column;
+    }
+    .btn-big {
+      font-weight: 900;
+      border-radius: 1.25rem;
+      border: 4px solid #0f265f;
+      box-shadow: 0 6px 0 #0f265f;
+      transition: transform .08s ease, box-shadow .08s ease;
+      cursor: pointer;
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: manipulation;
+    }
+    .btn-big:active { transform: translateY(4px); box-shadow: 0 2px 0 #0f265f; }
+    #wheelSvg { transition: transform 4s cubic-bezier(.15,.6,.15,1); }
+    .prompt-banner {
+      background: #facc15;
+      color: #1e3a8a;
+      border: 6px solid #fff;
+      border-radius: 1.5rem;
+      box-shadow: 0 10px 30px rgba(0,0,0,.4);
+      animation: popIn .45s cubic-bezier(.2,1.6,.4,1) both;
+    }
+    @keyframes popIn {
+      0% { transform: scale(.3); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    .letter-flash {
+      animation: popIn .5s cubic-bezier(.2,1.6,.4,1) both;
+    }
+    .confetti {
+      position: fixed;
+      top: -20px;
+      pointer-events: none;
+      z-index: 50;
+      font-size: clamp(1.2rem, 3vw, 2rem);
+      animation: fall linear forwards;
+    }
+    @keyframes fall {
+      to { transform: translateY(110vh) rotate(720deg); opacity: .9; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .prompt-banner, .letter-flash { animation: none; }
+      .confetti { display: none; }
+      #wheelSvg { transition: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <div id="gameScreen" class="screen">
+    <header class="flex items-center justify-between px-4 pt-4 pb-1 gap-2 flex-wrap">
+      <a href="apps.html" class="btn-big bg-white text-blue-900 text-base md:text-xl px-3 py-2 no-underline">← Back to Apps</a>
+      <h1 class="text-yellow-300 font-black" style="font-size: clamp(1.4rem, 4.5vw, 2.4rem); text-shadow: 3px 3px 0 #0f265f;">🎡 WHEEL OF WORDS</h1>
+      <label class="flex items-center gap-2 text-white font-bold text-sm md:text-lg cursor-pointer select-none">
+        <input type="checkbox" id="voiceToggle" class="w-5 h-5 md:w-6 md:h-6 accent-yellow-400" checked>
+        🔊 Voice
+      </label>
+    </header>
+
+    <main class="flex-1 flex flex-col items-center justify-center px-4 min-h-0 gap-2">
+
+      <div class="flex items-center justify-center gap-4 md:gap-8 flex-wrap w-full">
+        <!-- Wheel -->
+        <div class="relative" style="width: clamp(160px, 30vw, 300px); height: clamp(160px, 30vw, 300px);">
+          <svg id="wheelSvg" viewBox="0 0 200 200" style="width:100%; height:100%;"></svg>
+          <div style="position:absolute; top:-8px; left:50%; transform:translateX(-50%); width:0; height:0; border-left:14px solid transparent; border-right:14px solid transparent; border-top:24px solid #fff; filter: drop-shadow(0 2px 2px rgba(0,0,0,.4));"></div>
+        </div>
+
+        <!-- Big letter result -->
+        <div class="flex flex-col items-center gap-1">
+          <div class="text-blue-200 font-black" style="font-size: clamp(1rem, 2.8vw, 1.5rem);" id="letterCaption">Spin to get a letter!</div>
+          <div id="bigLetter" class="text-white font-black" style="font-size: clamp(5rem, 20vw, 12rem); line-height: 1; text-shadow: 5px 5px 0 #0f265f;">?</div>
+        </div>
+      </div>
+
+      <!-- Prompt banner -->
+      <div class="w-full max-w-4xl flex items-center justify-center min-h-[6rem] px-2">
+        <div id="promptBanner" class="prompt-banner px-6 py-4 text-center font-black hidden" style="font-size: clamp(1.4rem, 5vw, 3rem);"></div>
+      </div>
+
+      <div class="text-white font-bold text-center max-w-2xl" style="font-size: clamp(1rem, 2.8vw, 1.4rem);" id="helpText">
+        Everyone shouts out answers — there are no wrong ones!
+      </div>
+    </main>
+
+    <footer class="px-4 pb-5 pt-1">
+      <div class="flex justify-center gap-3 md:gap-5 flex-wrap max-w-3xl mx-auto">
+        <button id="spinBtn" class="btn-big bg-yellow-400 text-blue-900 px-6 py-4 flex-1 min-w-[9rem]" style="font-size: clamp(1.3rem, 4vw, 2.1rem); border-color:#b45309; box-shadow: 0 6px 0 #b45309;" onclick="spinWheel()">🎡 SPIN!</button>
+        <button id="catBtn" class="btn-big bg-white text-blue-900 px-6 py-4 flex-1 min-w-[9rem]" style="font-size: clamp(1.3rem, 4vw, 2.1rem);" onclick="newCategory()">🔄 New Category</button>
+        <button id="cheerBtn" class="btn-big bg-white text-blue-900 px-6 py-4 flex-1 min-w-[9rem]" style="font-size: clamp(1.3rem, 4vw, 2.1rem);" onclick="cheer()">🎉 Great Answers!</button>
+      </div>
+      <div class="text-center text-blue-300 font-semibold mt-2 hidden md:block" style="font-size: clamp(.85rem, 2vw, 1.05rem);">Tip: press the SPACE BAR to spin</div>
+    </footer>
+  </div>
+
+<script>
+// ============ DATA ============
+// Common, easy letters only — no Q, X, Z, V, U, Y.
+const LETTERS = ["A","B","C","D","E","F","G","H","J","K","L","M","N","P","R","S","T","W"];
+const WHEEL_COLORS = ["#3b82f6","#facc15","#ef4444","#22c55e","#a855f7","#f97316"];
+
+// Easy, familiar categories — plenty of possible answers for any letter.
+const CATEGORIES = [
+  "FOODS", "ANIMALS", "BOYS' NAMES", "GIRLS' NAMES", "THINGS IN THE KITCHEN",
+  "PLACES YOU CAN VISIT", "FLOWERS & PLANTS", "THINGS THAT ARE ROUND",
+  "THINGS IN THE GARDEN", "THINGS YOU WEAR", "THINGS THAT ARE BIG",
+  "THINGS THAT ARE SMALL", "COLORS & SHADES", "THINGS AT A PICNIC",
+  "THINGS IN A HOUSE", "JOBS PEOPLE DO", "THINGS AT THE FARM",
+  "THINGS THAT MAKE NOISE", "SWEET TREATS", "THINGS OUTSIDE",
+  "THINGS AT THE BEACH", "THINGS AT CHRISTMAS", "THINGS IN A PURSE",
+  "THINGS THAT ARE SOFT", "THINGS AT SCHOOL", "DRINKS",
+  "THINGS AT CHURCH", "THINGS ON A FARM TABLE", "SONGS OR SINGERS",
+  "CITIES & TOWNS",
+];
+
+// ============ STATE ============
+let spinning = false;
+let currentLetter = null;
+let currentCategory = null;
+let wheelAngle = 0;
+let recentCategories = [];
+
+// ============ AUDIO ============
+let audioCtx = null;
+function getCtx() {
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  if (audioCtx.state === "suspended") audioCtx.resume();
+  return audioCtx;
+}
+function tone(freq, start, dur, type, vol) {
+  const ctx = getCtx();
+  const o = ctx.createOscillator();
+  const g = ctx.createGain();
+  o.type = type || "triangle";
+  o.frequency.value = freq;
+  g.gain.setValueAtTime(0.0001, ctx.currentTime + start);
+  g.gain.exponentialRampToValueAtTime(vol || 0.25, ctx.currentTime + start + 0.02);
+  g.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + start + dur);
+  o.connect(g).connect(ctx.destination);
+  o.start(ctx.currentTime + start);
+  o.stop(ctx.currentTime + start + dur + 0.05);
+}
+function popSound() { tone(520, 0, 0.12, "triangle", 0.2); }
+function fanfare() {
+  tone(523, 0.00, 0.18, "triangle", 0.28);
+  tone(659, 0.14, 0.18, "triangle", 0.28);
+  tone(784, 0.28, 0.18, "triangle", 0.28);
+  tone(1047, 0.42, 0.45, "triangle", 0.32);
+}
+function spinTicks(durationMs) {
+  const ticks = 20;
+  for (let i = 0; i < ticks; i++) {
+    const t = i / ticks;
+    const when = t * t * (durationMs / 1000);
+    tone(600, when, 0.04, "square", 0.06);
+  }
+}
+
+// ============ VOICE ============
+function speakText(text) {
+  if (!document.getElementById("voiceToggle").checked) return;
+  if (!("speechSynthesis" in window)) return;
+  window.speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text);
+  u.rate = 0.9;
+  window.speechSynthesis.speak(u);
+}
+
+// ============ WHEEL ============
+function buildWheel() {
+  const svg = document.getElementById("wheelSvg");
+  const n = LETTERS.length;
+  const cx = 100, cy = 100, r = 96;
+  let parts = "";
+  for (let i = 0; i < n; i++) {
+    const a0 = (i / n) * 2 * Math.PI - Math.PI / 2;
+    const a1 = ((i + 1) / n) * 2 * Math.PI - Math.PI / 2;
+    const x0 = cx + r * Math.cos(a0), y0 = cy + r * Math.sin(a0);
+    const x1 = cx + r * Math.cos(a1), y1 = cy + r * Math.sin(a1);
+    const color = WHEEL_COLORS[i % WHEEL_COLORS.length];
+    parts += "<path d='M" + cx + "," + cy + " L" + x0.toFixed(2) + "," + y0.toFixed(2) +
+      " A" + r + "," + r + " 0 0 1 " + x1.toFixed(2) + "," + y1.toFixed(2) + " Z' fill='" + color + "' stroke='#fff' stroke-width='1.5'/>";
+    const mid = (a0 + a1) / 2;
+    const tx = cx + r * 0.72 * Math.cos(mid), ty = cy + r * 0.72 * Math.sin(mid);
+    const rot = (mid * 180 / Math.PI) + 90;
+    parts += "<text x='" + tx.toFixed(2) + "' y='" + ty.toFixed(2) + "' fill='#1e3a8a' font-weight='900' font-size='15' text-anchor='middle' dominant-baseline='middle' transform='rotate(" + rot.toFixed(1) + " " + tx.toFixed(2) + " " + ty.toFixed(2) + ")'>" + LETTERS[i] + "</text>";
+  }
+  parts += "<circle cx='100' cy='100' r='16' fill='#1e3a8a' stroke='#fff' stroke-width='3'/>";
+  svg.innerHTML = parts;
+}
+function pickCategory() {
+  let cat;
+  do {
+    cat = CATEGORIES[Math.floor(Math.random() * CATEGORIES.length)];
+  } while (recentCategories.includes(cat));
+  recentCategories.push(cat);
+  if (recentCategories.length > 8) recentCategories.shift();
+  return cat;
+}
+function spinWheel() {
+  if (spinning) return;
+  spinning = true;
+  document.getElementById("spinBtn").disabled = true;
+  window.speechSynthesis && window.speechSynthesis.cancel();
+  document.getElementById("promptBanner").classList.add("hidden");
+  document.getElementById("bigLetter").textContent = "?";
+  document.getElementById("bigLetter").classList.remove("letter-flash");
+  document.getElementById("letterCaption").textContent = "Round and round it goes...";
+
+  const n = LETTERS.length;
+  const target = Math.floor(Math.random() * n);
+  const wedgeDeg = 360 / n;
+  const desired = 360 - (target * wedgeDeg + wedgeDeg / 2);
+  const spins = 4 + Math.floor(Math.random() * 3);
+  const current = wheelAngle % 360;
+  const delta = (spins * 360) + ((desired - current + 360) % 360);
+  wheelAngle += delta;
+  const dur = 4000;
+  spinTicks(dur);
+  document.getElementById("wheelSvg").style.transform = "rotate(" + wheelAngle + "deg)";
+
+  setTimeout(function () {
+    spinning = false;
+    document.getElementById("spinBtn").disabled = false;
+    currentLetter = LETTERS[target];
+    currentCategory = pickCategory();
+    showPrompt(true);
+  }, dur + 100);
+}
+function showPrompt(withFanfare) {
+  const bl = document.getElementById("bigLetter");
+  bl.textContent = currentLetter;
+  bl.classList.remove("letter-flash");
+  void bl.offsetWidth; // restart animation
+  bl.classList.add("letter-flash");
+  document.getElementById("letterCaption").textContent = "The letter is...";
+  const banner = document.getElementById("promptBanner");
+  banner.textContent = "Name " + currentCategory + " that start with " + currentLetter + "!";
+  banner.classList.remove("hidden");
+  if (withFanfare) fanfare();
+  speakText("Name " + categoryForSpeech(currentCategory) + " that start with the letter " + currentLetter + "!");
+}
+function categoryForSpeech(cat) {
+  return cat.toLowerCase().replace("boys' names", "boys names").replace("girls' names", "girls names");
+}
+function newCategory() {
+  if (spinning) return;
+  if (!currentLetter) { spinWheel(); return; }
+  currentCategory = pickCategory();
+  popSound();
+  showPrompt(false);
+}
+function cheer() {
+  fanfare();
+  setTimeout(fanfare, 350);
+  throwConfetti(24);
+  speakText("Wonderful answers, everybody!");
+}
+
+// ============ CONFETTI ============
+const CONFETTI_EMOJI = ["🎉", "✨", "⭐", "🎊", "💛", "💙"];
+function throwConfetti(count) {
+  const n = count || 14;
+  for (let i = 0; i < n; i++) {
+    const el = document.createElement("div");
+    el.className = "confetti";
+    el.textContent = CONFETTI_EMOJI[Math.floor(Math.random() * CONFETTI_EMOJI.length)];
+    el.style.left = Math.random() * 100 + "vw";
+    el.style.animationDuration = (1.8 + Math.random() * 1.6) + "s";
+    el.style.animationDelay = (Math.random() * 0.4) + "s";
+    document.body.appendChild(el);
+    setTimeout(() => el.remove(), 4200);
+  }
+}
+
+// ============ SPACE BAR: spin ============
+document.addEventListener("keydown", function (ev) {
+  if (ev.code !== "Space" && ev.key !== " ") return;
+  ev.preventDefault();
+  spinWheel();
+});
+
+buildWheel();
+</script>
+</body>
+</html>
