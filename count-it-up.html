@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Count It Up — ProjectorFirst</title>
+
+<!-- Membership gate (paywall-test) -->
+<script
+  data-memberstack-app="app_cmgnwpg8y00x10suih4pua785"
+  src="https://static.memberstack.com/scripts/v2/memberstack.js"
+  type="text/javascript">
+</script>
+<script src="/guard.js"></script>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    html, body {
+      height: 100vh;
+      height: 100dvh;
+      margin: 0;
+      overflow: hidden;
+      background: #1e3a8a;
+      font-family: ui-rounded, system-ui, -apple-system, "Segoe UI", sans-serif;
+    }
+    .screen {
+      height: 100vh;
+      height: 100dvh;
+      display: flex;
+      flex-direction: column;
+    }
+    .btn-big {
+      font-weight: 900;
+      border-radius: 1.25rem;
+      border: 4px solid #0f265f;
+      box-shadow: 0 6px 0 #0f265f;
+      transition: transform .08s ease, box-shadow .08s ease;
+      cursor: pointer;
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: manipulation;
+    }
+    .btn-big:active {
+      transform: translateY(4px);
+      box-shadow: 0 2px 0 #0f265f;
+    }
+    .item {
+      position: relative;
+      font-size: clamp(3.2rem, 11vw, 8rem);
+      line-height: 1.1;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .item .num {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      color: #1e3a8a;
+      background: #facc15dd;
+      border-radius: 1rem;
+      font-size: clamp(2.2rem, 8vw, 5.5rem);
+      opacity: 0;
+      transform: scale(.4);
+      transition: opacity .15s ease, transform .2s cubic-bezier(.2,1.6,.4,1);
+    }
+    .item .num.on {
+      opacity: 1;
+      transform: scale(1);
+    }
+    .answer-banner {
+      background: #facc15;
+      color: #1e3a8a;
+      border: 6px solid #fff;
+      border-radius: 1.5rem;
+      box-shadow: 0 10px 30px rgba(0,0,0,.4);
+      animation: popIn .45s cubic-bezier(.2,1.6,.4,1) both;
+    }
+    @keyframes popIn {
+      0% { transform: scale(.3); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    .confetti {
+      position: fixed;
+      top: -20px;
+      pointer-events: none;
+      z-index: 50;
+      font-size: clamp(1.2rem, 3vw, 2rem);
+      animation: fall linear forwards;
+    }
+    @keyframes fall {
+      to { transform: translateY(110vh) rotate(720deg); opacity: .9; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .answer-banner { animation: none; }
+      .confetti { display: none; }
+      .item .num { transition: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ===== START SCREEN ===== -->
+  <div id="startScreen" class="screen">
+    <header class="flex items-center justify-between px-4 pt-4 pb-2">
+      <a href="apps.html" class="btn-big bg-white text-blue-900 text-lg md:text-xl px-4 py-2 no-underline">← Back to Apps</a>
+      <label class="flex items-center gap-2 text-white font-bold text-lg md:text-xl cursor-pointer select-none">
+        <input type="checkbox" id="voiceToggle" class="w-6 h-6 accent-yellow-400" checked>
+        🔊 Count out loud
+      </label>
+    </header>
+
+    <main class="flex-1 flex flex-col items-center justify-center px-4 gap-5 overflow-y-auto">
+      <div class="text-center">
+        <div style="font-size: clamp(3rem, 9vw, 5.5rem); line-height:1;">🍎🍎🍎</div>
+        <h1 class="text-yellow-300 font-black" style="font-size: clamp(2.4rem, 8vw, 5rem); text-shadow: 4px 4px 0 #0f265f;">COUNT IT UP!</h1>
+        <p class="text-white font-bold max-w-2xl mx-auto" style="font-size: clamp(1.1rem, 3vw, 1.6rem);">How many do you see? Count together, then watch the numbers pop up one by one!</p>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 w-full max-w-3xl pb-4">
+        <button class="btn-big bg-white text-blue-900 px-6 py-5" style="font-size: clamp(1.3rem, 4vw, 2rem);" onclick="startGame('easy')">🌱 Easy<br><span class="text-base md:text-lg font-bold">Count to 5</span></button>
+        <button class="btn-big bg-yellow-400 text-blue-900 px-6 py-5" style="font-size: clamp(1.3rem, 4vw, 2rem); border-color:#b45309; box-shadow: 0 6px 0 #b45309;" onclick="startGame('medium')">🌼 Medium<br><span class="text-base md:text-lg font-bold">Count to 10</span></button>
+        <button class="btn-big bg-white text-blue-900 px-6 py-5" style="font-size: clamp(1.3rem, 4vw, 2rem);" onclick="startGame('big')">🌳 Big Numbers<br><span class="text-base md:text-lg font-bold">Count to 15</span></button>
+      </div>
+    </main>
+  </div>
+
+  <!-- ===== GAME SCREEN ===== -->
+  <div id="gameScreen" class="screen" style="display:none;">
+    <header class="flex items-center justify-between px-4 pt-4 pb-1 gap-2 flex-wrap">
+      <a href="apps.html" class="btn-big bg-white text-blue-900 text-base md:text-xl px-3 py-2 no-underline">← Back to Apps</a>
+      <div class="text-yellow-300 font-black text-center" style="font-size: clamp(1.1rem, 3.5vw, 1.8rem);" id="promptLabel">How many do you see?</div>
+      <button class="btn-big bg-white text-blue-900 text-base md:text-xl px-3 py-2" onclick="goHome()">☰ Levels</button>
+    </header>
+
+    <div class="text-center text-blue-200 font-bold" style="font-size: clamp(.95rem, 2.5vw, 1.3rem);" id="progressLabel"></div>
+
+    <main class="flex-1 flex flex-col items-center justify-center px-4 min-h-0 gap-3">
+      <div id="itemGrid" class="flex flex-wrap items-center justify-center gap-2 md:gap-4 max-w-5xl"></div>
+
+      <div class="w-full max-w-4xl flex items-center justify-center min-h-[7rem]">
+        <div id="answerBanner" class="answer-banner px-8 py-4 text-center font-black hidden" style="font-size: clamp(2.2rem, 8vw, 5rem);"></div>
+      </div>
+    </main>
+
+    <footer class="px-4 pb-5 pt-1">
+      <div class="flex justify-center gap-3 md:gap-5 flex-wrap max-w-2xl mx-auto">
+        <button id="revealBtn" class="btn-big bg-yellow-400 text-blue-900 px-5 py-4 flex-1 min-w-[10rem]" style="font-size: clamp(1.3rem, 4vw, 2.1rem); border-color:#b45309; box-shadow: 0 6px 0 #b45309;" onclick="reveal()">🔢 Count Together!</button>
+        <button id="nextBtn" class="btn-big bg-white text-blue-900 px-5 py-4 flex-1 min-w-[10rem]" style="font-size: clamp(1.3rem, 4vw, 2.1rem);" onclick="nextRound()">Next ➡️</button>
+      </div>
+      <div class="text-center text-blue-300 font-semibold mt-2 hidden md:block" style="font-size: clamp(.85rem, 2vw, 1.05rem);">Tip: press the SPACE BAR to count, then advance</div>
+    </footer>
+  </div>
+
+<script>
+// ============ DATA ============
+// Friendly, familiar objects. Each round is generated: a random object, a random count.
+const OBJECTS = [
+  { e: "🍎", one: "apple", many: "apples" },
+  { e: "🌹", one: "rose", many: "roses" },
+  { e: "🐶", one: "puppy", many: "puppies" },
+  { e: "🐱", one: "kitten", many: "kittens" },
+  { e: "⭐", one: "star", many: "stars" },
+  { e: "🎈", one: "balloon", many: "balloons" },
+  { e: "🍪", one: "cookie", many: "cookies" },
+  { e: "☕", one: "coffee cup", many: "coffee cups" },
+  { e: "🌻", one: "sunflower", many: "sunflowers" },
+  { e: "🦋", one: "butterfly", many: "butterflies" },
+  { e: "🐦", one: "bird", many: "birds" },
+  { e: "🧁", one: "cupcake", many: "cupcakes" },
+  { e: "🍓", one: "strawberry", many: "strawberries" },
+  { e: "🎁", one: "present", many: "presents" },
+  { e: "🐟", one: "fish", many: "fish" },
+  { e: "🌙", one: "moon", many: "moons" },
+  { e: "🍌", one: "banana", many: "bananas" },
+  { e: "🐝", one: "bee", many: "bees" },
+  { e: "❤️", one: "heart", many: "hearts" },
+  { e: "🦆", one: "duck", many: "ducks" },
+  { e: "🍊", one: "orange", many: "oranges" },
+  { e: "🐢", one: "turtle", many: "turtles" },
+  { e: "🌷", one: "tulip", many: "tulips" },
+  { e: "🥧", one: "pie", many: "pies" },
+];
+
+const LEVELS = {
+  easy:   { min: 2, max: 5,  rounds: 30, label: "🌱 Easy — Count to 5" },
+  medium: { min: 3, max: 10, rounds: 30, label: "🌼 Medium — Count to 10" },
+  big:    { min: 8, max: 15, rounds: 30, label: "🌳 Big Numbers — Count to 15" },
+};
+
+// ============ STATE ============
+let deck = [];
+let deckIndex = 0;
+let currentLevel = null;
+let revealed = false;
+let counting = false;
+
+// ============ AUDIO ============
+let audioCtx = null;
+function getCtx() {
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  if (audioCtx.state === "suspended") audioCtx.resume();
+  return audioCtx;
+}
+function tone(freq, start, dur, type, vol) {
+  const ctx = getCtx();
+  const o = ctx.createOscillator();
+  const g = ctx.createGain();
+  o.type = type || "triangle";
+  o.frequency.value = freq;
+  g.gain.setValueAtTime(0.0001, ctx.currentTime + start);
+  g.gain.exponentialRampToValueAtTime(vol || 0.25, ctx.currentTime + start + 0.02);
+  g.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + start + dur);
+  o.connect(g).connect(ctx.destination);
+  o.start(ctx.currentTime + start);
+  o.stop(ctx.currentTime + start + dur + 0.05);
+}
+function popSound() { tone(520, 0, 0.12, "triangle", 0.2); }
+function countTick(i) { tone(440 + i * 40, 0, 0.14, "triangle", 0.22); }
+function fanfare() {
+  tone(523, 0.00, 0.18, "triangle", 0.28);
+  tone(659, 0.14, 0.18, "triangle", 0.28);
+  tone(784, 0.28, 0.18, "triangle", 0.28);
+  tone(1047, 0.42, 0.45, "triangle", 0.32);
+}
+
+// ============ VOICE ============
+function voiceOn() { return document.getElementById("voiceToggle").checked && ("speechSynthesis" in window); }
+function say(text, rate) {
+  if (!voiceOn()) return;
+  const u = new SpeechSynthesisUtterance(text);
+  u.rate = rate || 0.85;
+  window.speechSynthesis.speak(u);
+}
+
+// ============ DECK GENERATION ============
+function shuffle(arr) {
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+function buildDeck(levelKey) {
+  const lvl = LEVELS[levelKey];
+  const objs = shuffle(OBJECTS);
+  const rounds = [];
+  let lastCount = -1;
+  for (let i = 0; i < lvl.rounds; i++) {
+    const obj = objs[i % objs.length];
+    let count;
+    do {
+      count = lvl.min + Math.floor(Math.random() * (lvl.max - lvl.min + 1));
+    } while (count === lastCount);
+    lastCount = count;
+    rounds.push({ obj: obj, count: count });
+  }
+  return shuffle(rounds);
+}
+
+// ============ SCREENS ============
+function show(id) {
+  for (const s of ["startScreen", "gameScreen"]) {
+    document.getElementById(s).style.display = (s === id) ? "flex" : "none";
+  }
+}
+function goHome() {
+  window.speechSynthesis && window.speechSynthesis.cancel();
+  show("startScreen");
+}
+
+// ============ GAME FLOW ============
+function startGame(levelKey) {
+  currentLevel = levelKey;
+  deck = buildDeck(levelKey);
+  deckIndex = 0;
+  show("gameScreen");
+  renderRound();
+  popSound();
+}
+function renderRound() {
+  revealed = false;
+  counting = false;
+  const r = deck[deckIndex];
+  document.getElementById("progressLabel").textContent = "Round " + (deckIndex + 1) + " of " + deck.length + "  ·  " + LEVELS[currentLevel].label;
+  document.getElementById("promptLabel").textContent = "How many " + r.obj.many + " do you see?";
+  const grid = document.getElementById("itemGrid");
+  grid.innerHTML = "";
+  for (let i = 0; i < r.count; i++) {
+    const d = document.createElement("div");
+    d.className = "item";
+    d.innerHTML = "<span>" + r.obj.e + "</span><span class='num'>" + (i + 1) + "</span>";
+    grid.appendChild(d);
+  }
+  const banner = document.getElementById("answerBanner");
+  banner.classList.add("hidden");
+  banner.textContent = "";
+  document.getElementById("revealBtn").style.visibility = "visible";
+}
+function reveal() {
+  if (revealed || counting) return;
+  counting = true;
+  const r = deck[deckIndex];
+  const nums = document.querySelectorAll("#itemGrid .num");
+  document.getElementById("revealBtn").style.visibility = "hidden";
+  let i = 0;
+  const stepMs = 900; // slow, count-along pace
+  function step() {
+    if (i < nums.length) {
+      nums[i].classList.add("on");
+      countTick(i);
+      say(String(i + 1), 0.9);
+      i++;
+      setTimeout(step, stepMs);
+    } else {
+      finishCount(r);
+    }
+  }
+  step();
+}
+function finishCount(r) {
+  counting = false;
+  revealed = true;
+  const banner = document.getElementById("answerBanner");
+  banner.textContent = r.count + " " + (r.count === 1 ? r.obj.one : r.obj.many) + "!";
+  banner.classList.remove("hidden");
+  fanfare();
+  throwConfetti();
+  setTimeout(function () { say(r.count + " " + (r.count === 1 ? r.obj.one : r.obj.many) + "!"); }, 300);
+}
+function nextRound() {
+  if (counting) return;
+  window.speechSynthesis && window.speechSynthesis.cancel();
+  deckIndex++;
+  if (deckIndex >= deck.length) {
+    deck = buildDeck(currentLevel);
+    deckIndex = 0;
+  }
+  renderRound();
+  popSound();
+}
+
+// ============ CONFETTI ============
+const CONFETTI_EMOJI = ["🎉", "✨", "⭐", "🎊", "💛", "💙"];
+function throwConfetti(count) {
+  const n = count || 14;
+  for (let i = 0; i < n; i++) {
+    const el = document.createElement("div");
+    el.className = "confetti";
+    el.textContent = CONFETTI_EMOJI[Math.floor(Math.random() * CONFETTI_EMOJI.length)];
+    el.style.left = Math.random() * 100 + "vw";
+    el.style.animationDuration = (1.8 + Math.random() * 1.6) + "s";
+    el.style.animationDelay = (Math.random() * 0.4) + "s";
+    document.body.appendChild(el);
+    setTimeout(() => el.remove(), 4200);
+  }
+}
+
+// ============ SPACE BAR ============
+document.addEventListener("keydown", function (ev) {
+  if (ev.code !== "Space" && ev.key !== " ") return;
+  if (document.getElementById("gameScreen").style.display === "none") return;
+  ev.preventDefault();
+  if (!revealed && !counting) reveal();
+  else if (revealed) nextRound();
+});
+</script>
+</body>
+</html>
