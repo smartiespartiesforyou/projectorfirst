@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Odd One Out — ProjectorFirst</title>
+
+<!-- Membership gate (paywall-test) -->
+<script
+  data-memberstack-app="app_cmgnwpg8y00x10suih4pua785"
+  src="https://static.memberstack.com/scripts/v2/memberstack.js"
+  type="text/javascript">
+</script>
+<script src="/guard.js"></script>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    html, body {
+      height: 100vh;
+      height: 100dvh;
+      margin: 0;
+      overflow: hidden;
+      background: #1e3a8a;
+      font-family: ui-rounded, system-ui, -apple-system, "Segoe UI", sans-serif;
+    }
+    .screen {
+      height: 100vh;
+      height: 100dvh;
+      display: flex;
+      flex-direction: column;
+    }
+    .btn-big {
+      font-weight: 900;
+      border-radius: 1.25rem;
+      border: 4px solid #0f265f;
+      box-shadow: 0 6px 0 #0f265f;
+      transition: transform .08s ease, box-shadow .08s ease;
+      cursor: pointer;
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: manipulation;
+    }
+    .btn-big:active { transform: translateY(4px); box-shadow: 0 2px 0 #0f265f; }
+    .choice {
+      background: #fff;
+      border: 5px solid #0f265f;
+      border-radius: 1.5rem;
+      box-shadow: 0 8px 0 #0f265f55;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: .2rem;
+      cursor: pointer;
+      padding: .6rem;
+      transition: transform .15s ease, background .3s ease, opacity .3s ease, border-color .3s ease;
+      touch-action: manipulation;
+    }
+    .choice .c-emoji { font-size: clamp(3rem, 12vw, 8rem); line-height: 1.1; }
+    .choice .c-name { font-weight: 900; color: #1e3a8a; font-size: clamp(.9rem, 2.8vw, 1.5rem); text-align: center; }
+    .choice.dimmed { opacity: .35; }
+    .choice.winner {
+      background: #facc15;
+      border-color: #fff;
+      transform: scale(1.08);
+      box-shadow: 0 0 30px #facc15aa;
+      animation: bounce .6s ease;
+    }
+    @keyframes bounce {
+      0%, 100% { transform: scale(1.08); }
+      40% { transform: scale(1.2) rotate(-3deg); }
+      70% { transform: scale(1.05) rotate(2deg); }
+    }
+    .choice.wobble { animation: wobble .4s ease; }
+    @keyframes wobble {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-8px); }
+      75% { transform: translateX(8px); }
+    }
+    .answer-banner {
+      background: #facc15;
+      color: #1e3a8a;
+      border: 6px solid #fff;
+      border-radius: 1.5rem;
+      box-shadow: 0 10px 30px rgba(0,0,0,.4);
+      animation: popIn .45s cubic-bezier(.2,1.6,.4,1) both;
+    }
+    @keyframes popIn {
+      0% { transform: scale(.3); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    .confetti {
+      position: fixed;
+      top: -20px;
+      pointer-events: none;
+      z-index: 50;
+      font-size: clamp(1.2rem, 3vw, 2rem);
+      animation: fall linear forwards;
+    }
+    @keyframes fall {
+      to { transform: translateY(110vh) rotate(720deg); opacity: .9; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .answer-banner { animation: none; }
+      .confetti { display: none; }
+      .choice.winner, .choice.wobble { animation: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <div id="gameScreen" class="screen">
+    <header class="flex items-center justify-between px-4 pt-4 pb-1 gap-2 flex-wrap">
+      <a href="apps.html" class="btn-big bg-white text-blue-900 text-base md:text-xl px-3 py-2 no-underline">← Back to Apps</a>
+      <h1 class="text-yellow-300 font-black" style="font-size: clamp(1.3rem, 4.5vw, 2.4rem); text-shadow: 3px 3px 0 #0f265f;">🔍 ODD ONE OUT</h1>
+      <label class="flex items-center gap-2 text-white font-bold text-sm md:text-lg cursor-pointer select-none">
+        <input type="checkbox" id="voiceToggle" class="w-5 h-5 md:w-6 md:h-6 accent-yellow-400" checked>
+        🔊 Voice
+      </label>
+    </header>
+
+    <div class="text-center text-white font-black" style="font-size: clamp(1.1rem, 3.4vw, 1.9rem);" id="hostLine">Which one does NOT belong?</div>
+    <div class="text-center text-blue-200 font-bold" style="font-size: clamp(.9rem, 2.4vw, 1.2rem);" id="roundLabel"></div>
+
+    <main class="flex-1 flex flex-col items-center justify-center px-3 min-h-0 gap-3">
+      <div id="grid" class="grid grid-cols-2 gap-3 md:gap-6 w-full max-w-3xl"></div>
+
+      <div class="w-full max-w-4xl flex items-center justify-center min-h-[5rem] px-2">
+        <div id="answerBanner" class="answer-banner px-6 py-3 text-center font-black hidden" style="font-size: clamp(1.1rem, 3.8vw, 2.2rem);"></div>
+      </div>
+    </main>
+
+    <footer class="px-4 pb-5 pt-1">
+      <div class="flex justify-center gap-3 md:gap-5 flex-wrap max-w-2xl mx-auto">
+        <button id="revealBtn" class="btn-big bg-yellow-400 text-blue-900 px-5 py-4 flex-1 min-w-[10rem]" style="font-size: clamp(1.2rem, 3.8vw, 2rem); border-color:#b45309; box-shadow: 0 6px 0 #b45309;" onclick="reveal()">✨ Show the Answer!</button>
+        <button id="nextBtn" class="btn-big bg-white text-blue-900 px-5 py-4 flex-1 min-w-[10rem]" style="font-size: clamp(1.2rem, 3.8vw, 2rem);" onclick="nextRound()">Next ➡️</button>
+      </div>
+      <div class="text-center text-blue-300 font-semibold mt-2 hidden md:block" style="font-size: clamp(.85rem, 2vw, 1.05rem);">Tip: tap the odd picture, or press SPACE to reveal, then advance</div>
+    </footer>
+  </div>
+
+<script>
+// ============ CATEGORY POOLS ============
+// Each pool has a family so the odd one is always from a clearly DIFFERENT kind of thing.
+const POOLS = [
+  { family: "food", label: "FRUITS", items: [
+    { e: "🍎", n: "Apple" }, { e: "🍌", n: "Banana" }, { e: "🍇", n: "Grapes" }, { e: "🍓", n: "Strawberry" },
+    { e: "🍊", n: "Orange" }, { e: "🍉", n: "Watermelon" }, { e: "🍑", n: "Peach" }, { e: "🍒", n: "Cherries" } ] },
+  { family: "food", label: "VEGETABLES", items: [
+    { e: "🥕", n: "Carrot" }, { e: "🌽", n: "Corn" }, { e: "🥔", n: "Potato" }, { e: "🍅", n: "Tomato" },
+    { e: "🥒", n: "Cucumber" }, { e: "🧅", n: "Onion" } ] },
+  { family: "food", label: "SWEET TREATS", items: [
+    { e: "🍰", n: "Cake" }, { e: "🍪", n: "Cookie" }, { e: "🍭", n: "Lollipop" }, { e: "🍩", n: "Doughnut" },
+    { e: "🍦", n: "Ice Cream" }, { e: "🧁", n: "Cupcake" } ] },
+  { family: "food", label: "DRINKS", items: [
+    { e: "☕", n: "Coffee" }, { e: "🥛", n: "Milk" }, { e: "🧃", n: "Juice" }, { e: "🍵", n: "Tea" },
+    { e: "🥤", n: "Soda Pop" } ] },
+  { family: "animals", label: "FARM ANIMALS", items: [
+    { e: "🐴", n: "Horse" }, { e: "🐮", n: "Cow" }, { e: "🐷", n: "Pig" }, { e: "🐑", n: "Sheep" },
+    { e: "🐔", n: "Chicken" }, { e: "🦆", n: "Duck" }, { e: "🐐", n: "Goat" } ] },
+  { family: "animals", label: "PETS", items: [
+    { e: "🐶", n: "Dog" }, { e: "🐱", n: "Cat" }, { e: "🐰", n: "Rabbit" }, { e: "🐦", n: "Bird" },
+    { e: "🐹", n: "Hamster" } ] },
+  { family: "animals", label: "SEA CREATURES", items: [
+    { e: "🐟", n: "Fish" }, { e: "🐬", n: "Dolphin" }, { e: "🐙", n: "Octopus" }, { e: "🦀", n: "Crab" },
+    { e: "🐳", n: "Whale" }, { e: "🦞", n: "Lobster" } ] },
+  { family: "animals", label: "LITTLE BUGS", items: [
+    { e: "🐝", n: "Bee" }, { e: "🦋", n: "Butterfly" }, { e: "🐞", n: "Ladybug" }, { e: "🐜", n: "Ant" },
+    { e: "🦗", n: "Cricket" } ] },
+  { family: "things", label: "THINGS THAT GO", items: [
+    { e: "🚗", n: "Car" }, { e: "🚌", n: "Bus" }, { e: "🚂", n: "Train" }, { e: "🚲", n: "Bicycle" },
+    { e: "✈️", n: "Airplane" }, { e: "⛵", n: "Sailboat" }, { e: "🚜", n: "Tractor" } ] },
+  { family: "things", label: "THINGS YOU WEAR", items: [
+    { e: "👒", n: "Hat" }, { e: "👞", n: "Shoe" }, { e: "🧦", n: "Socks" }, { e: "🧤", n: "Gloves" },
+    { e: "👗", n: "Dress" }, { e: "🧥", n: "Coat" }, { e: "👔", n: "Necktie" } ] },
+  { family: "things", label: "MUSICAL INSTRUMENTS", items: [
+    { e: "🎺", n: "Trumpet" }, { e: "🎸", n: "Guitar" }, { e: "🎻", n: "Violin" }, { e: "🥁", n: "Drum" },
+    { e: "🎹", n: "Piano" }, { e: "🪗", n: "Accordion" } ] },
+  { family: "things", label: "SPORTS BALLS", items: [
+    { e: "⚾", n: "Baseball" }, { e: "🏀", n: "Basketball" }, { e: "🏈", n: "Football" }, { e: "⚽", n: "Soccer Ball" },
+    { e: "🎾", n: "Tennis Ball" }, { e: "🎳", n: "Bowling Ball" } ] },
+  { family: "things", label: "THINGS IN THE HOUSE", items: [
+    { e: "🪑", n: "Chair" }, { e: "🛏️", n: "Bed" }, { e: "🛋️", n: "Couch" }, { e: "🕰️", n: "Clock" },
+    { e: "🛁", n: "Bathtub" }, { e: "📺", n: "Television" } ] },
+  { family: "nature", label: "FLOWERS", items: [
+    { e: "🌹", n: "Rose" }, { e: "🌻", n: "Sunflower" }, { e: "🌷", n: "Tulip" }, { e: "🌼", n: "Daisy" },
+    { e: "🌺", n: "Hibiscus" } ] },
+  { family: "nature", label: "THINGS IN THE SKY", items: [
+    { e: "☀️", n: "Sun" }, { e: "🌙", n: "Moon" }, { e: "⭐", n: "Star" }, { e: "🌈", n: "Rainbow" },
+    { e: "☁️", n: "Cloud" } ] },
+];
+
+// ============ STATE ============
+let round = 0;
+let tiles = [];       // 4 items on screen
+let oddIndex = -1;
+let baseLabel = "";
+let oddItem = null;
+let revealed = false;
+let lastBasePool = -1;
+
+// ============ AUDIO ============
+let audioCtx = null;
+function getCtx() {
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  if (audioCtx.state === "suspended") audioCtx.resume();
+  return audioCtx;
+}
+function tone(freq, start, dur, type, vol) {
+  const ctx = getCtx();
+  const o = ctx.createOscillator();
+  const g = ctx.createGain();
+  o.type = type || "triangle";
+  o.frequency.value = freq;
+  g.gain.setValueAtTime(0.0001, ctx.currentTime + start);
+  g.gain.exponentialRampToValueAtTime(vol || 0.25, ctx.currentTime + start + 0.02);
+  g.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + start + dur);
+  o.connect(g).connect(ctx.destination);
+  o.start(ctx.currentTime + start);
+  o.stop(ctx.currentTime + start + dur + 0.05);
+}
+function popSound() { tone(520, 0, 0.12, "triangle", 0.2); }
+function softNote() { tone(330, 0, 0.18, "sine", 0.15); }
+function fanfare() {
+  tone(523, 0.00, 0.18, "triangle", 0.28);
+  tone(659, 0.14, 0.18, "triangle", 0.28);
+  tone(784, 0.28, 0.18, "triangle", 0.28);
+  tone(1047, 0.42, 0.45, "triangle", 0.32);
+}
+
+// ============ VOICE ============
+function speakText(text) {
+  if (!document.getElementById("voiceToggle").checked) return;
+  if (!("speechSynthesis" in window)) return;
+  window.speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text);
+  u.rate = 0.9;
+  window.speechSynthesis.speak(u);
+}
+
+// ============ ROUND GENERATION ============
+function shuffle(arr) {
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+function newRoundData() {
+  let baseIdx;
+  do {
+    baseIdx = Math.floor(Math.random() * POOLS.length);
+  } while (baseIdx === lastBasePool);
+  lastBasePool = baseIdx;
+  const base = POOLS[baseIdx];
+  const others = POOLS.filter(p => p.family !== base.family);
+  const oddPool = others[Math.floor(Math.random() * others.length)];
+  const three = shuffle(base.items).slice(0, 3);
+  const odd = oddPool.items[Math.floor(Math.random() * oddPool.items.length)];
+  const four = shuffle(three.concat([odd]));
+  return {
+    tiles: four,
+    oddIndex: four.indexOf(odd),
+    baseLabel: base.label,
+    oddItem: odd,
+  };
+}
+function renderRound() {
+  revealed = false;
+  round++;
+  const data = newRoundData();
+  tiles = data.tiles;
+  oddIndex = data.oddIndex;
+  baseLabel = data.baseLabel;
+  oddItem = data.oddItem;
+
+  document.getElementById("roundLabel").textContent = "Round " + round;
+  document.getElementById("hostLine").textContent = "Which one does NOT belong?";
+  const grid = document.getElementById("grid");
+  grid.innerHTML = "";
+  tiles.forEach((t, i) => {
+    const d = document.createElement("div");
+    d.className = "choice";
+    d.id = "choice" + i;
+    d.innerHTML = "<div class='c-emoji'>" + t.e + "</div><div class='c-name'>" + t.n + "</div>";
+    d.onclick = function () { tapTile(i); };
+    grid.appendChild(d);
+  });
+  const banner = document.getElementById("answerBanner");
+  banner.classList.add("hidden");
+  banner.textContent = "";
+  document.getElementById("revealBtn").style.visibility = "visible";
+}
+function tapTile(i) {
+  if (revealed) return;
+  if (i === oddIndex) {
+    reveal();
+  } else {
+    const el = document.getElementById("choice" + i);
+    el.classList.remove("wobble");
+    void el.offsetWidth;
+    el.classList.add("wobble");
+    softNote();
+  }
+}
+function reveal() {
+  if (revealed) return;
+  revealed = true;
+  tiles.forEach((t, i) => {
+    const el = document.getElementById("choice" + i);
+    if (i === oddIndex) el.classList.add("winner");
+    else el.classList.add("dimmed");
+  });
+  const line = "These three are " + baseLabel + " — the " + oddItem.n.toUpperCase() + " is the odd one out!";
+  const banner = document.getElementById("answerBanner");
+  banner.textContent = "🎉 " + line;
+  banner.classList.remove("hidden");
+  document.getElementById("hostLine").textContent = "You found it!";
+  document.getElementById("revealBtn").style.visibility = "hidden";
+  fanfare();
+  throwConfetti(16);
+  speakText(line);
+}
+function nextRound() {
+  window.speechSynthesis && window.speechSynthesis.cancel();
+  renderRound();
+  popSound();
+}
+
+// ============ CONFETTI ============
+const CONFETTI_EMOJI = ["🎉", "✨", "⭐", "🎊", "💛", "💙"];
+function throwConfetti(count) {
+  const n = count || 14;
+  for (let i = 0; i < n; i++) {
+    const el = document.createElement("div");
+    el.className = "confetti";
+    el.textContent = CONFETTI_EMOJI[Math.floor(Math.random() * CONFETTI_EMOJI.length)];
+    el.style.left = Math.random() * 100 + "vw";
+    el.style.animationDuration = (1.8 + Math.random() * 1.6) + "s";
+    el.style.animationDelay = (Math.random() * 0.4) + "s";
+    document.body.appendChild(el);
+    setTimeout(() => el.remove(), 4200);
+  }
+}
+
+// ============ SPACE BAR: reveal, then advance ============
+document.addEventListener("keydown", function (ev) {
+  if (ev.code !== "Space" && ev.key !== " ") return;
+  ev.preventDefault();
+  if (!revealed) reveal();
+  else nextRound();
+});
+
+renderRound();
+</script>
+</body>
+</html>
