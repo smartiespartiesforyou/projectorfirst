@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>What's That Emoji? — ProjectorFirst</title>
+
+<!-- Membership gate (paywall-test) -->
+<script
+  data-memberstack-app="app_cmgnwpg8y00x10suih4pua785"
+  src="https://static.memberstack.com/scripts/v2/memberstack.js"
+  type="text/javascript">
+</script>
+<script src="/guard.js"></script>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    html, body {
+      height: 100vh;
+      height: 100dvh;
+      margin: 0;
+      overflow: hidden;
+      background: #1e3a8a;
+      font-family: ui-rounded, system-ui, -apple-system, "Segoe UI", sans-serif;
+    }
+    .screen {
+      height: 100vh;
+      height: 100dvh;
+      display: flex;
+      flex-direction: column;
+    }
+    .btn-big {
+      font-weight: 900;
+      border-radius: 1.25rem;
+      border: 4px solid #0f265f;
+      box-shadow: 0 6px 0 #0f265f;
+      transition: transform .08s ease, box-shadow .08s ease;
+      cursor: pointer;
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: manipulation;
+    }
+    .btn-big:active {
+      transform: translateY(4px);
+      box-shadow: 0 2px 0 #0f265f;
+    }
+    .cat-btn {
+      background: #fff;
+      color: #1e3a8a;
+      font-weight: 900;
+      border: 4px solid #facc15;
+      border-radius: 1.5rem;
+      box-shadow: 0 8px 0 #b45309;
+      transition: transform .08s ease, box-shadow .08s ease;
+      cursor: pointer;
+      touch-action: manipulation;
+    }
+    .cat-btn:active {
+      transform: translateY(5px);
+      box-shadow: 0 3px 0 #b45309;
+    }
+    .big-emoji {
+      font-size: clamp(8rem, 30vw, 18rem);
+      line-height: 1.1;
+      text-align: center;
+    }
+    .answer-banner {
+      background: #facc15;
+      color: #1e3a8a;
+      border: 6px solid #fff;
+      border-radius: 1.5rem;
+      box-shadow: 0 10px 30px rgba(0,0,0,.4);
+      animation: popIn .45s cubic-bezier(.2,1.6,.4,1) both;
+    }
+    @keyframes popIn {
+      0% { transform: scale(.3); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    .confetti {
+      position: fixed;
+      top: -20px;
+      pointer-events: none;
+      z-index: 50;
+      font-size: clamp(1.2rem, 3vw, 2rem);
+      animation: fall linear forwards;
+    }
+    @keyframes fall {
+      to { transform: translateY(110vh) rotate(720deg); opacity: .9; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .answer-banner { animation: none; }
+      .confetti { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ===== START SCREEN ===== -->
+  <div id="startScreen" class="screen">
+    <header class="flex items-center justify-between px-4 pt-4 pb-2">
+      <a href="apps.html" class="btn-big bg-white text-blue-900 text-lg md:text-xl px-4 py-2 no-underline">← Back to Apps</a>
+      <label class="flex items-center gap-2 text-white font-bold text-lg md:text-xl cursor-pointer select-none">
+        <input type="checkbox" id="voiceToggle" class="w-6 h-6 accent-yellow-400" checked>
+        🔊 Read answers aloud
+      </label>
+    </header>
+
+    <main class="flex-1 flex flex-col items-center justify-center px-4 gap-4 overflow-y-auto">
+      <div class="text-center">
+        <div style="font-size: clamp(3rem, 9vw, 5.5rem); line-height:1;">😀📱❓</div>
+        <h1 class="text-yellow-300 font-black" style="font-size: clamp(2.2rem, 7.5vw, 4.6rem); text-shadow: 4px 4px 0 #0f265f;">WHAT'S THAT EMOJI?</h1>
+        <p class="text-white font-bold max-w-2xl mx-auto" style="font-size: clamp(1.1rem, 3vw, 1.6rem);">Learn the little pictures the grandkids text you! Shout out your guess, then reveal the answer.</p>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full max-w-3xl pb-4">
+        <button class="cat-btn px-6 py-5" style="font-size: clamp(1.2rem, 3.6vw, 1.9rem);" onclick="startGame('faces')">😊 Faces & Feelings</button>
+        <button class="cat-btn px-6 py-5" style="font-size: clamp(1.2rem, 3.6vw, 1.9rem);" onclick="startGame('hands')">👍 Hands & Gestures</button>
+        <button class="cat-btn px-6 py-5" style="font-size: clamp(1.2rem, 3.6vw, 1.9rem);" onclick="startGame('hearts')">❤️ Hearts & Fun Symbols</button>
+        <button class="cat-btn px-6 py-5" style="font-size: clamp(1.2rem, 3.6vw, 1.9rem);" onclick="startGame('animals')">🐶 Animals</button>
+        <button class="cat-btn px-6 py-5" style="font-size: clamp(1.2rem, 3.6vw, 1.9rem);" onclick="startGame('food')">☕ Food & Drink</button>
+        <button class="cat-btn px-6 py-5" style="font-size: clamp(1.2rem, 3.6vw, 1.9rem);" onclick="startGame('things')">🏠 Everyday Things</button>
+        <button class="cat-btn px-6 py-5 sm:col-span-2" style="font-size: clamp(1.2rem, 3.6vw, 1.9rem); background:#facc15; border-color:#fff;" onclick="startGame('all')">🎲 Mix Everything!</button>
+      </div>
+    </main>
+  </div>
+
+  <!-- ===== GAME SCREEN ===== -->
+  <div id="gameScreen" class="screen" style="display:none;">
+    <header class="flex items-center justify-between px-4 pt-4 pb-1 gap-2 flex-wrap">
+      <a href="apps.html" class="btn-big bg-white text-blue-900 text-base md:text-xl px-3 py-2 no-underline">← Back to Apps</a>
+      <div class="text-yellow-300 font-black text-center" style="font-size: clamp(1.1rem, 3.5vw, 1.8rem);" id="categoryLabel"></div>
+      <button class="btn-big bg-white text-blue-900 text-base md:text-xl px-3 py-2" onclick="goHome()">☰ Categories</button>
+    </header>
+
+    <div class="text-center text-blue-200 font-bold" style="font-size: clamp(.95rem, 2.5vw, 1.3rem);" id="progressLabel"></div>
+
+    <main class="flex-1 flex flex-col items-center justify-center px-4 min-h-0 gap-3">
+      <div id="emojiDisplay" class="big-emoji"></div>
+
+      <div id="answerArea" class="w-full max-w-4xl flex flex-col items-center justify-center gap-2 min-h-[8rem]">
+        <div id="answerBanner" class="answer-banner px-6 py-4 text-center font-black hidden" style="font-size: clamp(1.8rem, 6.5vw, 4rem);"></div>
+        <div id="tipLine" class="text-white font-bold text-center px-4 hidden" style="font-size: clamp(1.1rem, 3.2vw, 1.8rem);"></div>
+      </div>
+    </main>
+
+    <footer class="px-4 pb-5 pt-1">
+      <div class="flex justify-center gap-3 md:gap-5 flex-wrap max-w-2xl mx-auto">
+        <button id="revealBtn" class="btn-big bg-yellow-400 text-blue-900 px-5 py-4 flex-1 min-w-[10rem]" style="font-size: clamp(1.3rem, 4vw, 2.1rem); border-color:#b45309; box-shadow: 0 6px 0 #b45309;" onclick="reveal()">✨ What Is It?</button>
+        <button id="nextBtn" class="btn-big bg-white text-blue-900 px-5 py-4 flex-1 min-w-[10rem]" style="font-size: clamp(1.3rem, 4vw, 2.1rem);" onclick="nextEmoji()">Next ➡️</button>
+      </div>
+      <div class="text-center text-blue-300 font-semibold mt-2 hidden md:block" style="font-size: clamp(.85rem, 2vw, 1.05rem);">Tip: press the SPACE BAR to reveal, then advance</div>
+    </footer>
+  </div>
+
+  <!-- ===== FINISHED SCREEN ===== -->
+  <div id="doneScreen" class="screen" style="display:none;">
+    <main class="flex-1 flex flex-col items-center justify-center px-4 gap-5 text-center">
+      <div style="font-size: clamp(4rem, 14vw, 8rem);">🎉🏆🎉</div>
+      <h2 class="text-yellow-300 font-black" style="font-size: clamp(2rem, 7vw, 4.5rem); text-shadow: 4px 4px 0 #0f265f;">EMOJI EXPERTS!</h2>
+      <p class="text-white font-bold" style="font-size: clamp(1.1rem, 3vw, 1.6rem);">You learned every emoji in this category. The grandkids better watch out!</p>
+      <div class="flex gap-4 flex-wrap justify-center">
+        <button class="btn-big bg-yellow-400 text-blue-900 px-8 py-4" style="font-size: clamp(1.2rem, 4vw, 2rem); border-color:#b45309; box-shadow: 0 6px 0 #b45309;" onclick="replayCategory()">🔄 Play Again</button>
+        <button class="btn-big bg-white text-blue-900 px-8 py-4" style="font-size: clamp(1.2rem, 4vw, 2rem);" onclick="goHome()">☰ Pick a Category</button>
+      </div>
+    </main>
+  </div>
+
+<script>
+// ============ EMOJI DATA ============
+// Each entry: e = emoji, a = simple name, t = friendly tip about how it's used in texts.
+const EMOJIS = {
+  faces: [
+    { e: "😀", a: "Happy Face", t: "The everyday smile — means \"I'm happy!\"" },
+    { e: "😂", a: "Laughing So Hard You Cry", t: "The grandkids send this when something is very funny." },
+    { e: "😉", a: "Winking Face", t: "Means \"just kidding\" or \"our little secret.\"" },
+    { e: "😢", a: "Crying Face", t: "Means \"that's sad\" or \"I miss you.\"" },
+    { e: "😴", a: "Sleeping Face", t: "Means \"I'm tired\" or \"good night.\"" },
+    { e: "😡", a: "Angry Face", t: "Means someone is mad — hopefully not at you!" },
+    { e: "🥰", a: "Face with Hearts", t: "Means \"I love this!\" or \"I love you!\"" },
+    { e: "😎", a: "Cool Face with Sunglasses", t: "Means \"looking good\" or \"everything's great.\"" },
+    { e: "🤔", a: "Thinking Face", t: "Means \"hmm, let me think about that.\"" },
+    { e: "😱", a: "Shocked Face", t: "Means \"Oh my goodness!\"" },
+    { e: "🙂", a: "Little Smile", t: "A gentle, polite smile." },
+    { e: "😋", a: "Yummy Face", t: "Means \"that food is delicious!\"" },
+    { e: "🤗", a: "Hugging Face", t: "Means \"sending you a hug.\"" },
+    { e: "🤒", a: "Sick Face", t: "Means \"I'm not feeling well today.\"" },
+    { e: "🥳", a: "Party Face", t: "Means \"let's celebrate!\" — great for birthdays." },
+    { e: "😇", a: "Angel Face", t: "Means \"I've been good, I promise!\"" },
+    { e: "🤫", a: "Shhh Face", t: "Means \"it's a secret — don't tell!\"" },
+    { e: "🙄", a: "Rolling Eyes", t: "Means \"oh brother!\" — the grandkids use this a LOT." },
+    { e: "😮", a: "Surprised Face", t: "Means \"wow, really?\"" },
+    { e: "😍", a: "Heart Eyes", t: "Means \"I absolutely LOVE it!\"" },
+  ],
+  hands: [
+    { e: "👍", a: "Thumbs Up", t: "Means \"yes,\" \"okay,\" or \"good job.\" The most useful one of all!" },
+    { e: "👎", a: "Thumbs Down", t: "Means \"no\" or \"I don't like it.\"" },
+    { e: "👏", a: "Clapping Hands", t: "Means \"bravo!\" or \"well done!\"" },
+    { e: "🙏", a: "Praying Hands", t: "Means \"thank you,\" \"please,\" or \"praying for you.\"" },
+    { e: "✌️", a: "Peace Sign", t: "Means \"peace\" or \"goodbye.\"" },
+    { e: "👋", a: "Waving Hand", t: "Means \"hello!\" or \"goodbye!\"" },
+    { e: "💪", a: "Strong Arm", t: "Means \"you're strong\" or \"you can do it!\"" },
+    { e: "🤝", a: "Handshake", t: "Means \"it's a deal\" or \"nice working with you.\"" },
+    { e: "👌", a: "OK Sign", t: "Means \"perfect\" or \"just right.\"" },
+    { e: "🤞", a: "Fingers Crossed", t: "Means \"wish me luck!\"" },
+    { e: "✋", a: "Raised Hand", t: "Means \"stop\" or \"high five!\"" },
+    { e: "👉", a: "Pointing Finger", t: "Points at something — \"look at this!\"" },
+    { e: "👆", a: "Pointing Up", t: "Means \"see what I said above.\"" },
+    { e: "🖐️", a: "Open Hand", t: "A friendly open hand — \"hi there!\" or \"give me five!\"" },
+    { e: "👊", a: "Fist Bump", t: "A friendly knuckle tap — \"way to go, partner!\"" },
+    { e: "🤙", a: "Call Me Hand", t: "Means \"call me!\" — like holding a telephone." },
+    { e: "🫶", a: "Heart Hands", t: "Hands making a heart — \"I love you.\"" },
+    { e: "👐", a: "Open Arms", t: "Means \"come here for a hug!\"" },
+    { e: "✊", a: "Raised Fist", t: "Means \"stay strong!\"" },
+    { e: "🙌", a: "Hands in the Air", t: "Means \"hooray!\" or \"praise the Lord!\"" },
+  ],
+  hearts: [
+    { e: "❤️", a: "Red Heart", t: "The classic — means \"I love you.\"" },
+    { e: "💔", a: "Broken Heart", t: "Means \"that breaks my heart\" or \"I'm so sad.\"" },
+    { e: "💕", a: "Two Hearts", t: "Means \"lots of love!\"" },
+    { e: "💛", a: "Yellow Heart", t: "A happy, friendly heart — for good friends." },
+    { e: "⭐", a: "Star", t: "Means \"you're a star!\" or \"excellent!\"" },
+    { e: "🎉", a: "Party Popper", t: "Means \"congratulations!\" or \"hooray!\"" },
+    { e: "🎂", a: "Birthday Cake", t: "Means \"happy birthday!\"" },
+    { e: "🎁", a: "Gift", t: "Means \"a present for you!\"" },
+    { e: "✅", a: "Check Mark", t: "Means \"done!\" or \"correct!\"" },
+    { e: "❌", a: "Red X", t: "Means \"no\" or \"wrong.\"" },
+    { e: "❓", a: "Question Mark", t: "Means \"what do you mean?\"" },
+    { e: "💤", a: "Sleeping Z's", t: "Means \"sleeping\" or \"this is boring — zzzz.\"" },
+    { e: "🔥", a: "Fire", t: "The grandkids use this to say \"that's fantastic!\"" },
+    { e: "💐", a: "Bouquet of Flowers", t: "Means \"flowers for you!\" — sweet and thoughtful." },
+    { e: "💯", a: "One Hundred", t: "Means \"perfect score!\" or \"absolutely!\"" },
+    { e: "🎈", a: "Balloon", t: "Means \"celebration!\" — birthdays and parties." },
+    { e: "☀️", a: "Sun", t: "Means \"sunny day\" or \"good morning, sunshine!\"" },
+    { e: "🌈", a: "Rainbow", t: "Means \"beautiful day\" or \"hope after the storm.\"" },
+    { e: "🍀", a: "Four-Leaf Clover", t: "Means \"good luck!\"" },
+    { e: "💒", a: "Wedding Chapel", t: "Means \"a wedding!\" — love is in the air." },
+  ],
+  animals: [
+    { e: "🐶", a: "Dog", t: "Man's best friend — often means \"cute!\"" },
+    { e: "🐱", a: "Cat", t: "For cat lovers and cat photos." },
+    { e: "🐦", a: "Bird", t: "A little songbird." },
+    { e: "🐴", a: "Horse", t: "For horse lovers and trips to the races." },
+    { e: "🐟", a: "Fish", t: "Fishing trips and fish fries!" },
+    { e: "🦋", a: "Butterfly", t: "Means \"beautiful\" or a sign of spring." },
+    { e: "🐝", a: "Bee", t: "Busy as a bee!" },
+    { e: "🐢", a: "Turtle", t: "Means \"slow down\" or just a cute turtle." },
+    { e: "🐘", a: "Elephant", t: "An elephant never forgets!" },
+    { e: "🦉", a: "Owl", t: "Means \"wise\" or \"up late — a night owl.\"" },
+    { e: "🐔", a: "Chicken", t: "A barnyard hen — or someone being a scaredy-cat!" },
+    { e: "🐷", a: "Pig", t: "A little piggy — sometimes means \"I ate too much!\"" },
+    { e: "🐮", a: "Cow", t: "Straight from the farm." },
+    { e: "🦆", a: "Duck", t: "A quacking duck at the pond." },
+    { e: "🐰", a: "Rabbit", t: "A bunny — especially around Easter." },
+    { e: "🐿️", a: "Squirrel", t: "The little fella raiding your bird feeder." },
+    { e: "🐞", a: "Ladybug", t: "A sign of good luck in the garden." },
+    { e: "🦃", a: "Turkey", t: "Gobble gobble — Thanksgiving is coming!" },
+    { e: "🐑", a: "Sheep", t: "Counting sheep to fall asleep." },
+    { e: "🦅", a: "Eagle", t: "The proud American bald eagle." },
+  ],
+  food: [
+    { e: "☕", a: "Cup of Coffee", t: "Means \"good morning\" or \"let's have coffee together.\"" },
+    { e: "🍕", a: "Pizza", t: "Means \"pizza night!\"" },
+    { e: "🍦", a: "Ice Cream Cone", t: "A sweet treat on a hot day." },
+    { e: "🍎", a: "Apple", t: "An apple a day..." },
+    { e: "🍪", a: "Cookie", t: "Fresh from the oven!" },
+    { e: "🥧", a: "Pie", t: "Like grandma used to make." },
+    { e: "🍗", a: "Chicken Leg", t: "Sunday fried chicken!" },
+    { e: "🌽", a: "Corn on the Cob", t: "Straight from the summer garden." },
+    { e: "🍌", a: "Banana", t: "Good in puddings and splits!" },
+    { e: "🍇", a: "Grapes", t: "A sweet bunch of grapes." },
+    { e: "🧁", a: "Cupcake", t: "A little cake just for you." },
+    { e: "🍞", a: "Loaf of Bread", t: "Fresh-baked bread — nothing smells better." },
+    { e: "🥞", a: "Pancakes", t: "A stack with syrup — breakfast time!" },
+    { e: "🍉", a: "Watermelon", t: "The taste of summer picnics." },
+    { e: "🍓", a: "Strawberry", t: "Sweet and fresh-picked." },
+    { e: "🥪", a: "Sandwich", t: "Lunchtime!" },
+    { e: "🍩", a: "Doughnut", t: "Goes perfectly with that cup of coffee." },
+    { e: "🍬", a: "Candy", t: "A sweet little treat." },
+    { e: "🥕", a: "Carrot", t: "Good for your eyes, they always said." },
+    { e: "🍅", a: "Tomato", t: "Homegrown tomatoes beat store-bought every time." },
+  ],
+  things: [
+    { e: "🏠", a: "House", t: "Means \"home\" — \"heading home now!\"" },
+    { e: "🚗", a: "Car", t: "Means \"driving\" or \"on my way!\"" },
+    { e: "🌧️", a: "Rain Cloud", t: "Means \"it's raining here.\"" },
+    { e: "📞", a: "Telephone", t: "Means \"call me!\"" },
+    { e: "📺", a: "Television", t: "Means \"watching TV\" — what's on tonight?" },
+    { e: "⛪", a: "Church", t: "Means \"going to church\" or \"see you Sunday.\"" },
+    { e: "🌹", a: "Rose", t: "A single beautiful rose — very romantic." },
+    { e: "🌻", a: "Sunflower", t: "Bright and cheerful, just like you!" },
+    { e: "☂️", a: "Umbrella", t: "Means \"don't forget your umbrella!\"" },
+    { e: "⏰", a: "Alarm Clock", t: "Means \"time to get up!\" or \"don't be late.\"" },
+    { e: "📬", a: "Mailbox", t: "Means \"you've got mail!\"" },
+    { e: "🧶", a: "Ball of Yarn", t: "For the knitters and crocheters!" },
+    { e: "✂️", a: "Scissors", t: "Snip snip — crafts or a haircut." },
+    { e: "📖", a: "Open Book", t: "Means \"reading a good book.\"" },
+    { e: "🎵", a: "Music Note", t: "Means \"music\" — \"listening to my favorite song.\"" },
+    { e: "📷", a: "Camera", t: "Means \"take a picture!\" or \"send me photos.\"" },
+    { e: "🛏️", a: "Bed", t: "Means \"time for bed\" or \"taking a nap.\"" },
+    { e: "🌙", a: "Moon", t: "Means \"good night.\"" },
+    { e: "🚌", a: "Bus", t: "Means \"on the bus\" — or the activity van!" },
+    { e: "💡", a: "Light Bulb", t: "Means \"I have an idea!\"" },
+  ],
+};
+
+const CATEGORY_NAMES = {
+  faces: "😊 Faces & Feelings",
+  hands: "👍 Hands & Gestures",
+  hearts: "❤️ Hearts & Fun Symbols",
+  animals: "🐶 Animals",
+  food: "☕ Food & Drink",
+  things: "🏠 Everyday Things",
+  all: "🎲 Mix of Everything",
+};
+
+// ============ STATE ============
+let deck = [];
+let deckIndex = 0;
+let currentCategory = null;
+let revealed = false;
+
+// ============ AUDIO (WebAudio — no files needed) ============
+let audioCtx = null;
+function getCtx() {
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  if (audioCtx.state === "suspended") audioCtx.resume();
+  return audioCtx;
+}
+function tone(freq, start, dur, type, vol) {
+  const ctx = getCtx();
+  const o = ctx.createOscillator();
+  const g = ctx.createGain();
+  o.type = type || "triangle";
+  o.frequency.value = freq;
+  g.gain.setValueAtTime(0.0001, ctx.currentTime + start);
+  g.gain.exponentialRampToValueAtTime(vol || 0.25, ctx.currentTime + start + 0.02);
+  g.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + start + dur);
+  o.connect(g).connect(ctx.destination);
+  o.start(ctx.currentTime + start);
+  o.stop(ctx.currentTime + start + dur + 0.05);
+}
+function popSound() { tone(520, 0, 0.12, "triangle", 0.2); }
+function fanfare() {
+  tone(523, 0.00, 0.18, "triangle", 0.28);
+  tone(659, 0.14, 0.18, "triangle", 0.28);
+  tone(784, 0.28, 0.18, "triangle", 0.28);
+  tone(1047, 0.42, 0.45, "triangle", 0.32);
+}
+
+// ============ VOICE ============
+function speakAnswer(text) {
+  if (!document.getElementById("voiceToggle").checked) return;
+  if (!("speechSynthesis" in window)) return;
+  window.speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text);
+  u.rate = 0.85;
+  u.pitch = 1.0;
+  window.speechSynthesis.speak(u);
+}
+
+// ============ DECK ============
+function shuffle(arr) {
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+function buildDeck(cat) {
+  if (cat === "all") {
+    let all = [];
+    for (const k of Object.keys(EMOJIS)) all = all.concat(EMOJIS[k]);
+    return shuffle(all);
+  }
+  return shuffle(EMOJIS[cat]);
+}
+
+// ============ SCREENS ============
+function show(id) {
+  for (const s of ["startScreen", "gameScreen", "doneScreen"]) {
+    document.getElementById(s).style.display = (s === id) ? "flex" : "none";
+  }
+}
+function goHome() {
+  window.speechSynthesis && window.speechSynthesis.cancel();
+  show("startScreen");
+}
+
+// ============ GAME FLOW ============
+function startGame(cat) {
+  currentCategory = cat;
+  deck = buildDeck(cat);
+  deckIndex = 0;
+  document.getElementById("categoryLabel").textContent = CATEGORY_NAMES[cat];
+  show("gameScreen");
+  renderEmoji();
+  popSound();
+}
+function replayCategory() {
+  startGame(currentCategory);
+}
+function renderEmoji() {
+  revealed = false;
+  const p = deck[deckIndex];
+  document.getElementById("emojiDisplay").textContent = p.e;
+  document.getElementById("progressLabel").textContent = "Emoji " + (deckIndex + 1) + " of " + deck.length;
+  const banner = document.getElementById("answerBanner");
+  banner.classList.add("hidden");
+  banner.textContent = "";
+  const tip = document.getElementById("tipLine");
+  tip.classList.add("hidden");
+  tip.textContent = "";
+  document.getElementById("revealBtn").style.visibility = "visible";
+}
+function reveal() {
+  if (revealed) return;
+  revealed = true;
+  const p = deck[deckIndex];
+  const banner = document.getElementById("answerBanner");
+  banner.textContent = p.a;
+  banner.classList.remove("hidden");
+  const tip = document.getElementById("tipLine");
+  tip.textContent = p.t;
+  tip.classList.remove("hidden");
+  document.getElementById("revealBtn").style.visibility = "hidden";
+  fanfare();
+  throwConfetti();
+  speakAnswer(p.a + ". " + p.t);
+}
+function nextEmoji() {
+  window.speechSynthesis && window.speechSynthesis.cancel();
+  deckIndex++;
+  if (deckIndex >= deck.length) {
+    fanfare();
+    setTimeout(fanfare, 500);
+    throwConfetti(40);
+    show("doneScreen");
+    return;
+  }
+  renderEmoji();
+  popSound();
+}
+
+// ============ CONFETTI ============
+const CONFETTI_EMOJI = ["🎉", "✨", "⭐", "🎊", "💛", "💙"];
+function throwConfetti(count) {
+  const n = count || 14;
+  for (let i = 0; i < n; i++) {
+    const el = document.createElement("div");
+    el.className = "confetti";
+    el.textContent = CONFETTI_EMOJI[Math.floor(Math.random() * CONFETTI_EMOJI.length)];
+    el.style.left = Math.random() * 100 + "vw";
+    el.style.animationDuration = (1.8 + Math.random() * 1.6) + "s";
+    el.style.animationDelay = (Math.random() * 0.4) + "s";
+    document.body.appendChild(el);
+    setTimeout(() => el.remove(), 4200);
+  }
+}
+
+// ============ SPACE BAR: reveal, then advance ============
+document.addEventListener("keydown", function (ev) {
+  if (ev.code !== "Space" && ev.key !== " ") return;
+  if (document.getElementById("gameScreen").style.display === "none") return;
+  ev.preventDefault();
+  if (!revealed) reveal();
+  else nextEmoji();
+});
+</script>
+</body>
+</html>
