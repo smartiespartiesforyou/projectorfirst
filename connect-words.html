@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Connect Words — ProjectorFirst</title>
+
+<!-- Membership gate (paywall-test) -->
+<script
+  data-memberstack-app="app_cmgnwpg8y00x10suih4pua785"
+  src="https://static.memberstack.com/scripts/v2/memberstack.js"
+  type="text/javascript">
+</script>
+<script src="/guard.js"></script>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    html, body {
+      height: 100vh; height: 100dvh;
+      margin: 0; overflow: hidden;
+      background: #1e3a8a;
+      font-family: ui-rounded, system-ui, -apple-system, "Segoe UI", sans-serif;
+    }
+    .screen { height: 100vh; height: 100dvh; display: flex; flex-direction: column; }
+    .btn-big {
+      font-weight: 900; border-radius: 1.25rem; border: 4px solid #0f265f;
+      box-shadow: 0 6px 0 #0f265f; transition: transform .08s ease, box-shadow .08s ease;
+      cursor: pointer; user-select: none; -webkit-user-select: none; touch-action: manipulation;
+    }
+    .btn-big:active { transform: translateY(4px); box-shadow: 0 2px 0 #0f265f; }
+    .mode-off { opacity: .55; }
+    .tile {
+      background: #fff; color: #1e3a8a;
+      border: 5px solid #0f265f; border-radius: 1.25rem;
+      box-shadow: 0 6px 0 #0f265f55;
+      display: flex; align-items: center; justify-content: center; text-align: center;
+      font-weight: 900; line-height: 1.15;
+      padding: .35rem .45rem; cursor: pointer;
+      transition: transform .12s ease, background .25s ease, color .25s ease, border-color .25s ease;
+      user-select: none; -webkit-user-select: none; touch-action: manipulation;
+      overflow-wrap: anywhere;
+    }
+    .rows3 .tile { font-size: clamp(1rem, 2.6vw, 2.1rem); }
+    .rows4 .tile { font-size: clamp(.85rem, 2.2vw, 1.7rem); }
+    .tile.selected { background: #facc15; transform: scale(1.06); border-color: #a16207; }
+    .tile.locked {
+      background: #16a34a; color: #fff; border-color: #14532d;
+      cursor: default; animation: pop .45s ease;
+    }
+    @keyframes pop {
+      0% { transform: scale(1); }
+      45% { transform: scale(1.12); }
+      100% { transform: scale(1); }
+    }
+    .rowlabel {
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 900; color: #fff;
+      background: #16a34a; border: 4px solid #14532d; border-radius: 1rem;
+      padding: .2rem .5rem; text-align: center; overflow-wrap: anywhere;
+      opacity: 0; transition: opacity .4s ease;
+    }
+    .rows3 .rowlabel { font-size: clamp(.85rem, 1.8vw, 1.4rem); }
+    .rows4 .rowlabel { font-size: clamp(.75rem, 1.5vw, 1.15rem); }
+    .rowlabel.show { opacity: 1; }
+    .overlay {
+      position: fixed; inset: 0; display: none;
+      align-items: center; justify-content: center; flex-direction: column; gap: 1.2rem;
+      background: rgba(15, 38, 95, .92); z-index: 50; text-align: center; padding: 1rem;
+    }
+    .overlay.show { display: flex; }
+  </style>
+</head>
+<body>
+<div class="screen">
+
+  <!-- Header -->
+  <header class="flex flex-wrap items-center justify-between gap-2 px-3 sm:px-5 py-2 sm:py-3">
+    <div class="flex items-center gap-2 sm:gap-3">
+      <a href="apps.html" class="btn-big bg-white text-blue-900 px-3 py-2 text-base sm:text-xl">← Apps</a>
+      <h1 class="text-white font-extrabold text-xl sm:text-4xl">🔗 Connect Words</h1>
+    </div>
+    <div class="flex flex-wrap items-center gap-2 sm:gap-3">
+      <button id="easybtn" class="btn-big bg-green-600 text-white px-3 sm:px-4 py-2 text-base sm:text-xl">😊 Easy</button>
+      <button id="hardbtn" class="btn-big bg-orange-500 text-white px-3 sm:px-4 py-2 text-base sm:text-xl mode-off">🤔 Hard</button>
+      <div id="roundlabel" class="text-white font-extrabold text-base sm:text-2xl"></div>
+      <button id="shufflebtn" class="btn-big bg-yellow-400 text-blue-900 px-3 sm:px-4 py-2 text-base sm:text-xl">🔀 Shuffle</button>
+      <button id="nextbtn" class="btn-big bg-blue-100 text-blue-900 px-3 sm:px-4 py-2 text-base sm:text-xl">Next ▶</button>
+    </div>
+  </header>
+
+  <p id="hint" class="text-center text-blue-100 font-bold text-sm sm:text-xl px-3">
+    Tap two words to swap them. Get 5 matching words in one row and it lights up!
+  </p>
+  <p id="themelabel" class="text-center text-yellow-300 font-extrabold text-base sm:text-2xl px-3"></p>
+
+  <!-- Board -->
+  <main class="flex-1 min-h-0 px-2 sm:px-5 py-2 sm:py-4">
+    <div id="board" class="h-full grid gap-2 sm:gap-3"></div>
+  </main>
+</div>
+
+<!-- Mode select overlay (shown on load) -->
+<div id="modepick" class="overlay show">
+  <div class="text-5xl sm:text-7xl">🔗</div>
+  <div class="text-white font-extrabold text-3xl sm:text-6xl">Connect Words</div>
+  <div class="text-blue-100 font-bold text-lg sm:text-2xl max-w-2xl">Swap the words until every row is a matching group of five!</div>
+  <div class="flex flex-col sm:flex-row gap-4 sm:gap-6 mt-2">
+    <button id="pick-easy" class="btn-big bg-green-600 text-white px-10 py-5 text-2xl sm:text-4xl">😊 Easy<br><span class="text-base sm:text-xl font-bold">3 rows • simple groups</span></button>
+    <button id="pick-hard" class="btn-big bg-orange-500 text-white px-10 py-5 text-2xl sm:text-4xl">🤔 Hard<br><span class="text-base sm:text-xl font-bold">4 rows • tricky cousins</span></button>
+  </div>
+</div>
+
+<!-- Round-complete overlay -->
+<div id="bigmsg" class="overlay">
+  <div class="text-6xl sm:text-8xl">🎉</div>
+  <div class="text-white font-extrabold text-3xl sm:text-6xl">You connected them all!</div>
+  <div id="bigmsg-cats" class="text-yellow-300 font-extrabold text-xl sm:text-3xl"></div>
+  <button id="bigmsg-next" class="btn-big bg-yellow-400 text-blue-900 px-8 py-4 text-2xl sm:text-4xl">Next Round ▶</button>
+</div>
+
+<script>
+const EASY_ROUNDS = [{"theme": null, "cats": [{"name": "Old TV Shows", "words": ["I Love Lucy", "Bonanza", "Gunsmoke", "Lassie", "Andy Griffith"]}, {"name": "Green Things", "words": ["Grass", "Frog", "Pickle", "Lettuce Leaf", "Pea Pod"]}, {"name": "In the Mail", "words": ["Letter", "Stamp", "Postcard", "Package", "Envelope"]}]}, {"theme": null, "cats": [{"name": "Ice Cream Flavors", "words": ["Vanilla", "Strawberry", "Mint", "Rocky Road", "Butter Pecan"]}, {"name": "Thanksgiving", "words": ["Turkey", "Stuffing", "Gravy", "Pilgrims", "Cranberry"]}, {"name": "Kitchen Items", "words": ["Spoon", "Fork", "Plate", "Cup", "Bowl"]}]}, {"theme": null, "cats": [{"name": "Time Words", "words": ["Clock", "Minute", "Hour", "Calendar", "Watch"]}, {"name": "Forest Animals", "words": ["Deer", "Fox", "Rabbit", "Squirrel", "Raccoon"]}, {"name": "Kinds of Chairs", "words": ["Rocker", "Recliner", "Stool", "Bench", "Armchair"]}]}, {"theme": null, "cats": [{"name": "Things That Are Sweet", "words": ["Honey", "Sugar", "Syrup", "Jam", "Frosting"]}, {"name": "In the Sky", "words": ["Moon", "Stars", "Clouds", "Rainbow", "Comet"]}, {"name": "At the Fair", "words": ["Ferris Wheel", "Cotton Candy", "Carousel", "Corn Dog", "Prize"]}]}, {"theme": null, "cats": [{"name": "Trees", "words": ["Oak", "Pine", "Maple", "Willow", "Birch"]}, {"name": "Jewelry", "words": ["Necklace", "Bracelet", "Earrings", "Brooch", "Locket"]}, {"name": "At a Wedding", "words": ["Bride", "Groom", "Ring", "Bouquet", "Veil"]}]}, {"theme": null, "cats": [{"name": "Winter Words", "words": ["Mittens", "Scarf", "Snowman", "Sled", "Icicle"]}, {"name": "Pizza Toppings", "words": ["Pepperoni", "Mushrooms", "Sausage", "Onions", "Peppers"]}, {"name": "Morning Words", "words": ["Sunrise", "Alarm", "Dew", "Rooster Crow", "Newspaper"]}]}, {"theme": null, "cats": [{"name": "School Items", "words": ["Pencil", "Paper", "Crayon", "Eraser", "Chalk"]}, {"name": "Numbers", "words": ["One", "Two", "Five", "Seven", "Ten"]}, {"name": "More Colors", "words": ["Yellow", "Brown", "Black", "White", "Gray"]}]}, {"theme": null, "cats": [{"name": "Insects", "words": ["Bee", "Ant", "Butterfly", "Ladybug", "Cricket"]}, {"name": "On Your Feet", "words": ["Shoes", "Socks", "Boots", "Slippers", "Sandals"]}, {"name": "Vegetables", "words": ["Carrot", "Potato", "Corn", "Peas", "Beans"]}]}, {"theme": null, "cats": [{"name": "Months", "words": ["January", "March", "June", "October", "December"]}, {"name": "Kitchen Appliances", "words": ["Toaster", "Blender", "Mixer", "Kettle", "Skillet"]}, {"name": "Quiet Things", "words": ["Whisper", "Library Room", "Snowfall", "Naptime", "Mouse"]}]}, {"theme": null, "cats": [{"name": "Flowers", "words": ["Rose", "Tulip", "Daisy", "Lily", "Violet"]}, {"name": "Kinds of Weather", "words": ["Sunny", "Rainy", "Windy", "Snowy", "Cloudy"]}, {"name": "Dairy Foods", "words": ["Cheese", "Butter", "Yogurt", "Cream", "Cottage Cheese"]}]}, {"theme": null, "cats": [{"name": "At Church", "words": ["Hymn", "Pew", "Choir", "Steeple", "Prayer"]}, {"name": "Kinds of Bread", "words": ["White Bread", "Rye", "Biscuit", "Roll", "Cornbread"]}, {"name": "US States", "words": ["Texas", "Florida", "Ohio", "California", "Maine"]}]}, {"theme": null, "cats": [{"name": "Kinds of Pie", "words": ["Cherry", "Pumpkin", "Pecan", "Lemon", "Blueberry"]}, {"name": "Candy", "words": ["Chocolate", "Lollipop", "Taffy", "Gumdrops", "Caramel"]}, {"name": "Camping Items", "words": ["Tent Stakes", "Campfire", "Sleeping Bag", "Lantern", "Marshmallows"]}]}, {"theme": null, "cats": [{"name": "Body Parts", "words": ["Arm", "Leg", "Hand", "Foot", "Knee"]}, {"name": "Music Words", "words": ["Song", "Melody", "Rhythm", "Chorus", "Tune"]}, {"name": "Things That Are Sour", "words": ["Lemon", "Lime", "Vinegar", "Pickle Juice", "Grapefruit"]}]}, {"theme": null, "cats": [{"name": "Kings & Queens", "words": ["Crown", "Throne", "Castle", "Palace", "Scepter"]}, {"name": "On a Farm", "words": ["Barn", "Tractor Shed", "Silo", "Fence", "Hayloft"]}, {"name": "Herbs & Spices", "words": ["Salt", "Pepper", "Cinnamon", "Basil", "Garlic"]}]}, {"theme": null, "cats": [{"name": "School Subjects", "words": ["Math", "Reading", "History", "Science", "Spelling"]}, {"name": "Family", "words": ["Mother", "Father", "Sister", "Brother", "Grandma"]}, {"name": "Fruits", "words": ["Apple", "Banana", "Grapes", "Peach", "Pear"]}]}, {"theme": null, "cats": [{"name": "Bakery Items", "words": ["Donuts", "Muffins", "Bagels", "Croissant", "Cupcakes"]}, {"name": "Dance Styles", "words": ["Waltz", "Tango", "Polka", "Square Dance", "Jitterbug"]}, {"name": "Feelings", "words": ["Happy", "Sad", "Excited", "Proud", "Calm"]}]}, {"theme": null, "cats": [{"name": "Loud Things", "words": ["Thunder", "Siren", "Drum Roll", "Train Whistle", "Alarm Clock"]}, {"name": "At the Beach", "words": ["Sand", "Waves", "Seashell", "Sunscreen", "Bucket"]}, {"name": "Farm Animals", "words": ["Cow", "Pig", "Horse", "Sheep", "Goat"]}]}, {"theme": null, "cats": [{"name": "Things in a Park", "words": ["Swings", "Slide", "Fountain", "Pond", "Path"]}, {"name": "In a Toolbox", "words": ["Nails", "Screws", "Tape Measure", "Level", "Screwdriver"]}, {"name": "Kinds of Hats", "words": ["Cap", "Bonnet", "Beret", "Cowboy Hat", "Top Hat"]}]}, {"theme": null, "cats": [{"name": "Shapes", "words": ["Circle", "Square", "Triangle", "Heart", "Star"]}, {"name": "On Your Face", "words": ["Eyes", "Nose", "Mouth", "Ears", "Chin"]}, {"name": "Card Games", "words": ["Poker", "Bridge", "Solitaire", "Rummy", "Hearts"]}]}, {"theme": null, "cats": [{"name": "Board Games", "words": ["Checkers", "Chess", "Monopoly", "Scrabble", "Bingo"]}, {"name": "Big Cities", "words": ["Chicago", "Boston", "Dallas", "Denver", "Memphis"]}, {"name": "Christmas", "words": ["Santa", "Sleigh", "Reindeer", "Wreath", "Stocking"]}]}, {"theme": null, "cats": [{"name": "Ocean Words", "words": ["Tide", "Lighthouse", "Anchor", "Sailboat", "Harbor"]}, {"name": "Bedroom Items", "words": ["Bed", "Pillow", "Blanket", "Lamp", "Dresser"]}, {"name": "Fall Words", "words": ["Leaves", "Acorns", "Harvest", "Scarecrow", "Cider"]}]}, {"theme": null, "cats": [{"name": "Breakfast Foods", "words": ["Eggs", "Bacon", "Toast", "Pancakes", "Oatmeal"]}, {"name": "At the Circus", "words": ["Clown", "Tent", "Elephant Act", "Trapeze", "Ringmaster"]}, {"name": "Weather", "words": ["Rain", "Wind", "Cloud", "Storm", "Fog"]}]}, {"theme": null, "cats": [{"name": "Things With Wheels", "words": ["Car", "Bicycle", "Truck", "Wagon", "Tractor"]}, {"name": "Birds", "words": ["Robin", "Eagle", "Owl", "Sparrow", "Cardinal"]}, {"name": "Baby Animals", "words": ["Puppy", "Kitten", "Chick", "Lamb", "Calf"]}]}, {"theme": null, "cats": [{"name": "In the Garden", "words": ["Shovel", "Seeds", "Hose", "Weeds", "Soil"]}, {"name": "Sewing Items", "words": ["Needle", "Thread", "Button", "Scissors", "Thimble"]}, {"name": "Drinks", "words": ["Coffee", "Tea", "Milk", "Juice", "Lemonade"]}]}, {"theme": null, "cats": [{"name": "Baby Items", "words": ["Crib", "Bottle", "Rattle", "Diaper", "Bib"]}, {"name": "Berries", "words": ["Strawberries", "Blueberries", "Raspberry", "Blackberry", "Cranberries"]}, {"name": "Vacation Spots", "words": ["Hawaii", "Paris", "Grand Canyon", "Niagara Falls", "Yellowstone"]}]}, {"theme": null, "cats": [{"name": "Spring Words", "words": ["Blossoms", "Robins Nest", "Showers", "Easter", "Sprouts"]}, {"name": "Nuts", "words": ["Peanut", "Walnut", "Almond", "Cashew", "Pecan Half"]}, {"name": "Tools", "words": ["Hammer", "Saw", "Wrench", "Drill", "Pliers"]}]}, {"theme": null, "cats": [{"name": "Night Words", "words": ["Midnight", "Dream", "Pajamas", "Lullaby", "Nightlight"]}, {"name": "At a Picnic", "words": ["Basket", "Sandwich", "Watermelon", "Lemonade", "Ants"]}, {"name": "Library Words", "words": ["Books", "Shelf", "Librarian", "Bookmark", "Quiet"]}]}, {"theme": null, "cats": [{"name": "Clothing", "words": ["Shirt", "Pants", "Dress", "Coat", "Sweater"]}, {"name": "Colors", "words": ["Red", "Blue", "Green", "Purple", "Pink"]}, {"name": "Yellow Things", "words": ["Sunflower", "Banana Peel", "School Bus", "Lemon Drop", "Corn Cob"]}]}, {"theme": null, "cats": [{"name": "Doctor's Office", "words": ["Stethoscope", "Bandage", "Thermometer", "Scale", "Waiting Room"]}, {"name": "Round Things", "words": ["Ball", "Wheel", "Coin", "Globe", "Donut"]}, {"name": "Wild West", "words": ["Sheriff", "Wanted Poster", "Stagecoach", "Gold Mine", "Saloon Doors"]}]}, {"theme": null, "cats": [{"name": "Breakfast Drinks", "words": ["Orange Juice", "Cocoa", "Espresso", "Latte", "Grapefruit Juice"]}, {"name": "Grocery Store", "words": ["Cart", "Aisle", "Checkout", "Coupon", "Bag Boy"]}, {"name": "Money Words", "words": ["Penny", "Nickel", "Dime", "Quarter", "Dollar"]}]}, {"theme": null, "cats": [{"name": "Jobs", "words": ["Doctor", "Teacher", "Farmer", "Nurse", "Baker"]}, {"name": "In a Purse", "words": ["Wallet", "Keys", "Lipstick", "Tissues", "Comb"]}, {"name": "Citrus Fruits", "words": ["Oranges", "Lemons", "Limes", "Tangerine", "Grapefruits"]}]}, {"theme": null, "cats": [{"name": "Summer Words", "words": ["Swimming", "Sunshine", "Vacation", "Barbecue", "Fireflies"]}, {"name": "Soup Kinds", "words": ["Chicken Noodle", "Tomato Soup", "Vegetable Soup", "Bean Soup", "Potato Soup"]}, {"name": "Things That Fly", "words": ["Airplane", "Kite", "Balloon", "Helicopter", "Rocket"]}]}, {"theme": null, "cats": [{"name": "Sports", "words": ["Baseball", "Football", "Golf", "Tennis", "Bowling"]}, {"name": "Post Office", "words": ["Mailbox", "Parcel", "Zip Code", "Mail Truck", "Postmark"]}, {"name": "Soft Things", "words": ["Cotton", "Feather", "Kitten Fur", "Marshmallow", "Velvet"]}]}, {"theme": null, "cats": [{"name": "Pets", "words": ["Dog", "Cat", "Hamster", "Goldfish", "Parakeet"]}, {"name": "Sandwich Fixings", "words": ["Ham", "Lettuce", "Tomato", "Mustard", "Pickles"]}, {"name": "Fishing Items", "words": ["Rod", "Reel", "Bait", "Hook", "Bobber"]}]}, {"theme": null, "cats": [{"name": "Desserts", "words": ["Cake", "Pie", "Cookies", "Pudding", "Brownies"]}, {"name": "Famous Singers", "words": ["Elvis", "Sinatra", "Patsy Cline", "Dean Martin", "Johnny Cash"]}, {"name": "Famous Landmarks", "words": ["Eiffel Tower", "Statue of Liberty", "Big Ben", "Mount Rushmore", "Golden Gate"]}]}, {"theme": null, "cats": [{"name": "Cowboy Words", "words": ["Lasso", "Saddle", "Spurs", "Rodeo", "Bandana"]}, {"name": "Cold Things", "words": ["Ice", "Snow", "Popsicle", "Freezer", "Iceberg"]}, {"name": "Red Things", "words": ["Fire Truck", "Stop Sign", "Cherry Pie", "Ladybug Wings", "Rose Petal"]}]}, {"theme": null, "cats": [{"name": "Bathroom Items", "words": ["Soap", "Towel", "Toothbrush", "Shampoo", "Mirror"]}, {"name": "Instruments", "words": ["Piano", "Guitar", "Drums", "Trumpet", "Violin"]}, {"name": "Ocean Animals", "words": ["Whale", "Dolphin", "Shark", "Octopus", "Seal"]}]}, {"theme": null, "cats": [{"name": "Days of the Week", "words": ["Monday", "Tuesday", "Friday", "Saturday", "Sunday"]}, {"name": "Salad Fixings", "words": ["Cucumber", "Radish", "Celery", "Croutons", "Dressing"]}, {"name": "Zoo Animals", "words": ["Lion", "Elephant", "Giraffe", "Zebra", "Monkey"]}]}];
+const HARD_ROUNDS = [{"theme": "All Animals", "cats": [{"name": "Farm Animals", "words": ["Cow", "Pig", "Horse", "Sheep", "Goat"]}, {"name": "Zoo Animals", "words": ["Lion", "Elephant", "Giraffe", "Zebra", "Monkey"]}, {"name": "Ocean Animals", "words": ["Whale", "Dolphin", "Shark", "Octopus", "Seal"]}, {"name": "Insects", "words": ["Bee", "Ant", "Butterfly", "Ladybug", "Cricket"]}]}, {"theme": "All Food", "cats": [{"name": "Fruits", "words": ["Apple", "Banana", "Grapes", "Peach", "Pear"]}, {"name": "Vegetables", "words": ["Carrot", "Potato", "Corn", "Peas", "Beans"]}, {"name": "Desserts", "words": ["Cake", "Pie", "Cookies", "Pudding", "Brownies"]}, {"name": "Breakfast Foods", "words": ["Eggs", "Bacon", "Toast", "Pancakes", "Oatmeal"]}]}, {"theme": "Around the House", "cats": [{"name": "Kitchen Items", "words": ["Spoon", "Fork", "Plate", "Cup", "Bowl"]}, {"name": "Bathroom Items", "words": ["Soap", "Towel", "Toothbrush", "Shampoo", "Mirror"]}, {"name": "Bedroom Items", "words": ["Bed", "Pillow", "Blanket", "Lamp", "Dresser"]}, {"name": "Cleaning Items", "words": ["Broom", "Mop", "Duster", "Sponge", "Vacuum"]}]}, {"theme": "Out in Nature", "cats": [{"name": "Flowers", "words": ["Rose", "Tulip", "Daisy", "Lily", "Violet"]}, {"name": "Trees", "words": ["Oak", "Pine", "Maple", "Willow", "Birch"]}, {"name": "Forest Animals", "words": ["Deer", "Fox", "Rabbit", "Squirrel", "Raccoon"]}, {"name": "In the Garden", "words": ["Shovel", "Seeds", "Hose", "Weeds", "Soil"]}]}, {"theme": "Look Up!", "cats": [{"name": "Weather", "words": ["Rain", "Wind", "Storm", "Fog", "Hail"]}, {"name": "In the Night Sky", "words": ["Moon", "Stars", "Comet", "Planets", "Big Dipper"]}, {"name": "Things That Fly", "words": ["Airplane", "Kite", "Balloon", "Helicopter", "Rocket"]}, {"name": "Birds", "words": ["Robin", "Eagle", "Owl", "Sparrow", "Cardinal"]}]}, {"theme": "People You Know", "cats": [{"name": "Family", "words": ["Mother", "Father", "Sister", "Brother", "Grandma"]}, {"name": "Jobs", "words": ["Doctor", "Teacher", "Farmer", "Nurse", "Baker"]}, {"name": "Body Parts", "words": ["Arm", "Leg", "Hand", "Foot", "Knee"]}, {"name": "On Your Face", "words": ["Eyes", "Nose", "Mouth", "Ears", "Chin"]}]}, {"theme": "Places on the Map", "cats": [{"name": "US States", "words": ["Texas", "Florida", "Ohio", "California", "Maine"]}, {"name": "Big Cities", "words": ["Chicago", "Boston", "Dallas", "Denver", "Memphis"]}, {"name": "Famous Landmarks", "words": ["Eiffel Tower", "Statue of Liberty", "Big Ben", "Mount Rushmore", "Golden Gate"]}, {"name": "Ocean Words", "words": ["Tide", "Lighthouse", "Anchor", "Sailboat", "Harbor"]}]}, {"theme": "Music & Dancing", "cats": [{"name": "Instruments", "words": ["Piano", "Guitar", "Drums", "Trumpet", "Violin"]}, {"name": "Dance Styles", "words": ["Waltz", "Tango", "Polka", "Square Dance", "Jitterbug"]}, {"name": "Music Words", "words": ["Song", "Melody", "Rhythm", "Chorus", "Tune"]}, {"name": "Famous Singers", "words": ["Elvis", "Sinatra", "Patsy Cline", "Dean Martin", "Johnny Cash"]}]}, {"theme": "Fun & Games", "cats": [{"name": "Sports", "words": ["Baseball", "Football", "Golf", "Tennis", "Bowling"]}, {"name": "Card Games", "words": ["Poker", "Bridge", "Solitaire", "Rummy", "Hearts"]}, {"name": "Board Games", "words": ["Checkers", "Chess", "Monopoly", "Scrabble", "Dominoes"]}, {"name": "At the Fair", "words": ["Ferris Wheel", "Cotton Candy", "Carousel", "Corn Dog", "Fun House"]}]}, {"theme": "Four Seasons", "cats": [{"name": "Winter Words", "words": ["Mittens", "Scarf", "Snowman", "Sled", "Icicle"]}, {"name": "Summer Words", "words": ["Swimming", "Sunshine", "Vacation", "Barbecue", "Fireflies"]}, {"name": "Fall Words", "words": ["Leaves", "Acorns", "Harvest", "Scarecrow", "Cider"]}, {"name": "Spring Words", "words": ["Blossoms", "Showers", "Easter", "Sprouts", "Robins Nest"]}]}, {"theme": "Celebrations", "cats": [{"name": "Christmas", "words": ["Santa", "Sleigh", "Reindeer", "Wreath", "Stocking"]}, {"name": "Thanksgiving", "words": ["Turkey", "Stuffing", "Gravy", "Pilgrims", "Cranberry"]}, {"name": "At a Wedding", "words": ["Bride", "Groom", "Ring", "Bouquet", "Veil"]}, {"name": "Birthday Party", "words": ["Candles", "Presents", "Party Hats", "Streamers", "Wishes"]}]}, {"theme": "Getting Dressed", "cats": [{"name": "Clothing", "words": ["Shirt", "Pants", "Dress", "Coat", "Sweater"]}, {"name": "On Your Feet", "words": ["Shoes", "Socks", "Boots", "Slippers", "Sandals"]}, {"name": "Kinds of Hats", "words": ["Cap", "Bonnet", "Beret", "Cowboy Hat", "Top Hat"]}, {"name": "Jewelry", "words": ["Necklace", "Bracelet", "Earrings", "Brooch", "Locket"]}]}, {"theme": "Sweet Treats", "cats": [{"name": "Drinks", "words": ["Coffee", "Tea", "Milk", "Juice", "Lemonade"]}, {"name": "Candy", "words": ["Chocolate", "Lollipop", "Taffy", "Gumdrops", "Caramel"]}, {"name": "Ice Cream Flavors", "words": ["Vanilla", "Strawberry", "Mint", "Rocky Road", "Butter Pecan"]}, {"name": "Kinds of Pie", "words": ["Cherry", "Pumpkin", "Pecan", "Lemon", "Blueberry"]}]}, {"theme": "The Great Outdoors", "cats": [{"name": "Camping Items", "words": ["Tent", "Campfire", "Sleeping Bag", "Lantern", "Marshmallows"]}, {"name": "Fishing Items", "words": ["Rod", "Reel", "Bait", "Hook", "Bobber"]}, {"name": "At a Picnic", "words": ["Basket", "Sandwich", "Watermelon", "Checkered Cloth", "Thermos"]}, {"name": "At the Beach", "words": ["Sand", "Waves", "Seashell", "Sunscreen", "Beach Umbrella"]}]}, {"theme": "Opposites Attract", "cats": [{"name": "Loud Things", "words": ["Thunder", "Siren", "Drum Roll", "Train Whistle", "Alarm Clock"]}, {"name": "Quiet Things", "words": ["Whisper", "Library Room", "Snowfall", "Naptime", "Mouse"]}, {"name": "Soft Things", "words": ["Cotton", "Feather", "Kitten Fur", "Marshmallow Fluff", "Velvet"]}, {"name": "Round Things", "words": ["Ball", "Wheel", "Coin", "Globe", "Donut"]}]}, {"theme": "Name That Color", "cats": [{"name": "Green Things", "words": ["Grass", "Frog", "Pickle", "Lettuce Leaf", "Pea Pod"]}, {"name": "Yellow Things", "words": ["Sunflower", "Banana Peel", "School Bus", "Lemon Drop", "Corn Cob"]}, {"name": "Red Things", "words": ["Fire Truck", "Stop Sign", "Cherry Pie", "Ladybug Wings", "Rose Petal"]}, {"name": "Shapes", "words": ["Circle", "Square", "Triangle", "Heart", "Star"]}]}, {"theme": "Around Town", "cats": [{"name": "Library Words", "words": ["Books", "Shelf", "Librarian", "Bookmark", "Quiet Please"]}, {"name": "Doctor's Office", "words": ["Stethoscope", "Bandage", "Thermometer", "Scale", "Waiting Room"]}, {"name": "Post Office", "words": ["Mailbox", "Parcel", "Zip Code", "Mail Truck", "Postmark"]}, {"name": "Grocery Store", "words": ["Cart", "Aisle", "Checkout", "Coupon", "Produce"]}]}, {"theme": "Good Cooking", "cats": [{"name": "Kitchen Appliances", "words": ["Toaster", "Blender", "Mixer", "Kettle", "Skillet"]}, {"name": "Bakery Items", "words": ["Donuts", "Muffins", "Bagels", "Croissant", "Cupcakes"]}, {"name": "Pizza Toppings", "words": ["Pepperoni", "Mushrooms", "Sausage", "Onions", "Peppers"]}, {"name": "Herbs & Spices", "words": ["Salt", "Pepper", "Cinnamon", "Basil", "Garlic"]}]}, {"theme": "Counting the Days", "cats": [{"name": "Money Words", "words": ["Penny", "Nickel", "Dime", "Quarter", "Dollar"]}, {"name": "Time Words", "words": ["Clock", "Minute", "Hour", "Calendar", "Watch"]}, {"name": "Numbers", "words": ["One", "Two", "Five", "Seven", "Ten"]}, {"name": "Months", "words": ["January", "March", "June", "October", "December"]}]}, {"theme": "The Good Old Days", "cats": [{"name": "Old TV Shows", "words": ["I Love Lucy", "Bonanza", "Gunsmoke", "Lassie", "Andy Griffith"]}, {"name": "Cowboy Words", "words": ["Lasso", "Saddle", "Spurs", "Rodeo", "Bandana"]}, {"name": "Sewing Items", "words": ["Needle", "Thread", "Button", "Scissors", "Thimble"]}, {"name": "In a Purse", "words": ["Wallet", "Keys", "Lipstick", "Tissues", "Comb"]}]}];
+
+let mode = 'easy';                    // 'easy' | 'hard'
+let roundIdxByMode = { easy: 0, hard: 0 };
+let grid = [];                        // rows of 5 words
+let lockedRows = [];                  // category name per row when locked
+let selected = null;
+
+function rounds() { return mode === 'easy' ? EASY_ROUNDS : HARD_ROUNDS; }
+function nRows() { return mode === 'easy' ? 3 : 4; }
+function roundIdx() { return roundIdxByMode[mode]; }
+function currentCats() { return rounds()[roundIdx()].cats; }
+
+function sameSet(arr, set) {
+  if (arr.length !== set.size) return false;
+  return arr.every(w => set.has(w));
+}
+
+function shuffleWords() {
+  const words = [];
+  currentCats().forEach(c => words.push(...c.words));
+  const R = nRows();
+  const sets = currentCats().map(c => new Set(c.words));
+  for (let t = 0; t < 50; t++) {
+    for (let i = words.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [words[i], words[j]] = [words[j], words[i]];
+    }
+    const rows = [];
+    for (let r = 0; r < R; r++) rows.push(words.slice(r*5, r*5+5));
+    if (!rows.some(row => sets.some(s => sameSet(row, s)))) return rows;
+  }
+  const rows = [];
+  for (let r = 0; r < R; r++) rows.push(words.slice(r*5, r*5+5));
+  return rows;
+}
+
+function startRound(idx) {
+  const n = rounds().length;
+  roundIdxByMode[mode] = ((idx % n) + n) % n;
+  grid = shuffleWords();
+  lockedRows = new Array(nRows()).fill(null);
+  selected = null;
+  document.getElementById('bigmsg').classList.remove('show');
+  render();
+}
+
+function render() {
+  const board = document.getElementById('board');
+  const R = nRows();
+  board.className = 'h-full grid gap-2 sm:gap-3 ' + (R === 3 ? 'rows3' : 'rows4');
+  board.style.gridTemplateColumns = 'minmax(70px, .8fr) repeat(5, 2fr)';
+  board.style.gridTemplateRows = 'repeat(' + R + ', 1fr)';
+  board.innerHTML = '';
+
+  document.getElementById('roundlabel').textContent =
+    'Round ' + (roundIdx() + 1) + ' of ' + rounds().length;
+  const theme = rounds()[roundIdx()].theme;
+  document.getElementById('themelabel').textContent = theme ? 'Theme: ' + theme : '';
+
+  document.getElementById('easybtn').classList.toggle('mode-off', mode !== 'easy');
+  document.getElementById('hardbtn').classList.toggle('mode-off', mode !== 'hard');
+
+  for (let r = 0; r < R; r++) {
+    const label = document.createElement('div');
+    label.className = 'rowlabel' + (lockedRows[r] ? ' show' : '');
+    label.textContent = lockedRows[r] ? '✓ ' + lockedRows[r] : '';
+    board.appendChild(label);
+    for (let c = 0; c < 5; c++) {
+      const t = document.createElement('div');
+      t.className = 'tile'
+        + (lockedRows[r] ? ' locked' : '')
+        + (selected && selected.r === r && selected.c === c ? ' selected' : '');
+      t.textContent = grid[r][c];
+      if (!lockedRows[r]) t.addEventListener('click', () => tapTile(r, c));
+      board.appendChild(t);
+    }
+  }
+}
+
+function tapTile(r, c) {
+  if (lockedRows[r]) return;
+  if (!selected) { selected = { r, c }; render(); return; }
+  if (selected.r === r && selected.c === c) { selected = null; render(); return; }
+  const a = selected; selected = null;
+  const tmp = grid[a.r][a.c];
+  grid[a.r][a.c] = grid[r][c];
+  grid[r][c] = tmp;
+  checkRows();
+  render();
+  if (lockedRows.every(x => x)) setTimeout(showWin, 650);
+}
+
+function checkRows() {
+  const cats = currentCats().map(c => ({ name: c.name, set: new Set(c.words) }));
+  const used = new Set(lockedRows.filter(Boolean));
+  for (let r = 0; r < nRows(); r++) {
+    if (lockedRows[r]) continue;
+    for (const c of cats) {
+      if (used.has(c.name)) continue;
+      if (sameSet(grid[r], c.set)) { lockedRows[r] = c.name; used.add(c.name); break; }
+    }
+  }
+}
+
+function showWin() {
+  document.getElementById('bigmsg-cats').textContent =
+    currentCats().map(c => c.name).join('  •  ');
+  document.getElementById('bigmsg').classList.add('show');
+}
+
+function setMode(m) {
+  if (mode === m) return;
+  mode = m;
+  startRound(roundIdxByMode[mode]);
+}
+
+document.getElementById('easybtn').addEventListener('click', () => setMode('easy'));
+document.getElementById('hardbtn').addEventListener('click', () => setMode('hard'));
+document.getElementById('pick-easy').addEventListener('click', () => {
+  document.getElementById('modepick').classList.remove('show');
+  mode = 'easy'; startRound(0);
+});
+document.getElementById('pick-hard').addEventListener('click', () => {
+  document.getElementById('modepick').classList.remove('show');
+  mode = 'hard'; startRound(0);
+});
+
+document.getElementById('shufflebtn').addEventListener('click', () => {
+  if (lockedRows.every(x => !x)) { grid = shuffleWords(); selected = null; render(); return; }
+  const loose = [];
+  for (let r = 0; r < nRows(); r++) if (!lockedRows[r]) loose.push(...grid[r]);
+  for (let i = loose.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [loose[i], loose[j]] = [loose[j], loose[i]];
+  }
+  let k = 0;
+  for (let r = 0; r < nRows(); r++) if (!lockedRows[r]) { grid[r] = loose.slice(k, k + 5); k += 5; }
+  selected = null;
+  checkRows();
+  render();
+});
+
+document.getElementById('nextbtn').addEventListener('click', () => startRound(roundIdx() + 1));
+document.getElementById('bigmsg-next').addEventListener('click', () => startRound(roundIdx() + 1));
+
+// Board renders behind the mode-select overlay so nothing looks empty
+mode = 'easy'; startRound(0);
+</script>
+</body>
+</html>
