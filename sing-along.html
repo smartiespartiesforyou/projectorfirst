@@ -81,7 +81,7 @@
       opacity: 0.01;
       pointer-events: none;
     }
-    #ytFrame {
+    #ytHolder iframe {
       width: 300px;
       height: 200px;
     }
@@ -114,7 +114,7 @@
     </footer>
   </div>
 
-  <div id="ytHolder"><iframe id="ytFrame" frameborder="0" allow="autoplay" src=""></iframe></div>
+  <div id="ytHolder"></div>
 
 <script>
 // ============ SONGS ============
@@ -163,6 +163,13 @@ function shuffle(arr) {
 }
 
 // ============ GAME ============
+function stopClip() {
+  // Remove the iframe entirely rather than reusing one — some browsers
+  // only grant autoplay-with-sound once per iframe element, so reusing
+  // it silently breaks playback after the first song.
+  document.getElementById("ytHolder").innerHTML = "";
+}
+
 function renderSong() {
   revealed = false;
   clearTimeout(clipTimer);
@@ -172,35 +179,35 @@ function renderSong() {
   document.getElementById("notePulse").textContent = "🎵";
   document.getElementById("revealBtn").disabled = true;
   document.getElementById("playBtn").disabled = false;
-  // Stop any playing audio by clearing the iframe src.
-  document.getElementById("ytFrame").src = "";
+  stopClip();
 }
 
 function playClip() {
   const song = deck[deckIndex];
-  const frame = document.getElementById("ytFrame");
   clearTimeout(clipTimer);
   if (!song.id) {
     document.getElementById("statusLine").textContent = "No video linked for this song yet.";
     return;
   }
-  frame.src = "";
-  setTimeout(function () {
-    frame.src = "https://www.youtube.com/embed/" + song.id +
-      "?autoplay=1&controls=0&modestbranding=1&rel=0&disablekb=1";
-  }, 50);
+  stopClip();
+  // Build a brand-new iframe (synchronously, inside the click handler)
+  // for every play so each load gets its own fresh autoplay permission.
+  const frame = document.createElement("iframe");
+  frame.setAttribute("frameborder", "0");
+  frame.setAttribute("allow", "autoplay");
+  frame.src = "https://www.youtube.com/embed/" + song.id +
+    "?autoplay=1&controls=0&modestbranding=1&rel=0&disablekb=1";
+  document.getElementById("ytHolder").appendChild(frame);
   document.getElementById("statusLine").textContent = "🎶 Now playing... guess out loud!";
   document.getElementById("revealBtn").disabled = false;
-  clipTimer = setTimeout(function () {
-    frame.src = "";
-  }, CLIP_SECONDS * 1000);
+  clipTimer = setTimeout(stopClip, CLIP_SECONDS * 1000);
 }
 
 function reveal() {
   if (revealed) return;
   revealed = true;
   clearTimeout(clipTimer);
-  document.getElementById("ytFrame").src = "";
+  stopClip();
   const song = deck[deckIndex];
   document.getElementById("statusLine").textContent = "The answer is...";
   document.getElementById("notePulse").textContent = "🎉";
