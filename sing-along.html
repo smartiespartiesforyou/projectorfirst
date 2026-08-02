@@ -100,7 +100,7 @@
 
     <main class="flex-1 flex flex-col items-center justify-center px-4 min-h-0 gap-5">
       <div id="notePulse" class="note-pulse text-center" style="font-size: clamp(4rem, 16vw, 9rem); line-height: 1;">🎵</div>
-      <div id="statusLine" class="text-white font-black text-center" style="font-size: clamp(1.3rem, 4.5vw, 2.2rem);">Listen closely... can you guess the song?</div>
+      <div id="statusLine" class="text-white font-black text-center" style="font-size: clamp(1.3rem, 4.5vw, 2.2rem);">Listen closely... can you guess the artist?</div>
       <div id="answerWrap" class="flex justify-center px-2 max-w-3xl"></div>
     </main>
 
@@ -118,29 +118,32 @@
 
 <script>
 // ============ SONGS ============
-// One shared YouTube video (a licensed cover compilation) with a start-time
-// per song. Audio-only presentation: the iframe is kept off-screen so no
-// on-screen title/lyrics spoil the answer before Reveal.
-const VIDEO_ID = "3P4XB3bM9iA";
+// Each song has its own dedicated YouTube video, so each clip just loads
+// and autoplays from the start — no seeking to a mid-video timestamp,
+// which was unreliable. Fill in "id" with the real YouTube video ID
+// (the part after watch?v= in a normal youtube.com/watch link) for each.
 const SONGS = [
-  { title: "Oh, Pretty Woman", artist: "Roy Orbison", start: 0 },
-  { title: "Can't Take My Eyes Off You", artist: "Frankie Valli", start: 181 },
-  { title: "Ain't No Mountain High Enough", artist: "Marvin Gaye & Tammi Terrell", start: 416 },
-  { title: "Dreams", artist: "Fleetwood Mac", start: 564 },
-  { title: "Don't Worry Baby", artist: "The Beach Boys", start: 805 },
-  { title: "Suspicious Minds", artist: "Elvis Presley", start: 992 },
-  { title: "I Just Want to Be Your Everything", artist: "Andy Gibb", start: 1230 },
-  { title: "Unchained Melody", artist: "The Righteous Brothers", start: 1453 },
-  { title: "Have You Ever Seen the Rain", artist: "Creedence Clearwater Revival", start: 1668 },
-  { title: "Let It Be", artist: "The Beatles", start: 1818 },
-  { title: "A Horse With No Name", artist: "America", start: 2053 },
-  { title: "My Girl", artist: "The Temptations", start: 2268 },
-  { title: "Return to Sender", artist: "Elvis Presley", start: 2442 },
-  { title: "Dancing Queen", artist: "ABBA", start: 2565 },
-  { title: "California Dreamin'", artist: "The Mamas & the Papas", start: 2791 },
-  { title: "Sweet Caroline", artist: "Neil Diamond", start: 2961 },
-  { title: "Jolene", artist: "Dolly Parton", start: 3187 },
-  { title: "Fortunate Son", artist: "Creedence Clearwater Revival", start: 3352 },
+  { title: "Oh, Pretty Woman", artist: "Roy Orbison", id: "3KFvoDDs0XM" },
+  { title: "Can't Take My Eyes Off You", artist: "Frankie Valli", id: "" },
+  { title: "Ain't No Mountain High Enough", artist: "Marvin Gaye & Tammi Terrell", id: "" },
+  { title: "Dreams", artist: "Fleetwood Mac", id: "" },
+  { title: "Don't Worry Baby", artist: "The Beach Boys", id: "" },
+  { title: "Suspicious Minds", artist: "Elvis Presley", id: "" },
+  { title: "I Just Want to Be Your Everything", artist: "Andy Gibb", id: "" },
+  { title: "Unchained Melody", artist: "The Righteous Brothers", id: "" },
+  { title: "Have You Ever Seen the Rain", artist: "Creedence Clearwater Revival", id: "" },
+  { title: "Let It Be", artist: "The Beatles", id: "" },
+  { title: "A Horse With No Name", artist: "America", id: "" },
+  { title: "My Girl", artist: "The Temptations", id: "y3KJ7d2qBoA" },
+  { title: "Return to Sender", artist: "Elvis Presley", id: "" },
+  { title: "Dancing Queen", artist: "ABBA", id: "" },
+  { title: "California Dreamin'", artist: "The Mamas & the Papas", id: "" },
+  { title: "Sweet Caroline", artist: "Neil Diamond", id: "" },
+  { title: "Jolene", artist: "Dolly Parton", id: "" },
+  { title: "Fortunate Son", artist: "Creedence Clearwater Revival", id: "" },
+  { title: "Put Your Head on My Shoulder", artist: "Paul Anka", id: "kvazBqAlx58" },
+  { title: "Stop! In the Name of Love", artist: "The Supremes", id: "une981B7Q4Y" },
+  { title: "Wouldn't It Be Nice", artist: "The Beach Boys", id: "5lP8BZcyoEQ" },
 ];
 
 // ============ STATE ============
@@ -164,7 +167,7 @@ function renderSong() {
   revealed = false;
   clearTimeout(clipTimer);
   document.getElementById("progressLabel").textContent = "Song " + (deckIndex + 1) + " of " + deck.length;
-  document.getElementById("statusLine").textContent = "Listen closely... can you guess the song?";
+  document.getElementById("statusLine").textContent = "Listen closely... can you guess the artist?";
   document.getElementById("answerWrap").innerHTML = "";
   document.getElementById("notePulse").textContent = "🎵";
   document.getElementById("revealBtn").disabled = true;
@@ -177,15 +180,14 @@ function playClip() {
   const song = deck[deckIndex];
   const frame = document.getElementById("ytFrame");
   clearTimeout(clipTimer);
-  // Force a genuine fresh load of the video at the right start time by
-  // rebuilding the iframe src from scratch each time (more reliable than
-  // the JS Player API, which can ignore a new start time when reloading
-  // the same video ID).
+  if (!song.id) {
+    document.getElementById("statusLine").textContent = "No video linked for this song yet.";
+    return;
+  }
   frame.src = "";
   setTimeout(function () {
-    frame.src = "https://www.youtube.com/embed/" + VIDEO_ID +
-      "?start=" + song.start +
-      "&autoplay=1&controls=0&modestbranding=1&rel=0&disablekb=1";
+    frame.src = "https://www.youtube.com/embed/" + song.id +
+      "?autoplay=1&controls=0&modestbranding=1&rel=0&disablekb=1";
   }, 50);
   document.getElementById("statusLine").textContent = "🎶 Now playing... guess out loud!";
   document.getElementById("revealBtn").disabled = false;
