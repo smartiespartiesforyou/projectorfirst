@@ -72,18 +72,33 @@
       0%, 100% { transform: scale(1); }
       50% { transform: scale(1.12); }
     }
-    /* YouTube iframe kept tiny and non-interactive: audio-only experience
-       so the answer isn't spoiled by on-screen video/lyrics. */
+    /* Player hidden by default (audio-only). The Show Video toggle
+       reveals it as a small corner player as a manual fallback. */
     #ytHolder {
+      position: fixed;
+      bottom: 8px;
+      right: 8px;
       width: 3px;
       height: 3px;
       overflow: hidden;
       opacity: 0.01;
       pointer-events: none;
+      z-index: 40;
+    }
+    #ytHolder.visible {
+      width: 320px;
+      height: 200px;
+      opacity: 1;
+      pointer-events: auto;
+      border: 3px solid #facc15;
+      border-radius: .5rem;
+      background: #000;
     }
     #ytHolder iframe {
-      width: 300px;
-      height: 200px;
+      width: 100%;
+      height: 100%;
+      min-width: 300px;
+      min-height: 180px;
     }
   </style>
 </head>
@@ -93,7 +108,10 @@
     <header class="flex items-center justify-between px-4 pt-4 pb-1 gap-2 flex-wrap">
       <a href="apps.html" class="btn-big bg-white text-blue-900 text-base md:text-xl px-3 py-2 no-underline">← Back to Apps</a>
       <h1 class="text-yellow-300 font-black" style="font-size: clamp(1.3rem, 4.5vw, 2.4rem); text-shadow: 3px 3px 0 #0f265f;">🎤 SING-ALONG</h1>
-      <div style="width: 1px;"></div>
+      <label class="flex items-center gap-2 text-white font-bold text-sm md:text-lg cursor-pointer select-none">
+        <input type="checkbox" id="videoToggle" class="w-5 h-5 md:w-6 md:h-6 accent-yellow-400" onchange="toggleVideo()">
+        🎬 Show Video
+      </label>
     </header>
 
     <div class="text-center text-blue-200 font-bold" style="font-size: clamp(.9rem, 2.4vw, 1.2rem);" id="progressLabel"></div>
@@ -114,7 +132,7 @@
     </footer>
   </div>
 
-  <div id="ytHolder"></div>
+  <div id="ytHolder"><div id="ytPlayer"></div></div>
 
 <script>
 // ============ SONGS ============
@@ -162,12 +180,56 @@ function shuffle(arr) {
   return a;
 }
 
+// ============ YOUTUBE PLAYER (official IFrame API) ============
+// One persistent player, created on the first Play click (a user gesture,
+// which satisfies browser autoplay rules). Each subsequent song is loaded
+// into the SAME player via loadVideoById(differentVideoId) — the standard,
+// well-supported way to switch videos, unlike recreating iframes (whose
+// autoplay is often blocked after the first) or seeking within one long
+// video (which was unreliable).
+let player = null;
+let playerReady = false;
+let pendingVideoId = null;
+
+// Load the API script.
+(function () {
+  const tag = document.createElement("script");
+  tag.src = "https://www.youtube.com/iframe_api";
+  document.body.appendChild(tag);
+})();
+
+window.onYouTubeIframeAPIReady = function () {
+  // API is ready; the player itself is created lazily on first Play.
+};
+
+function ensurePlayer(videoId) {
+  if (player) return true;
+  if (!(window.YT && YT.Player)) return false; // API still loading
+  player = new YT.Player("ytPlayer", {
+    videoId: videoId,
+    playerVars: { autoplay: 1, rel: 0, modestbranding: 1 },
+    events: {
+      onReady: function (e) {
+        playerReady = true;
+        e.target.playVideo();
+        if (pendingVideoId && pendingVideoId !== videoId) {
+          e.target.loadVideoById(pendingVideoId);
+        }
+        pendingVideoId = null;
+      }
+    }
+  });
+  return true;
+}
+
+function toggleVideo() {
+  const on = document.getElementById("videoToggle").checked;
+  document.getElementById("ytHolder").classList.toggle("visible", on);
+}
+
 // ============ GAME ============
 function stopClip() {
-  // Remove the iframe entirely rather than reusing one — some browsers
-  // only grant autoplay-with-sound once per iframe element, so reusing
-  // it silently breaks playback after the first song.
-  document.getElementById("ytHolder").innerHTML = "";
+  if (player && playerReady && player.stopVideo) player.stopVideo();
 }
 
 function renderSong() {
@@ -189,18 +251,23 @@ function playClip() {
     document.getElementById("statusLine").textContent = "No video linked for this song yet.";
     return;
   }
-  stopClip();
-  // Build a brand-new iframe (synchronously, inside the click handler)
-  // for every play so each load gets its own fresh autoplay permission.
-  const frame = document.createElement("iframe");
-  frame.setAttribute("frameborder", "0");
-  frame.setAttribute("allow", "autoplay");
-  frame.src = "https://www.youtube.com/embed/" + song.id +
-    "?autoplay=1&controls=0&modestbranding=1&rel=0&disablekb=1";
-  document.getElementById("ytHolder").appendChild(frame);
+  if (!ensurePlayer(song.id)) {
+    // API script still loading; remember what to play and retry shortly.
+    pendingVideoId = song.id;
+    document.getElementById("statusLine").textContent = "Loading the music... one moment.";
+    setTimeout(playClip, 400);
+    return;
+  }
+  if (playerReady) {
+    player.loadVideoById(song.id); // loads AND autoplays the new video
+  } else {
+    pendingVideoId = song.id; // player object exists but not ready yet
+  }
   document.getElementById("statusLine").textContent = "🎶 Now playing... guess out loud!";
   document.getElementById("revealBtn").disabled = false;
-  clipTimer = setTimeout(stopClip, CLIP_SECONDS * 1000);
+  clipTimer = setTimeout(function () {
+    if (player && playerReady && player.pauseVideo) player.pauseVideo();
+  }, CLIP_SECONDS * 1000);
 }
 
 function reveal() {
