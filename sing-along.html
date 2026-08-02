@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Sing-Along — ProjectorFirst</title>
+
+<!-- Membership gate (paywall-test) -->
+<script
+  data-memberstack-app="app_cmgnwpg8y00x10suih4pua785"
+  src="https://static.memberstack.com/scripts/v2/memberstack.js"
+  type="text/javascript">
+</script>
+<script src="/guard.js"></script>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    html, body {
+      height: 100vh;
+      height: 100dvh;
+      margin: 0;
+      overflow: hidden;
+      background: #1e3a8a;
+      font-family: ui-rounded, system-ui, -apple-system, "Segoe UI", sans-serif;
+    }
+    .screen { height: 100vh; height: 100dvh; display: flex; flex-direction: column; }
+    .btn-big {
+      font-weight: 900;
+      border-radius: 1.25rem;
+      border: 4px solid #0f265f;
+      box-shadow: 0 6px 0 #0f265f;
+      transition: transform .08s ease, box-shadow .08s ease;
+      cursor: pointer;
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: manipulation;
+    }
+    .btn-big:active { transform: translateY(4px); box-shadow: 0 2px 0 #0f265f; }
+    .btn-big:disabled { opacity: .5; cursor: default; }
+    .answer-card {
+      background: #facc15;
+      color: #1e3a8a;
+      font-weight: 900;
+      border: 4px solid #fff;
+      border-radius: 1.5rem;
+      padding: 1rem 1.5rem;
+      animation: popIn .4s cubic-bezier(.2,1.6,.4,1) both;
+      box-shadow: 0 6px 0 #b45309;
+      text-align: center;
+    }
+    @keyframes popIn {
+      0% { transform: scale(.3); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    .confetti {
+      position: fixed;
+      top: -20px;
+      pointer-events: none;
+      z-index: 50;
+      font-size: clamp(1.2rem, 3vw, 2rem);
+      animation: fall linear forwards;
+    }
+    @keyframes fall { to { transform: translateY(110vh) rotate(720deg); opacity: .9; } }
+    @media (prefers-reduced-motion: reduce) {
+      .answer-card { animation: none; }
+      .confetti { display: none; }
+    }
+    .note-pulse {
+      animation: pulse 1.4s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.12); }
+    }
+    /* YouTube iframe kept tiny and non-interactive: audio-only experience
+       so the answer isn't spoiled by on-screen video/lyrics. */
+    #ytHolder {
+      width: 3px;
+      height: 3px;
+      overflow: hidden;
+      opacity: 0.01;
+      pointer-events: none;
+    }
+    #ytFrame {
+      width: 300px;
+      height: 200px;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="gameScreen" class="screen">
+    <header class="flex items-center justify-between px-4 pt-4 pb-1 gap-2 flex-wrap">
+      <a href="apps.html" class="btn-big bg-white text-blue-900 text-base md:text-xl px-3 py-2 no-underline">← Back to Apps</a>
+      <h1 class="text-yellow-300 font-black" style="font-size: clamp(1.3rem, 4.5vw, 2.4rem); text-shadow: 3px 3px 0 #0f265f;">🎤 SING-ALONG</h1>
+      <div style="width: 1px;"></div>
+    </header>
+
+    <div class="text-center text-blue-200 font-bold" style="font-size: clamp(.9rem, 2.4vw, 1.2rem);" id="progressLabel"></div>
+
+    <main class="flex-1 flex flex-col items-center justify-center px-4 min-h-0 gap-5">
+      <div id="notePulse" class="note-pulse text-center" style="font-size: clamp(4rem, 16vw, 9rem); line-height: 1;">🎵</div>
+      <div id="statusLine" class="text-white font-black text-center" style="font-size: clamp(1.3rem, 4.5vw, 2.2rem);">Listen closely... can you guess the song?</div>
+      <div id="answerWrap" class="flex justify-center px-2 max-w-3xl"></div>
+    </main>
+
+    <footer class="px-4 pb-5 pt-1">
+      <div class="flex justify-center gap-3 md:gap-5 flex-wrap max-w-2xl mx-auto">
+        <button id="playBtn" class="btn-big bg-green-400 text-blue-900 px-5 py-4 flex-1 min-w-[10rem]" style="font-size: clamp(1.2rem, 3.8vw, 2rem); border-color:#14532d; box-shadow: 0 6px 0 #14532d;" onclick="playClip()">▶️ Play Clip</button>
+        <button id="revealBtn" class="btn-big bg-yellow-400 text-blue-900 px-5 py-4 flex-1 min-w-[10rem]" style="font-size: clamp(1.2rem, 3.8vw, 2rem); border-color:#b45309; box-shadow: 0 6px 0 #b45309;" onclick="reveal()" disabled>✨ Reveal Answer</button>
+        <button id="nextBtn" class="btn-big bg-white text-blue-900 px-5 py-4 flex-1 min-w-[10rem]" style="font-size: clamp(1.2rem, 3.8vw, 2rem);" onclick="nextSong()">Next Song ➡️</button>
+      </div>
+      <div class="text-center text-blue-300 font-semibold mt-2 hidden md:block" style="font-size: clamp(.85rem, 2vw, 1.05rem);">Play the clip, let everyone guess out loud, then reveal!</div>
+    </footer>
+  </div>
+
+  <div id="ytHolder"><iframe id="ytFrame" frameborder="0" allow="autoplay" src=""></iframe></div>
+
+<script>
+// ============ SONGS ============
+// One shared YouTube video (a licensed cover compilation) with a start-time
+// per song. Audio-only presentation: the iframe is kept off-screen so no
+// on-screen title/lyrics spoil the answer before Reveal.
+const VIDEO_ID = "3P4XB3bM9iA";
+const SONGS = [
+  { title: "Oh, Pretty Woman", artist: "Roy Orbison", start: 0 },
+  { title: "Can't Take My Eyes Off You", artist: "Frankie Valli", start: 181 },
+  { title: "Ain't No Mountain High Enough", artist: "Marvin Gaye & Tammi Terrell", start: 416 },
+  { title: "Dreams", artist: "Fleetwood Mac", start: 564 },
+  { title: "Don't Worry Baby", artist: "The Beach Boys", start: 805 },
+  { title: "Suspicious Minds", artist: "Elvis Presley", start: 992 },
+  { title: "I Just Want to Be Your Everything", artist: "Andy Gibb", start: 1230 },
+  { title: "Unchained Melody", artist: "The Righteous Brothers", start: 1453 },
+  { title: "Have You Ever Seen the Rain", artist: "Creedence Clearwater Revival", start: 1668 },
+  { title: "Let It Be", artist: "The Beatles", start: 1818 },
+  { title: "A Horse With No Name", artist: "America", start: 2053 },
+  { title: "My Girl", artist: "The Temptations", start: 2268 },
+  { title: "Return to Sender", artist: "Elvis Presley", start: 2442 },
+  { title: "Dancing Queen", artist: "ABBA", start: 2565 },
+  { title: "California Dreamin'", artist: "The Mamas & the Papas", start: 2791 },
+  { title: "Sweet Caroline", artist: "Neil Diamond", start: 2961 },
+  { title: "Jolene", artist: "Dolly Parton", start: 3187 },
+  { title: "Fortunate Son", artist: "Creedence Clearwater Revival", start: 3352 },
+];
+
+// ============ STATE ============
+let deck = [];
+let deckIndex = 0;
+let revealed = false;
+let clipTimer = null;
+const CLIP_SECONDS = 25; // auto-stop the clip after this many seconds
+
+function shuffle(arr) {
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+// ============ GAME ============
+function renderSong() {
+  revealed = false;
+  clearTimeout(clipTimer);
+  document.getElementById("progressLabel").textContent = "Song " + (deckIndex + 1) + " of " + deck.length;
+  document.getElementById("statusLine").textContent = "Listen closely... can you guess the song?";
+  document.getElementById("answerWrap").innerHTML = "";
+  document.getElementById("notePulse").textContent = "🎵";
+  document.getElementById("revealBtn").disabled = true;
+  document.getElementById("playBtn").disabled = false;
+  // Stop any playing audio by clearing the iframe src.
+  document.getElementById("ytFrame").src = "";
+}
+
+function playClip() {
+  const song = deck[deckIndex];
+  const frame = document.getElementById("ytFrame");
+  clearTimeout(clipTimer);
+  // Force a genuine fresh load of the video at the right start time by
+  // rebuilding the iframe src from scratch each time (more reliable than
+  // the JS Player API, which can ignore a new start time when reloading
+  // the same video ID).
+  frame.src = "";
+  setTimeout(function () {
+    frame.src = "https://www.youtube.com/embed/" + VIDEO_ID +
+      "?start=" + song.start +
+      "&autoplay=1&controls=0&modestbranding=1&rel=0&disablekb=1";
+  }, 50);
+  document.getElementById("statusLine").textContent = "🎶 Now playing... guess out loud!";
+  document.getElementById("revealBtn").disabled = false;
+  clipTimer = setTimeout(function () {
+    frame.src = "";
+  }, CLIP_SECONDS * 1000);
+}
+
+function reveal() {
+  if (revealed) return;
+  revealed = true;
+  clearTimeout(clipTimer);
+  document.getElementById("ytFrame").src = "";
+  const song = deck[deckIndex];
+  document.getElementById("statusLine").textContent = "The answer is...";
+  document.getElementById("notePulse").textContent = "🎉";
+  const wrap = document.getElementById("answerWrap");
+  const card = document.createElement("div");
+  card.className = "answer-card";
+  card.style.fontSize = "clamp(1.5rem, 5.5vw, 3rem)";
+  card.innerHTML = song.title + "<br><span style='font-size:.7em;'>" + song.artist + "</span>";
+  wrap.appendChild(card);
+  document.getElementById("revealBtn").disabled = true;
+  throwConfetti(16);
+}
+
+function nextSong() {
+  clearTimeout(clipTimer);
+  deckIndex++;
+  if (deckIndex >= deck.length) {
+    deck = shuffle(SONGS);
+    deckIndex = 0;
+  }
+  renderSong();
+}
+
+// ============ CONFETTI ============
+const CONFETTI_EMOJI = ["🎉", "✨", "⭐", "🎊", "💛", "💙", "🎶"];
+function throwConfetti(count) {
+  const n = count || 14;
+  for (let i = 0; i < n; i++) {
+    const el = document.createElement("div");
+    el.className = "confetti";
+    el.textContent = CONFETTI_EMOJI[Math.floor(Math.random() * CONFETTI_EMOJI.length)];
+    el.style.left = Math.random() * 100 + "vw";
+    el.style.animationDuration = (1.8 + Math.random() * 1.6) + "s";
+    el.style.animationDelay = (Math.random() * 0.4) + "s";
+    document.body.appendChild(el);
+    setTimeout(() => el.remove(), 4200);
+  }
+}
+
+// ============ SPACE BAR ============
+document.addEventListener("keydown", function (ev) {
+  if (ev.code !== "Space" && ev.key !== " ") return;
+  ev.preventDefault();
+  if (!revealed && !document.getElementById("revealBtn").disabled) reveal();
+  else if (document.getElementById("playBtn").disabled === false && document.getElementById("revealBtn").disabled === true) playClip();
+});
+
+deck = shuffle(SONGS);
+renderSong();
+</script>
+</body>
+</html>
