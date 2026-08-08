@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Silly Stories — ProjectorFirst</title>
+
+<!-- Membership gate (paywall-test) -->
+<script
+  data-memberstack-app="app_cmgnwpg8y00x10suih4pua785"
+  src="https://static.memberstack.com/scripts/v2/memberstack.js"
+  type="text/javascript">
+</script>
+<script src="/guard.js"></script>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    html, body {
+      height: 100vh;
+      height: 100dvh;
+      margin: 0;
+      overflow: hidden;
+      background: #1e3a8a;
+      font-family: ui-rounded, system-ui, -apple-system, "Segoe UI", sans-serif;
+    }
+    .screen { height: 100vh; height: 100dvh; display: flex; flex-direction: column; }
+    .btn-big {
+      font-weight: 900;
+      border-radius: 1.25rem;
+      border: 4px solid #0f265f;
+      box-shadow: 0 6px 0 #0f265f;
+      transition: transform .08s ease, box-shadow .08s ease;
+      cursor: pointer;
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: manipulation;
+    }
+    .btn-big:active { transform: translateY(4px); box-shadow: 0 2px 0 #0f265f; }
+    .btn-big:disabled { opacity: .5; cursor: default; }
+    .story-card {
+      background: #fffbeb;
+      color: #1f2937;
+      border: 6px solid #facc15;
+      border-radius: 1.5rem;
+      box-shadow: 0 8px 0 #b45309;
+      animation: popIn .4s cubic-bezier(.2,1.6,.4,1) both;
+    }
+    @keyframes popIn {
+      0% { transform: scale(.85); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .story-card { animation: none; }
+    }
+    .name-word {
+      color: #1d4ed8;
+      font-weight: 900;
+    }
+    .silly-word {
+      background: #fde68a;
+      border-radius: .4rem;
+      padding: 0 .25em;
+      font-weight: 800;
+      color: #92400e;
+      white-space: nowrap;
+    }
+    .name-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: .5rem;
+      background: #fde68a;
+      color: #1e3a8a;
+      font-weight: 800;
+      border: 3px solid #b45309;
+      border-radius: 9999px;
+      padding: .35rem .5rem .35rem 1rem;
+      font-size: 1.25rem;
+    }
+    .name-chip button {
+      background: #b91c1c;
+      color: #fff;
+      border: none;
+      border-radius: 9999px;
+      width: 1.9rem;
+      height: 1.9rem;
+      font-weight: 900;
+      font-size: 1.1rem;
+      line-height: 1;
+      cursor: pointer;
+    }
+    .story-text { font-size: clamp(1.5rem, 3.4vh, 2.4rem); line-height: 1.55; }
+    .story-title { font-size: clamp(1.6rem, 4vh, 2.6rem); }
+  </style>
+</head>
+<body>
+
+<!-- ============================ SETUP SCREEN ============================ -->
+<div id="setupScreen" class="screen items-center px-4 py-6 overflow-y-auto" style="overflow-y:auto;">
+  <h1 class="text-white font-extrabold text-center" style="font-size:clamp(2rem,5vh,3.2rem);">📖 Silly Stories</h1>
+  <p class="text-blue-100 text-center font-semibold mb-4" style="font-size:clamp(1.1rem,2.4vh,1.5rem);">
+    Add your residents' names, and we'll put them in funny stories for you to read aloud!
+  </p>
+
+  <div class="bg-white rounded-2xl p-5 w-full max-w-2xl mb-4 border-4 border-yellow-300">
+    <label for="nameInput" class="block text-blue-900 font-extrabold text-xl mb-2">Type a first name, then press Add:</label>
+    <div class="flex gap-3 mb-4">
+      <input id="nameInput" type="text" autocomplete="off" maxlength="30"
+        class="flex-1 text-2xl font-bold border-4 border-blue-800 rounded-xl px-4 py-2 text-blue-900"
+        placeholder="Example: Dorothy" />
+      <button id="addNameBtn" class="btn-big bg-green-500 text-white text-2xl px-6 py-2">➕ Add</button>
+    </div>
+    <div id="nameList" class="flex flex-wrap gap-2 mb-2"></div>
+    <p id="nameCount" class="text-gray-700 font-semibold text-lg">No names yet — add at least one to begin.</p>
+  </div>
+
+  <button id="startBtn" class="btn-big bg-yellow-400 text-blue-900 px-10 py-4 mb-4" style="font-size:clamp(1.4rem,3vh,2rem);" disabled>
+    🎉 Start the Stories!
+  </button>
+
+  <div class="bg-blue-800 border-2 border-blue-400 rounded-xl p-4 w-full max-w-2xl text-blue-100 text-base mb-3">
+    <span class="font-bold text-white">Good to know:</span> Your name list saves on <span class="font-bold text-white">this device only</span>.
+    If you use a different computer or tablet, the list won't follow you automatically — use the
+    <span class="font-bold text-white">Copy Share Link</span> button below to bring your names to another device, or just type them in again.
+  </div>
+  <button id="shareBtn" class="btn-big bg-blue-500 text-white text-lg px-6 py-2 mb-8">🔗 Copy Share Link (moves your names to another device)</button>
+</div>
+
+<!-- ============================ STORY SCREEN ============================ -->
+<div id="storyScreen" class="screen px-4 py-4 hidden">
+  <div class="flex items-center justify-between max-w-5xl w-full mx-auto mb-2">
+    <h1 class="text-white font-extrabold" style="font-size:clamp(1.3rem,3vh,2rem);">📖 Silly Stories</h1>
+    <p id="storyCounter" class="text-blue-200 font-bold" style="font-size:clamp(1rem,2.2vh,1.4rem);"></p>
+  </div>
+
+  <div class="flex-1 overflow-y-auto max-w-5xl w-full mx-auto">
+    <div id="storyCard" class="story-card px-6 py-5 md:px-10 md:py-8">
+      <h2 id="storyTitle" class="story-title font-extrabold text-blue-900 text-center mb-4"></h2>
+      <p id="storyBody" class="story-text"></p>
+    </div>
+  </div>
+
+  <div class="flex flex-wrap gap-3 justify-center max-w-5xl w-full mx-auto pt-4">
+    <button id="newStoryBtn" class="btn-big bg-yellow-400 text-blue-900 px-8 py-3" style="font-size:clamp(1.2rem,2.6vh,1.7rem);">📖 New Story</button>
+    <button id="rerollBtn" class="btn-big bg-green-500 text-white px-8 py-3" style="font-size:clamp(1.2rem,2.6vh,1.7rem);">🎲 Same Story, New Silliness</button>
+    <button id="editNamesBtn" class="btn-big bg-blue-500 text-white px-6 py-3" style="font-size:clamp(1rem,2.2vh,1.4rem);">✏️ Names</button>
+  </div>
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  // ======================= WORD BANKS =======================
+  var BANKS = {
+    animal: ["chicken","billy goat","poodle","flamingo","hippopotamus","donkey","parakeet","walrus","hamster","rooster","pot-bellied pig","llama","snapping turtle","skunk","moose","penguin","ostrich","raccoon","bullfrog","alley cat","stubborn mule","peacock","armadillo","canary","dachshund","possum"],
+    food: ["meatloaf","banana pudding","dill pickles","spaghetti","deviled eggs","fried chicken","gumbo","jello salad","biscuits and gravy","tapioca pudding","pot roast","cornbread","sweet tea","fruitcake","liver and onions","mashed potatoes","a bologna sandwich","gumdrops","prune juice","butterscotch candy","grits","sauerkraut","tuna casserole","red beans and rice","pecan pie","pimento cheese"],
+    color: ["hot pink","lime green","polka-dotted","bright orange","royal purple","sparkly gold","neon yellow","plaid","turquoise","ruby red","glittery silver","leopard-print","candy-striped","checkerboard"],
+    job: ["mail carrier","tap dancer","lion tamer","weatherman","hairdresser","opera singer","rodeo clown","librarian","bus driver","magician","banjo player","dog groomer","head cheerleader","wrestling champion","fortune teller","crossing guard","pie judge","tugboat captain"],
+    place: ["the grocery store","the beauty parlor","the county fair","the bowling alley","Niagara Falls","the post office","Graceland","the fishing hole","the church potluck","the dance hall","the Grand Ole Opry","the barber shop","Yellowstone","the five-and-dime","the drive-in movie","the flea market","the ice cream parlor"],
+    thing: ["a kazoo","a rubber chicken","a bowling ball","a feather boa","an accordion","a garden gnome","a whoopee cushion","a pogo stick","a cowbell","a hula hoop","a set of dentures","a fly swatter","a plunger","a tuba","roller skates","a lava lamp","a fishing pole","an umbrella hat","a jar of pickles","a bag of marbles"],
+    clothing: ["a sombrero","fuzzy slippers","overalls","a pink tutu","cowboy boots","long johns","a poodle skirt","rainbow suspenders","a shower cap","galoshes","a Hawaiian shirt","polka-dot bloomers","a coonskin cap","a superhero cape","mittens"],
+    adjective: ["wiggly","gigantic","sparkly","grumpy","ticklish","squeaky","fancy","wobbly","itchy","magnificent","sassy","bouncy","mysterious","dazzling","chatty","dramatic","bedazzled","enormous"],
+    exclaim: ["Well, butter my biscuit!","Great googly moogly!","Heavens to Betsy!","Hot diggity dog!","Land sakes alive!","Well, I'll be a monkey's uncle!","Good gravy!","Jumpin' Jehoshaphat!","Well, slap my knee!","Sweet sassy molassy!"],
+    dance: ["the cha-cha","the twist","the polka","the hokey pokey","the jitterbug","the boot scootin' boogie","the chicken dance","the conga","the tango","the mashed potato"],
+    sound: ["honked like a goose","yodeled","mooed","played a kazoo solo","whistled Dixie","hiccuped loudly","snored","crowed like a rooster","clucked","sang opera"],
+    vehicle: ["a tractor","a golf cart","a unicycle","a riding lawnmower","a hot air balloon","a canoe","a tandem bicycle","a mule wagon","a motor scooter","a pink Cadillac","a pontoon boat"],
+    number: ["seventeen","forty-two","one hundred","twelve","ninety-nine","three and a half","sixty-seven","twenty-two","fifty-five","eleventy-seven"],
+    song: ["'You Are My Sunshine'","'Take Me Out to the Ball Game'","'Home on the Range'","'Oh! Susanna'","'She'll Be Comin' Round the Mountain'","'Row, Row, Row Your Boat'","'Jingle Bells' (in the middle of July)","'The Hokey Pokey'"],
+    weather: ["a thunderstorm","a heat wave","a snowstorm","a windy day","a double rainbow","a drizzle","a full moon"]
+  };
+
+  // Stock characters used only if the name list is too short for a story.
+  var STOCK_NAMES = ["the mail carrier","the bingo caller","the bus driver","Elvis","the mayor","the weatherman"];
+
+  // ======================= STORY TEMPLATES =======================
+  // {n1},{n2},{n3} = resident names. Other {tokens} pull from BANKS.
+  // A number suffix ({animal2}) means "a different word from the same bank."
+  var TEMPLATES = [
+    { t: "The Big Bingo Day", s: "Last Tuesday, {n1} showed up to bingo wearing {clothing} and carrying {thing}. \"{exclaim}\" shouted {n2}. \"That's my lucky charm!\" When {n1} finally yelled BINGO, the prize turned out to be {number} pounds of {food}. {n1} shared it with everyone, and they all agreed it tasted better than {food2}." },
+    { t: "The Great Bake Sale", s: "{n1} and {n2} entered the bake sale with a {color} cake shaped like a {animal}. The judge took one bite, {sound}, and gave it first prize. \"{exclaim}\" said {n1}. \"The secret ingredient is {food}!\" They celebrated by doing {dance} all the way to {place}." },
+    { t: "A Trip to the Fair", s: "{n1} rode to the county fair on {vehicle}. First stop: the {adjective} {animal} contest, where {n2}'s pet {animal2} won a blue ribbon for eating {number} plates of {food}. \"{exclaim}\" said the announcer. \"I've never seen anything so {adjective2} in all my days!\"" },
+    { t: "The Dance Contest", s: "At Friday night's dance, {n1} put on {clothing} and did {dance} like nobody was watching. {n2} joined in and {sound}. The band was so impressed they played {song} {number} times in a row. Everyone agreed it was the most {adjective} night since the great {weather} of 1962." },
+    { t: "The Fishing Trip", s: "{n1} and {n2} went fishing at {place} with nothing but {thing} and a bucket of {food}. After {number} minutes, {n1} caught a {adjective} {animal} wearing {clothing}. \"{exclaim}\" hollered {n2}. \"Throw it back — it's wearing nicer clothes than I am!\"" },
+    { t: "The Grocery Adventure", s: "{n1} went to the grocery store for {food}, but came home with {number} cans of {food2}, {thing}, and a {color} {animal}. \"{exclaim}\" said {n2}. \"What are we supposed to do with all this?\" So they invited the whole neighborhood over and had the most {adjective} supper in town history." },
+    { t: "The Talent Show", s: "For the talent show, {n1} planned to sing {song}. But halfway through, a {animal} in {clothing} wandered on stage and {sound}. The crowd went wild! {n2} gave them a standing ovation and shouted \"{exclaim}\" The duo won first prize: a year's supply of {food}." },
+    { t: "The Road Trip", s: "{n1}, {n2}, and {n3} took a road trip to {place} in {vehicle}. They packed {number} sandwiches, {thing}, and one very {adjective} {animal} named Buttons. Every time they stopped for gas, {n3} {sound}. Best vacation ever." },
+    { t: "The Beauty Parlor", s: "{n1} asked the hairdresser for something new, and walked out with a {color} hairdo shaped like a {animal}. \"{exclaim}\" gasped {n2}. \"You look absolutely {adjective}!\" {n1} liked it so much, they wore {clothing} to match and danced {dance} down Main Street." },
+    { t: "The Mystery Package", s: "A package arrived for {n1} — inside was {thing}, a {color} hat, and a note that read: \"Meet me at {place}. Bring {food}.\" {n2} came along for backup. It turned out to be a surprise party with {number} guests and a {adjective} {animal} wearing a party hat!" },
+    { t: "The Garden Surprise", s: "{n1} planted tomatoes, but something {adjective} grew instead: a vine covered in {food}! A hungry {animal} in {clothing} showed up every morning for breakfast. \"{exclaim}\" said {n2}. \"Should we charge him rent?\" Instead, they named him Gerald and taught him {dance}." },
+    { t: "The Church Potluck", s: "At the potluck, {n1} brought a casserole made of {food} and {food2}. Pastor took one bite and {sound}. \"{exclaim}\" he declared. \"This is the most {adjective} dish I've ever tasted!\" {n2} asked for the recipe, but {n1} said, \"Sorry — a magician never reveals their secrets.\"" },
+    { t: "The Snowed-In Day", s: "During {weather}, {n1} and {n2} got stuck inside with only {thing}, a deck of cards, and {number} boxes of {food}. By noon, they had taught the cat {dance}. By supper, {n2} had won every card game and {sound} in victory. \"{exclaim}\" laughed {n1}. \"Best day all winter.\"" },
+    { t: "The New Pet", s: "{n1} came home from {place} with a surprise: a {adjective} pet {animal} named Sparkles. Sparkles only ate {food}, slept in {clothing}, and {sound} every morning at six o'clock sharp. \"{exclaim}\" said {n2}. \"That critter has a better routine than I do!\"" },
+    { t: "The Big Game", s: "It was the championship, and {n1} was up to bat wearing {clothing} for good luck. The pitcher threw the ball, and {n1} hit it {number} miles — right into a truck full of {food}! The crowd {sound}. \"{exclaim}\" cried {n2}. \"That's the most {adjective} home run I've ever seen!\"" },
+    { t: "The Photo Booth", s: "{n1} and {n2} found a photo booth at {place}. They squeezed in with {thing}, a {color} wig, and someone's pet {animal}. The pictures came out so {adjective} that the newspaper printed them on the front page with the headline: \"{exclaim}\"" },
+    { t: "The Wrong Suitcase", s: "{n1} grabbed the wrong suitcase at the airport. Instead of pajamas, it held {clothing}, {thing}, and {number} cans of {food}. \"{exclaim}\" said {n2}. \"Whose bag IS this?\" It belonged to a traveling {job}, who traded it back for a slice of {food2} and a lesson in {dance}." },
+    { t: "The Cooking Show", s: "{n1} got picked for a TV cooking show! The secret ingredient: {food}. {n1} whipped up something {adjective}, garnished it with {food2}, and served it wearing {clothing}. The judge took one bite and {sound}. \"{exclaim}\" cheered {n2} from the audience. First place!" },
+    { t: "The Parade", s: "This year, {n1} led the town parade riding {vehicle} and waving {thing}. Behind them marched {number} musicians and one {adjective} {animal} doing {dance}. {n2} watched from the porch and shouted, \"{exclaim} That's the best parade since the {weather} of '58!\"" },
+    { t: "The Lost Glasses", s: "{n1} spent all morning looking for their glasses. They checked under {thing}, inside the {color} cookie jar, even out by {place}. Finally {n2} started laughing so hard they {sound}. The glasses were on top of {n1}'s head the whole time — right next to {clothing}. \"{exclaim}\"" },
+    { t: "The Birthday Surprise", s: "For {n1}'s birthday, {n2} and {n3} planned something {adjective}: a party at {place} with {number} balloons, a cake shaped like a {animal}, and a band that only knew {song}. {n1} laughed so hard they {sound}. Best birthday ever!" },
+    { t: "The Yard Sale", s: "{n1} held a yard sale and sold everything except {thing}. Then a {job} pulled up in {vehicle} and offered {number} dollars for it! \"{exclaim}\" whispered {n2}. \"Take the money!\" {n1} did — and spent every penny on {food} for the whole block." },
+    { t: "The Karaoke Night", s: "At karaoke night, {n1} grabbed the microphone and belted out {song} while wearing {clothing}. Halfway through, {n2} jumped up and {sound}. The crowd chanted their names and threw {food} like confetti. \"{exclaim}\" said the DJ. \"You two should go professional!\"" },
+    { t: "The Doctor Visit", s: "{n1} went to the doctor complaining of the giggles. The doctor listened carefully, nodded, and prescribed {number} servings of {food}, one {adjective} nap, and {dance} twice daily. \"{exclaim}\" said {n2}. \"That's the same thing MY doctor told me!\"" },
+    { t: "The Fancy Restaurant", s: "{n1} and {n2} dressed up for the fanciest restaurant in town — {n1} in {clothing} and {n2} carrying {thing} for good luck. The waiter recommended the {food}, served with a side of {food2}. When the bill came, it was {number} dollars. \"{exclaim}\" they said together, and washed dishes while singing {song}." },
+    { t: "The Museum Trip", s: "On a trip to the museum, {n1} discovered a painting of a {adjective} {animal} wearing {clothing}. \"{exclaim}\" said {n1}. \"That looks just like Uncle Herbert!\" {n2} laughed so hard the security guard {sound}. They bought {number} postcards of it in the gift shop." },
+    { t: "The Camping Trip", s: "{n1}, {n2}, and {n3} went camping near {place}. They forgot the tent but remembered {thing} and {number} bags of {food}. That night, a {adjective} {animal} wandered into camp, so {n3} taught it {dance} around the campfire. \"{exclaim}\" they all agreed. \"Best trip ever.\"" },
+    { t: "The Wedding Toast", s: "At the wedding, {n1} stood up to give a toast, but a {animal} in {clothing} beat them to the microphone and {sound}. The whole room roared with laughter. \"{exclaim}\" said {n1}, raising a glass of {food}. \"I couldn't have said it better myself!\" Then {n2} led everyone in {dance}." },
+    { t: "The Superhero", s: "By day, {n1} seems perfectly ordinary. But by night, they become Captain {color}, defender of {place}! Armed with {thing} and a cape made from {clothing}, they once rescued {number} kittens during {weather}. \"{exclaim}\" says loyal sidekick {n2}. \"This town has never been so {adjective}!\"" },
+    { t: "The Ice Cream Social", s: "At the ice cream social, {n1} invented a brand-new flavor: {food} swirl with {food2} sprinkles. {n2} tried a scoop, went quiet for a moment, and then {sound}. \"{exclaim}\" they shouted. \"This is {adjective}!\" It sold out in {number} minutes flat." },
+    { t: "The Antique Shop", s: "In a dusty antique shop near {place}, {n1} found {thing} that once belonged to a famous {job}. The shopkeeper swore it was magic. That night, {n1} gave it a polish, and a {color} {animal} appeared and granted one wish. {n1} wished for {food} — enough to share with {n2} and the whole town." },
+    { t: "The Weather Report", s: "The TV weatherman predicted sunshine, but {n1} knew better — their knee only aches like this before {weather}. Sure enough, by noon it hit, and everyone hid inside {place} eating {food}. \"{exclaim}\" said {n2}. \"Next time we're listening to {n1}'s knee, not the {adjective} weatherman!\"" },
+    { t: "The School Reunion", s: "At the class reunion, {n1} was voted \"Most {adjective}\" for the third time. {n2} showed everyone they could still do {dance}, and old coach Wilson {sound} with pride. They stayed up past midnight eating {food} and singing {song}. \"{exclaim}\" said {n1}. \"We've still got it!\"" },
+    { t: "The Runaway Hat", s: "A gust of wind snatched {n1}'s favorite {color} hat and carried it all the way to {place}. {n1} chased it on {vehicle}, with {n2} following close behind waving {thing}. When they finally caught it, a {animal} was wearing it. \"{exclaim}\" sighed {n1}. \"Keep it — it looks more {adjective} on you anyway.\"" },
+    { t: "The Cooking Disaster", s: "{n1} tried a new recipe: {food} with a dash of {food2}. Something went wrong. The kitchen filled with {color} smoke, the smoke alarm {sound}, and the casserole came out shaped like a {animal}. \"{exclaim}\" coughed {n2}. \"Let's just order pizza.\" They ate it at {place} and laughed all night." },
+    { t: "The Big Raffle", s: "{n1} bought one raffle ticket at {place} — and won the grand prize: {vehicle} filled with {number} pounds of {food}! \"{exclaim}\" screamed {n2}. {n1} drove it home wearing {clothing}, honking the horn, while a {adjective} {animal} rode shotgun. The whole town came out to watch." },
+    { t: "The Movie Night", s: "For movie night, {n1} picked a film about a {job} who falls in love with a {job2}. {n2} made {number} bowls of popcorn topped with {food}. During the sad part, someone {sound} — and it turned out to be the {animal} that snuck in wearing {clothing}. \"{exclaim}\" everyone laughed. It stayed for the sequel." },
+    { t: "The Morning Routine", s: "Every morning, {n1} wakes up at six, puts on {clothing}, and does {number} jumping jacks while singing {song}. The neighbors set their clocks by it. One day {n1} slept in, and the whole street panicked! \"{exclaim}\" cried {n2}, banging on the door. \"Is everything alright?!\" {n1} opened it holding {food}. \"Relax — it's my birthday. Breakfast in bed.\"" },
+    { t: "The Dance Lessons", s: "{n1} signed up to teach {dance} lessons at {place}. First student: {n2}, wearing {clothing} and full of confidence. Second student: a {adjective} {animal} who turned out to be a natural! By the recital, all three could dance to {song} in perfect step. \"{exclaim}\" said the newspaper. \"Best show in {number} years!\"" },
+    { t: "The Time Capsule", s: "{n1} and {n2} dug up a time capsule buried near {place} fifty years ago. Inside: {thing}, a {color} photograph of a young {job}, and a recipe for {food}. They made the recipe that night. It was {adjective}. \"{exclaim}\" said {n1}. \"Some things only get better with time — just like us.\"" }
+  ];
+
+  // ======================= STATE =======================
+  var STORAGE_KEY = "sillyStoriesNames";
+  var names = [];
+  var templateOrder = [];
+  var templatePos = -1;
+  var nameQueue = [];
+  var currentFill = null;
+
+  // ======================= HELPERS =======================
+  function shuffle(arr) {
+    var a = arr.slice();
+    for (var i = a.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var tmp = a[i]; a[i] = a[j]; a[j] = tmp;
+    }
+    return a;
+  }
+
+  function escapeHtml(s) {
+    return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+  }
+
+  function saveNames() {
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(names)); } catch (e) {}
+  }
+
+  function loadNames() {
+    // Share link takes priority: ?names=Dorothy,Earl,Mabel
+    try {
+      var params = new URLSearchParams(window.location.search);
+      var fromLink = params.get("names");
+      if (fromLink) {
+        var parsed = fromLink.split(",").map(function (n) { return n.trim(); })
+          .filter(function (n) { return n.length > 0 && n.length <= 30; }).slice(0, 60);
+        if (parsed.length) { names = parsed; saveNames(); return; }
+      }
+    } catch (e) {}
+    try {
+      var saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+      if (Array.isArray(saved)) {
+        names = saved.filter(function (n) { return typeof n === "string" && n.trim(); });
+      }
+    } catch (e) { names = []; }
+  }
+
+  // Draw distinct names for one story; top up with stock characters if short.
+  function drawNames(count) {
+    var picked = [];
+    while (picked.length < count) {
+      if (nameQueue.length === 0) {
+        var next = shuffle(names).filter(function (n) { return picked.indexOf(n) === -1; });
+        if (next.length === 0) break;
+        nameQueue = next;
+      }
+      picked.push(nameQueue.shift());
+    }
+    var stock = shuffle(STOCK_NAMES);
+    while (picked.length < count) picked.push(stock.pop());
+    return picked;
+  }
+
+  // Fill a template: names + one random word per token (distinct within a bank).
+  function buildFill(tpl) {
+    var nameCount = 0;
+    ["{n1}", "{n2}", "{n3}"].forEach(function (tok) {
+      if (tpl.s.indexOf(tok) !== -1) nameCount++;
+    });
+    var storyNames = drawNames(nameCount);
+
+    var fill = { names: storyNames, words: {} };
+    var used = {};
+    var tokenRe = /\{([a-z]+)(\d?)\}/g;
+    var m;
+    while ((m = tokenRe.exec(tpl.s)) !== null) {
+      var full = m[1] + m[2];
+      if (m[1] === "n") continue;
+      if (fill.words[full]) continue;
+      var bank = BANKS[m[1]];
+      if (!bank) continue;
+      if (!used[m[1]]) used[m[1]] = [];
+      var choices = bank.filter(function (w) { return used[m[1]].indexOf(w) === -1; });
+      if (choices.length === 0) choices = bank;
+      var pick = choices[Math.floor(Math.random() * choices.length)];
+      used[m[1]].push(pick);
+      fill.words[full] = pick;
+    }
+    return fill;
+  }
+
+  function renderStory(tpl, fill) {
+    var html = escapeHtml(tpl.s);
+    html = html.replace(/\{n(\d)\}/g, function (_, d) {
+      var nm = fill.names[Number(d) - 1] || "someone";
+      return '<span class="name-word">' + escapeHtml(nm) + "</span>";
+    });
+    html = html.replace(/\{([a-z]+\d?)\}/g, function (whole, key) {
+      var w = fill.words[key];
+      if (!w) return whole;
+      return '<span class="silly-word">' + escapeHtml(w) + "</span>";
+    });
+    document.getElementById("storyTitle").textContent = tpl.t;
+    document.getElementById("storyBody").innerHTML = html;
+    document.getElementById("storyCounter").textContent =
+      "Story " + (templatePos + 1) + " of " + TEMPLATES.length;
+    var card = document.getElementById("storyCard");
+    card.style.animation = "none";
+    void card.offsetWidth; // restart pop-in animation
+    card.style.animation = "";
+  }
+
+  function nextStory() {
+    templatePos++;
+    if (templatePos >= templateOrder.length) {
+      templateOrder = shuffle(TEMPLATES.map(function (_, i) { return i; }));
+      templatePos = 0;
+    }
+    var tpl = TEMPLATES[templateOrder[templatePos]];
+    currentFill = buildFill(tpl);
+    renderStory(tpl, currentFill);
+  }
+
+  function rerollStory() {
+    var tpl = TEMPLATES[templateOrder[templatePos]];
+    currentFill = buildFill(tpl);
+    renderStory(tpl, currentFill);
+  }
+
+  // ======================= SETUP SCREEN =======================
+  function renderNameList() {
+    var list = document.getElementById("nameList");
+    list.innerHTML = "";
+    names.forEach(function (n, i) {
+      var chip = document.createElement("span");
+      chip.className = "name-chip";
+      var label = document.createElement("span");
+      label.textContent = n;
+      var x = document.createElement("button");
+      x.textContent = "✕";
+      x.setAttribute("aria-label", "Remove " + n);
+      x.addEventListener("click", function () {
+        names.splice(i, 1);
+        saveNames();
+        renderNameList();
+      });
+      chip.appendChild(label);
+      chip.appendChild(x);
+      list.appendChild(chip);
+    });
+    var count = document.getElementById("nameCount");
+    if (names.length === 0) {
+      count.textContent = "No names yet — add at least one to begin.";
+    } else if (names.length === 1) {
+      count.textContent = "1 name added. Add more so everyone gets a turn!";
+    } else {
+      count.textContent = names.length + " names added. Everyone will take turns starring in the stories.";
+    }
+    document.getElementById("startBtn").disabled = names.length === 0;
+  }
+
+  function addName() {
+    var input = document.getElementById("nameInput");
+    var val = input.value.trim();
+    if (!val) return;
+    if (names.length >= 60) return;
+    names.push(val);
+    saveNames();
+    renderNameList();
+    input.value = "";
+    input.focus();
+  }
+
+  function showScreen(id) {
+    document.getElementById("setupScreen").classList.toggle("hidden", id !== "setup");
+    document.getElementById("storyScreen").classList.toggle("hidden", id !== "story");
+  }
+
+  // ======================= WIRE UP =======================
+  document.getElementById("addNameBtn").addEventListener("click", addName);
+  document.getElementById("nameInput").addEventListener("keydown", function (e) {
+    if (e.key === "Enter") { e.preventDefault(); addName(); }
+  });
+
+  document.getElementById("startBtn").addEventListener("click", function () {
+    if (names.length === 0) return;
+    nameQueue = [];
+    templateOrder = shuffle(TEMPLATES.map(function (_, i) { return i; }));
+    templatePos = -1;
+    showScreen("story");
+    nextStory();
+  });
+
+  document.getElementById("newStoryBtn").addEventListener("click", nextStory);
+  document.getElementById("rerollBtn").addEventListener("click", rerollStory);
+  document.getElementById("editNamesBtn").addEventListener("click", function () {
+    showScreen("setup");
+    renderNameList();
+  });
+
+  document.getElementById("shareBtn").addEventListener("click", function () {
+    var url = window.location.origin + window.location.pathname +
+      "?names=" + encodeURIComponent(names.join(","));
+    var btn = document.getElementById("shareBtn");
+    function done(ok) {
+      btn.textContent = ok ? "✅ Link copied! Paste it into the other device's browser."
+                           : "⚠️ Couldn't copy — your link: " + url;
+      setTimeout(function () {
+        btn.textContent = "🔗 Copy Share Link (moves your names to another device)";
+      }, 4000);
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(url).then(function () { done(true); },
+        function () { done(false); });
+    } else { done(false); }
+  });
+
+  // ======================= INIT =======================
+  loadNames();
+  renderNameList();
+  showScreen("setup");
+})();
+</script>
+</body>
+</html>
