@@ -99,7 +99,8 @@
   </p>
 
   <div class="bg-white rounded-2xl p-5 w-full max-w-2xl mb-4 border-4 border-blue-300">
-    <label for="resInput" class="block text-blue-800 font-extrabold text-xl mb-2">👥 Resident names:</label>
+    <label for="resInput" class="block text-blue-800 font-extrabold text-xl mb-1">👥 Resident names:</label>
+    <p class="text-gray-600 font-semibold text-base mb-2">Type <span class="font-extrabold">one name at a time</span> and press <span class="font-extrabold">Enter</span> (or tap Add) after each name.</p>
     <div class="flex gap-3 mb-3">
       <input id="resInput" type="text" autocomplete="off" maxlength="30"
         class="flex-1 text-2xl font-bold border-4 border-blue-800 rounded-xl px-4 py-2 text-blue-900"
@@ -111,7 +112,8 @@
   </div>
 
   <div class="bg-white rounded-2xl p-5 w-full max-w-2xl mb-4 border-4 border-emerald-300">
-    <label for="staffInput" class="block text-emerald-800 font-extrabold text-xl mb-2">🧑‍⚕️ Staff names <span class="font-semibold text-gray-600 text-base">(optional but fun!)</span>:</label>
+    <label for="staffInput" class="block text-emerald-800 font-extrabold text-xl mb-1">🧑‍⚕️ Staff names <span class="font-semibold text-gray-600 text-base">(optional but fun!)</span>:</label>
+    <p class="text-gray-600 font-semibold text-base mb-2">One name at a time, press <span class="font-extrabold">Enter</span> after each.</p>
     <div class="flex gap-3 mb-3">
       <input id="staffInput" type="text" autocomplete="off" maxlength="30"
         class="flex-1 text-2xl font-bold border-4 border-emerald-800 rounded-xl px-4 py-2 text-emerald-900"
@@ -131,7 +133,8 @@
     If you use a different computer or tablet, the lists won't follow you automatically — use the
     <span class="font-bold text-white">Copy Share Link</span> button below to bring your names to another device, or just type them in again.
   </div>
-  <button id="shareBtn" class="btn-big bg-blue-500 text-white text-lg px-6 py-2 mb-8">🔗 Copy Share Link (moves your names to another device)</button>
+  <button id="shareBtn" class="btn-big bg-blue-500 text-white text-lg px-6 py-2 mb-4">🔗 Copy Share Link (moves your names to another device)</button>
+  <a href="apps.html" class="btn-big bg-white text-blue-900 text-base md:text-lg px-4 py-3 no-underline mb-8">← Back to Apps</a>
 </div>
 
 <!-- ============================ STORY SCREEN ============================ -->
@@ -476,8 +479,14 @@
   function addTo(arr, inputId) {
     var input = document.getElementById(inputId);
     var val = input.value.trim();
-    if (!val || arr.length >= 60) return;
-    arr.push(val);
+    if (!val) return;
+    // If someone types "Dorothy, Earl, Mabel", split it into separate
+    // names automatically instead of storing it as one long name.
+    var parts = val.split(/[,;]+/).map(function (n) { return n.trim(); })
+      .filter(function (n) { return n.length > 0 && n.length <= 30; });
+    parts.forEach(function (n) {
+      if (arr.length < 60) arr.push(n);
+    });
     saveNames();
     renderLists();
     input.value = "";
