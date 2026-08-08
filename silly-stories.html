@@ -52,30 +52,27 @@
     @media (prefers-reduced-motion: reduce) {
       .story-card { animation: none; }
     }
-    .name-word {
-      color: #1d4ed8;
-      font-weight: 900;
-    }
-    .silly-word {
+    .res-name { color: #1d4ed8; font-weight: 900; }
+    .staff-name { color: #047857; font-weight: 900; }
+    .fill-word {
       background: #fde68a;
       border-radius: .4rem;
       padding: 0 .25em;
       font-weight: 800;
       color: #92400e;
-      white-space: nowrap;
     }
     .name-chip {
       display: inline-flex;
       align-items: center;
       gap: .5rem;
-      background: #fde68a;
       color: #1e3a8a;
       font-weight: 800;
-      border: 3px solid #b45309;
       border-radius: 9999px;
       padding: .35rem .5rem .35rem 1rem;
-      font-size: 1.25rem;
+      font-size: 1.2rem;
     }
+    .chip-res { background: #bfdbfe; border: 3px solid #1d4ed8; }
+    .chip-staff { background: #a7f3d0; border: 3px solid #047857; }
     .name-chip button {
       background: #b91c1c;
       color: #fff;
@@ -88,29 +85,41 @@
       line-height: 1;
       cursor: pointer;
     }
-    .story-text { font-size: clamp(1.5rem, 3.4vh, 2.4rem); line-height: 1.55; }
+    .story-text { font-size: clamp(1.45rem, 3.2vh, 2.3rem); line-height: 1.55; }
     .story-title { font-size: clamp(1.6rem, 4vh, 2.6rem); }
   </style>
 </head>
 <body>
 
 <!-- ============================ SETUP SCREEN ============================ -->
-<div id="setupScreen" class="screen items-center px-4 py-6 overflow-y-auto" style="overflow-y:auto;">
+<div id="setupScreen" class="screen items-center px-4 py-6" style="overflow-y:auto;">
   <h1 class="text-white font-extrabold text-center" style="font-size:clamp(2rem,5vh,3.2rem);">📖 Silly Stories</h1>
-  <p class="text-blue-100 text-center font-semibold mb-4" style="font-size:clamp(1.1rem,2.4vh,1.5rem);">
-    Add your residents' names, and we'll put them in funny stories for you to read aloud!
+  <p class="text-blue-100 text-center font-semibold mb-4 max-w-2xl" style="font-size:clamp(1.05rem,2.3vh,1.45rem);">
+    Add your residents' names — and some staff names too! — and we'll write funny stories about a day in your community for you to read aloud.
   </p>
 
-  <div class="bg-white rounded-2xl p-5 w-full max-w-2xl mb-4 border-4 border-yellow-300">
-    <label for="nameInput" class="block text-blue-900 font-extrabold text-xl mb-2">Type a first name, then press Add:</label>
-    <div class="flex gap-3 mb-4">
-      <input id="nameInput" type="text" autocomplete="off" maxlength="30"
+  <div class="bg-white rounded-2xl p-5 w-full max-w-2xl mb-4 border-4 border-blue-300">
+    <label for="resInput" class="block text-blue-800 font-extrabold text-xl mb-2">👥 Resident names:</label>
+    <div class="flex gap-3 mb-3">
+      <input id="resInput" type="text" autocomplete="off" maxlength="30"
         class="flex-1 text-2xl font-bold border-4 border-blue-800 rounded-xl px-4 py-2 text-blue-900"
         placeholder="Example: Dorothy" />
-      <button id="addNameBtn" class="btn-big bg-green-500 text-white text-2xl px-6 py-2">➕ Add</button>
+      <button id="addResBtn" class="btn-big bg-blue-600 text-white text-2xl px-6 py-2">➕ Add</button>
     </div>
-    <div id="nameList" class="flex flex-wrap gap-2 mb-2"></div>
-    <p id="nameCount" class="text-gray-700 font-semibold text-lg">No names yet — add at least one to begin.</p>
+    <div id="resList" class="flex flex-wrap gap-2 mb-1"></div>
+    <p id="resCount" class="text-gray-700 font-semibold text-lg"></p>
+  </div>
+
+  <div class="bg-white rounded-2xl p-5 w-full max-w-2xl mb-4 border-4 border-emerald-300">
+    <label for="staffInput" class="block text-emerald-800 font-extrabold text-xl mb-2">🧑‍⚕️ Staff names <span class="font-semibold text-gray-600 text-base">(optional but fun!)</span>:</label>
+    <div class="flex gap-3 mb-3">
+      <input id="staffInput" type="text" autocomplete="off" maxlength="30"
+        class="flex-1 text-2xl font-bold border-4 border-emerald-800 rounded-xl px-4 py-2 text-emerald-900"
+        placeholder="Example: Nurse Kim" />
+      <button id="addStaffBtn" class="btn-big bg-emerald-600 text-white text-2xl px-6 py-2">➕ Add</button>
+    </div>
+    <div id="staffList" class="flex flex-wrap gap-2 mb-1"></div>
+    <p id="staffCount" class="text-gray-700 font-semibold text-lg"></p>
   </div>
 
   <button id="startBtn" class="btn-big bg-yellow-400 text-blue-900 px-10 py-4 mb-4" style="font-size:clamp(1.4rem,3vh,2rem);" disabled>
@@ -118,8 +127,8 @@
   </button>
 
   <div class="bg-blue-800 border-2 border-blue-400 rounded-xl p-4 w-full max-w-2xl text-blue-100 text-base mb-3">
-    <span class="font-bold text-white">Good to know:</span> Your name list saves on <span class="font-bold text-white">this device only</span>.
-    If you use a different computer or tablet, the list won't follow you automatically — use the
+    <span class="font-bold text-white">Good to know:</span> Your name lists save on <span class="font-bold text-white">this device only</span>.
+    If you use a different computer or tablet, the lists won't follow you automatically — use the
     <span class="font-bold text-white">Copy Share Link</span> button below to bring your names to another device, or just type them in again.
   </div>
   <button id="shareBtn" class="btn-big bg-blue-500 text-white text-lg px-6 py-2 mb-8">🔗 Copy Share Link (moves your names to another device)</button>
@@ -141,7 +150,7 @@
 
   <div class="flex flex-wrap gap-3 justify-center max-w-5xl w-full mx-auto pt-4">
     <button id="newStoryBtn" class="btn-big bg-yellow-400 text-blue-900 px-8 py-3" style="font-size:clamp(1.2rem,2.6vh,1.7rem);">📖 New Story</button>
-    <button id="rerollBtn" class="btn-big bg-green-500 text-white px-8 py-3" style="font-size:clamp(1.2rem,2.6vh,1.7rem);">🎲 Same Story, New Silliness</button>
+    <button id="rerollBtn" class="btn-big bg-green-500 text-white px-8 py-3" style="font-size:clamp(1.2rem,2.6vh,1.7rem);">🎲 Retell It (new details)</button>
     <button id="editNamesBtn" class="btn-big bg-blue-500 text-white px-6 py-3" style="font-size:clamp(1rem,2.2vh,1.4rem);">✏️ Names</button>
   </div>
 </div>
@@ -150,81 +159,151 @@
 (function () {
   "use strict";
 
-  // ======================= WORD BANKS =======================
-  var BANKS = {
-    animal: ["chicken","billy goat","poodle","flamingo","hippopotamus","donkey","parakeet","walrus","hamster","rooster","pot-bellied pig","llama","snapping turtle","skunk","moose","penguin","ostrich","raccoon","bullfrog","alley cat","stubborn mule","peacock","armadillo","canary","dachshund","possum"],
-    food: ["meatloaf","banana pudding","dill pickles","spaghetti","deviled eggs","fried chicken","gumbo","jello salad","biscuits and gravy","tapioca pudding","pot roast","cornbread","sweet tea","fruitcake","liver and onions","mashed potatoes","a bologna sandwich","gumdrops","prune juice","butterscotch candy","grits","sauerkraut","tuna casserole","red beans and rice","pecan pie","pimento cheese"],
-    color: ["hot pink","lime green","polka-dotted","bright orange","royal purple","sparkly gold","neon yellow","plaid","turquoise","ruby red","glittery silver","leopard-print","candy-striped","checkerboard"],
-    job: ["mail carrier","tap dancer","lion tamer","weatherman","hairdresser","opera singer","rodeo clown","librarian","bus driver","magician","banjo player","dog groomer","head cheerleader","wrestling champion","fortune teller","crossing guard","pie judge","tugboat captain"],
-    place: ["the grocery store","the beauty parlor","the county fair","the bowling alley","Niagara Falls","the post office","Graceland","the fishing hole","the church potluck","the dance hall","the Grand Ole Opry","the barber shop","Yellowstone","the five-and-dime","the drive-in movie","the flea market","the ice cream parlor"],
-    thing: ["a kazoo","a rubber chicken","a bowling ball","a feather boa","an accordion","a garden gnome","a whoopee cushion","a pogo stick","a cowbell","a hula hoop","a set of dentures","a fly swatter","a plunger","a tuba","roller skates","a lava lamp","a fishing pole","an umbrella hat","a jar of pickles","a bag of marbles"],
-    clothing: ["a sombrero","fuzzy slippers","overalls","a pink tutu","cowboy boots","long johns","a poodle skirt","rainbow suspenders","a shower cap","galoshes","a Hawaiian shirt","polka-dot bloomers","a coonskin cap","a superhero cape","mittens"],
-    adjective: ["wiggly","gigantic","sparkly","grumpy","ticklish","squeaky","fancy","wobbly","itchy","magnificent","sassy","bouncy","mysterious","dazzling","chatty","dramatic","bedazzled","enormous"],
-    exclaim: ["Well, butter my biscuit!","Great googly moogly!","Heavens to Betsy!","Hot diggity dog!","Land sakes alive!","Well, I'll be a monkey's uncle!","Good gravy!","Jumpin' Jehoshaphat!","Well, slap my knee!","Sweet sassy molassy!"],
-    dance: ["the cha-cha","the twist","the polka","the hokey pokey","the jitterbug","the boot scootin' boogie","the chicken dance","the conga","the tango","the mashed potato"],
-    sound: ["honked like a goose","yodeled","mooed","played a kazoo solo","whistled Dixie","hiccuped loudly","snored","crowed like a rooster","clucked","sang opera"],
-    vehicle: ["a tractor","a golf cart","a unicycle","a riding lawnmower","a hot air balloon","a canoe","a tandem bicycle","a mule wagon","a motor scooter","a pink Cadillac","a pontoon boat"],
-    number: ["seventeen","forty-two","one hundred","twelve","ninety-nine","three and a half","sixty-seven","twenty-two","fifty-five","eleventy-seven"],
-    song: ["'You Are My Sunshine'","'Take Me Out to the Ball Game'","'Home on the Range'","'Oh! Susanna'","'She'll Be Comin' Round the Mountain'","'Row, Row, Row Your Boat'","'Jingle Bells' (in the middle of July)","'The Hokey Pokey'"],
-    weather: ["a thunderstorm","a heat wave","a snowstorm","a windy day","a double rainbow","a drizzle","a full moon"]
-  };
-
-  // Stock characters used only if the name list is too short for a story.
-  var STOCK_NAMES = ["the mail carrier","the bingo caller","the bus driver","Elvis","the mayor","the weatherman"];
+  // If no staff names are entered, these stand in for {s1}/{s2}.
+  var STOCK_STAFF = ["the activities director", "the head nurse", "the new aide", "the maintenance man", "the kitchen manager", "the front desk lady"];
 
   // ======================= STORY TEMPLATES =======================
-  // {n1},{n2},{n3} = resident names. Other {tokens} pull from BANKS.
-  // A number suffix ({animal2}) means "a different word from the same bank."
+  // {r1},{r2},{r3} = resident names.  {s1},{s2} = staff names.
+  // Every other {slot} is filled from ITS OWN curated list, so every
+  // version of every story reads naturally.
   var TEMPLATES = [
-    { t: "The Big Bingo Day", s: "Last Tuesday, {n1} showed up to bingo wearing {clothing} and carrying {thing}. \"{exclaim}\" shouted {n2}. \"That's my lucky charm!\" When {n1} finally yelled BINGO, the prize turned out to be {number} pounds of {food}. {n1} shared it with everyone, and they all agreed it tasted better than {food2}." },
-    { t: "The Great Bake Sale", s: "{n1} and {n2} entered the bake sale with a {color} cake shaped like a {animal}. The judge took one bite, {sound}, and gave it first prize. \"{exclaim}\" said {n1}. \"The secret ingredient is {food}!\" They celebrated by doing {dance} all the way to {place}." },
-    { t: "A Trip to the Fair", s: "{n1} rode to the county fair on {vehicle}. First stop: the {adjective} {animal} contest, where {n2}'s pet {animal2} won a blue ribbon for eating {number} plates of {food}. \"{exclaim}\" said the announcer. \"I've never seen anything so {adjective2} in all my days!\"" },
-    { t: "The Dance Contest", s: "At Friday night's dance, {n1} put on {clothing} and did {dance} like nobody was watching. {n2} joined in and {sound}. The band was so impressed they played {song} {number} times in a row. Everyone agreed it was the most {adjective} night since the great {weather} of 1962." },
-    { t: "The Fishing Trip", s: "{n1} and {n2} went fishing at {place} with nothing but {thing} and a bucket of {food}. After {number} minutes, {n1} caught a {adjective} {animal} wearing {clothing}. \"{exclaim}\" hollered {n2}. \"Throw it back — it's wearing nicer clothes than I am!\"" },
-    { t: "The Grocery Adventure", s: "{n1} went to the grocery store for {food}, but came home with {number} cans of {food2}, {thing}, and a {color} {animal}. \"{exclaim}\" said {n2}. \"What are we supposed to do with all this?\" So they invited the whole neighborhood over and had the most {adjective} supper in town history." },
-    { t: "The Talent Show", s: "For the talent show, {n1} planned to sing {song}. But halfway through, a {animal} in {clothing} wandered on stage and {sound}. The crowd went wild! {n2} gave them a standing ovation and shouted \"{exclaim}\" The duo won first prize: a year's supply of {food}." },
-    { t: "The Road Trip", s: "{n1}, {n2}, and {n3} took a road trip to {place} in {vehicle}. They packed {number} sandwiches, {thing}, and one very {adjective} {animal} named Buttons. Every time they stopped for gas, {n3} {sound}. Best vacation ever." },
-    { t: "The Beauty Parlor", s: "{n1} asked the hairdresser for something new, and walked out with a {color} hairdo shaped like a {animal}. \"{exclaim}\" gasped {n2}. \"You look absolutely {adjective}!\" {n1} liked it so much, they wore {clothing} to match and danced {dance} down Main Street." },
-    { t: "The Mystery Package", s: "A package arrived for {n1} — inside was {thing}, a {color} hat, and a note that read: \"Meet me at {place}. Bring {food}.\" {n2} came along for backup. It turned out to be a surprise party with {number} guests and a {adjective} {animal} wearing a party hat!" },
-    { t: "The Garden Surprise", s: "{n1} planted tomatoes, but something {adjective} grew instead: a vine covered in {food}! A hungry {animal} in {clothing} showed up every morning for breakfast. \"{exclaim}\" said {n2}. \"Should we charge him rent?\" Instead, they named him Gerald and taught him {dance}." },
-    { t: "The Church Potluck", s: "At the potluck, {n1} brought a casserole made of {food} and {food2}. Pastor took one bite and {sound}. \"{exclaim}\" he declared. \"This is the most {adjective} dish I've ever tasted!\" {n2} asked for the recipe, but {n1} said, \"Sorry — a magician never reveals their secrets.\"" },
-    { t: "The Snowed-In Day", s: "During {weather}, {n1} and {n2} got stuck inside with only {thing}, a deck of cards, and {number} boxes of {food}. By noon, they had taught the cat {dance}. By supper, {n2} had won every card game and {sound} in victory. \"{exclaim}\" laughed {n1}. \"Best day all winter.\"" },
-    { t: "The New Pet", s: "{n1} came home from {place} with a surprise: a {adjective} pet {animal} named Sparkles. Sparkles only ate {food}, slept in {clothing}, and {sound} every morning at six o'clock sharp. \"{exclaim}\" said {n2}. \"That critter has a better routine than I do!\"" },
-    { t: "The Big Game", s: "It was the championship, and {n1} was up to bat wearing {clothing} for good luck. The pitcher threw the ball, and {n1} hit it {number} miles — right into a truck full of {food}! The crowd {sound}. \"{exclaim}\" cried {n2}. \"That's the most {adjective} home run I've ever seen!\"" },
-    { t: "The Photo Booth", s: "{n1} and {n2} found a photo booth at {place}. They squeezed in with {thing}, a {color} wig, and someone's pet {animal}. The pictures came out so {adjective} that the newspaper printed them on the front page with the headline: \"{exclaim}\"" },
-    { t: "The Wrong Suitcase", s: "{n1} grabbed the wrong suitcase at the airport. Instead of pajamas, it held {clothing}, {thing}, and {number} cans of {food}. \"{exclaim}\" said {n2}. \"Whose bag IS this?\" It belonged to a traveling {job}, who traded it back for a slice of {food2} and a lesson in {dance}." },
-    { t: "The Cooking Show", s: "{n1} got picked for a TV cooking show! The secret ingredient: {food}. {n1} whipped up something {adjective}, garnished it with {food2}, and served it wearing {clothing}. The judge took one bite and {sound}. \"{exclaim}\" cheered {n2} from the audience. First place!" },
-    { t: "The Parade", s: "This year, {n1} led the town parade riding {vehicle} and waving {thing}. Behind them marched {number} musicians and one {adjective} {animal} doing {dance}. {n2} watched from the porch and shouted, \"{exclaim} That's the best parade since the {weather} of '58!\"" },
-    { t: "The Lost Glasses", s: "{n1} spent all morning looking for their glasses. They checked under {thing}, inside the {color} cookie jar, even out by {place}. Finally {n2} started laughing so hard they {sound}. The glasses were on top of {n1}'s head the whole time — right next to {clothing}. \"{exclaim}\"" },
-    { t: "The Birthday Surprise", s: "For {n1}'s birthday, {n2} and {n3} planned something {adjective}: a party at {place} with {number} balloons, a cake shaped like a {animal}, and a band that only knew {song}. {n1} laughed so hard they {sound}. Best birthday ever!" },
-    { t: "The Yard Sale", s: "{n1} held a yard sale and sold everything except {thing}. Then a {job} pulled up in {vehicle} and offered {number} dollars for it! \"{exclaim}\" whispered {n2}. \"Take the money!\" {n1} did — and spent every penny on {food} for the whole block." },
-    { t: "The Karaoke Night", s: "At karaoke night, {n1} grabbed the microphone and belted out {song} while wearing {clothing}. Halfway through, {n2} jumped up and {sound}. The crowd chanted their names and threw {food} like confetti. \"{exclaim}\" said the DJ. \"You two should go professional!\"" },
-    { t: "The Doctor Visit", s: "{n1} went to the doctor complaining of the giggles. The doctor listened carefully, nodded, and prescribed {number} servings of {food}, one {adjective} nap, and {dance} twice daily. \"{exclaim}\" said {n2}. \"That's the same thing MY doctor told me!\"" },
-    { t: "The Fancy Restaurant", s: "{n1} and {n2} dressed up for the fanciest restaurant in town — {n1} in {clothing} and {n2} carrying {thing} for good luck. The waiter recommended the {food}, served with a side of {food2}. When the bill came, it was {number} dollars. \"{exclaim}\" they said together, and washed dishes while singing {song}." },
-    { t: "The Museum Trip", s: "On a trip to the museum, {n1} discovered a painting of a {adjective} {animal} wearing {clothing}. \"{exclaim}\" said {n1}. \"That looks just like Uncle Herbert!\" {n2} laughed so hard the security guard {sound}. They bought {number} postcards of it in the gift shop." },
-    { t: "The Camping Trip", s: "{n1}, {n2}, and {n3} went camping near {place}. They forgot the tent but remembered {thing} and {number} bags of {food}. That night, a {adjective} {animal} wandered into camp, so {n3} taught it {dance} around the campfire. \"{exclaim}\" they all agreed. \"Best trip ever.\"" },
-    { t: "The Wedding Toast", s: "At the wedding, {n1} stood up to give a toast, but a {animal} in {clothing} beat them to the microphone and {sound}. The whole room roared with laughter. \"{exclaim}\" said {n1}, raising a glass of {food}. \"I couldn't have said it better myself!\" Then {n2} led everyone in {dance}." },
-    { t: "The Superhero", s: "By day, {n1} seems perfectly ordinary. But by night, they become Captain {color}, defender of {place}! Armed with {thing} and a cape made from {clothing}, they once rescued {number} kittens during {weather}. \"{exclaim}\" says loyal sidekick {n2}. \"This town has never been so {adjective}!\"" },
-    { t: "The Ice Cream Social", s: "At the ice cream social, {n1} invented a brand-new flavor: {food} swirl with {food2} sprinkles. {n2} tried a scoop, went quiet for a moment, and then {sound}. \"{exclaim}\" they shouted. \"This is {adjective}!\" It sold out in {number} minutes flat." },
-    { t: "The Antique Shop", s: "In a dusty antique shop near {place}, {n1} found {thing} that once belonged to a famous {job}. The shopkeeper swore it was magic. That night, {n1} gave it a polish, and a {color} {animal} appeared and granted one wish. {n1} wished for {food} — enough to share with {n2} and the whole town." },
-    { t: "The Weather Report", s: "The TV weatherman predicted sunshine, but {n1} knew better — their knee only aches like this before {weather}. Sure enough, by noon it hit, and everyone hid inside {place} eating {food}. \"{exclaim}\" said {n2}. \"Next time we're listening to {n1}'s knee, not the {adjective} weatherman!\"" },
-    { t: "The School Reunion", s: "At the class reunion, {n1} was voted \"Most {adjective}\" for the third time. {n2} showed everyone they could still do {dance}, and old coach Wilson {sound} with pride. They stayed up past midnight eating {food} and singing {song}. \"{exclaim}\" said {n1}. \"We've still got it!\"" },
-    { t: "The Runaway Hat", s: "A gust of wind snatched {n1}'s favorite {color} hat and carried it all the way to {place}. {n1} chased it on {vehicle}, with {n2} following close behind waving {thing}. When they finally caught it, a {animal} was wearing it. \"{exclaim}\" sighed {n1}. \"Keep it — it looks more {adjective} on you anyway.\"" },
-    { t: "The Cooking Disaster", s: "{n1} tried a new recipe: {food} with a dash of {food2}. Something went wrong. The kitchen filled with {color} smoke, the smoke alarm {sound}, and the casserole came out shaped like a {animal}. \"{exclaim}\" coughed {n2}. \"Let's just order pizza.\" They ate it at {place} and laughed all night." },
-    { t: "The Big Raffle", s: "{n1} bought one raffle ticket at {place} — and won the grand prize: {vehicle} filled with {number} pounds of {food}! \"{exclaim}\" screamed {n2}. {n1} drove it home wearing {clothing}, honking the horn, while a {adjective} {animal} rode shotgun. The whole town came out to watch." },
-    { t: "The Movie Night", s: "For movie night, {n1} picked a film about a {job} who falls in love with a {job2}. {n2} made {number} bowls of popcorn topped with {food}. During the sad part, someone {sound} — and it turned out to be the {animal} that snuck in wearing {clothing}. \"{exclaim}\" everyone laughed. It stayed for the sequel." },
-    { t: "The Morning Routine", s: "Every morning, {n1} wakes up at six, puts on {clothing}, and does {number} jumping jacks while singing {song}. The neighbors set their clocks by it. One day {n1} slept in, and the whole street panicked! \"{exclaim}\" cried {n2}, banging on the door. \"Is everything alright?!\" {n1} opened it holding {food}. \"Relax — it's my birthday. Breakfast in bed.\"" },
-    { t: "The Dance Lessons", s: "{n1} signed up to teach {dance} lessons at {place}. First student: {n2}, wearing {clothing} and full of confidence. Second student: a {adjective} {animal} who turned out to be a natural! By the recital, all three could dance to {song} in perfect step. \"{exclaim}\" said the newspaper. \"Best show in {number} years!\"" },
-    { t: "The Time Capsule", s: "{n1} and {n2} dug up a time capsule buried near {place} fifty years ago. Inside: {thing}, a {color} photograph of a young {job}, and a recipe for {food}. They made the recipe that night. It was {adjective}. \"{exclaim}\" said {n1}. \"Some things only get better with time — just like us.\"" }
+    { t: "Bingo Gets Serious",
+      f: { a:["forty-five minutes","an hour","twenty minutes"], b:["pretending to be asleep","smiling like nothing was wrong","guarding it with both elbows"], c:["church","a golf tournament","jury duty"], d:["a coupon for extra pudding","a gently used jigsaw puzzle","two dollars and a round of applause"], e:["I demand a recount","Congratulations, I suppose","Enjoy it while it lasts"] },
+      s: "It was bingo day, and everyone knew it. {r1} arrived {a} early to claim the lucky seat by the window, only to find {r2} already sitting in it, {b}. {s1} started calling numbers, and the room went quiet — the kind of quiet usually reserved for {c}. Card after card, the tension grew. When {r1} finally hollered BINGO, the grand prize turned out to be {d}. \"{e},\" said {r2}, which everyone agreed was very gracious." },
+
+    { t: "The Thermostat War",
+      f: { a:["sixty-eight","seventy-two","seventy-five"], b:["a winter coat","two sweaters","a quilt from home"], c:["Florida in July","a sauna","the surface of the sun"], d:["taped a note over it","stood guard beside it","hid the little plastic cover"], e:["diplomatic relations","a formal peace treaty","snack-based negotiations"] },
+      s: "Nobody remembers exactly when the thermostat war began. {r1} liked it at {a} degrees. {r2} responded by wearing {b} indoors and announcing to anyone who'd listen that it felt like {c} in here. Every time {s1} adjusted it, someone adjusted it right back. Finally {r3} {d}, and the building settled into an uneasy truce. Experts agree that only {e} can end this conflict for good." },
+
+    { t: "The Case of the Missing Dessert",
+      f: { a:["banana pudding","peach cobbler","chocolate cake"], b:["nobody saw anything","everyone was suddenly very busy","all eyes went to the floor"], c:["a trail of crumbs","a suspiciously clean fork","a napkin tucked in a pocket"], d:["taking a very innocent nap","doing a crossword upside down","whistling a little too casually"], e:["community service in the craft room","sharing next week's dessert","a full pardon, on account of good behavior"] },
+      s: "At exactly 12:40 on Tuesday, the {a} vanished from the dining room. When {s1} asked who took it, {b}. But detectives {r1} and {r2} were on the case. Following {c}, they tracked the culprit to the sunroom, where {r3} was {d}. The evidence was overwhelming. The sentence: {e}. Justice was served — unlike the dessert." },
+
+    { t: "Chair Exercise Champions",
+      f: { a:["arm circles","the seated march","gentle stretching"], b:["training for the Olympics","auditioning for a dance movie","showing off, frankly"], c:["a standing ovation","two thumbs up","a slow, respectful clap"], d:["hydration","proper form","napping afterward"], e:["defending the title next week","going professional","signing autographs in the lobby"] },
+      s: "Morning exercise class started like any other, with {s1} leading everyone through {a}. Then {r1} kicked it up a notch — moving like someone {b}. Not to be outdone, {r2} matched every move. The class gave them {c}. Afterward, {s1} reminded everyone about the importance of {d}, but it was too late: {r1} was already talking about {e}." },
+
+    { t: "The Bus Trip",
+      f: { a:["the scenic route","a shortcut","the long way, twice"], b:["front seat privileges","control of the radio","the good window seat"], c:["a family of ducks crossing the road","a tractor going eleven miles an hour","a very long train"], d:["started a sing-along","narrated the whole drive like a tour guide","took a group photo at a gas station"], e:["five stars","two thumbs up","a perfect ten"] },
+      s: "The Tuesday outing began with {s1} taking {a} into town. {r1} and {r2} had already negotiated {b} before the engine even started. Halfway there, the bus stopped for {c}, and {r3} {d}. By the time they got back, everyone agreed the trip deserved {e} — mostly for the parts that didn't go as planned." },
+
+    { t: "Coffee Hour Intelligence Agency",
+      f: { a:["before the coffee was even poured","by 9:15 sharp","faster than the morning news"], b:["a new resident moving in on the second floor","meatloaf being replaced on Thursday's menu","someone's grandson getting engaged"], c:["three reliable sources","a conversation overheard by the elevator","someone's daughter who knows someone"], d:["neither confirm nor deny","only smile mysteriously","plead the fifth"], e:["the fastest news network in the county","more reliable than the newspaper","never wrong, only early"] },
+      s: "If you want to know what's happening in this building, skip the bulletin board and go straight to coffee hour. This morning, {a}, {r1} already knew about {b}. When {r2} asked how, {r1} cited {c}. {s1} could {d}. It's widely accepted that {r1} and {r2} together run {e}." },
+
+    { t: "Movie Night Negotiations",
+      f: { a:["a western","a musical","a mystery"], b:["a romance","something with car chases","anything but a western"], c:["a coin toss","a formal debate","rock, paper, scissors — best of five"], d:["fell asleep in the first ten minutes","talked through the whole thing","guessed the ending out loud"], e:["a double feature","a written ballot system","letting the popcorn decide"] },
+      s: "Choosing the movie is the most delicate diplomacy of the week. {r1} campaigned hard for {a}. {r2} wanted {b} and would not be moved. {s1} proposed {c} to settle it fairly. The winner? It hardly mattered — {r3} {d} anyway. Next week, the committee will consider {e}." },
+
+    { t: "The New Aide's First Day",
+      f: { a:["a map, a schedule, and a good-luck charm","comfortable shoes and high hopes","a clipboard and visible optimism"], b:["quizzed them on fifty years of local history","tested whether they could take a joke","asked their opinion on the meatloaf, as a trap"], c:["passed with flying colors","did surprisingly well","survived, which counts"], d:["where the good snacks are hidden","which chair is whose — this is important","who actually runs this place"], e:["one of us now","officially approved","allowed to stay"] },
+      s: "It was {s2}'s first day, and they arrived with {a}. The residents wasted no time. {r1} {b}. The verdict: {s2} {c}. By lunch, {r2} was already explaining {d}. By dinner, the residents had voted: {s2} is {e}." },
+
+    { t: "The Great Puzzle Standoff",
+      f: { a:["a thousand-piece lighthouse","a five-hundred-piece basket of kittens","an all-white snow scene, heaven help us"], b:["three weeks","most of the month","longer than anyone will admit"], c:["under the couch cushion","in the box the whole time","stuck to someone's sleeve"], d:["framed it","photographed it from several angles","stood guard so no one touched it"], e:["something easier","something harder, out of spite","two puzzles at once"] },
+      s: "The table by the window has hosted {a} for {b} now. {r1} does the edges — always the edges. {r2} handles the sky, a thankless job. This week, disaster: one piece missing. The whole floor searched. {r3} finally found it {c}. When the last piece went in, {s1} {d}. Next up, the group has voted for {e}." },
+
+    { t: "Beauty Shop Confidential",
+      f: { a:["a trim, nothing dramatic","the same style since 1974","something new and adventurous"], b:["a movie star","royalty","twenty years younger"], c:["turned every head in the dining room","got compliments all afternoon","caused an actual round of applause"], d:["booked the same appointment for next month","tipped extra","asked for the stylist's autograph"], e:["magic","witchcraft, in a good way","professional excellence"] },
+      s: "Thursday is beauty shop day, and the waiting list proves it. {r1} went in asking for {a} and came out looking like {b}. The debut {c}. {r2} immediately {d}. {s1} says it's just a wash and set, but everyone knows it's {e}." },
+
+    { t: "The Remote Control Summit",
+      f: { a:["the news","a fishing show","her programs, thank you very much"], b:["inside the recliner","in the fake plant","under the community bible"], c:["a formal viewing schedule","assigned TV hours","a laminated sign-up sheet"], d:["lasted about a day and a half","worked beautifully until Friday","was ignored by everyone immediately"], e:["a second television","a bigger television","earbuds for everyone"] },
+      s: "The lounge television has one remote, and therein lies the trouble. {r1} wanted {a}. {r2} disagreed and hid the remote {b}. After a thorough investigation, {s1} instituted {c}, which {d}. The residents' council has since submitted a formal request for {e}." },
+
+    { t: "Pancake Breakfast Diplomacy",
+      f: { a:["blueberry","chocolate chip","plain, like a sensible person"], b:["an even dozen","more than the kitchen anticipated","a personal record"], c:["extra syrup for the whole table","seconds before anyone asked","the good bacon"], d:["a toast to the cook","a slow clap","three cheers"], e:["every Saturday","twice a week","daily, and they'd better mean it"] },
+      s: "Pancake morning brings out everyone's true character. {r1} lobbied for {a} pancakes and would accept no substitute. {r2} quietly put away {b}. When {s1} brought out {c}, the dining room erupted in {d}. A petition is now circulating to make pancake breakfast happen {e}." },
+
+    { t: "The Fire Drill",
+      f: { a:["mid-crossword","during the good part of her show","halfway through a winning card game"], b:["grabbed her purse first — priorities","finished his coffee on the way out","brought the crossword along"], c:["four minutes flat","record time","a leisurely but dignified pace"], d:["a job well done","the fastest evacuation in building history","a round of lemonade"], e:["schedule drills during commercials","give five minutes' warning next time","never interrupt bingo again"] },
+      s: "The alarm went off at 2 p.m., catching {r1} {a}. Everyone filed out calmly — though {r2} {b}. The whole building made it out in {c}. {s1} congratulated everyone on {d}. The residents' council responded with one formal request: {e}." },
+
+    { t: "Garden Club Rivalry",
+      f: { a:["tomatoes","prize roses","zucchini the size of your arm"], b:["talking to them every morning","a secret fertilizer recipe","sheer stubbornness"], c:["mysteriously fell over","developed a suspicious lean","was visited by a very hungry rabbit"], d:["demanded an inquiry","blamed the squirrels","suspected foul play immediately"], e:["side by side, under armed guard","in separate corners of the garden","at the county fair, where the judges are neutral"] },
+      s: "The garden out back has produced many things — vegetables, flowers, and one legendary rivalry. {r1} grows {a}, thriving on {b}. {r2}'s entry, meanwhile, {c}. {r2} {d}. {s1} has ruled that next season, the two will grow their entries {e}. The squirrels declined to comment." },
+
+    { t: "Karaoke Night",
+      f: { a:["a Patsy Cline number","'My Way,' naturally","something by Elvis"], b:["brought the house down","earned a standing ovation","had people calling for an encore"], c:["a duet","a dramatic ballad","a surprise second verse nobody knew existed"], d:["backup dancers","a light show, meaning someone flicked the switches","audience participation"], e:["a regular Friday event","a monthly tradition","a competitive league with trophies"] },
+      s: "Nobody expected karaoke night to go the way it did. {r1} opened with {a} and {b}. Then {r2} and {s1} performed {c}, complete with {d}. By nine o'clock, there was a waiting list for the microphone. Karaoke is now officially {e}." },
+
+    { t: "The Birthday Conspiracy",
+      f: { a:["knew nothing","suspected everything","had been dropping hints for weeks"], b:["hiding decorations in the supply closet","practicing the song in the stairwell","smuggling in the good cake — the bakery kind"], c:["act natural","create a diversion","stall for ten more minutes"], d:["cried happy tears","pretended to be surprised beautifully","laughed until her sides hurt"], e:["the best party this building has ever thrown","a new bar for all future birthdays","proof that nobody here can keep a secret, and nobody minds"] },
+      s: "Officially, {r1} {a} about the party. Unofficially, the whole floor was in on it — {r2} had been {b}, and {s1}'s job was to {c}. When the lights came on and everyone yelled surprise, {r1} {d}. It was, by unanimous agreement, {e}." },
+
+    { t: "Trivia Afternoon",
+      f: { a:["state capitals","1950s music","old Hollywood"], b:["The Brain Trust","The Know-It-Alls","Team Still Sharp"], c:["without even blinking","before the question was finished","while barely looking up from her knitting"], d:["a rematch","a recount","harder questions next time"], e:["bragging rights until Thursday","the good table at lunch","a dollar-store trophy they treat like the Stanley Cup"] },
+      s: "Trivia day, and the category was {a}. {r1} and {r2} teamed up as {b} and were unstoppable — {r1} answered the final question {c}. The losing side demanded {d}. The winners took home {e}, and honestly, they've earned it." },
+
+    { t: "The Vending Machine Incident",
+      f: { a:["a candy bar","peanut butter crackers","a bag of chips"], b:["dangling at a cruel angle","stuck against the glass","hanging by sheer spite"], c:["a gentle nudge","a firm and dignified shake","percussive maintenance"], d:["two snacks fell instead of one","the machine surrendered completely","victory was total"], e:["a local legend","the person to call in a crisis","banned from the machine, affectionately"] },
+      s: "It started when {r1} paid for {a} and the machine left it {b}. A crowd gathered. Advice was offered. Finally {r2} stepped forward and applied {c}. The result: {d}. {s1} arrived to find everyone cheering, and {r2} is now {e}." },
+
+    { t: "The Newsletter Deadline",
+      f: { a:["the birthday list","a recipe corner","a poetry section"], b:["an advice column","a gossip section, tastefully renamed 'Community Notes'","restaurant reviews of the dining room"], c:["hard-hitting questions","two sources for every scoop","total editorial independence"], d:["front-page news","the top story","a special edition"], e:["Pulitzer material","the best publication in the building, admittedly the only one","required reading"] },
+      s: "The community newsletter was due Friday, and editor-in-chief {r1} ran a tight ship. {r2} handled {a}. {r3} pitched {b}, promising {c}. When {s1} approved the final draft, the dessert-theft story made {d}. Subscribers — meaning everyone — agree it's {e}." },
+
+    { t: "Physical Therapy Bragging Rights",
+      f: { a:["ten extra reps","the resistance band nobody likes","the full circuit, twice"], b:["a personal best","a new building record","numbers that impressed even the skeptics"], c:["a high five","a gold star on the whiteboard","genuine astonishment"], d:["training montage music","a rival to keep things interesting","a bigger whiteboard for the records"], e:["signed up for double sessions","started a friendly competition","asked if there's a trophy involved"] },
+      s: "Down in the therapy room, {r1} has been putting in the work. This week: {a}, followed by {b}. {s1} responded with {c}. Word spread fast, and now {r2} says all that's missing is {d}. As of this morning, half the floor has {e}." },
+
+    { t: "The Great Nap Debate",
+      f: { a:["1:30 sharp","right after lunch","2 p.m., non-negotiable"], b:["an art form","a science","a constitutional right"], c:["twenty minutes, no more","a solid hour","until the smell of dinner"], d:["the recliner by the window","anywhere quiet","his chair — and everyone knows it's his chair"], e:["a formal napping schedule","quiet hours, enforced","a 'Do Not Disturb' sign program"] },
+      s: "In this building, napping is taken seriously. {r1} naps at {a} and considers it {b}. {r2} swears by {c}, preferably in {d}. The only controversy is noise, which is why the residents' council has asked {s1} to consider {e}. The motion passed without debate — everyone was too rested to argue." },
+
+    { t: "Family Visit Day",
+      f: { a:["the good photographs","her famous stories","the grandkids' drawings for the wall"], b:["grew an inch","got taller again, which should be illegal","brought a girlfriend — big news"], c:["gave the full building tour","introduced them to absolutely everyone","showed off the trivia trophy"], d:["homemade cookies","a new houseplant","enough leftovers for a week"], e:["counting down to the next one","already planning the menu","telling everyone every detail, twice"] },
+      s: "Sunday meant visitors, and {r1} was ready with {a}. The grandson {b}. {r1} {c}, pausing so {s1} could say hello. The family left behind {d}, and {r1} has spent every day since {e}." },
+
+    { t: "The Crossword Alliance",
+      f: { a:["seventeen across","the whole bottom corner","one stubborn seven-letter word"], b:["a 1940s bandleader","an eight-letter word for 'stubborn'","some river in Europe"], c:["three days","all week","longer than either will confess"], d:["woke up knowing it","solved it mid-bite of toast","shouted it from across the room"], e:["a moment of silence","a celebratory refill of coffee","immediate plans to start the next one"], },
+      s: "Every morning, {r1} and {r2} split the crossword — pencils only, no exceptions. This week, {a} had them stumped: {b}. The standoff lasted {c}. Then this morning, {r2} {d}. The lounge observed {e}. {s1} has learned never to throw out a newspaper before noon." },
+
+    { t: "Decorating Committee",
+      f: { a:["twice as many lights as last year","a theme, voted on democratically","garland on every railing"], b:["supervising from the recliner","directing traffic like an air traffic controller","quality control, self-appointed"], c:["slightly crooked","perfect, if you squint","exactly where it wanted to be"], d:["the best-decorated floor in the building","a fire marshal's polite concern","photos for the newsletter"], e:["started planning next year","refused to take anything down early","given themselves matching titles"], },
+      s: "The decorating committee convened at nine sharp. The vision: {a}. {r1} handled {b} while {s1} did the ladder work. The wreath ended up {c}, and nobody dared touch it. The result was {d}. The committee — {r1}, {r2}, and {r3} — has since {e}." },
+
+    { t: "The Mail Call Stakeout",
+      f: { a:["10:45, give or take","the same time every day, in theory","whenever the truck feels like it"], b:["a package","a letter from her sister","the good coupons"], c:["casually reading the same page for an hour","doing very slow laps past the mailboxes","watering a plastic plant"], d:["arrived twenty minutes late","came early, catching everyone off guard","showed up right on schedule for once"], e:["a birthday card two days early","the package, finally","a coupon for the good coffee"] },
+      s: "Mail arrives at {a}, and {r1} was expecting {b}. The stakeout began after breakfast — {r1} positioned by the window, {c}. {r2} joined, purely for moral support. The mail {d}. Inside: {e}. Worth the wait, and both of them said so." },
+
+    { t: "The Spelling Bee",
+      f: { a:["'rhythm' — no vowels, no mercy","'necessary' — one C or two, choose wisely","'February,' the silent-R menace"], b:["spelled it slowly, savoring every letter","asked for it in a sentence, just for drama","closed her eyes and nailed it"], c:["thunderous applause","chants of her name","a wave of respectful envy"], d:["a rematch with harder words","a doubles division","the dictionary banned from the front row"], e:["undefeated","the one to beat","insufferable, in the most lovable way"] },
+      s: "The first annual spelling bee came down to two finalists: {r1} and {r2}. The final word: {a}. {r1} {b}. Correct! The room answered with {c}. {r2} has formally requested {d}. Until then, {r1} remains {e}, and {s1} is already writing next month's word list." },
+
+    { t: "The Weather Committee",
+      f: { a:["her left knee","his shoulder","the hip that's never once been wrong"], b:["rain by suppertime","a cold snap coming","a storm before the weekend"], c:["sunny skies all week","clear and mild","zero chance of rain"], d:["right on schedule","just as predicted","exactly when the knee said it would"], e:["retire immediately","consult the residents first","hire the knee as a paid consultant"] },
+      s: "The TV weatherman is fine, but this building trusts {r1}'s {a}. On Monday it forecast {b}. The weatherman promised {c}. By Wednesday, the rain arrived {d}. {r2} has proposed that the weatherman {e}. {s1} keeps an umbrella by the door either way — smart on all fronts." },
+
+    { t: "Popcorn Day",
+      f: { a:["extra butter — the only correct answer","lightly salted, for the sophisticated palate","plain, which sparked a debate"], b:["the entire hallway","two floors","everyone within smelling distance"], c:["appeared within minutes","materialized out of nowhere","lined up before the first batch finished"], d:["strict rationing","a two-bowl limit","seconds for those who helped clean up"], e:["a weekly institution","non-negotiable","the official smell of Friday"] },
+      s: "Friday afternoon, {s1} fired up the popcorn machine — {a}. The smell reached {b}, and a crowd {c}. {r1} claimed the first bowl by right of seniority. {r2} attempted diplomacy for the second. {s1} instituted {d}. Popcorn day is now {e}." },
+
+    { t: "The Suggestion Box",
+      f: { a:["more butterscotch pudding","a later breakfast on Sundays","softer chairs in the lounge"], b:["a petting zoo, temporary or permanent","a pool table","a soft-serve ice cream machine"], c:["signed it, boldly","submitted it anonymously — fooling no one","attached supporting documentation"], d:["under advisement","seriously, to everyone's surprise","straight to the top"], e:["the pudding, gloriously","a trial run next month","a town hall to discuss it further"] },
+      s: "The suggestion box filled up fast this month. {r1} requested {a}. {r2} aimed higher: {b} — and {c}. {s1} took the suggestions {d}. The result, announced Friday: {e}. Democracy works, at least when dessert is involved." },
+
+    { t: "Wheel of Fortune Hour",
+      f: { a:["before half the letters were up","from across the room, mid-knitting","before the contestant even spun"], b:["a common phrase","a famous title","a thing, allegedly"], c:["shouting wrong answers with total confidence","narrating every spin","rooting loudly against the champion"], d:["should be on that show","would clean house out there","is wasting her talents in this lounge"], e:["a formal application","a tryout tape","a letter to the producers, signed by the whole floor"] },
+      s: "At 6:30, the lounge belongs to Wheel of Fortune. {r1} solved the first puzzle {a} — category: {b}. {r2} contributed by {c}. {s1} said what everyone was thinking: {r1} {d}. The residents are now assembling {e}. Hollywood has been warned." },
+
+    { t: "The Library Cart",
+      f: { a:["mysteries — the gorier the better","romance novels, unashamed","westerns, exclusively"], b:["three at a time","a personal waiting list","first pick, by unspoken agreement"], c:["read the ending first — chaos","guards new arrivals like treasure","reviews every book aloud whether asked or not"], d:["a formal book club","a waiting list system","two carts, honestly"], e:["spirited","occasionally heated","better than the books themselves"] },
+      s: "The library cart rolls through on Wednesdays, and it's the event of the week. {r1} goes for {a}, claiming {b}. {r2}, meanwhile, {c}. {s1} has suggested {d} to keep the peace. The first meeting's discussion was {e}. The sequel is next month." },
+
+    { t: "The Anniversary Waltz",
+      f: { a:["fifty-eight years","sixty years","fifty-five wonderful years"], b:["the song from their wedding","a slow waltz","their song — everyone has one"], c:["didn't miss a step","still had all the old moves","danced like it was 1965"], d:["joined in by the second verse","formed a circle around them","dabbed their eyes and pretended not to"], e:["dance lessons for everyone","a monthly dance night","an encore, immediately"] },
+      s: "When {r1} mentioned it would have been {a} this week, {s1} quietly put on {b} after dinner. {r1} stood, took {r2}'s hand for a spin around the lounge, and {c}. The room {d}. By popular demand, there are now calls for {e}. Some evenings just turn out right." }
   ];
 
   // ======================= STATE =======================
-  var STORAGE_KEY = "sillyStoriesNames";
-  var names = [];
+  var STORAGE_KEY = "sillyStoriesNamesV2";
+  var residents = [];
+  var staff = [];
   var templateOrder = [];
   var templatePos = -1;
-  var nameQueue = [];
-  var currentFill = null;
+  var resQueue = [];
+  var staffQueue = [];
 
   // ======================= HELPERS =======================
   function shuffle(arr) {
@@ -242,90 +321,104 @@
   }
 
   function saveNames() {
-    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(names)); } catch (e) {}
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({ residents: residents, staff: staff }));
+    } catch (e) {}
   }
 
   function loadNames() {
-    // Share link takes priority: ?names=Dorothy,Earl,Mabel
+    // Share link takes priority: ?res=Dorothy,Earl&staff=Nurse%20Kim
     try {
       var params = new URLSearchParams(window.location.search);
-      var fromLink = params.get("names");
-      if (fromLink) {
-        var parsed = fromLink.split(",").map(function (n) { return n.trim(); })
+      var clean = function (raw) {
+        return raw.split(",").map(function (n) { return n.trim(); })
           .filter(function (n) { return n.length > 0 && n.length <= 30; }).slice(0, 60);
-        if (parsed.length) { names = parsed; saveNames(); return; }
+      };
+      var fromRes = params.get("res");
+      var fromStaff = params.get("staff");
+      if (fromRes || fromStaff) {
+        residents = fromRes ? clean(fromRes) : [];
+        staff = fromStaff ? clean(fromStaff) : [];
+        saveNames();
+        return;
       }
     } catch (e) {}
     try {
-      var saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
-      if (Array.isArray(saved)) {
-        names = saved.filter(function (n) { return typeof n === "string" && n.trim(); });
+      var saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
+      if (saved && Array.isArray(saved.residents)) {
+        residents = saved.residents.filter(function (n) { return typeof n === "string" && n.trim(); });
       }
-    } catch (e) { names = []; }
+      if (saved && Array.isArray(saved.staff)) {
+        staff = saved.staff.filter(function (n) { return typeof n === "string" && n.trim(); });
+      }
+    } catch (e) { residents = []; staff = []; }
   }
 
-  // Draw distinct names for one story; top up with stock characters if short.
-  function drawNames(count) {
+  // Draw distinct names for one story from a rotating queue so everyone
+  // gets featured before anyone repeats.
+  function drawFrom(pool, queueName, count, fallback) {
+    var queue = queueName === "res" ? resQueue : staffQueue;
     var picked = [];
-    while (picked.length < count) {
-      if (nameQueue.length === 0) {
-        var next = shuffle(names).filter(function (n) { return picked.indexOf(n) === -1; });
-        if (next.length === 0) break;
-        nameQueue = next;
+    while (picked.length < count && pool.length > 0) {
+      if (queue.length === 0) {
+        var refill = shuffle(pool).filter(function (n) { return picked.indexOf(n) === -1; });
+        if (refill.length === 0) break;
+        queue = refill;
       }
-      picked.push(nameQueue.shift());
+      picked.push(queue.shift());
     }
-    var stock = shuffle(STOCK_NAMES);
-    while (picked.length < count) picked.push(stock.pop());
+    if (queueName === "res") resQueue = queue; else staffQueue = queue;
+    var backup = shuffle(fallback);
+    while (picked.length < count) {
+      var b = backup.length ? backup.pop() : null;
+      if (b === null) { picked.push("a mysterious volunteer"); continue; }
+      if (picked.indexOf(b) === -1) picked.push(b);
+    }
     return picked;
   }
 
-  // Fill a template: names + one random word per token (distinct within a bank).
-  function buildFill(tpl) {
-    var nameCount = 0;
-    ["{n1}", "{n2}", "{n3}"].forEach(function (tok) {
-      if (tpl.s.indexOf(tok) !== -1) nameCount++;
-    });
-    var storyNames = drawNames(nameCount);
+  function buildStory(tpl) {
+    // Find which specific tokens this story uses (a story may use {s2}
+    // without {s1}), then map one drawn name to each token used.
+    var resTokens = [], staffTokens = [];
+    [1, 2, 3].forEach(function (i) { if (tpl.s.indexOf("{r" + i + "}") !== -1) resTokens.push(i); });
+    [1, 2].forEach(function (i) { if (tpl.s.indexOf("{s" + i + "}") !== -1) staffTokens.push(i); });
 
-    var fill = { names: storyNames, words: {} };
-    var used = {};
-    var tokenRe = /\{([a-z]+)(\d?)\}/g;
-    var m;
-    while ((m = tokenRe.exec(tpl.s)) !== null) {
-      var full = m[1] + m[2];
-      if (m[1] === "n") continue;
-      if (fill.words[full]) continue;
-      var bank = BANKS[m[1]];
-      if (!bank) continue;
-      if (!used[m[1]]) used[m[1]] = [];
-      var choices = bank.filter(function (w) { return used[m[1]].indexOf(w) === -1; });
-      if (choices.length === 0) choices = bank;
-      var pick = choices[Math.floor(Math.random() * choices.length)];
-      used[m[1]].push(pick);
-      fill.words[full] = pick;
-    }
-    return fill;
-  }
+    var resNames = drawFrom(residents, "res", resTokens.length, STOCK_STAFF);
+    var staffNames = drawFrom(staff, "staff", staffTokens.length, STOCK_STAFF.filter(function (n) {
+      return resNames.indexOf(n) === -1;
+    }));
 
-  function renderStory(tpl, fill) {
+    var resMap = {}, staffMap = {};
+    resTokens.forEach(function (tok, i) { resMap[tok] = resNames[i]; });
+    staffTokens.forEach(function (tok, i) { staffMap[tok] = staffNames[i]; });
+
     var html = escapeHtml(tpl.s);
-    html = html.replace(/\{n(\d)\}/g, function (_, d) {
-      var nm = fill.names[Number(d) - 1] || "someone";
-      return '<span class="name-word">' + escapeHtml(nm) + "</span>";
+    html = html.replace(/\{r(\d)\}/g, function (_, d) {
+      return '<span class="res-name">' + escapeHtml(resMap[Number(d)] || "someone") + "</span>";
     });
-    html = html.replace(/\{([a-z]+\d?)\}/g, function (whole, key) {
-      var w = fill.words[key];
-      if (!w) return whole;
-      return '<span class="silly-word">' + escapeHtml(w) + "</span>";
+    html = html.replace(/\{s(\d)\}/g, function (_, d) {
+      return '<span class="staff-name">' + escapeHtml(staffMap[Number(d)] || "the staff") + "</span>";
     });
+    html = html.replace(/\{([a-z])\}/g, function (whole, key) {
+      var options = tpl.f[key];
+      if (!options) return whole;
+      var pick = options[Math.floor(Math.random() * options.length)];
+      return '<span class="fill-word">' + escapeHtml(pick) + "</span>";
+    });
+
+    // Capitalize any inserted name/word that begins a sentence
+    // (matters when stand-in titles like "the head nurse" are used).
+    html = html.replace(/(^|[.!?]\s+|&quot;\s*)(<span class="(?:res-name|staff-name|fill-word)">)([a-z])/g,
+      function (_, pre, span, ch) { return pre + span + ch.toUpperCase(); });
+
     document.getElementById("storyTitle").textContent = tpl.t;
     document.getElementById("storyBody").innerHTML = html;
     document.getElementById("storyCounter").textContent =
       "Story " + (templatePos + 1) + " of " + TEMPLATES.length;
     var card = document.getElementById("storyCard");
     card.style.animation = "none";
-    void card.offsetWidth; // restart pop-in animation
+    void card.offsetWidth;
     card.style.animation = "";
   }
 
@@ -335,57 +428,58 @@
       templateOrder = shuffle(TEMPLATES.map(function (_, i) { return i; }));
       templatePos = 0;
     }
-    var tpl = TEMPLATES[templateOrder[templatePos]];
-    currentFill = buildFill(tpl);
-    renderStory(tpl, currentFill);
+    buildStory(TEMPLATES[templateOrder[templatePos]]);
   }
 
   function rerollStory() {
-    var tpl = TEMPLATES[templateOrder[templatePos]];
-    currentFill = buildFill(tpl);
-    renderStory(tpl, currentFill);
+    buildStory(TEMPLATES[templateOrder[templatePos]]);
   }
 
   // ======================= SETUP SCREEN =======================
-  function renderNameList() {
-    var list = document.getElementById("nameList");
-    list.innerHTML = "";
-    names.forEach(function (n, i) {
-      var chip = document.createElement("span");
-      chip.className = "name-chip";
-      var label = document.createElement("span");
-      label.textContent = n;
-      var x = document.createElement("button");
-      x.textContent = "✕";
-      x.setAttribute("aria-label", "Remove " + n);
-      x.addEventListener("click", function () {
-        names.splice(i, 1);
-        saveNames();
-        renderNameList();
+  function renderLists() {
+    var render = function (arr, listId, chipClass, save) {
+      var list = document.getElementById(listId);
+      list.innerHTML = "";
+      arr.forEach(function (n, i) {
+        var chip = document.createElement("span");
+        chip.className = "name-chip " + chipClass;
+        var label = document.createElement("span");
+        label.textContent = n;
+        var x = document.createElement("button");
+        x.textContent = "✕";
+        x.setAttribute("aria-label", "Remove " + n);
+        x.addEventListener("click", function () {
+          arr.splice(i, 1);
+          save();
+          renderLists();
+        });
+        chip.appendChild(label);
+        chip.appendChild(x);
+        list.appendChild(chip);
       });
-      chip.appendChild(label);
-      chip.appendChild(x);
-      list.appendChild(chip);
-    });
-    var count = document.getElementById("nameCount");
-    if (names.length === 0) {
-      count.textContent = "No names yet — add at least one to begin.";
-    } else if (names.length === 1) {
-      count.textContent = "1 name added. Add more so everyone gets a turn!";
-    } else {
-      count.textContent = names.length + " names added. Everyone will take turns starring in the stories.";
-    }
-    document.getElementById("startBtn").disabled = names.length === 0;
+    };
+    render(residents, "resList", "chip-res", saveNames);
+    render(staff, "staffList", "chip-staff", saveNames);
+
+    var rc = document.getElementById("resCount");
+    if (residents.length === 0) rc.textContent = "Add at least one resident to begin.";
+    else if (residents.length === 1) rc.textContent = "1 resident added — add more so everyone gets a turn!";
+    else rc.textContent = residents.length + " residents added. Everyone will take turns starring in the stories.";
+
+    var sc = document.getElementById("staffCount");
+    if (staff.length === 0) sc.textContent = "No staff yet — stories will use titles like \u201Cthe activities director\u201D instead.";
+    else sc.textContent = staff.length + " staff added. They\u2019ll pop up in the stories too!";
+
+    document.getElementById("startBtn").disabled = residents.length === 0;
   }
 
-  function addName() {
-    var input = document.getElementById("nameInput");
+  function addTo(arr, inputId) {
+    var input = document.getElementById(inputId);
     var val = input.value.trim();
-    if (!val) return;
-    if (names.length >= 60) return;
-    names.push(val);
+    if (!val || arr.length >= 60) return;
+    arr.push(val);
     saveNames();
-    renderNameList();
+    renderLists();
     input.value = "";
     input.focus();
   }
@@ -396,14 +490,19 @@
   }
 
   // ======================= WIRE UP =======================
-  document.getElementById("addNameBtn").addEventListener("click", addName);
-  document.getElementById("nameInput").addEventListener("keydown", function (e) {
-    if (e.key === "Enter") { e.preventDefault(); addName(); }
+  document.getElementById("addResBtn").addEventListener("click", function () { addTo(residents, "resInput"); });
+  document.getElementById("addStaffBtn").addEventListener("click", function () { addTo(staff, "staffInput"); });
+  document.getElementById("resInput").addEventListener("keydown", function (e) {
+    if (e.key === "Enter") { e.preventDefault(); addTo(residents, "resInput"); }
+  });
+  document.getElementById("staffInput").addEventListener("keydown", function (e) {
+    if (e.key === "Enter") { e.preventDefault(); addTo(staff, "staffInput"); }
   });
 
   document.getElementById("startBtn").addEventListener("click", function () {
-    if (names.length === 0) return;
-    nameQueue = [];
+    if (residents.length === 0) return;
+    resQueue = [];
+    staffQueue = [];
     templateOrder = shuffle(TEMPLATES.map(function (_, i) { return i; }));
     templatePos = -1;
     showScreen("story");
@@ -414,12 +513,13 @@
   document.getElementById("rerollBtn").addEventListener("click", rerollStory);
   document.getElementById("editNamesBtn").addEventListener("click", function () {
     showScreen("setup");
-    renderNameList();
+    renderLists();
   });
 
   document.getElementById("shareBtn").addEventListener("click", function () {
     var url = window.location.origin + window.location.pathname +
-      "?names=" + encodeURIComponent(names.join(","));
+      "?res=" + encodeURIComponent(residents.join(",")) +
+      "&staff=" + encodeURIComponent(staff.join(","));
     var btn = document.getElementById("shareBtn");
     function done(ok) {
       btn.textContent = ok ? "✅ Link copied! Paste it into the other device's browser."
@@ -436,7 +536,7 @@
 
   // ======================= INIT =======================
   loadNames();
-  renderNameList();
+  renderLists();
   showScreen("setup");
 })();
 </script>
