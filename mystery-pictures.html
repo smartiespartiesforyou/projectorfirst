@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Mystery Pictures — ProjectorFirst</title>
+
+<!-- Membership gate (paywall-test) -->
+<script
+  data-memberstack-app="app_cmgnwpg8y00x10suih4pua785"
+  src="https://static.memberstack.com/scripts/v2/memberstack.js"
+  type="text/javascript">
+</script>
+<script src="/guard.js"></script>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    html, body {
+      height: 100vh;
+      height: 100dvh;
+      margin: 0;
+      overflow: hidden;
+      background: #1e3a8a;
+      font-family: ui-rounded, system-ui, -apple-system, "Segoe UI", sans-serif;
+    }
+    .screen { height: 100vh; height: 100dvh; display: flex; flex-direction: column; }
+    .btn-big {
+      font-weight: 900;
+      border-radius: 1.25rem;
+      border: 4px solid #0f265f;
+      box-shadow: 0 6px 0 #0f265f;
+      transition: transform .08s ease, box-shadow .08s ease;
+      cursor: pointer;
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: manipulation;
+    }
+    .btn-big:active { transform: translateY(4px); box-shadow: 0 2px 0 #0f265f; }
+    .btn-big:disabled { opacity: .5; cursor: default; }
+    .answer-card {
+      background: #facc15;
+      color: #1e3a8a;
+      font-weight: 900;
+      border: 4px solid #fff;
+      border-radius: 1.5rem;
+      padding: .6rem 1.5rem;
+      animation: popIn .4s cubic-bezier(.2,1.6,.4,1) both;
+      box-shadow: 0 6px 0 #b45309;
+      text-align: center;
+    }
+    @keyframes popIn {
+      0% { transform: scale(.3); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    .confetti {
+      position: fixed;
+      top: -20px;
+      pointer-events: none;
+      z-index: 50;
+      font-size: clamp(1.2rem, 3vw, 2rem);
+      animation: fall linear forwards;
+    }
+    @keyframes fall { to { transform: translateY(110vh) rotate(720deg); opacity: .9; } }
+    @media (prefers-reduced-motion: reduce) {
+      .answer-card { animation: none; }
+      .confetti { display: none; }
+    }
+    #picCanvas {
+      background: #fff;
+      border: 6px solid #facc15;
+      border-radius: 1.5rem;
+      box-shadow: 0 8px 0 #b45309;
+      image-rendering: pixelated;
+      image-rendering: crisp-edges;
+    }
+  </style>
+</head>
+<body>
+
+<!-- ============================ CATEGORY SCREEN ============================ -->
+<div id="categoryScreen" class="screen items-center justify-center px-4 gap-6">
+  <h1 class="text-yellow-300 font-black text-center" style="font-size: clamp(1.8rem, 6vw, 3rem); text-shadow: 4px 4px 0 #0f265f;">🔍 MYSTERY PICTURES</h1>
+  <div class="text-white font-bold text-center" style="font-size: clamp(1rem, 3vw, 1.4rem);">The picture starts scrambled and gets clearer with every reveal.<br/>Call out your guesses!</div>
+  <div id="categoryButtons" class="flex flex-wrap justify-center gap-4 max-w-3xl"></div>
+  <a href="apps.html" class="btn-big bg-white text-blue-900 text-base md:text-lg px-4 py-3 no-underline mt-4">← Back to Apps</a>
+</div>
+
+<!-- ============================ GAME SCREEN ============================ -->
+<div id="gameScreen" class="screen hidden">
+  <header class="flex items-center justify-between px-4 pt-4 pb-1 gap-2 flex-wrap max-w-5xl w-full mx-auto">
+    <button id="backToCatsBtn" class="btn-big bg-white text-blue-900 text-base md:text-xl px-3 py-2">← Picture Sets</button>
+    <h1 class="text-yellow-300 font-black" style="font-size: clamp(1.2rem, 4vw, 2.2rem); text-shadow: 3px 3px 0 #0f265f;">🔍 MYSTERY PICTURES</h1>
+    <p id="picCounter" class="text-blue-200 font-bold" style="font-size:clamp(1rem,2.2vh,1.4rem);"></p>
+  </header>
+
+  <div class="flex-1 flex flex-col items-center justify-center px-4 min-h-0">
+    <canvas id="picCanvas" width="480" height="480" style="width:min(90vw, 52vh); height:min(90vw, 52vh);"></canvas>
+    <div id="hintBox" class="text-white font-black text-center mt-3 hidden tracking-widest" style="font-size:clamp(1.4rem,3.4vh,2.4rem); text-shadow: 2px 2px 0 #0f265f;"></div>
+    <div id="answerBox" class="answer-card mt-3 hidden" style="font-size:clamp(1.6rem,4.5vh,3rem);"></div>
+  </div>
+
+  <div class="flex flex-wrap gap-3 justify-center max-w-5xl w-full mx-auto px-4 pb-4 pt-2">
+    <button id="revealBtn" class="btn-big bg-yellow-400 text-blue-900 px-8 py-3" style="font-size:clamp(1.2rem,2.6vh,1.7rem);">🔍 Reveal More</button>
+    <button id="hintBtn" class="btn-big bg-blue-500 text-white px-6 py-3" style="font-size:clamp(1.1rem,2.4vh,1.5rem);">💡 Hint</button>
+    <button id="answerBtn" class="btn-big bg-green-500 text-white px-6 py-3" style="font-size:clamp(1.1rem,2.4vh,1.5rem);">✅ Show Answer</button>
+    <button id="nextBtn" class="btn-big bg-white text-blue-900 px-6 py-3" style="font-size:clamp(1.1rem,2.4vh,1.5rem);">➡️ Next Picture</button>
+  </div>
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  // ======================= PICTURE DECKS =======================
+  // Deliberately medium difficulty — recognizable, but not instant.
+  var DECKS = [
+    { name: "🏠 House & Town", items: [
+      ["☂️","Umbrella"],["🎂","Birthday Cake"],["🧸","Teddy Bear"],["🛁","Bathtub"],
+      ["🔑","Key"],["🧹","Broom"],["📻","Radio"],["☎️","Telephone"],
+      ["💡","Light Bulb"],["🕯️","Candle"],["📬","Mailbox"],["🚲","Bicycle"],
+      ["🚂","Train"],["🚜","Tractor"],["⛵","Sailboat"],["🎡","Ferris Wheel"],
+      ["⛪","Church"],["🌉","Bridge"],["⏰","Alarm Clock"],["✂️","Scissors"],
+      ["🧯","Fire Extinguisher"],["🛒","Shopping Cart"],["🎪","Circus Tent"],["⛲","Fountain"],
+      ["🔒","Padlock"],["🧲","Magnet"],["🎈","Balloon"],["🔦","Flashlight"],
+      ["🧦","Socks"],["👓","Eyeglasses"],["🎩","Top Hat"]
+    ]},
+    { name: "🦋 Animals & Nature", items: [
+      ["🦋","Butterfly"],["🦉","Owl"],["🐢","Turtle"],["🐝","Bee"],
+      ["🌵","Cactus"],["🌻","Sunflower"],["🍄","Mushroom"],["🌈","Rainbow"],
+      ["🐘","Elephant"],["🦒","Giraffe"],["🦚","Peacock"],["🦩","Flamingo"],
+      ["🐫","Camel"],["🦀","Crab"],["🐙","Octopus"],["🦅","Eagle"],
+      ["🌹","Rose"],["🍁","Maple Leaf"],["🌊","Ocean Wave"],["⛄","Snowman"],
+      ["🌙","Crescent Moon"],["🕷️","Spider"],["🐞","Ladybug"],["🦇","Bat"],
+      ["🐧","Penguin"],["🦌","Deer"],["🐊","Alligator"],["🦈","Shark"],
+      ["🌪️","Tornado"],["🦜","Parrot"]
+    ]},
+    { name: "🧠 A Little Trickier", items: [
+      ["⚓","Anchor"],["🧭","Compass"],["⏳","Hourglass"],["🎻","Violin"],
+      ["🎺","Trumpet"],["🥁","Drum"],["🎠","Carousel Horse"],["🗽","Statue of Liberty"],
+      ["🏰","Castle"],["🧵","Spool of Thread"],["🧶","Ball of Yarn"],["🛶","Canoe"],
+      ["🏮","Paper Lantern"],["🎭","Theater Masks"],["🔭","Telescope"],["🔬","Microscope"],
+      ["⚖️","Scales of Justice"],["🏺","Ancient Vase"],["🚠","Cable Car"],["🏹","Bow and Arrow"],
+      ["🧨","Dynamite"],["🛰️","Satellite"],["🚀","Rocket"],["🎲","Dice"],
+      ["♟️","Chess Piece"],["🧩","Puzzle Piece"],["🧰","Toolbox"],["🪁","Kite"],
+      ["🦺","Safety Vest"],["🧊","Ice Cube"]
+    ]}
+  ];
+
+  // Pixel resolutions per reveal step: chunky ➜ clear.
+  var LEVELS = [7, 10, 14, 20, 30, 48];
+
+  // ======================= STATE =======================
+  var deck = null;
+  var order = [];
+  var pos = -1;
+  var step = 0;
+  var answered = false;
+
+  // Offscreen canvas holding the full-resolution picture.
+  var OS = document.createElement("canvas");
+  OS.width = 480; OS.height = 480;
+  var osCtx = OS.getContext("2d");
+
+  // ======================= HELPERS =======================
+  function shuffle(arr) {
+    var a = arr.slice();
+    for (var i = a.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var tmp = a[i]; a[i] = a[j]; a[j] = tmp;
+    }
+    return a;
+  }
+
+  function drawFull(emoji) {
+    osCtx.clearRect(0, 0, 480, 480);
+    osCtx.fillStyle = "#ffffff";
+    osCtx.fillRect(0, 0, 480, 480);
+    osCtx.font = "340px serif";
+    osCtx.textAlign = "center";
+    osCtx.textBaseline = "middle";
+    osCtx.fillText(emoji, 240, 265);
+  }
+
+  function renderStep() {
+    var canvas = document.getElementById("picCanvas");
+    var ctx = canvas.getContext("2d");
+    ctx.imageSmoothingEnabled = false;
+    ctx.clearRect(0, 0, 480, 480);
+    if (answered || step >= LEVELS.length) {
+      // Fully clear picture.
+      ctx.drawImage(OS, 0, 0);
+      return;
+    }
+    var res = LEVELS[step];
+    var tiny = document.createElement("canvas");
+    tiny.width = res; tiny.height = res;
+    var tctx = tiny.getContext("2d");
+    tctx.imageSmoothingEnabled = true;
+    tctx.drawImage(OS, 0, 0, res, res);
+    ctx.drawImage(tiny, 0, 0, res, res, 0, 0, 480, 480);
+  }
+
+  function updateButtons() {
+    var revealBtn = document.getElementById("revealBtn");
+    if (answered) {
+      revealBtn.disabled = true;
+      revealBtn.textContent = "🔍 Reveal More";
+    } else if (step >= LEVELS.length - 1) {
+      revealBtn.disabled = true;
+      revealBtn.textContent = "🔍 Fully Revealed";
+    } else {
+      revealBtn.disabled = false;
+      revealBtn.textContent = "🔍 Reveal More (" + (step + 1) + " of " + LEVELS.length + ")";
+    }
+    document.getElementById("hintBtn").disabled = answered;
+    document.getElementById("answerBtn").disabled = answered;
+  }
+
+  function hintFor(answer) {
+    // "Top Hat" ➜ "T _ _   H _ _"
+    return answer.split(" ").map(function (word) {
+      var out = [word.charAt(0).toUpperCase()];
+      for (var i = 1; i < word.length; i++) out.push("_");
+      return out.join(" ");
+    }).join("\u00A0\u00A0\u00A0");
+  }
+
+  function confettiBurst() {
+    var emojis = ["🎉","⭐","🎊","✨"];
+    for (var i = 0; i < 14; i++) {
+      var el = document.createElement("div");
+      el.className = "confetti";
+      el.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+      el.style.left = Math.random() * 100 + "vw";
+      el.style.animationDuration = (1.6 + Math.random() * 1.4) + "s";
+      document.body.appendChild(el);
+      setTimeout(function (node) { return function () { node.remove(); }; }(el), 3200);
+    }
+  }
+
+  function nextPicture() {
+    pos++;
+    if (pos >= order.length) {
+      order = shuffle(deck.items.map(function (_, i) { return i; }));
+      pos = 0;
+    }
+    step = 0;
+    answered = false;
+    var item = deck.items[order[pos]];
+    drawFull(item[0]);
+    document.getElementById("hintBox").classList.add("hidden");
+    document.getElementById("answerBox").classList.add("hidden");
+    document.getElementById("picCounter").textContent =
+      "Picture " + (pos + 1) + " of " + deck.items.length;
+    renderStep();
+    updateButtons();
+  }
+
+  function showAnswer() {
+    if (answered) return;
+    answered = true;
+    var item = deck.items[order[pos]];
+    var box = document.getElementById("answerBox");
+    box.textContent = item[1];
+    box.classList.remove("hidden");
+    document.getElementById("hintBox").classList.add("hidden");
+    renderStep();
+    updateButtons();
+    confettiBurst();
+  }
+
+  // ======================= WIRE UP =======================
+  var catWrap = document.getElementById("categoryButtons");
+  DECKS.forEach(function (d) {
+    var btn = document.createElement("button");
+    btn.className = "btn-big bg-yellow-400 text-blue-900 px-6 py-4";
+    btn.style.fontSize = "clamp(1.2rem, 3vw, 1.7rem)";
+    btn.textContent = d.name + "  (" + d.items.length + " pictures)";
+    btn.addEventListener("click", function () {
+      deck = d;
+      order = shuffle(d.items.map(function (_, i) { return i; }));
+      pos = -1;
+      document.getElementById("categoryScreen").classList.add("hidden");
+      document.getElementById("gameScreen").classList.remove("hidden");
+      nextPicture();
+    });
+    catWrap.appendChild(btn);
+  });
+
+  document.getElementById("revealBtn").addEventListener("click", function () {
+    if (answered || step >= LEVELS.length - 1) return;
+    step++;
+    renderStep();
+    updateButtons();
+  });
+
+  document.getElementById("hintBtn").addEventListener("click", function () {
+    if (answered) return;
+    var item = deck.items[order[pos]];
+    var box = document.getElementById("hintBox");
+    box.textContent = hintFor(item[1]);
+    box.classList.remove("hidden");
+  });
+
+  document.getElementById("answerBtn").addEventListener("click", showAnswer);
+  document.getElementById("nextBtn").addEventListener("click", nextPicture);
+
+  document.getElementById("backToCatsBtn").addEventListener("click", function () {
+    document.getElementById("gameScreen").classList.add("hidden");
+    document.getElementById("categoryScreen").classList.remove("hidden");
+  });
+})();
+</script>
+</body>
+</html>
