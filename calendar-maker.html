@@ -38,7 +38,7 @@
 
     @media print {
       @page { size: landscape; margin: 0.5in; }
-      #toolbar, #topbar, #graphics-panel, #instructions { display: none !important; }
+      #toolbar, #topbar, #graphics-panel, #instructions, #saveStatusLine { display: none !important; }
       body { margin: 0; background:#fff; }
     }
 
@@ -148,6 +148,7 @@
           Fade background (easier to read)
         </label>
 
+        <button id="rolloverBtn" class="px-4 py-2 rounded-lg font-semibold bg-amber-200 hover:bg-amber-300 text-sm">Copy to Next Month →</button>
         <button id="clearBtn" class="px-4 py-2 rounded-lg font-semibold bg-gray-200 hover:bg-gray-300 text-sm">Clear Calendar</button>
         <label class="text-sm text-slate-700 font-semibold">Print size</label>
         <select id="paperSel" class="border rounded px-2 py-1 text-sm">
@@ -159,8 +160,11 @@
       </div>
     </div>
 
-    <p id="instructions" class="max-w-screen-2xl mx-auto text-sm text-slate-600 mb-3">
+    <p id="instructions" class="max-w-screen-2xl mx-auto text-sm text-slate-600 mb-1">
       Click into a day, then click a game or activity on the right to add it. You can also type directly into any day.
+    </p>
+    <p id="saveStatusLine" class="max-w-screen-2xl mx-auto text-xs text-slate-500 mb-3">
+      <span id="saveStatus">Not saved yet</span> — your calendar saves automatically on this computer/browser as you type. If you switch computers, export a PDF first so you don't lose your work.
     </p>
 
     <!-- Layout -->
@@ -299,14 +303,95 @@
         n.textContent=active?d++:'';
       }
     }
-    monthSel.addEventListener('change', renumberGrid);
-    yearSel.addEventListener('change', renumberGrid);
+    monthSel.addEventListener('change', onMonthYearChange);
+    yearSel.addEventListener('change', onMonthYearChange);
     renumberGrid();
+
+    // ===== SAVE / RESUME (this device only) =====
+    // Saves automatically as the AD types, so leaving mid-build and coming
+    // back later (same computer, same browser) restores where she left off.
+    // Each month/year is stored separately so several months can be kept
+    // at once. Background images are NOT saved here (too large for this
+    // storage) -- only the typed text and facility name.
+    const STORAGE_PREFIX = 'pf_calendar_';
+    const saveStatus = document.getElementById('saveStatus');
+    function storageKey(m,y){ return STORAGE_PREFIX + y + '-' + String(m).padStart(2,'0'); }
+
+    function saveCurrent(){
+      const m=parseInt(monthSel.value,10), y=parseInt(yearSel.value,10);
+      const data = {
+        facility: document.getElementById('facility').innerText,
+        days: boxes.map(b => b.querySelector('.day-content').innerText)
+      };
+      try {
+        localStorage.setItem(storageKey(m,y), JSON.stringify(data));
+        if (saveStatus) saveStatus.textContent = 'Saved ' + new Date().toLocaleTimeString([], {hour:'numeric', minute:'2-digit'});
+      } catch(e) {
+        if (saveStatus) saveStatus.textContent = 'Could not save (device storage full)';
+      }
+    }
+    let saveTimer;
+    function scheduleSave(){
+      clearTimeout(saveTimer);
+      saveTimer = setTimeout(saveCurrent, 600);
+    }
+
+    function loadForMonth(m,y){
+      document.querySelectorAll('.day-content').forEach(el => el.textContent = '');
+      const raw = localStorage.getItem(storageKey(m,y));
+      if (!raw) { if (saveStatus) saveStatus.textContent = 'No saved calendar yet for this month'; return; }
+      try {
+        const data = JSON.parse(raw);
+        if (data.facility) document.getElementById('facility').innerText = data.facility;
+        (data.days || []).forEach((text, i) => {
+          if (boxes[i]) boxes[i].querySelector('.day-content').textContent = text || '';
+        });
+        if (saveStatus) saveStatus.textContent = 'Loaded your saved calendar for this month';
+      } catch(e) { /* ignore corrupted entry */ }
+    }
+
+    function onMonthYearChange(){
+      renumberGrid();
+      loadForMonth(parseInt(monthSel.value,10), parseInt(yearSel.value,10));
+    }
+
+    calendar.addEventListener('input', scheduleSave);
+    document.getElementById('facility').addEventListener('input', scheduleSave);
+    loadForMonth(parseInt(monthSel.value,10), parseInt(yearSel.value,10));
+
+    // ===== COPY TO NEXT MONTH (rollover) =====
+    // Copies by grid position (same row/weekday slot), not by date number,
+    // so a recurring "every Monday" activity lands on next month's Mondays
+    // instead of shifting to whatever weekday that same date number falls on.
+    document.getElementById('rolloverBtn').addEventListener('click', () => {
+      const m = parseInt(monthSel.value,10), y = parseInt(yearSel.value,10);
+      const nextM = (m + 1) % 12;
+      const nextY = m === 11 ? y + 1 : y;
+
+      if (localStorage.getItem(storageKey(nextM, nextY))) {
+        if (!confirm(`${months[nextM]} ${nextY} already has a saved calendar. Overwrite it with a copy of ${months[m]} ${y}?`)) return;
+      } else {
+        if (!confirm(`Copy this month's activities into ${months[nextM]} ${nextY}? Recurring items (like "every Monday Bingo") will land on the right weekdays. Review the new month afterward for holidays and one-off events.`)) return;
+      }
+
+      const data = {
+        facility: document.getElementById('facility').innerText,
+        days: boxes.map(b => b.querySelector('.day-content').innerText)
+      };
+      localStorage.setItem(storageKey(nextM, nextY), JSON.stringify(data));
+
+      monthSel.value = nextM;
+      yearSel.value = nextY;
+      onMonthYearChange();
+      if (saveStatus) saveStatus.textContent = `Copied from ${months[m]} ${y} — review for holidays and one-off events`;
+    });
 
     // ===== CLEAR CALENDAR =====
     document.getElementById('clearBtn').addEventListener('click', () => {
       if (!confirm("Clear all activities from every day? Your facility name, month, and background image will stay.")) return;
       document.querySelectorAll('.day-content').forEach(el => el.textContent = "");
+      localStorage.removeItem(storageKey(parseInt(monthSel.value,10), parseInt(yearSel.value,10)));
+      if (saveStatus) saveStatus.textContent = 'Cleared';
     });
 
     // ===== BACKGROUND UPLOAD (local file, no external assets) =====
