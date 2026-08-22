@@ -150,6 +150,9 @@
 
         <button id="rolloverBtn" class="px-4 py-2 rounded-lg font-semibold bg-amber-200 hover:bg-amber-300 text-sm">Copy to Next Month →</button>
         <button id="clearBtn" class="px-4 py-2 rounded-lg font-semibold bg-gray-200 hover:bg-gray-300 text-sm">Clear Calendar</button>
+        <input type="file" id="jsonUpload" accept="application/json,.json" class="hidden">
+        <button id="saveJsonBtn" class="px-4 py-2 rounded-lg font-semibold bg-green-600 text-white hover:bg-green-700 text-sm">Save Working Calendar</button>
+        <button id="openJsonBtn" class="px-4 py-2 rounded-lg font-semibold bg-green-100 hover:bg-green-200 text-green-900 border border-green-600 text-sm">Open Working Calendar</button>
         <label class="text-sm text-slate-700 font-semibold">Print size</label>
         <select id="paperSel" class="border rounded px-2 py-1 text-sm">
           <option value="tabloid">11 × 17 (poster / common area)</option>
@@ -164,7 +167,7 @@
       Click into a day, then click a game or activity on the right to add it. You can also type directly into any day.
     </p>
     <p id="saveStatusLine" class="max-w-screen-2xl mx-auto text-xs text-slate-500 mb-3">
-      <span id="saveStatus">Not saved yet</span> — your calendar saves automatically on this computer/browser as you type. If you switch computers, export a PDF first so you don't lose your work.
+      <span id="saveStatus">Not saved yet</span> — Your calendar saves automatically in this browser as you type. To continue working on another computer—or to keep a backup—select Save Working Calendar. Later, select Open Working Calendar to continue editing. Export a PDF only when you are ready to print or share the finished calendar.
     </p>
 
     <!-- Layout -->
@@ -424,6 +427,116 @@
       bgTheme.style.opacity = hiContrast.checked ? 0.15 : 0.5;
     }
     hiContrast.addEventListener('change', applyBgOpacity);
+
+    // ===== SAVE / OPEN WORKING CALENDAR (JSON file) =====
+    // This is separate from the automatic browser (localStorage) save above.
+    // It lets the AD download a complete, editable copy of the calendar --
+    // including the background image -- to keep as a backup or bring to a
+    // different computer, then re-open it later and keep editing normally.
+    function sanitizeForFilename(text){
+      return (text || '').trim().replace(/[^a-z0-9]+/gi, '-').replace(/^-+|-+$/g, '') || 'Facility';
+    }
+
+    function gatherFullCalendarData(){
+      const m = parseInt(monthSel.value, 10);
+      const y = parseInt(yearSel.value, 10);
+      return {
+        appId: 'projectorfirst-calendar-maker',
+        version: 1,
+        month: m,
+        year: y,
+        facility: document.getElementById('facility').innerText,
+        monthYearTitle: document.getElementById('monthYear').innerText,
+        days: boxes.map(b => b.querySelector('.day-content').innerText),
+        background: bgTheme.src || null,
+        bgFade: hiContrast.checked,
+        paperSize: document.getElementById('paperSel').value,
+        savedAt: new Date().toISOString()
+      };
+    }
+
+    document.getElementById('saveJsonBtn').addEventListener('click', () => {
+      const data = gatherFullCalendarData();
+      const filename = `${sanitizeForFilename(data.facility)}-${months[data.month]}-${data.year}-Calendar.json`;
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      if (saveStatus) saveStatus.textContent = 'Working calendar file downloaded';
+    });
+
+    function restoreCalendarData(data){
+      monthSel.value = data.month;
+      yearSel.value = data.year;
+      renumberGrid();
+
+      document.getElementById('facility').innerText = data.facility || 'Facility Name';
+      if (data.monthYearTitle) document.getElementById('monthYear').innerText = data.monthYearTitle;
+
+      (data.days || []).forEach((text, i) => {
+        if (boxes[i]) boxes[i].querySelector('.day-content').textContent = text || '';
+      });
+
+      if (data.background) {
+        bgTheme.src = data.background;
+        bgRemoveBtn.classList.remove('hidden');
+      } else {
+        bgTheme.src = '';
+        bgTheme.style.opacity = 0;
+        bgRemoveBtn.classList.add('hidden');
+      }
+      hiContrast.checked = (data.bgFade !== undefined) ? !!data.bgFade : true;
+      applyBgOpacity();
+
+      if (data.paperSize) {
+        const paperSel = document.getElementById('paperSel');
+        if ([...paperSel.options].some(o => o.value === data.paperSize)) {
+          paperSel.value = data.paperSize;
+        }
+      }
+
+      saveCurrent();
+      if (saveStatus) saveStatus.textContent = 'Opened working calendar file — continue editing below';
+    }
+
+    const jsonUpload = document.getElementById('jsonUpload');
+    document.getElementById('openJsonBtn').addEventListener('click', () => jsonUpload.click());
+    jsonUpload.addEventListener('change', () => {
+      const file = jsonUpload.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        let data;
+        try {
+          data = JSON.parse(e.target.result);
+        } catch (err) {
+          alert("This file couldn't be opened. It doesn't look like a valid Calendar Maker working file.");
+          jsonUpload.value = '';
+          return;
+        }
+        const looksValid = data && data.appId === 'projectorfirst-calendar-maker'
+          && Array.isArray(data.days)
+          && typeof data.month === 'number'
+          && typeof data.year === 'number';
+        if (!looksValid) {
+          alert('This doesn\'t look like a Calendar Maker working file. Please choose a file created with "Save Working Calendar".');
+          jsonUpload.value = '';
+          return;
+        }
+        restoreCalendarData(data);
+        jsonUpload.value = '';
+      };
+      reader.onerror = () => {
+        alert('This file could not be read. Please try again or choose a different file.');
+        jsonUpload.value = '';
+      };
+      reader.readAsText(file);
+    });
 
     // ===== EXPORT TO PDF =====
     // Paper sizes below are landscape (wide side first) since the calendar
