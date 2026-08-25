@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Random Number Generator — ProjectorFirst</title>
+
+<!-- Membership gate (paywall-test) -->
+<script
+  data-memberstack-app="app_cmgnwpg8y00x10suih4pua785"
+  src="https://static.memberstack.com/scripts/v2/memberstack.js"
+  type="text/javascript">
+</script>
+<script src="/guard.js"></script>
+
+<meta name="description" content="Pick a random number in any range — great for raffles, prize draws, and picking a winner, with big high-contrast numbers for senior care."/>
+  <meta name="theme-color" content="#1e3a8a"/>
+  <link rel="icon" href="/logo.svg" type="image/svg+xml"/>
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    html, body { height: 100%; }
+    body {
+      background: #ffffff;
+      color: #000;
+      font-family: ui-sans-serif, system-ui, -apple-system, sans-serif;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      min-height: 100dvh;
+      max-height: 100dvh;
+      padding: 0.75rem 1rem;
+      overflow: hidden;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+      margin-bottom: 0.5rem;
+    }
+    .topbar h1 {
+      font-size: clamp(1.4rem, 3vmin, 2.2rem);
+      font-weight: 800;
+      color: #1e3a8a;
+      white-space: nowrap;
+    }
+    .back-btn {
+      background: #1e3a8a;
+      color: #fff;
+      font-weight: 700;
+      font-size: clamp(1rem, 2vmin, 1.25rem);
+      padding: 0.6rem 1.2rem;
+      border-radius: 0.75rem;
+      white-space: nowrap;
+    }
+    .back-btn:hover { background: #1e40af; }
+
+    .range-form {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      border: 2px solid #1e3a8a;
+      border-radius: 0.75rem;
+      padding: 0.4rem 0.75rem;
+    }
+    .range-form label {
+      font-weight: 700;
+      color: #1e3a8a;
+      font-size: clamp(0.95rem, 1.8vmin, 1.15rem);
+    }
+    .range-form input[type="number"] {
+      width: 5.5rem;
+      font-size: clamp(1rem, 2vmin, 1.25rem);
+      font-weight: 700;
+      border: 2px solid #cbd5e1;
+      border-radius: 0.5rem;
+      padding: 0.3rem 0.5rem;
+      color: #1e3a8a;
+    }
+    .range-form input[type="number"]:focus { outline: 3px solid #facc15; border-color: #1e3a8a; }
+
+    .stage {
+      flex: 1 1 auto;
+      min-height: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: clamp(1rem, 3vw, 2.5rem);
+    }
+    .caller-box {
+      width: min(58vw, calc(100dvh - 15rem), 600px);
+      aspect-ratio: 1 / 1;
+      background: #000;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      border-radius: 1.25rem;
+      font-weight: 900;
+      box-shadow: 0 0 30px rgba(0,0,0,0.3);
+      user-select: none;
+    }
+    .caller-number {
+      white-space: nowrap;
+      letter-spacing: 0.02em;
+      line-height: 0.9;
+    }
+    .caller-sub {
+      font-size: clamp(1rem, 2.5vmin, 1.5rem);
+      color: #facc15;
+      margin-top: 0.75rem;
+      font-weight: 700;
+      min-height: 1.5em;
+    }
+
+    .controls {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+    .btn {
+      font-size: clamp(1.2rem, 2.4vmin, 1.75rem);
+      font-weight: bold;
+      padding: clamp(0.8rem, 1.8vmin, 1.25rem) clamp(1.2rem, 3vmin, 2.5rem);
+      border-radius: 1rem;
+      cursor: pointer;
+      min-width: clamp(140px, 16vw, 200px);
+      transition: transform 0.1s;
+      border: none;
+    }
+    .btn:hover { transform: scale(1.05); }
+    .btn:focus-visible { outline: 4px solid #facc15; outline-offset: 2px; }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+    .btn-next { background: #1e3a8a; color: #fff; }
+    .btn-fullscreen { background: #7c3aed; color: #fff; }
+    .btn-reset { background: #dc2626; color: #fff; }
+    .btn-sound { background: #fff; color: #1e3a8a; border: 2px solid #1e3a8a; }
+
+    .repeat-toggle {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-weight: 700;
+      color: #1e3a8a;
+      font-size: clamp(0.95rem, 1.8vmin, 1.1rem);
+    }
+    .repeat-toggle input { width: 1.3rem; height: 1.3rem; }
+
+    .tray-wrap {
+      flex: 0 0 auto;
+      margin-top: 0.5rem;
+      border-top: 3px solid #e2e8f0;
+      padding-top: 0.5rem;
+    }
+    .tray-label {
+      font-size: clamp(0.9rem, 1.8vmin, 1.1rem);
+      font-weight: 700;
+      color: #475569;
+      text-align: left;
+      margin-bottom: 0.25rem;
+    }
+    .recent-calls {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      overflow-x: auto;
+      overflow-y: hidden;
+      padding-bottom: 0.4rem;
+      -webkit-overflow-scrolling: touch;
+    }
+    .recent-calls span {
+      flex: 0 0 auto;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: clamp(56px, 8vmin, 88px);
+      height: clamp(56px, 8vmin, 88px);
+      padding: 0 0.5rem;
+      border-radius: 50%;
+      background: #1e3a8a;
+      color: #fff;
+      font-size: clamp(1.3rem, 3vmin, 2rem);
+      font-weight: bold;
+      box-shadow: 0 0 8px rgba(0,0,0,0.3);
+    }
+    .recent-calls span:first-child {
+      outline: 4px solid #facc15;
+      outline-offset: 2px;
+    }
+
+    @media (max-width: 820px) {
+      .stage { flex-direction: column; gap: 0.75rem; }
+      .caller-box { width: min(88vw, calc(100dvh - 24rem)); }
+      .controls { flex-direction: row; flex-wrap: wrap; justify-content: center; }
+      .topbar { justify-content: center; }
+      .range-form { justify-content: center; width: 100%; }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="topbar">
+    <a href="apps.html" class="back-btn">← Back to Apps</a>
+    <h1>🎲 Random Number Generator</h1>
+    <div class="range-form">
+      <label for="minInput">From</label>
+      <input type="number" id="minInput" value="1"/>
+      <label for="maxInput">to</label>
+      <input type="number" id="maxInput" value="100"/>
+      <label class="repeat-toggle"><input type="checkbox" id="repeatToggle" checked/> Avoid repeats</label>
+    </div>
+  </div>
+
+  <div class="stage">
+    <div class="controls">
+      <button id="nextBtn" class="btn btn-next">Generate</button>
+      <button id="fsBtn" class="btn btn-fullscreen">Fullscreen</button>
+    </div>
+
+    <div id="callerBox" class="caller-box">
+      <div id="callerText" class="caller-number">—</div>
+      <div id="callerSub" class="caller-sub"></div>
+    </div>
+
+    <div class="controls">
+      <button id="resetBtn" class="btn btn-reset">Reset</button>
+      <button id="soundBtn" class="btn btn-sound">🔊 Sound</button>
+    </div>
+  </div>
+
+  <div class="tray-wrap">
+    <div class="tray-label">Generated so far: <span id="callCount">0</span> <span style="font-weight:500">(newest first)</span></div>
+    <div id="recentCalls" class="recent-calls"></div>
+  </div>
+
+  <script>
+    let pool = [], history = [], soundOn = true;
+
+    const callerText = document.getElementById("callerText");
+    const callerSub = document.getElementById("callerSub");
+    const recentDiv = document.getElementById("recentCalls");
+    const callCount = document.getElementById("callCount");
+    const minInput = document.getElementById("minInput");
+    const maxInput = document.getElementById("maxInput");
+    const repeatToggle = document.getElementById("repeatToggle");
+    const nextBtn = document.getElementById("nextBtn");
+
+    function getRange() {
+      let min = parseInt(minInput.value, 10);
+      let max = parseInt(maxInput.value, 10);
+      if (isNaN(min)) min = 1;
+      if (isNaN(max)) max = 100;
+      if (min > max) { [min, max] = [max, min]; }
+      return { min, max };
+    }
+
+    function shuffle(arr) {
+      const randomValues = new Uint32Array(arr.length);
+      crypto.getRandomValues(randomValues);
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = randomValues[i] % (i + 1);
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+    }
+
+    function initGame() {
+      const { min, max } = getRange();
+      pool = [];
+      for (let n = min; n <= max; n++) pool.push(n);
+      shuffle(pool);
+      history = [];
+      callerText.textContent = "—";
+      callerSub.textContent = "";
+      recentDiv.innerHTML = "";
+      callCount.textContent = "0";
+      nextBtn.disabled = false;
+      fitCaller();
+    }
+
+    function generateNext() {
+      const { min, max } = getRange();
+
+      if (repeatToggle.checked) {
+        if (pool.length === 0) {
+          callerSub.textContent = "All numbers used — tap Reset";
+          nextBtn.disabled = true;
+          return;
+        }
+        const pick = pool.pop();
+        showNumber(pick, min, max);
+      } else {
+        const pick = Math.floor(Math.random() * (max - min + 1)) + min;
+        showNumber(pick, min, max);
+      }
+    }
+
+    function showNumber(pick, min, max) {
+      history.push(pick);
+      callerText.textContent = pick;
+      callerSub.textContent = repeatToggle.checked ? `${pool.length} left of ${max - min + 1}` : "";
+      fitCaller();
+      addRecent(pick);
+      callCount.textContent = history.length;
+      if (soundOn) speak(String(pick));
+    }
+
+    function addRecent(n) {
+      const el = document.createElement("span");
+      el.textContent = n;
+      recentDiv.prepend(el);
+      recentDiv.scrollLeft = 0;
+      if (recentDiv.children.length > 100) recentDiv.lastChild.remove();
+    }
+
+    function resetGame() { initGame(); }
+
+    function toggleSound() {
+      soundOn = !soundOn;
+      document.getElementById("soundBtn").textContent = soundOn ? "🔊 Sound" : "🔇 Muted";
+      if (!soundOn) speechSynthesis.cancel();
+    }
+
+    function toggleFullscreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen();
+      } else {
+        document.exitFullscreen();
+      }
+    }
+
+    function speak(text) {
+      const utter = new SpeechSynthesisUtterance(text);
+      utter.rate = 1.0;
+      speechSynthesis.speak(utter);
+    }
+
+    function fitCaller() {
+      const box = document.getElementById("callerBox");
+      const text = callerText.textContent || "—";
+      let size = Math.min(box.clientHeight * 0.62,
+                          (box.clientWidth * 0.92) / (0.62 * Math.max(text.length, 1)));
+      callerText.style.fontSize = size + "px";
+      let guard = 20;
+      while (callerText.scrollWidth > box.clientWidth * 0.94 && guard-- > 0) {
+        size *= 0.94;
+        callerText.style.fontSize = size + "px";
+      }
+    }
+
+    window.addEventListener("resize", fitCaller);
+    document.addEventListener("fullscreenchange", fitCaller);
+
+    nextBtn.addEventListener("click", generateNext);
+    document.getElementById("resetBtn").addEventListener("click", resetGame);
+    document.getElementById("soundBtn").addEventListener("click", toggleSound);
+    document.getElementById("fsBtn").addEventListener("click", toggleFullscreen);
+    document.addEventListener("keydown", (e) => {
+      if (e.code === "Space") { e.preventDefault(); generateNext(); }
+      if (e.code === "KeyR") resetGame();
+      if (e.code === "KeyF") toggleFullscreen();
+      if (e.code === "KeyS") toggleSound();
+    });
+
+    minInput.addEventListener("change", initGame);
+    maxInput.addEventListener("change", initGame);
+    repeatToggle.addEventListener("change", initGame);
+
+    initGame();
+  </script>
+</body>
+</html>
