@@ -59,7 +59,8 @@
       white-space: nowrap;
     }
     .back-btn:hover { background: #1e40af; }
-    #themeGame {
+    #themeGame,
+    #callerVoice {
       border: 2px solid #1e3a8a;
       font-size: clamp(1rem, 2vmin, 1.25rem);
       border-radius: 0.75rem;
@@ -67,6 +68,13 @@
       font-weight: 600;
       color: #1e3a8a;
       background: #fff;
+    }
+    .topbar-options {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      justify-content: center;
     }
 
     /* ---- Main stage: controls + caller box, sized to leave room for the tray ---- */
@@ -188,16 +196,24 @@
   <div class="topbar">
     <a href="apps.html" class="back-btn">← Back to Apps</a>
     <h1>🎉 Classic Bingo Caller</h1>
-    <select id="themeGame" aria-label="Game style">
-      <option value="classic-75">Classic 🇺🇸 (1–75)</option>
-      <option value="halloween-75">Halloween 🎃 (1–75)</option>
-      <option value="christmas-75">Christmas 🎄 (1–75)</option>
-      <option value="easter-75">Easter 🐣 (1–75)</option>
-      <option value="valentines-75">Valentine’s 💘 (1–75)</option>
-      <option value="patriotic-75">Patriotic ⭐ (1–75)</option>
-      <option value="classic-90">UK 🇬🇧 (1–90)</option>
-      <option value="classic-100">Extended 💫 (1–100)</option>
-    </select>
+    <div class="topbar-options">
+      <select id="callerVoice" aria-label="Bingo caller voice">
+        <option value="southern-woman">Warm Southern Woman</option>
+        <option value="southern-man">Cheerful Southern Man</option>
+        <option value="british-woman">Polished British Woman</option>
+        <option value="american-woman">Clear American Woman</option>
+      </select>
+      <select id="themeGame" aria-label="Game style">
+        <option value="classic-75">Classic 🇺🇸 (1–75)</option>
+        <option value="halloween-75">Halloween 🎃 (1–75)</option>
+        <option value="christmas-75">Christmas 🎄 (1–75)</option>
+        <option value="easter-75">Easter 🐣 (1–75)</option>
+        <option value="valentines-75">Valentine’s 💘 (1–75)</option>
+        <option value="patriotic-75">Patriotic ⭐ (1–75)</option>
+        <option value="classic-90">UK 🇬🇧 (1–90)</option>
+        <option value="classic-100">Extended 💫 (1–100)</option>
+      </select>
+    </div>
   </div>
 
   <div class="stage">
@@ -231,7 +247,56 @@
     const callerEmoji = document.getElementById("callerEmoji");
     const recentDiv = document.getElementById("recentCalls");
     const themeGameSel = document.getElementById("themeGame");
+    const callerVoiceSel = document.getElementById("callerVoice");
     const callCount = document.getElementById("callCount");
+
+    const CALLER_STYLES = {
+      "southern-woman": {
+        lang: "en-US",
+        names: ["Samantha", "Ava", "Jenny", "Aria", "Zira", "Susan", "Google US English"],
+        rate: 0.84,
+        pitch: 1.06
+      },
+      "southern-man": {
+        lang: "en-US",
+        names: ["Evan", "Guy", "Davis", "Tony", "Fred", "David", "Mark"],
+        rate: 0.86,
+        pitch: 0.88
+      },
+      "british-woman": {
+        lang: "en-GB",
+        names: ["Serena", "Sonia", "Libby", "Martha", "Kate", "Google UK English Female"],
+        rate: 0.86,
+        pitch: 1.02
+      },
+      "american-woman": {
+        lang: "en-US",
+        names: ["Samantha", "Ava", "Jenny", "Aria", "Zira", "Susan", "Google US English"],
+        rate: 0.80,
+        pitch: 1.0
+      }
+    };
+
+    let availableVoices = [];
+
+    function loadVoices() {
+      availableVoices = speechSynthesis.getVoices();
+    }
+
+    function voiceForStyle(style) {
+      const matchingLanguage = availableVoices.filter(voice =>
+        voice.lang.toLowerCase().startsWith(style.lang.toLowerCase())
+      );
+      for (const preferredName of style.names) {
+        const match = matchingLanguage.find(voice =>
+          voice.name.toLowerCase().includes(preferredName.toLowerCase())
+        );
+        if (match) return match;
+      }
+      return matchingLanguage[0] || availableVoices.find(voice =>
+        voice.lang.toLowerCase().startsWith("en")
+      ) || null;
+    }
 
     const THEMES = {
       classic: { emoji: "" },
@@ -290,7 +355,7 @@
       fitCaller();
       addRecent(pick);
       callCount.textContent = history.length;
-      if (soundOn) speak(pick.letter ? `${pick.letter} ${pick.number}` : `${pick.number}`);
+      if (soundOn) speakCall(pick.letter, pick.number);
     }
 
     function addRecent(call) {
@@ -319,9 +384,17 @@
       }
     }
 
-    function speak(text) {
-      const utter = new SpeechSynthesisUtterance(text);
-      utter.rate = 1.0;
+    function speakCall(letter, number) {
+      const spokenCall = letter ? `${letter} ${number}` : `${number}`;
+      const phrase = `${spokenCall}. Again, ${spokenCall}.`;
+      const style = CALLER_STYLES[callerVoiceSel.value] || CALLER_STYLES["southern-woman"];
+      const utter = new SpeechSynthesisUtterance(phrase);
+      const selectedVoice = voiceForStyle(style);
+      if (selectedVoice) utter.voice = selectedVoice;
+      utter.lang = selectedVoice?.lang || style.lang;
+      utter.rate = style.rate;
+      utter.pitch = style.pitch;
+      speechSynthesis.cancel();
       speechSynthesis.speak(utter);
     }
 
@@ -356,6 +429,13 @@
     });
 
     themeGameSel.addEventListener("change", initGame);
+    callerVoiceSel.value = localStorage.getItem("projectorfirst-bingo-voice") || "southern-woman";
+    callerVoiceSel.addEventListener("change", () => {
+      localStorage.setItem("projectorfirst-bingo-voice", callerVoiceSel.value);
+      speechSynthesis.cancel();
+    });
+    loadVoices();
+    speechSynthesis.addEventListener?.("voiceschanged", loadVoices);
     initGame();
   </script>
 </body>
