@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Ethel's Day Out | Projector First</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:#f3eadb;color:#29231e}.game{min-height:100vh;display:flex;flex-direction:column}.top{display:flex;justify-content:space-between;align-items:center;padding:14px 22px;background:#fff8ed;border-bottom:3px solid #b97963}.brand{font-weight:800;font-size:clamp(18px,2vw,28px)}button{font:inherit}.restart{border:2px solid #6d4c41;background:white;border-radius:12px;padding:10px 16px;font-weight:700;cursor:pointer}.scene{flex:1;display:flex;align-items:center;justify-content:center;padding:28px;background:linear-gradient(145deg,#eadfc9,#bfd0c8)}.card{width:min(1050px,94vw);background:rgba(255,255,255,.94);border-radius:24px;padding:clamp(24px,4vw,54px);box-shadow:0 10px 30px rgba(0,0,0,.12)}.eyebrow{font-size:clamp(14px,1.5vw,20px);font-weight:800;letter-spacing:.12em;color:#75594c}.card h1{font-size:clamp(36px,5vw,70px);margin:8px 0 16px}.story{font-size:clamp(22px,2.5vw,34px);line-height:1.45}.question{font-size:clamp(27px,3vw,42px);font-weight:800;margin-top:22px}.purse{display:inline-block;margin-top:18px;padding:10px 15px;border-radius:999px;background:#fff3df;font-size:clamp(16px,1.5vw,22px)}.choices{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;padding:20px 28px 30px;background:#fff8ed}.choice{min-height:120px;border:3px solid #b97963;border-radius:18px;background:white;padding:18px;text-align:left;cursor:pointer;display:flex;gap:16px;align-items:center}.choice:hover,.choice:focus{background:#fff0e8;outline:4px solid #7f9d91;outline-offset:2px}.icon{font-size:44px}.label{display:block;font-size:clamp(24px,2.5vw,36px);font-weight:900}.desc{display:block;margin-top:5px;font-size:clamp(17px,1.7vw,24px);color:#5f554e}.one{grid-template-columns:1fr}.placeholder{text-align:center}.placeholder .big{font-size:72px}@media(max-width:700px){.choices{grid-template-columns:1fr}.top{align-items:flex-start;gap:10px}.restart{padding:8px 10px}.scene{padding:14px}.choices{padding:14px}}
+</style>
+</head>
+<body>
+<main class="game">
+<header class="top"><div class="brand">Projector First • Ethel's Day Out</div><button class="restart" id="restart">↻ Start Over</button></header>
+<section class="scene" id="scene"></section>
+<section class="choices" id="choices"></section>
+</main>
+<script>
+const scenes={
+start:{e:"SATURDAY MORNING",h:"Meet Ethel",t:"Ethel has nowhere she has to be. She's got a little money in her purse and a whole day ahead of her.",q:"Where should Ethel go first?",o:[["🛍️","DOWNTOWN","Shopping, lunch & maybe a little gossip","downtown"],["🌳","THE PARK","Fresh air, music & who knows what else","park"]]},
+downtown:{e:"MAIN STREET",h:"Ethel Arrives Downtown",t:"Ethel strolls past the storefronts and spots two places that catch her eye.",q:"Where should Ethel go first?",o:[["💇","BEAUTY SHOP","Maybe I'll just stop in and say hello…","beauty"],["🍨","SODA FOUNTAIN","I could certainly use something sweet…","soda"]]},
+beauty:{e:"MARGE IS HAPPY TO SEE HER",h:"The Beauty Shop",t:"Ethel stops to visit Marge. They catch up on the latest news, and Marge suggests Ethel might like to have her hair set while she's here.",q:"What should Ethel do?",p:true,o:[["💇‍♀️","HAVE HER HAIR DONE","It might be nice to get all fixed up!","hair"],["💬","JUST VISIT","Maybe I'll sit a minute and visit with Marge.","visit"]]},
+hair:{e:"A LITTLE WHILE LATER…",h:"Freshly Fixed Up!",t:"Marge finishes Ethel's hair, and Ethel feels refreshed and ready to enjoy the rest of her day.",q:"Ready to continue?",p:true,o:[["➡️","NEXT","Continue Ethel's adventure","next"]]},
+next:{e:"BACK ON MAIN STREET",h:"Where Next?",t:"Ethel steps outside. Her hair looks wonderful, the afternoon is still young, and there is plenty more to do downtown.",q:"What should Ethel do next?",o:[["🍨","GET A TREAT","Head over to the soda fountain.","soda"],["🛍️","GO SHOPPING","Walk down to the department store.","shopping"]]}
+};
+const scene=document.getElementById("scene"),choices=document.getElementById("choices");
+function show(id){
+ const s=scenes[id];
+ if(!s){placeholder(id);return}
+ scene.innerHTML='<div class="card"><div class="eyebrow">'+s.e+'</div><h1>'+s.h+'</h1><div class="story">'+s.t+'</div>'+(s.p?'<div class="purse">👜 A cream handbag rests quietly on the counter.</div>':'')+'<div class="question">'+s.q+'</div></div>';
+ choices.className="choices"+(s.o.length===1?" one":""); choices.innerHTML="";
+ s.o.forEach(x=>{const b=document.createElement("button");b.className="choice";b.innerHTML='<span class="icon">'+x[0]+'</span><span><span class="label">'+x[1]+'</span><span class="desc">'+x[2]+'</span></span>';b.onclick=()=>show(x[3]);choices.appendChild(b)})
+}
+function placeholder(id){
+ const names={park:"The Park",soda:"The Soda Fountain",shopping:"The Department Store",visit:"Just Visiting Marge"};
+ scene.innerHTML='<div class="card placeholder"><div class="big">🎬</div><h1>'+ (names[id]||"Next Scene") +'</h1><div class="story">This branch is ready for its story and high-resolution artwork. The navigation reached it successfully.</div></div>';
+ choices.className="choices one";choices.innerHTML='<button class="choice" id="backStart"><span class="icon">↻</span><span><span class="label">RETURN TO BEGINNING</span><span class="desc">Play the prototype again.</span></span></button>';document.getElementById("backStart").onclick=()=>show("start")
+}
+document.getElementById("restart").onclick=()=>show("start");show("start");
+</script>
+</body>
+</html>
