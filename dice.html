@@ -1,179 +1,197 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>🎲 Dice Roller — ProjectorFirst</title>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Dice Roller — ProjectorFirst</title>
 
-<!-- Membership gate (paywall-test) -->
-<script
-  data-memberstack-app="app_cmgnwpg8y00x10suih4pua785"
-  src="https://static.memberstack.com/scripts/v2/memberstack.js"
-  type="text/javascript">
-</script>
+<script data-memberstack-app="app_cmgnwpg8y00x10suih4pua785" src="https://static.memberstack.com/scripts/v2/memberstack.js" type="text/javascript"></script>
 <script src="/guard.js"></script>
-<script src="https://cdn.tailwindcss.com"></script>
+
+<meta name="description" content="Large-screen dice roller with two giant high-contrast dice for group games and senior activities."/>
+<link rel="icon" href="/logo.svg" type="image/svg+xml"/>
 
 <style>
-  body {
-    background: #ffffff;
-    font-family: ui-sans-serif, system-ui, sans-serif;
-    text-align: center;
-    padding: 20px;
-    color: #000;
-  }
-
-  h1 {
-    font-size: clamp(2rem, 6vw, 4rem);
-    font-weight: 800;
-    color: #1e3a8a;
-    margin-top: 20px;
-  }
-
-  .dice-area {
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 5vw;
-    margin-top: 5vh;
-    margin-bottom: 5vh;
-  }
-
-  .die {
-    width: clamp(150px, 30vw, 400px);
-    height: clamp(150px, 30vw, 400px);
-    background: #fff;
-    border: clamp(6px, 1vw, 12px) solid #000;
-    border-radius: 20px;
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    grid-template-rows: repeat(3, 1fr);
-    padding: clamp(10px, 2vw, 30px);
-    box-shadow: 0 10px 0 rgba(0,0,0,0.2);
-  }
-
-  .pip {
-    width: clamp(20px, 4vw, 60px);
-    height: clamp(20px, 4vw, 60px);
-    background: #000;
-    border-radius: 50%;
-    justify-self: center;
-    align-self: center;
-  }
-
-  .bounce {
-    animation: bounce 0.3s ease;
-  }
-
-  @keyframes bounce {
-    0% { transform: scale(1); }
-    40% { transform: scale(1.2); }
-    100% { transform: scale(1); }
-  }
+:root{
+  --navy:#17324d;--blue:#3f7898;--blue2:#2f607a;--coral:#d97961;--coral2:#bc5e4b;
+  --sage:#6e9d8b;--sage2:#557e70;--cream:#fff8e8;--ivory:#fffdf6;--gold:#d5c49d;
+}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{
+  min-height:100vh;min-height:100dvh;
+  color:var(--navy);font-family:Arial,sans-serif;
+  background:
+    radial-gradient(circle at 12% 10%,rgba(242,184,75,.26),transparent 24%),
+    radial-gradient(circle at 88% 18%,rgba(110,157,139,.22),transparent 26%),
+    linear-gradient(145deg,#fff8e8,#f3ede2 52%,#e6f0ed);
+}
+body:before{
+  content:"";position:fixed;inset:0;pointer-events:none;opacity:.10;
+  background-image:
+    linear-gradient(90deg,transparent 49%,rgba(23,50,77,.07) 50%,transparent 51%),
+    linear-gradient(transparent 49%,rgba(23,50,77,.05) 50%,transparent 51%);
+  background-size:48px 48px
+}
+button,a{font:inherit}
+.topbar{
+  max-width:1180px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;
+  gap:14px;padding:20px 18px;border-bottom:1px solid rgba(23,50,77,.12);flex-wrap:wrap
+}
+.back-btn,.top-btn{
+  border:0;border-radius:14px;background:#1e3a8a;color:#fff;text-decoration:none;
+  font-weight:900;padding:11px 17px;cursor:pointer;box-shadow:0 5px 0 rgba(23,50,77,.22)
+}
+.title-block{text-align:center;flex:1;min-width:260px}
+.eyebrow{font-size:.8rem;font-weight:900;letter-spacing:.18em;color:#80694e}
+h1{
+  margin:3px 0 0;font-family:Georgia,serif;font-size:clamp(2.2rem,5vw,4rem);
+  color:var(--navy);line-height:1;text-shadow:0 2px 0 #fff
+}
+.wrap{max-width:1180px;margin:0 auto;padding:26px 18px 34px;position:relative;text-align:center}
+.subtitle{
+  margin:0 auto 20px;max-width:760px;color:#5f6c72;
+  font-size:clamp(1.05rem,2vw,1.3rem);font-weight:800
+}
+.dice-shell{
+  background:rgba(255,253,246,.88);border:3px solid rgba(23,50,77,.10);
+  border-radius:30px;padding:24px;box-shadow:0 18px 42px rgba(23,50,77,.12)
+}
+.dice-area{
+  display:flex;justify-content:center;align-items:center;flex-wrap:wrap;
+  gap:clamp(24px,5vw,70px);margin:6px 0 18px
+}
+.die{
+  width:clamp(220px,31vw,410px);height:clamp(220px,31vw,410px);
+  background:#fff;border:8px solid #17324d;border-radius:28px;
+  display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(3,1fr);
+  padding:clamp(18px,2.2vw,34px);
+  box-shadow:0 10px 0 #b99d69,0 18px 28px rgba(23,50,77,.16)
+}
+.pip{
+  width:clamp(34px,5.2vw,68px);height:clamp(34px,5.2vw,68px);
+  background:#102d46;border-radius:50%;justify-self:center;align-self:center
+}
+.bounce{animation:bounce .28s ease}
+@keyframes bounce{0%{transform:scale(1)}40%{transform:scale(1.08)}100%{transform:scale(1)}}
+.total{
+  display:inline-flex;align-items:baseline;justify-content:center;gap:10px;
+  min-width:250px;background:#fff8e8;border:3px solid #d5c49d;border-radius:18px;
+  padding:10px 18px;margin:0 auto 18px;font-weight:900;color:#5f6c72
+}
+.total strong{
+  font-family:"Arial Black",Arial,sans-serif;font-size:clamp(2rem,4.5vw,3.6rem);color:#102d46
+}
+.controls{display:flex;justify-content:center;gap:14px;flex-wrap:wrap}
+.roll-btn{
+  min-width:250px;border:4px solid rgba(255,255,255,.78);border-radius:20px;
+  background:linear-gradient(145deg,var(--blue),var(--blue2));color:#fff;
+  font-size:clamp(1.4rem,2.7vw,1.9rem);font-weight:900;padding:15px 24px;
+  box-shadow:0 7px 0 #244d63;cursor:pointer
+}
+.tip{text-align:center;margin-top:13px;color:#7a7167;font-size:.95rem;font-weight:700}
+@media(max-width:760px){
+  .title-block{order:-1;flex-basis:100%}
+  .dice-shell{padding:16px}
+  .die{width:min(72vw,340px);height:min(72vw,340px)}
+}
 </style>
 </head>
 
 <body>
-  <!-- Header -->
-  <div class="max-w-6xl mx-auto flex justify-between items-center p-6 border-b border-gray-200">
-    <a href="apps.html" class="bg-blue-900 text-white text-xl font-bold px-5 py-3 rounded-xl hover:bg-blue-800">← Back to Apps</a>
+<div class="topbar">
+  <a href="apps.html" class="back-btn">← Back to Apps</a>
+  <div class="title-block">
+    <div class="eyebrow">DICE ROLLER</div>
+    <h1>Roll the Dice</h1>
   </div>
+  <button id="fsBtn" class="top-btn">⛶ Fullscreen</button>
+</div>
 
-  <h1>🎲 Dice Roller</h1>
+<main class="wrap">
+  <p class="subtitle">Two giant high-contrast dice for group games, raffles, and quick challenges.</p>
 
-  <div class="dice-area">
-    <div id="die1" class="die"></div>
-    <div id="die2" class="die"></div>
-  </div>
+  <section class="dice-shell">
+    <div class="dice-area">
+      <div id="die1" class="die" aria-label="First die"></div>
+      <div id="die2" class="die" aria-label="Second die"></div>
+    </div>
 
-  <div class="flex justify-center gap-4 mt-6 flex-wrap">
-    <button id="rollBtn" class="px-8 py-5 bg-blue-900 text-white rounded-2xl text-3xl font-bold shadow hover:bg-blue-800">
-      ROLL 🎲
-    </button>
+    <div class="total">Total <strong id="totalValue">—</strong></div>
 
-    <button id="fsBtn" class="px-8 py-5 bg-green-700 text-white rounded-2xl text-3xl font-bold shadow hover:bg-green-600">
-      FULLSCREEN ⛶
-    </button>
-  </div>
+    <div class="controls">
+      <button id="rollBtn" class="roll-btn">ROLL 🎲</button>
+    </div>
 
-  <!-- 🎵 Dice Roll Sound -->
-  <audio id="diceSound" src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_0b3f8b75e9.mp3?filename=dice-roll-1.mp3" preload="auto"></audio>
+    <div class="tip">Space = Roll • F = Fullscreen</div>
+  </section>
+</main>
 
 <script>
-  const die1 = document.getElementById("die1");
-  const die2 = document.getElementById("die2");
-  const rollBtn = document.getElementById("rollBtn");
-  const fsBtn = document.getElementById("fsBtn");
-  const sound = document.getElementById("diceSound");
+const die1=document.getElementById("die1");
+const die2=document.getElementById("die2");
+const rollBtn=document.getElementById("rollBtn");
+const fsBtn=document.getElementById("fsBtn");
+const totalValue=document.getElementById("totalValue");
 
-  const pipLayout = {
-    1: [5],
-    2: [1, 9],
-    3: [1, 5, 9],
-    4: [1, 3, 7, 9],
-    5: [1, 3, 5, 7, 9],
-    6: [1, 3, 4, 6, 7, 9],
-  };
+const pipLayout={
+  1:[5],
+  2:[1,9],
+  3:[1,5,9],
+  4:[1,3,7,9],
+  5:[1,3,5,7,9],
+  6:[1,3,4,6,7,9]
+};
 
-  function drawDie(dieEl, number) {
-    dieEl.innerHTML = "";
-    dieEl.classList.add("bounce");
-    setTimeout(() => dieEl.classList.remove("bounce"), 300);
+function drawDie(dieEl,number){
+  dieEl.innerHTML="";
+  dieEl.classList.add("bounce");
+  setTimeout(()=>dieEl.classList.remove("bounce"),280);
 
-    for (let i = 1; i <= 9; i++) {
-      const spot = document.createElement("div");
-      if (pipLayout[number].includes(i)) spot.className = "pip";
-      dieEl.appendChild(spot);
-    }
+  for(let i=1;i<=9;i++){
+    const spot=document.createElement("div");
+    if(pipLayout[number].includes(i))spot.className="pip";
+    dieEl.appendChild(spot);
   }
+  dieEl.setAttribute("aria-label","Die shows "+number);
+}
 
-  function rollDice() {
-    // Play sound on user interaction (mobile-safe)
-    try {
-      sound.currentTime = 0;
-      sound.play().catch(() => {});
-    } catch {}
+function rollDice(){
+  let shakeCount=5;
+  rollBtn.disabled=true;
 
-    let shakeCount = 6;
-    const shakeInterval = setInterval(() => {
-      const n1 = Math.floor(Math.random() * 6) + 1;
-      const n2 = Math.floor(Math.random() * 6) + 1;
-      drawDie(die1, n1);
-      drawDie(die2, n2);
-      shakeCount--;
+  const shakeInterval=setInterval(()=>{
+    drawDie(die1,Math.floor(Math.random()*6)+1);
+    drawDie(die2,Math.floor(Math.random()*6)+1);
+    shakeCount--;
 
-      if (shakeCount === 0) {
-        clearInterval(shakeInterval);
-        const final1 = Math.floor(Math.random() * 6) + 1;
-        const final2 = Math.floor(Math.random() * 6) + 1;
-        drawDie(die1, final1);
-        drawDie(die2, final2);
-      }
-    }, 200);
-  }
-// Unlock audio on first tap for iPhones / Android
-document.body.addEventListener("touchstart", () => {
-  sound.play().then(() => sound.pause());
-}, { once: true });
-
-  rollBtn.addEventListener("click", rollDice);
-
-  document.addEventListener("keydown", (e) => {
-    if (e.code === "Space") {
-      e.preventDefault();
-      rollDice();
+    if(shakeCount===0){
+      clearInterval(shakeInterval);
+      const final1=Math.floor(Math.random()*6)+1;
+      const final2=Math.floor(Math.random()*6)+1;
+      drawDie(die1,final1);
+      drawDie(die2,final2);
+      totalValue.textContent=final1+final2;
+      rollBtn.disabled=false;
     }
-  });
+  },160);
+}
 
-  fsBtn.addEventListener("click", () => {
-    if (!document.fullscreenElement) {
-      document.documentElement.requestFullscreen();
-    } else {
-      document.exitFullscreen();
-    }
-  });
+function toggleFullscreen(){
+  if(!document.fullscreenElement)document.documentElement.requestFullscreen();
+  else document.exitFullscreen();
+}
 
-  rollDice();
+rollBtn.addEventListener("click",rollDice);
+fsBtn.addEventListener("click",toggleFullscreen);
+document.addEventListener("keydown",e=>{
+  if(e.code==="Space"){e.preventDefault();if(!rollBtn.disabled)rollDice()}
+  if(e.code==="KeyF")toggleFullscreen();
+});
+
+drawDie(die1,1);
+drawDie(die2,1);
+totalValue.textContent="2";
 </script>
 </body>
 </html>
