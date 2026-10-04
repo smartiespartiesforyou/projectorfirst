@@ -1,228 +1,253 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Memory Match — ProjectorFirst</title>
-  
-<!-- Membership gate (paywall-test) -->
-<script
-  data-memberstack-app="app_cmgnwpg8y00x10suih4pua785"
-  src="https://static.memberstack.com/scripts/v2/memberstack.js"
-  type="text/javascript">
-</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Memory Match — ProjectorFirst</title>
+<script data-memberstack-app="app_cmgnwpg8y00x10suih4pua785" src="https://static.memberstack.com/scripts/v2/memberstack.js" type="text/javascript"></script>
 <script src="/guard.js"></script>
-
 <script src="https://cdn.tailwindcss.com"></script>
+<style>
+body{
+  margin:0;min-height:100vh;color:#17324d;font-family:Arial,sans-serif;
+  background:
+    radial-gradient(circle at 12% 10%,rgba(242,184,75,.30),transparent 24%),
+    radial-gradient(circle at 88% 18%,rgba(110,157,139,.25),transparent 26%),
+    linear-gradient(145deg,#fff8e8,#f3ede2 52%,#e6f0ed);
+}
+body:before{
+  content:"";position:fixed;inset:0;pointer-events:none;opacity:.13;
+  background-image:
+    linear-gradient(90deg,transparent 49%,rgba(23,50,77,.08) 50%,transparent 51%),
+    linear-gradient(transparent 49%,rgba(23,50,77,.06) 50%,transparent 51%);
+  background-size:48px 48px;
+}
+.pf-blue{background:#1e3a8a}.pf-blue:hover{background:#1d4ed8}
+#categoryScreen,#gameScreen{position:relative}
+#categoryScreen h1,#gameTitle{font-family:Georgia,serif!important;color:#17324d!important;text-shadow:0 3px 0 white}
+#categoryScreen:before{content:"MEMORY MATCH";display:block;font-weight:900;letter-spacing:.18em;color:#80694e;margin-top:8px;margin-bottom:10px}
+#categoryButtons button{
+  background:linear-gradient(145deg,#3f7898,#2f607a)!important;
+  border:4px solid rgba(255,255,255,.75);
+  box-shadow:0 9px 0 #244d63,0 14px 28px rgba(23,50,77,.18);
+  border-radius:26px!important;min-height:105px;color:white;
+}
+#categoryButtons button:nth-child(3n+2){
+  background:linear-gradient(145deg,#d97961,#bc5e4b)!important;
+  box-shadow:0 9px 0 #934738,0 14px 28px rgba(23,50,77,.18);
+}
+#categoryButtons button:nth-child(3n){
+  background:linear-gradient(145deg,#6e9d8b,#557e70)!important;
+  box-shadow:0 9px 0 #42675a,0 14px 28px rgba(23,50,77,.18);
+}
+#gameScreen{
+  background:rgba(255,253,246,.88);
+  border:3px solid rgba(23,50,77,.12);
+  border-radius:34px;padding:22px!important;margin-top:24px!important;
+  box-shadow:0 20px 50px rgba(23,50,77,.15);
+}
+#board{
+  display:grid;grid-template-columns:repeat(4,minmax(120px,1fr));
+  gap:16px;max-width:980px;margin:0 auto;
+}
+.memory-card{
+  position:relative;aspect-ratio:1/1;border:0;background:transparent;padding:0;
+  cursor:pointer;perspective:1000px;touch-action:manipulation;
+}
+.card-inner{position:absolute;inset:0;transition:transform .45s ease;transform-style:preserve-3d}
+.memory-card.flipped .card-inner,.memory-card.matched .card-inner{transform:rotateY(180deg)}
+.card-face{
+  position:absolute;inset:0;border-radius:22px;backface-visibility:hidden;
+  display:flex;align-items:center;justify-content:center;overflow:hidden;
+}
+.card-back{
+  background:linear-gradient(145deg,#3f7898,#2f607a);
+  border:5px solid rgba(255,255,255,.8);
+  box-shadow:0 8px 0 #244d63,0 12px 18px rgba(23,50,77,.18);
+  color:white;font-family:Georgia,serif;font-size:clamp(2.7rem,6vw,5rem);font-weight:900;
+}
+.card-back:before{content:"";position:absolute;inset:13px;border:3px solid rgba(255,255,255,.26);border-radius:15px}
+.card-front{
+  transform:rotateY(180deg);
+  background:linear-gradient(145deg,#fffdf6,#efe3c7);
+  border:5px solid #d5c49d;
+  box-shadow:0 8px 0 #b99d69,0 12px 18px rgba(23,50,77,.15);
+  flex-direction:column;gap:6px;padding:10px;text-align:center;
+}
+.memory-card.matched .card-front{background:#e9f4e8;border-color:#7aa17a;box-shadow:0 8px 0 #648c64}
+.icon{font-size:clamp(3.4rem,7vw,6.3rem);line-height:1}
+.label{font-family:Georgia,serif;font-size:clamp(1rem,2.2vw,1.45rem);font-weight:900;color:#17324d}
+#status{background:#fff8e8;border-radius:16px;padding:10px 18px;max-width:780px;margin:18px auto 0;font-size:1.2rem;font-weight:800;color:#5e6a75}
+.big-btn{font-size:22px;padding:14px 22px;border-radius:1rem;font-weight:800;color:white;box-shadow:0 6px 0 rgba(23,50,77,.25)}
+@media(max-width:760px){
+  #board{grid-template-columns:repeat(4,minmax(70px,1fr));gap:9px}
+  .card-face{border-radius:15px}.card-back,.card-front{border-width:4px}.label{font-size:.9rem}
+}
+</style>
+</head>
+<body class="min-h-screen">
+<div class="max-w-6xl mx-auto flex justify-between items-center p-6 border-b border-gray-200">
+  <a href="apps.html" class="pf-blue text-white text-xl font-bold px-5 py-3 rounded-xl">← Back to Apps</a>
+  <button id="fullscreenBtn" class="bg-blue-700 text-white text-xl font-bold px-6 py-3 rounded-xl hover:bg-blue-600">⛶ Fullscreen</button>
+</div>
 
-  <!-- Memberstack -->
-  <!-- Restrict Page -->
-  </head>
+<div id="categoryScreen" class="text-center mt-10 px-6 max-w-6xl mx-auto">
+  <h1 class="text-4xl md:text-6xl font-extrabold mb-3">Choose a Category</h1>
+  <p class="text-xl md:text-2xl font-bold text-slate-600 mb-2">8 matching pairs • large numbered cards • a new shuffle every game</p>
+  <p class="text-lg font-semibold text-slate-500 mb-10">Residents can call out card numbers from across the room.</p>
+  <div id="categoryButtons" class="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-4xl mx-auto"></div>
+</div>
 
-<body class="bg-white text-gray-900 min-h-screen">
-
-  <div class="w-full px-2 sm:px-6 lg:px-12 py-6">
-    
-    <!-- Title -->
-    <h1 class="text-6xl font-extrabold mb-6 text-blue-900 text-center">
-      Memory Match
-    </h1>
-
-    <!-- Controls -->
-    <div class="flex justify-center gap-4 mb-6 flex-wrap">
-      <a href="apps.html"
-         class="px-8 py-4 bg-blue-900 text-white rounded-2xl text-2xl font-bold hover:bg-blue-800">
-        ← Apps
-      </a>
-
-      <button id="fullscreenBtn"
-         class="px-8 py-4 bg-blue-700 text-white rounded-2xl text-2xl font-bold hover:bg-blue-800">
-        ⛶ Full Screen
-      </button>
-
-      <button id="resetBtn"
-         class="px-8 py-4 bg-blue-600 text-white rounded-2xl text-2xl font-bold hover:bg-blue-800">
-        New Game
-      </button>
-
-      <select id="themeSelect"
-          class="border-4 border-blue-700 rounded-xl px-4 py-3 text-2xl font-bold text-blue-900 bg-white">
-          <option value="animals">🐶 Animals</option>
-          <option value="food">🍔 Food</option>
-          <option value="sports">⚽ Sports</option>
-          <option value="christmas">🎄 Christmas</option>
-          <option value="halloween">🎃 Halloween</option>
-          <option value="easter">🐣 Easter</option>
-      </select>
-    </div>
-
-    <!-- ✅ CARDS TOUCHING (gap-0) -->
-    <div id="grid"
-         class="w-full max-w-7xl mx-auto grid grid-cols-4 gap-0 justify-center">
-    </div>
-
-    <!-- Status -->
-    <div id="status" class="text-center mt-6 text-3xl font-bold text-blue-700"></div>
+<div id="gameScreen" class="text-center px-4 hidden max-w-6xl mx-auto">
+  <div class="flex justify-between items-center gap-3 flex-wrap mb-5">
+    <button id="backBtn" class="big-btn bg-gray-600 hover:bg-gray-500">← Categories</button>
+    <h1 id="gameTitle" class="text-3xl md:text-5xl font-extrabold"></h1>
+    <button id="newGameBtn" class="big-btn pf-blue">New Game</button>
   </div>
+  <div id="board" aria-label="Memory matching board"></div>
+  <div id="status">Choose two cards.</div>
+</div>
 
-  <script>
-    // Fullscreen toggle
-    const fullscreenBtn = document.getElementById("fullscreenBtn");
-    fullscreenBtn.addEventListener("click", () => {
-      if (!document.fullscreenElement) {
-        document.documentElement.requestFullscreen();
-        fullscreenBtn.textContent = "Exit Full Screen";
-      } else {
-        document.exitFullscreen();
-        fullscreenBtn.textContent = "⛶ Full Screen";
-      }
-    });
+<script>
+const THEMES={
+  "Around Home":[
+    ["☎️","Telephone"],["📻","Radio"],["🕰️","Clock"],["🫖","Kettle"],
+    ["🧹","Broom"],["🪑","Chair"],["📬","Mailbox"],["🧺","Basket"],
+    ["💡","Lamp"],["🔑","Key"],["🧵","Thread"],["🪴","Plant"]
+  ],
+  "Garden & Nature":[
+    ["🌻","Sunflower"],["🌹","Rose"],["🦋","Butterfly"],["🐦","Bird"],
+    ["🌳","Tree"],["🍄","Mushroom"],["🐞","Ladybug"],["🌈","Rainbow"],
+    ["🌷","Tulip"],["🐝","Bee"],["🍁","Leaf"],["🌼","Daisy"]
+  ],
+  "Music & Memories":[
+    ["🎹","Piano"],["🎻","Violin"],["🎺","Trumpet"],["🎷","Saxophone"],
+    ["🎤","Microphone"],["📀","Record"],["🎸","Guitar"],["🥁","Drum"],
+    ["🎼","Music"],["🔔","Bell"],["🎶","Song"],["🪕","Banjo"]
+  ],
+  "Sweet Treats":[
+    ["🍦","Ice Cream"],["🍪","Cookie"],["🧁","Cupcake"],["🍩","Doughnut"],
+    ["🍰","Cake"],["🍫","Chocolate"],["🍓","Strawberry"],["🍒","Cherries"],
+    ["🥧","Pie"],["🍬","Candy"],["🍎","Apple"],["🍌","Banana"]
+  ],
+  "On the Road":[
+    ["🚗","Car"],["🚌","Bus"],["🚂","Train"],["🚲","Bicycle"],
+    ["🛻","Truck"],["⛵","Sailboat"],["✈️","Airplane"],["🚜","Tractor"],
+    ["🚕","Taxi"],["🚒","Fire Truck"],["🚑","Ambulance"],["🛶","Canoe"]
+  ],
+  "Holidays":[
+    ["🎄","Christmas Tree"],["🎁","Gift"],["🔔","Bell"],["⛄","Snowman"],
+    ["🎃","Pumpkin"],["🦃","Turkey"],["❤️","Heart"],["🐰","Bunny"],
+    ["🍀","Shamrock"],["🎆","Fireworks"],["🕯️","Candle"],["⭐","Star"]
+  ]
+};
 
-    const totalPairs = 8;
+let currentTheme="",deck=[],first=null,second=null,locked=false,matches=0;
 
-    const themes = {
-      animals: ["🐶","🐱","🦁","🐸","🐢","🐰","🐼","🐧","🦊","🐻","🐨","🐷"],
-      food: ["🍔","🍕","🍟","🌭","🍩","🍪","🍦","🍎","🍌","🍇","🍓"],
-      sports: ["⚽","🏀","🏈","⚾","🎾","🏐","🥎","🏒"],
-      christmas: ["🎄","🎅","🤶","🦌","🎁","⛄","❄️","🔔"],
-      halloween: ["🎃","👻","🕷️","🕸️","🧛","🦇","🍬","☠️"],
-      easter: ["🐣","🐰","🥚","🌸","🍫","🌼","🐥","🧺"]
-    };
+function shuffle(a){
+  a=a.slice();
+  for(let i=a.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
 
-    let currentTheme = "animals";
-    let firstCard = null;
-    let secondCard = null;
-    let busy = false;
-    let matchesFound = 0;
-    let deck = [];
+function showScreen(name){
+  document.getElementById("categoryScreen").classList.toggle("hidden",name!=="categories");
+  document.getElementById("gameScreen").classList.toggle("hidden",name!=="game");
+}
 
-    function shuffle(arr) {
-      for (let i = arr.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [arr[i], arr[j]] = [arr[j], arr[i]];
-      }
-      return arr;
-    }
+function startGame(theme){
+  currentTheme=theme;
+  const picks=shuffle(THEMES[theme]).slice(0,8);
+  deck=shuffle([...picks,...picks].map((item,i)=>({id:i,pair:item[1],icon:item[0],label:item[1],matched:false})));
+  first=null;second=null;locked=false;matches=0;
+  document.getElementById("gameTitle").textContent=theme;
+  showScreen("game");
+  renderBoard();
+  updateStatus("Choose two cards.");
+}
 
-    function buildDeck() {
-      const pool = shuffle([...themes[currentTheme]]);
-      const picks = pool.slice(0, totalPairs);
-      return shuffle([...picks, ...picks]).map((val, i) => ({
-        id: i + 1,
-        value: val,
-        matched: false
-      }));
-    }
+function renderBoard(){
+  const board=document.getElementById("board");
+  board.innerHTML="";
+  deck.forEach((card,index)=>{
+    const btn=document.createElement("button");
+    btn.type="button";
+    btn.className="memory-card";
+    btn.dataset.index=index;
+    btn.setAttribute("aria-label","Card "+(index+1));
+    btn.innerHTML=
+      '<span class="card-inner">'+
+        '<span class="card-face card-back">'+(index+1)+'</span>'+
+        '<span class="card-face card-front">'+
+          '<span class="icon">'+card.icon+'</span>'+
+          '<span class="label">'+card.label+'</span>'+
+        '</span>'+
+      '</span>';
+    btn.addEventListener("click",()=>flipCard(btn,index));
+    board.appendChild(btn);
+  });
+}
 
-    function renderGrid() {
-      const grid = document.getElementById("grid");
-      grid.innerHTML = "";
+function updateStatus(msg){
+  document.getElementById("status").textContent=msg+"  •  Matches: "+matches+" of 8";
+}
 
-      deck.forEach((card, idx) => {
-        const btn = document.createElement("button");
-        btn.dataset.index = idx;
+function flipCard(btn,index){
+  if(locked||btn.classList.contains("flipped")||btn.classList.contains("matched"))return;
+  btn.classList.add("flipped");
+  if(first===null){
+    first={btn,index};
+    updateStatus("Pick one more card.");
+    return;
+  }
+  second={btn,index};
+  locked=true;
 
-        // ✅ Bigger cards, touching
-        btn.className = [
-          "relative w-[240px] h-[240px]",
-          "rounded-2xl border-[8px] border-blue-700",
-          "bg-white shadow-md",
-          "flex items-center justify-center"
-        ].join(" ");
+  const a=deck[first.index],b=deck[second.index];
+  if(a.pair===b.pair){
+    setTimeout(()=>{
+      first.btn.classList.remove("flipped");second.btn.classList.remove("flipped");
+      first.btn.classList.add("matched");second.btn.classList.add("matched");
+      a.matched=b.matched=true;
+      matches++;
+      const done=matches===8;
+      resetTurn();
+      updateStatus(done?"🎉 All 8 pairs matched! Great job!":"That's a match!");
+    },450);
+  }else{
+    updateStatus("Not a match — remember those cards.");
+    setTimeout(()=>{
+      first.btn.classList.remove("flipped");
+      second.btn.classList.remove("flipped");
+      resetTurn();
+      updateStatus("Choose two cards.");
+    },1100);
+  }
+}
 
-        const back = document.createElement("div");
-        back.className = "back absolute inset-0 flex items-center justify-center";
-        back.innerHTML =
-          `<span class="text-[8rem] font-extrabold text-blue-700">${card.id}</span>`;
+function resetTurn(){first=null;second=null;locked=false}
 
-        const front = document.createElement("div");
-        front.className = "front absolute inset-0 hidden items-center justify-center";
-        front.innerHTML =
-          `<span class="text-[9rem] leading-none">${card.value}</span>`;
+function full(){
+  if(document.fullscreenElement){document.exitFullscreen()}
+  else{document.documentElement.requestFullscreen()}
+}
 
-        btn.appendChild(back);
-        btn.appendChild(front);
-        btn.addEventListener("click", () => handleFlip(btn));
-        grid.appendChild(btn);
-      });
-    }
+const categoryButtons=document.getElementById("categoryButtons");
+Object.keys(THEMES).forEach(theme=>{
+  const b=document.createElement("button");
+  b.type="button";
+  b.className="text-2xl md:text-3xl font-bold py-6 transition-transform hover:scale-[1.01]";
+  b.textContent=theme;
+  b.addEventListener("click",()=>startGame(theme));
+  categoryButtons.appendChild(b);
+});
 
-    function showFront(btn, show) {
-      btn.querySelector(".front").classList.toggle("hidden", !show);
-      btn.querySelector(".back").classList.toggle("hidden", show);
-    }
-
-    function handleFlip(btn) {
-      if (busy) return;
-      const i = parseInt(btn.dataset.index, 10);
-      const card = deck[i];
-      if (card.matched) return;
-
-      const frontVisible = !btn.querySelector(".front").classList.contains("hidden");
-      if (frontVisible) return;
-
-      showFront(btn, true);
-
-      if (!firstCard) {
-        firstCard = { btn, i, card };
-      } else if (!secondCard && btn !== firstCard.btn) {
-        secondCard = { btn, i, card };
-        busy = true;
-        checkMatch();
-      }
-    }
-
-    function checkMatch() {
-      const status = document.getElementById("status");
-      const isMatch = firstCard.card.value === secondCard.card.value;
-
-      if (isMatch) {
-        deck[firstCard.i].matched = true;
-        deck[secondCard.i].matched = true;
-
-        firstCard.btn.classList.add("border-green-600");
-        secondCard.btn.classList.add("border-green-600");
-
-        matchesFound++;
-        status.textContent = `Matched: ${matchesFound}/${totalPairs}`;
-
-        resetTurn();
-
-        if (matchesFound === totalPairs) {
-          status.textContent = "🎉 Finished!";
-        }
-      } else {
-        status.textContent = "Not a match…";
-
-        setTimeout(() => {
-          showFront(firstCard.btn, false);
-          showFront(secondCard.btn, false);
-          resetTurn();
-        }, 900);
-      }
-    }
-
-    function resetTurn() {
-      firstCard = null;
-      secondCard = null;
-      busy = false;
-    }
-
-    function newGame() {
-      matchesFound = 0;
-      deck = buildDeck();
-      renderGrid();
-      document.getElementById("status").textContent = "Pick two cards!";
-    }
-
-    document.getElementById("resetBtn").addEventListener("click", newGame);
-    document.getElementById("themeSelect").addEventListener("change", e => {
-      currentTheme = e.target.value;
-      newGame();
-    });
-
-    newGame();
-  </script>
-
+document.getElementById("newGameBtn").addEventListener("click",()=>startGame(currentTheme));
+document.getElementById("backBtn").addEventListener("click",()=>showScreen("categories"));
+document.getElementById("fullscreenBtn").addEventListener("click",full);
+</script>
 </body>
 </html>
