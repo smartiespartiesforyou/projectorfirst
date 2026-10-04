@@ -91,7 +91,24 @@
       .answer-banner { animation: none; }
       .confetti { display: none; }
     }
-  </style>
+  
+    /* Projector First warm game-show refresh */
+    html,body{background:#315d68}
+    body:before{content:"";position:fixed;inset:0;pointer-events:none;background:
+      radial-gradient(circle at 12% 12%,rgba(240,190,82,.25),transparent 25%),
+      radial-gradient(circle at 88% 78%,rgba(218,124,96,.20),transparent 28%),
+      repeating-linear-gradient(135deg,rgba(255,255,255,.025) 0 2px,transparent 2px 18px)}
+    #startScreen main,#doneScreen main{background:radial-gradient(ellipse at center,rgba(255,248,225,.10),transparent 65%)}
+    #startScreen h1,#doneScreen h2{font-family:Georgia,serif!important;color:#f2c55e!important;text-shadow:0 4px 0 #173742,0 8px 24px rgba(0,0,0,.24)!important}
+    #startScreen main>div:first-child{background:rgba(255,250,237,.09);border:3px solid rgba(242,197,94,.5);border-radius:30px;padding:18px 28px;box-shadow:0 18px 45px rgba(0,0,0,.18)}
+    .cat-btn{background:linear-gradient(145deg,#fffdf6,#f0e5ca)!important;color:#244b58!important;border-color:#d6b35d!important;box-shadow:0 7px 0 #9f7b36,0 14px 25px rgba(0,0,0,.16)!important}
+    .cat-btn:nth-child(3n+2){border-color:#d8836d!important;box-shadow:0 7px 0 #a85745,0 14px 25px rgba(0,0,0,.16)!important}
+    #gameScreen main{width:min(94%,1100px);margin:8px auto;background:linear-gradient(145deg,rgba(255,253,246,.98),rgba(242,231,204,.98));border:5px solid #c89c49;border-radius:34px;box-shadow:0 9px 0 #8b672f,0 22px 48px rgba(0,0,0,.25);color:#17324d;padding:12px!important}
+    .big-emoji{filter:drop-shadow(0 8px 6px rgba(23,50,77,.18))}
+    .answer-banner{background:#e8b84f!important;color:#17324d!important;border-color:#fff8e8!important;box-shadow:0 7px 0 #a97825,0 15px 30px rgba(0,0,0,.18)!important}
+    #tipLine{color:#315d68!important;background:#fff8e8;border:3px solid #d7c398;border-radius:18px;padding:10px 18px!important}
+    #progressLabel{width:max-content;max-width:90%;margin:4px auto;background:#173742;border-radius:999px;padding:6px 16px;color:#f5dfa8!important}
+</style>
 </head>
 <body>
 
@@ -99,17 +116,19 @@
   <div id="startScreen" class="screen">
     <header class="flex items-center justify-between px-4 pt-4 pb-2">
       <a href="apps.html" class="btn-big bg-white text-blue-900 text-lg md:text-xl px-4 py-2 no-underline">← Back to Apps</a>
+      <div class="flex items-center gap-3">
+      <button onclick="document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen()" class="btn-big bg-white text-blue-900 text-lg md:text-xl px-4 py-2">⛶ Fullscreen</button>
       <label class="flex items-center gap-2 text-white font-bold text-lg md:text-xl cursor-pointer select-none">
         <input type="checkbox" id="voiceToggle" class="w-6 h-6 accent-yellow-400" checked>
         🔊 Read answers aloud
-      </label>
+      </label></div>
     </header>
 
     <main class="flex-1 flex flex-col items-center justify-center px-4 gap-4 overflow-y-auto">
       <div class="text-center">
         <div style="font-size: clamp(3rem, 9vw, 5.5rem); line-height:1;">😀📱❓</div>
         <h1 class="text-yellow-300 font-black" style="font-size: clamp(2.2rem, 7.5vw, 4.6rem); text-shadow: 4px 4px 0 #0f265f;">WHAT'S THAT EMOJI?</h1>
-        <p class="text-white font-bold max-w-2xl mx-auto" style="font-size: clamp(1.1rem, 3vw, 1.6rem);">Learn the little pictures the grandkids text you! Shout out your guess, then reveal the answer.</p>
+        <p class="text-white font-bold max-w-2xl mx-auto" style="font-size: clamp(1.1rem, 3vw, 1.6rem);">Learn the little pictures the grandkids text you!<br><span style="font-size:.82em;color:#f7e5b0">10 emojis per round • 120 emojis built in • a new mix each time</span></p>
       </div>
 
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full max-w-3xl pb-4">
@@ -129,7 +148,7 @@
     <header class="flex items-center justify-between px-4 pt-4 pb-1 gap-2 flex-wrap">
       <a href="apps.html" class="btn-big bg-white text-blue-900 text-base md:text-xl px-3 py-2 no-underline">← Back to Apps</a>
       <div class="text-yellow-300 font-black text-center" style="font-size: clamp(1.1rem, 3.5vw, 1.8rem);" id="categoryLabel"></div>
-      <button class="btn-big bg-white text-blue-900 text-base md:text-xl px-3 py-2" onclick="goHome()">☰ Categories</button>
+      <div class="flex gap-2"><button class="btn-big bg-white text-blue-900 text-base md:text-xl px-3 py-2" onclick="document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen()">⛶</button><button class="btn-big bg-white text-blue-900 text-base md:text-xl px-3 py-2" onclick="goHome()">☰ Categories</button></div>
     </header>
 
     <div class="text-center text-blue-200 font-bold" style="font-size: clamp(.95rem, 2.5vw, 1.3rem);" id="progressLabel"></div>
@@ -157,9 +176,9 @@
     <main class="flex-1 flex flex-col items-center justify-center px-4 gap-5 text-center">
       <div style="font-size: clamp(4rem, 14vw, 8rem);">🎉🏆🎉</div>
       <h2 class="text-yellow-300 font-black" style="font-size: clamp(2rem, 7vw, 4.5rem); text-shadow: 4px 4px 0 #0f265f;">EMOJI EXPERTS!</h2>
-      <p class="text-white font-bold" style="font-size: clamp(1.1rem, 3vw, 1.6rem);">You learned every emoji in this category. The grandkids better watch out!</p>
+      <p class="text-white font-bold" style="font-size: clamp(1.1rem, 3vw, 1.6rem);">Round complete — the grandkids better watch out!</p>
       <div class="flex gap-4 flex-wrap justify-center">
-        <button class="btn-big bg-yellow-400 text-blue-900 px-8 py-4" style="font-size: clamp(1.2rem, 4vw, 2rem); border-color:#b45309; box-shadow: 0 6px 0 #b45309;" onclick="replayCategory()">🔄 Play Again</button>
+        <button class="btn-big bg-yellow-400 text-blue-900 px-8 py-4" style="font-size: clamp(1.2rem, 4vw, 2rem); border-color:#b45309; box-shadow: 0 6px 0 #b45309;" onclick="replayCategory()">🔄 Play Another 10</button>
         <button class="btn-big bg-white text-blue-900 px-8 py-4" style="font-size: clamp(1.2rem, 4vw, 2rem);" onclick="goHome()">☰ Pick a Category</button>
       </div>
     </main>
@@ -318,6 +337,7 @@ let deck = [];
 let deckIndex = 0;
 let currentCategory = null;
 let revealed = false;
+const ROUND_SIZE = 10;
 
 // ============ AUDIO (WebAudio — no files needed) ============
 let audioCtx = null;
@@ -390,7 +410,7 @@ function goHome() {
 // ============ GAME FLOW ============
 function startGame(cat) {
   currentCategory = cat;
-  deck = buildDeck(cat);
+  deck = buildDeck(cat).slice(0, ROUND_SIZE);
   deckIndex = 0;
   document.getElementById("categoryLabel").textContent = CATEGORY_NAMES[cat];
   show("gameScreen");
