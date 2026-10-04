@@ -21,24 +21,6 @@
       color: #111;
       font-family: Arial, sans-serif;
     }
-    .modal-bg {
-      background: rgba(0, 0, 0, 0.55);
-      position: fixed;
-      inset: 0;
-      display: none;
-      justify-content: center;
-      align-items: center;
-      z-index: 50;
-    }
-    .modal {
-      background: white;
-      color: black;
-      border-radius: 20px;
-      padding: 30px;
-      width: 90%;
-      max-width: 700px;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
-    }
     .big-btn {
       font-size: 40px;
       padding: 25px 60px;
@@ -73,14 +55,13 @@ body:before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.13;ba
   <!-- Header -->
   <div class="max-w-6xl mx-auto flex justify-between items-center p-6 border-b border-gray-200">
     <a href="apps.html" class="pf-blue text-white text-xl font-bold px-5 py-3 rounded-xl">← Back to Apps</a>
-    <div class="flex gap-3 flex-wrap justify-end"><button onclick="document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen()" class="bg-blue-700 text-white text-xl font-bold px-6 py-3 rounded-xl hover:bg-blue-600">⛶ Fullscreen</button><button id="openEditor" class="bg-purple-700 text-white text-xl font-bold px-6 py-3 rounded-xl hover:bg-purple-600">
-      Word Editor 📝
-    </button></div>
+    <div class="flex gap-3 flex-wrap justify-end"><button onclick="document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen()" class="bg-blue-700 text-white text-xl font-bold px-6 py-3 rounded-xl hover:bg-blue-600">⛶ Fullscreen</button></div>
   </div>
 
   <!-- Category Screen -->
   <div id="categoryScreen" class="text-center mt-10 px-6 max-w-6xl mx-auto">
-    <h1 class="text-4xl md:text-6xl font-extrabold text-blue-800 mb-10">Choose a Category</h1>
+    <h1 class="text-4xl md:text-6xl font-extrabold text-blue-800 mb-3">Choose a Category</h1>
+    <p class="text-xl md:text-2xl font-bold text-slate-600 mb-10">20 ready-to-play categories • 400 words built in</p>
     <div id="categoryButtons" class="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-4xl mx-auto"></div>
   </div>
 
@@ -101,37 +82,8 @@ body:before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.13;ba
     </div>
   </div>
 
-  <!-- Editor Modal -->
-  <div id="modalBg" class="modal-bg">
-    <div class="modal">
-      <div class="flex justify-between items-center mb-6">
-        <h2 class="text-3xl font-bold text-blue-800">Word Editor</h2>
-        <button id="closeEditor" class="px-4 py-1 bg-gray-300 rounded-xl font-bold hover:bg-gray-400">Close</button>
-      </div>
-
-      <label class="font-bold text-gray-700">Word</label>
-      <input id="inputWord" class="w-full border p-3 rounded-xl mb-4 text-lg" placeholder="Enter a word…" />
-
-      <label class="font-bold text-gray-700">Category</label>
-      <select id="inputCategory" class="w-full border p-3 rounded-xl mb-4 text-lg"></select>
-
-      <input
-        id="newCategoryInput"
-        class="w-full border p-3 rounded-xl mb-4 text-lg hidden"
-        placeholder="Enter new category…"
-      />
-
-      <button id="saveBtn" class="bg-green-600 text-white font-bold px-6 py-3 rounded-xl hover:bg-green-500">Save Word</button>
-
-      <h3 class="text-xl font-bold mt-8 mb-2 text-blue-700">Your Saved Words</h3>
-      <ul id="savedList" class="space-y-2 text-lg max-h-[250px] overflow-y-auto"></ul>
-    </div>
-  </div>
-
   <script>
-    const DATA_VERSION = "scrambler-v3-2026-03-21";
-
-    const defaultCategories = [
+const defaultCategories = [
       "Bible",
       "Animals",
       "History",
@@ -237,9 +189,20 @@ body:before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.13;ba
       ]
     };
 
-    const defaultWords = Object.entries(wordsByCategory).flatMap(([category, arr]) =>
+    const categories = [...defaultCategories];
+    const words = Object.entries(wordsByCategory).flatMap(([category, arr]) =>
       arr.map(word => ({ word, category }))
     );
+
+    const categoryButtons = document.getElementById("categoryButtons");
+    const scrambleEl = document.getElementById("scramble");
+    const answerEl = document.getElementById("answer");
+    const statusEl = document.getElementById("status");
+
+    let filtered = [];
+    let currentWord = "";
+    let currentCategory = "";
+    let categoryQueue = {};
 
     function shuffleArray(arr) {
       const copy = [...arr];
@@ -249,39 +212,6 @@ body:before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.13;ba
       }
       return copy;
     }
-
-    // Force refresh of old stored data when version changes
-    if (localStorage.getItem("scrambleDataVersion") !== DATA_VERSION) {
-      localStorage.setItem("scrambleDataVersion", DATA_VERSION);
-      localStorage.setItem("scrambleCategories", JSON.stringify(defaultCategories));
-      localStorage.setItem("scrambleWords", JSON.stringify(defaultWords));
-    }
-
-    let categories = JSON.parse(localStorage.getItem("scrambleCategories") || "null");
-    let words = JSON.parse(localStorage.getItem("scrambleWords") || "null");
-
-    if (!Array.isArray(categories) || categories.length === 0) {
-      categories = [...defaultCategories];
-      localStorage.setItem("scrambleCategories", JSON.stringify(categories));
-    }
-
-    if (!Array.isArray(words) || words.length === 0) {
-      words = [...defaultWords];
-      localStorage.setItem("scrambleWords", JSON.stringify(words));
-    }
-
-    const modalBg = document.getElementById("modalBg");
-    const categoryButtons = document.getElementById("categoryButtons");
-    const inputCategory = document.getElementById("inputCategory");
-    const newCategoryInput = document.getElementById("newCategoryInput");
-    const scrambleEl = document.getElementById("scramble");
-    const answerEl = document.getElementById("answer");
-    const statusEl = document.getElementById("status");
-
-    let filtered = [];
-    let currentWord = "";
-    let currentCategory = "";
-    let categoryQueue = {};
 
     function renderCategoryButtons() {
       categoryButtons.innerHTML = "";
@@ -294,99 +224,15 @@ body:before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.13;ba
       });
     }
 
-    function updateCategoryDropdown() {
-      inputCategory.innerHTML = "";
-      categories.forEach(cat => {
-        const opt = document.createElement("option");
-        opt.value = cat;
-        opt.textContent = cat;
-        inputCategory.appendChild(opt);
-      });
-
-      const addNew = document.createElement("option");
-      addNew.value = "__NEW__";
-      addNew.textContent = "+ Add New Category";
-      inputCategory.appendChild(addNew);
-    }
-
-    inputCategory.onchange = () => {
-      if (inputCategory.value === "__NEW__") {
-        newCategoryInput.classList.remove("hidden");
-      } else {
-        newCategoryInput.classList.add("hidden");
-      }
+    const DISPLAY_WORDS = {
+      "CIVILWAR":"CIVIL WAR","ICECREAM":"ICE CREAM","STARWARS":"STAR WARS","MARYPOPPINS":"MARY POPPINS",
+      "FRENCHQUARTER":"FRENCH QUARTER","CAFEAULAIT":"CAFE AU LAIT","NEW YEARS":"NEW YEARS",
+      "MIDNIGHTKISS":"MIDNIGHT KISS","PERRYMASON":"PERRY MASON","ANDYGRIFFITH":"ANDY GRIFFITH",
+      "WHEELFORTUNE":"WHEEL OF FORTUNE","POTOFGOLD":"POT OF GOLD","KINGCAKE":"KING CAKE",
+      "REDWHITEBLUE":"RED WHITE BLUE","JACKOLANTERN":"JACK O LANTERN","PUMPKINPIE":"PUMPKIN PIE",
+      "CANDYCANE":"CANDY CANE","COASTGUARD":"COAST GUARD","AIRFORCE":"AIR FORCE"
     };
-
-    document.getElementById("openEditor").onclick = () => {
-      modalBg.style.display = "flex";
-      updateSavedList();
-    };
-
-    document.getElementById("closeEditor").onclick = () => {
-      modalBg.style.display = "none";
-      newCategoryInput.value = "";
-      newCategoryInput.classList.add("hidden");
-    };
-
-    document.getElementById("saveBtn").onclick = () => {
-      const w = document.getElementById("inputWord").value.trim().toUpperCase();
-      let cat = inputCategory.value;
-
-      if (!w) {
-        alert("Please enter a word.");
-        return;
-      }
-
-      if (cat === "__NEW__") {
-        cat = newCategoryInput.value.trim();
-        if (!cat) {
-          alert("Enter a category name.");
-          return;
-        }
-        if (!categories.includes(cat)) {
-          categories.push(cat);
-          localStorage.setItem("scrambleCategories", JSON.stringify(categories));
-          renderCategoryButtons();
-          updateCategoryDropdown();
-        }
-      }
-
-      words.push({ word: w, category: cat });
-      localStorage.setItem("scrambleWords", JSON.stringify(words));
-      categoryQueue[cat] = [];
-
-      document.getElementById("inputWord").value = "";
-      newCategoryInput.value = "";
-      newCategoryInput.classList.add("hidden");
-      inputCategory.value = cat;
-      updateSavedList();
-    };
-
-    function updateSavedList() {
-      const list = document.getElementById("savedList");
-      list.innerHTML = "";
-
-      words.forEach((w, i) => {
-        const li = document.createElement("li");
-        li.innerHTML = `
-          <div class="flex justify-between bg-gray-100 p-3 rounded-xl items-center">
-            <div class="flex-1"><strong>${w.word}</strong> <em class="text-gray-500">(${w.category})</em></div>
-            <button onclick="deleteWord(${i})" class="bg-red-500 text-white px-3 py-1 rounded-lg hover:bg-red-600 ml-4">Delete</button>
-          </div>`;
-        list.appendChild(li);
-      });
-    }
-
-    function deleteWord(i) {
-      const removed = words[i];
-      words.splice(i, 1);
-      localStorage.setItem("scrambleWords", JSON.stringify(words));
-      if (removed && removed.category) {
-        categoryQueue[removed.category] = [];
-      }
-      updateSavedList();
-    }
-    window.deleteWord = deleteWord;
+    function displayWord(word) { return DISPLAY_WORDS[word] || word; }
 
     function shuffleWord(word) {
       const arr = word.split("");
@@ -427,7 +273,7 @@ body:before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.13;ba
       const total = words.filter(w => w.category === cat).length;
       const remaining = categoryQueue[cat] ? categoryQueue[cat].length : 0;
       const used = total - remaining;
-      statusEl.textContent = `Used this round: ${used}/${total}`;
+      statusEl.textContent = `Word ${used} of ${total} • Every word appears once before the category repeats`;
     }
 
     function startCategory(cat) {
@@ -451,7 +297,8 @@ body:before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.13;ba
 
       const next = getNextWordForCategory(currentCategory);
       currentWord = next;
-      const mixed = shuffleWord(currentWord);
+      const shownWord = displayWord(currentWord);
+      const mixed = shuffleWord(shownWord.replace(/ /g, ""));
       scrambleEl.innerHTML = "";
       Array.from(mixed).forEach((letter, i) => {
         const tile = document.createElement("span");
@@ -460,7 +307,7 @@ body:before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.13;ba
         tile.textContent = letter;
         scrambleEl.appendChild(tile);
       });
-      answerEl.textContent = currentWord;
+      answerEl.textContent = shownWord;
       answerEl.classList.add("hidden");
       updateStatus(currentCategory);
     }
@@ -482,7 +329,6 @@ body:before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.13;ba
     document.getElementById("backBtn").onclick = backToCategories;
 
     renderCategoryButtons();
-    updateCategoryDropdown();
   </script>
 
 </body>
