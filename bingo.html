@@ -88,7 +88,6 @@ h1{
   line-height:.82;
   letter-spacing:-.045em;
   text-align:center;
-  width:100%;
   box-shadow:none
 }
 .caller-letter:empty{
@@ -296,27 +295,19 @@ function updateProgress(){
 
 function fitCaller(){
   const box=document.getElementById("callerBox");
-  const text=callerNumber.textContent||"—";
-  const digits=Math.max(text.length,1);
+  const hasLetter=!!callerLetter.textContent.trim();
 
-  let size=Math.min(
-    box.clientHeight*0.30,
-    box.clientWidth/(digits===1?0.78:digits===2?1.38:1.95)
-  );
-
-  callerLetter.style.fontSize=size+"px";
-  callerNumber.style.fontSize=size+"px";
-
-  let guard=24;
-  while(
-    (
-      callerNumber.scrollWidth>box.clientWidth*0.90 ||
-      callerLetter.scrollWidth>box.clientWidth*0.90 ||
-      (callerLetter.offsetHeight+callerNumber.offsetHeight)>box.clientHeight*0.80
-    ) && guard-->0
-  ){
-    size*=0.94;
+  if(hasLetter){
+    const size=Math.min(box.clientHeight*0.27,box.clientWidth*0.27);
     callerLetter.style.fontSize=size+"px";
+    callerNumber.style.fontSize=size+"px";
+  }else{
+    const digits=Math.max((callerNumber.textContent||"—").length,1);
+    const size=Math.min(
+      box.clientHeight*0.52,
+      box.clientWidth/(digits===1?0.8:digits===2?1.45:2.05)
+    );
+    callerLetter.style.fontSize="0px";
     callerNumber.style.fontSize=size+"px";
   }
 }
