@@ -1,78 +1,292 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
- <title>Contact | ProjectorFirst</title>
-<meta name="description" content="Get in touch with ProjectorFirst. Have questions or feedback about our big-screen apps for seniors and care communities? Email us at helloprojectorfirst@gmail.com." />
-<link rel="icon" href="logo.svg" type="image/svg+xml" />
-<meta name="theme-color" content="#1e3a8a" />
-<script src="https://cdn.tailwindcss.com"></script>
-  <!-- ✅ Memberstack Script (keeps login/logout working across pages) -->
-  <script 
-    data-memberstack-app="app_cmgnwpg8y00x10suih4pua785" 
-    src="https://static.memberstack.com/scripts/v2/memberstack.js" 
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Contact | Projector First</title>
+  <meta name="description" content="Contact Projector First with questions, support needs, accessibility feedback, or ideas for senior-living activities and games."/>
+  <meta name="theme-color" content="#fff8e8"/>
+  <link rel="icon" href="logo.svg" type="image/svg+xml"/>
+
+  <script
+    data-memberstack-app="app_cmgnwpg8y00x10suih4pua785"
+    src="https://static.memberstack.com/scripts/v2/memberstack.js"
     type="text/javascript">
   </script>
+
+  <style>
+    :root{
+      --navy:#17324d;
+      --blue:#2f607a;
+      --cream:#fff8e8;
+      --paper:#fffdf7;
+      --gold:#e8b54c;
+      --sage:#6e9d8b;
+      --line:#d7cbb9;
+      --muted:#5f6870;
+    }
+
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;
+      min-height:100vh;
+      color:var(--navy);
+      font-family:Arial,Helvetica,sans-serif;
+      line-height:1.55;
+      background:
+        radial-gradient(circle at 12% 8%,rgba(242,184,75,.18),transparent 24%),
+        radial-gradient(circle at 88% 18%,rgba(110,157,139,.14),transparent 28%),
+        linear-gradient(145deg,#fffaf0,#f7f0e4 55%,#edf3ef);
+    }
+
+    a{color:inherit}
+    .shell{width:min(1100px,calc(100% - 32px));margin:0 auto}
+
+    .skip-link{
+      position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden
+    }
+    .skip-link:focus{
+      left:1rem;top:1rem;width:auto;height:auto;padding:.75rem 1rem;
+      background:var(--navy);color:#fff;border-radius:.75rem;z-index:1000
+    }
+
+    header{
+      position:sticky;top:0;z-index:50;
+      background:rgba(255,253,247,.96);
+      border-bottom:1px solid rgba(23,50,77,.10);
+      backdrop-filter:blur(10px)
+    }
+    .header-inner{
+      min-height:82px;display:flex;align-items:center;justify-content:space-between;
+      gap:24px;padding:12px 0
+    }
+    .brand{
+      text-decoration:none;display:inline-flex;flex-direction:column;line-height:1;
+      min-width:max-content
+    }
+    .brand-name{
+      font-family:Georgia,"Times New Roman",serif;font-weight:800;
+      font-size:clamp(2rem,3.4vw,3rem);letter-spacing:-.025em
+    }
+    .brand-tag{
+      margin-top:7px;font-size:.68rem;font-weight:900;letter-spacing:.33em;
+      color:#615b53
+    }
+    nav{display:flex;align-items:center;gap:7px;flex-wrap:wrap;justify-content:flex-end}
+    nav a{
+      text-decoration:none;font-weight:800;padding:9px 12px;border-radius:10px
+    }
+    nav a:hover{background:#f4ecdf}
+    nav a[aria-current="page"]{
+      border-bottom:3px solid var(--gold);border-radius:0
+    }
+    .nav-cta{
+      background:var(--navy);color:#fff;padding:10px 17px!important;
+      border-radius:10px!important;box-shadow:0 4px 0 rgba(23,50,77,.18)
+    }
+
+    .hero{padding:58px 0 28px}
+    .eyebrow{
+      margin:0 0 12px;text-align:center;font-size:.78rem;font-weight:900;
+      letter-spacing:.22em;color:#80694e
+    }
+    h1,h2,h3{font-family:Georgia,"Times New Roman",serif}
+    h1{
+      margin:0 auto;text-align:center;max-width:900px;
+      font-size:clamp(3rem,6vw,5rem);line-height:.98;letter-spacing:-.035em
+    }
+    .intro{
+      max-width:760px;margin:22px auto 0;text-align:center;
+      font-size:clamp(1.15rem,2.1vw,1.4rem);color:#2f4457
+    }
+
+    .contact-card{
+      max-width:850px;margin:10px auto 24px;
+      background:rgba(255,253,247,.84);
+      border:1px solid var(--line);
+      border-radius:22px;
+      padding:34px;
+      box-shadow:0 7px 0 rgba(23,50,77,.05);
+      text-align:center
+    }
+    .contact-card h2{
+      margin:0 0 10px;
+      font-size:clamp(2rem,3.4vw,2.8rem);
+      line-height:1.05
+    }
+    .gold-rule{
+      width:52px;height:3px;background:var(--gold);
+      border-radius:999px;margin:0 auto 22px
+    }
+    .email-box{
+      margin:22px auto 0;
+      background:linear-gradient(145deg,#e7eee8,#f8f2e4);
+      border:2px solid #b7c8bf;
+      border-radius:18px;
+      padding:24px
+    }
+    .email-label{
+      margin:0 0 7px;font-size:.78rem;font-weight:900;letter-spacing:.14em;
+      color:#80694e
+    }
+    .email-link{
+      display:inline-block;
+      font-family:Georgia,"Times New Roman",serif;
+      font-size:clamp(1.35rem,3vw,2rem);
+      font-weight:800;
+      color:var(--navy);
+      text-decoration-thickness:2px;
+      text-underline-offset:5px
+    }
+
+    .topics{
+      max-width:850px;margin:24px auto;
+      display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px
+    }
+    .topic{
+      background:rgba(255,253,247,.76);
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:20px;
+      text-align:center
+    }
+    .topic h3{
+      margin:0 0 7px;font-size:1.35rem
+    }
+    .topic p{
+      margin:0;color:#405568;font-size:.98rem
+    }
+
+    .privacy{
+      max-width:760px;margin:28px auto 0;
+      color:#5f6870;text-align:center;font-size:.94rem
+    }
+
+    .back-row{text-align:center;margin:34px auto 52px}
+    .btn{
+      display:inline-flex;align-items:center;justify-content:center;gap:8px;
+      text-decoration:none;background:var(--navy);color:#fff;font-weight:900;
+      border-radius:12px;padding:14px 22px;box-shadow:0 5px 0 #0d263b
+    }
+
+    footer{
+      background:#fffdf7;border-top:1px solid rgba(23,50,77,.10);
+      padding:25px 0 30px;text-align:center;color:#56626b
+    }
+    .footer-links{
+      display:flex;justify-content:center;gap:16px;flex-wrap:wrap;margin-top:8px
+    }
+    .footer-links a{font-weight:800}
+
+    @media(max-width:800px){
+      .header-inner{align-items:flex-start;flex-direction:column}
+      nav{justify-content:flex-start}
+      .topics{grid-template-columns:1fr}
+    }
+
+    @media(max-width:560px){
+      .shell{width:min(100% - 22px,1100px)}
+      .brand-name{font-size:2.05rem}
+      .brand-tag{letter-spacing:.22em}
+      nav a{font-size:.92rem;padding:8px 9px}
+      h1{font-size:3.05rem}
+      .hero{padding-top:38px}
+      .contact-card{padding:24px}
+    }
+  </style>
 </head>
 
-<body class="bg-white text-black">
-  <!-- Header -->
-  <header class="bg-white border-b border-black/10 py-4 shadow-sm">
-    <div class="max-w-6xl mx-auto px-4 flex items-center justify-between">
-      <a href="index.html" class="flex items-center gap-3">
-        <img src="logo.svg" alt="ProjectorFirst logo" class="w-12 h-12"/>
-        <span class="text-3xl font-extrabold text-blue-900">ProjectorFirst</span>
+<body>
+  <a href="#main" class="skip-link">Skip to main content</a>
+
+  <header role="banner">
+    <div class="shell header-inner">
+      <a class="brand" href="index.html" aria-label="Projector First home">
+        <span class="brand-name">Projector First</span>
+        <span class="brand-tag">BIG GAMES · BRIGHTER DAYS.</span>
       </a>
-      <nav class="space-x-2">
-        <a href="index.html" class="px-5 py-3 rounded-xl bg-blue-900 text-white text-xl font-bold">Home</a>
-        <a href="apps.html" class="px-5 py-3 rounded-xl bg-blue-900/90 text-white text-xl font-bold hover:bg-blue-800 transition">Apps</a>
-        <a href="about.html" class="px-5 py-3 rounded-xl bg-blue-900/90 text-white text-xl font-bold hover:bg-blue-800 transition">About</a>
-        <a href="contact.html" class="px-5 py-3 rounded-xl bg-blue-900 text-white text-xl font-bold">Contact</a>
+
+      <nav aria-label="Primary">
+        <a href="index.html">Home</a>
+        <a href="apps.html">Games</a>
+        <a href="about.html">About</a>
+        <a href="contact.html" aria-current="page">Contact</a>
+        <a class="nav-cta" href="index.html#pricing">Get Started</a>
       </nav>
     </div>
   </header>
 
-  <!-- Contact Section -->
-  <main class="max-w-3xl mx-auto px-6 py-14">
-    <section class="bg-white rounded-2xl shadow border border-blue-200 p-8">
-      <h1 class="text-4xl font-extrabold text-blue-900 mb-6 text-center">Contact ProjectorFirst</h1>
-
-      <p class="text-gray-700 text-lg mb-6 text-center">
-        Have a question, feature idea, or need support? We’d love to hear from you.
-      </p>
-
-      <div class="bg-blue-50 border border-blue-200 rounded-xl p-6 mb-6 text-center">
-        <p class="text-lg text-blue-900 font-bold">
-          📧 Email us at: 
-          <a href="mailto:helloprojectorfirst@gmail.com" class="text-blue-700 underline hover:text-blue-900">
-            helloprojectorfirst@gmail.com
-          </a>
+  <main id="main">
+    <section class="hero">
+      <div class="shell">
+        <p class="eyebrow">QUESTIONS · IDEAS · SUPPORT</p>
+        <h1>Contact Projector First</h1>
+        <p class="intro">
+          Have a question, a game idea, accessibility feedback, or need help with Projector First?
+          Email is the simplest way to reach us.
         </p>
       </div>
+    </section>
 
-      <p class="text-gray-600 text-sm text-center">
-        ProjectorFirst values your privacy. We only use your email to reply to your message and do not share your data with anyone.
+    <section class="shell">
+      <div class="contact-card">
+        <h2>Send an Email</h2>
+        <div class="gold-rule"></div>
+        <p>
+          We welcome feedback from Activity Directors, senior-living teams, caregivers,
+          and anyone using Projector First.
+        </p>
+
+        <div class="email-box">
+          <p class="email-label">EMAIL PROJECTOR FIRST</p>
+          <a class="email-link" href="mailto:helloprojectorfirst@gmail.com">
+            helloprojectorfirst@gmail.com
+          </a>
+        </div>
+      </div>
+
+      <div class="topics" aria-label="Reasons to contact Projector First">
+        <article class="topic">
+          <h3>Game Ideas</h3>
+          <p>Have an activity you wish existed? Suggestions are welcome.</p>
+        </article>
+
+        <article class="topic">
+          <h3>Support</h3>
+          <p>Tell us what is not working or where you need help.</p>
+        </article>
+
+        <article class="topic">
+          <h3>Accessibility</h3>
+          <p>Share anything that could make a game easier to see, hear, or use.</p>
+        </article>
+      </div>
+
+      <p class="privacy">
+        Projector First uses your email only to respond to your message and does not share your contact information.
       </p>
 
-      <div class="mt-10 text-center">
-        <a href="index.html"
-           class="inline-block px-8 py-3 bg-blue-900 text-white font-bold text-lg rounded-xl hover:bg-blue-800 transition focus:ring-4 focus:ring-blue-400">
-          ⬅ Back to Home
-        </a>
+      <div class="back-row">
+        <a class="btn" href="index.html">← Back to Home</a>
       </div>
     </section>
   </main>
 
-  <!-- Footer -->
-  <footer class="bg-white border-t border-black/10 py-6 mt-12">
-    <div class="max-w-6xl mx-auto px-4 text-center text-lg text-gray-700">
-      © <span id="year"></span> ProjectorFirst • Big, Simple Apps for Nursing Homes & Senior Care
+  <footer role="contentinfo">
+    <div class="shell">
+      <strong>© <span id="year"></span> Projector First</strong> · Big, simple games for senior living.
+      <div class="footer-links">
+        <a href="index.html">Home</a>
+        <a href="about.html">About</a>
+        <a href="articles.html">Articles</a>
+        <a href="legal.html">Legal &amp; Policies</a>
+      </div>
     </div>
   </footer>
 
   <script>
-    document.getElementById('year').textContent = new Date().getFullYear();
+    document.getElementById("year").textContent = new Date().getFullYear();
   </script>
 </body>
 </html>
