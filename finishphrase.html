@@ -1,78 +1,67 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Finish the Phrase — Projector First</title>
-<script data-memberstack-app="app_cmgnwpg8y00x10suih4pua785" src="https://static.memberstack.com/scripts/v2/memberstack.js"></script>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Finish the Phrase — ProjectorFirst</title>
+<script data-memberstack-app="app_cmgnwpg8y00x10suih4pua785" src="https://static.memberstack.com/scripts/v2/memberstack.js" type="text/javascript"></script>
 <script src="/guard.js"></script>
+<script src="https://cdn.tailwindcss.com"></script>
 <style>
-:root{--navy:#254b59;--cream:#fff9ea;--gold:#e8b94f;--coral:#d97d66;--sage:#789b7c;--blue:#6f93aa;--ink:#17364b;--shadow:#173742}
-*{box-sizing:border-box}
-html,body{margin:0;min-height:100%;font-family:Arial,sans-serif;background:#315d68;color:white}
-body:before{content:"";position:fixed;inset:0;pointer-events:none;background:radial-gradient(circle at 12% 15%,#efba4d33,transparent 26%),radial-gradient(circle at 88% 78%,#d8786033,transparent 28%),repeating-linear-gradient(135deg,#ffffff08 0 2px,transparent 2px 18px)}
-.screen{min-height:100vh;display:flex;flex-direction:column;position:relative}.hidden{display:none!important}
-header{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 18px;flex-wrap:wrap}
-.brand{font-weight:900;letter-spacing:.08em}
-.btn{border:3px solid #163846;border-radius:16px;box-shadow:0 5px 0 #163846;padding:11px 17px;font-size:clamp(1rem,2vw,1.22rem);font-weight:900;cursor:pointer;background:white;color:var(--ink);touch-action:manipulation}.btn:active{transform:translateY(3px);box-shadow:0 2px 0 #163846}.gold{background:var(--gold)}.coral{background:var(--coral);color:white}.sage{background:#dcebdc;color:#315c47}
-.start{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:20px}
-.title{font-family:Georgia,serif;font-size:clamp(2.7rem,7vw,5.4rem);color:#f2c55e;text-shadow:0 4px 0 #173742;margin:.08em}
-.sub{font-size:clamp(1.1rem,2.4vw,1.55rem);font-weight:800;line-height:1.4;max-width:900px}
-.cats{display:grid;grid-template-columns:repeat(3,minmax(220px,1fr));gap:14px;width:min(1050px,95vw);margin-top:22px}
-.cat{background:linear-gradient(145deg,#fffdf6,#efe3c6);color:#244b58;border:4px solid #d2ad55;border-radius:22px;box-shadow:0 7px 0 #98732f;padding:19px 14px;font-size:clamp(1.05rem,2.4vw,1.55rem);font-weight:900;cursor:pointer}
-.cat:nth-child(4n+2){border-color:#d27c67;box-shadow:0 7px 0 #9e5342}.cat:nth-child(4n+3){border-color:#789b7c;box-shadow:0 7px 0 #527056}.cat:nth-child(4n){border-color:#6f93aa;box-shadow:0 7px 0 #4f6f82}
-.game{flex:1;display:grid;grid-template-columns:minmax(520px,820px) minmax(260px,360px);gap:22px;align-items:center;justify-content:center;padding:12px 22px 28px}
-.stage{background:linear-gradient(145deg,#fffdf6,#efe5cc);border:5px solid #c89c49;border-radius:30px;box-shadow:0 9px 0 #8b672f,0 22px 48px #0004;padding:26px;color:var(--ink);text-align:center}
-.category-pill{display:inline-block;background:#315d68;color:#fff8df;border-radius:999px;padding:8px 18px;font-weight:900;font-size:clamp(1rem,2vw,1.2rem)}
-.prompt{font-family:Georgia,serif;font-weight:900;font-size:clamp(2.4rem,6vw,5rem);line-height:1.15;margin:28px auto 20px;max-width:950px}
-.answer{background:var(--gold);border:4px solid #fff8e8;border-radius:22px;box-shadow:0 6px 0 #a97825;padding:18px 22px;margin:18px auto 0;font-family:Georgia,serif;font-size:clamp(2rem,5vw,4rem);font-weight:900;color:var(--ink)}
-.side{display:flex;flex-direction:column;gap:14px}
-.card{background:#173742;border-radius:20px;padding:16px;text-align:center;box-shadow:0 6px 0 #102c35}
-.counter{font-size:clamp(1.2rem,2.8vw,1.7rem);font-weight:900;color:#f5dfa8}
-.instructions{font-size:clamp(1rem,2.1vw,1.2rem);font-weight:800;line-height:1.4}
-.done{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:20px}
-@media(max-width:900px){.game{grid-template-columns:1fr}.cats{grid-template-columns:repeat(2,minmax(220px,1fr))}.side{width:min(820px,100%);margin:auto}}
-@media(max-width:560px){.cats{grid-template-columns:1fr}.prompt{font-size:clamp(2rem,11vw,3.2rem)}}
+body{margin:0;background:radial-gradient(circle at 12% 10%,rgba(242,184,75,.30),transparent 24%),radial-gradient(circle at 88% 18%,rgba(110,157,139,.25),transparent 26%),linear-gradient(145deg,#fff8e8,#f3ede2 52%,#e6f0ed);color:#17324d;font-family:Arial,sans-serif;min-height:100vh}
+body:before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.13;background-image:linear-gradient(90deg,transparent 49%,rgba(23,50,77,.08) 50%,transparent 51%),linear-gradient(transparent 49%,rgba(23,50,77,.06) 50%,transparent 51%);background-size:48px 48px}
+.pf-blue{background:#1e3a8a}.pf-blue:hover{background:#1d4ed8}
+#categoryScreen,#gameScreen{position:relative}
+#categoryScreen h1,#categoryTitle{font-family:Georgia,serif!important;color:#17324d!important;text-shadow:0 3px 0 white}
+#categoryScreen:before{content:"FINISH THE PHRASE";display:block;font-weight:900;letter-spacing:.18em;color:#80694e;margin-top:8px;margin-bottom:10px}
+#categoryButtons button{background:linear-gradient(145deg,#3f7898,#2f607a)!important;border:4px solid rgba(255,255,255,.75);box-shadow:0 9px 0 #244d63,0 14px 28px rgba(23,50,77,.18);border-radius:26px!important;min-height:105px;color:white}
+#categoryButtons button:nth-child(3n+2){background:linear-gradient(145deg,#d97961,#bc5e4b)!important;box-shadow:0 9px 0 #934738,0 14px 28px rgba(23,50,77,.18)}
+#categoryButtons button:nth-child(3n){background:linear-gradient(145deg,#6e9d8b,#557e70)!important;box-shadow:0 9px 0 #42675a,0 14px 28px rgba(23,50,77,.18)}
+#gameScreen{background:rgba(255,253,246,.9);border:3px solid rgba(23,50,77,.12);border-radius:34px;padding:24px!important;margin-top:24px!important;box-shadow:0 20px 50px rgba(23,50,77,.15)}
+#phraseCard{background:linear-gradient(145deg,#fffdf6,#efe3c7);border:4px solid #d5c49d;border-radius:26px;box-shadow:0 8px 0 #b99d69,0 12px 18px rgba(23,50,77,.15);padding:38px 28px}
+#prompt{font-family:Georgia,serif;font-size:clamp(2.5rem,6vw,5rem);font-weight:900;line-height:1.15;color:#17324d}
+#answer{background:#e9f4e8;border:4px solid #7aa17a;border-radius:22px;padding:18px 24px;color:#245b3b;box-shadow:0 7px 0 #648c64;font-family:Georgia,serif;font-size:clamp(2rem,5vw,4rem);font-weight:900}
+#status{background:#fff8e8;border-radius:16px;padding:10px 18px;color:#5e6a75;font-weight:800}
+.big-btn{font-size:25px;padding:16px 26px;border-radius:1rem;font-weight:800;color:white;box-shadow:0 6px 0 rgba(23,50,77,.25)}
+@media(max-width:700px){#gameScreen{padding:14px!important}#phraseCard{padding:26px 18px}#categoryButtons button{min-height:86px}}
 </style>
 </head>
-<body>
-<div id="start" class="screen">
-<header><a class="btn" href="apps.html">← Apps</a><div class="brand">PROJECTOR FIRST</div><button id="fs1" class="btn">⛶ Fullscreen</button></header>
-<main class="start">
-<div style="font-size:clamp(3rem,8vw,6rem)">💬</div>
-<h1 class="title">Finish the Phrase</h1>
-<div class="sub">Read the beginning aloud and let the room finish it together.<br><span id="bankInfo" style="color:#f7e5b0"></span></div>
-<div id="cats" class="cats"></div>
-</main>
+<body class="min-h-screen">
+<div class="max-w-6xl mx-auto flex justify-between items-center p-6 border-b border-gray-200">
+<a href="apps.html" class="pf-blue text-white text-xl font-bold px-5 py-3 rounded-xl">← Back to Apps</a>
+<button id="fullscreenBtn" class="bg-blue-700 text-white text-xl font-bold px-6 py-3 rounded-xl hover:bg-blue-600">⛶ Fullscreen</button>
 </div>
 
-<div id="play" class="screen hidden">
-<header><button id="back" class="btn">← Categories</button><div class="brand">FINISH THE PHRASE</div><button id="fs2" class="btn">⛶ Fullscreen</button></header>
-<main class="game">
-<section class="stage">
-<div id="catTitle" class="category-pill"></div>
-<div id="prompt" class="prompt"></div>
-<div id="answer" class="answer hidden"></div>
-</section>
-<aside class="side">
-<div class="card"><div id="counter" class="counter"></div></div>
-<button id="showAnswer" class="btn gold">✨ Show Answer</button>
-<button id="nextPhrase" class="btn coral hidden">Next Phrase ➜</button>
-<div class="card instructions">Give residents time to call it out before revealing the ending. No scorekeeping needed.</div>
-</aside>
-</main>
+<div id="categoryScreen" class="text-center mt-10 px-6 max-w-6xl mx-auto">
+<h1 class="text-4xl md:text-6xl font-extrabold mb-3">Choose a Category</h1>
+<p id="bankInfo" class="text-xl md:text-2xl font-bold text-slate-600 mb-10"></p>
+<div id="categoryButtons" class="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-4xl mx-auto"></div>
 </div>
 
-<div id="done" class="screen hidden">
-<main class="done">
-<div style="font-size:7rem">👏💬👏</div>
-<h2 class="title">Round Complete!</h2>
-<p class="sub">That was 10 phrases. Ready for another mix?</p>
-<div style="display:flex;gap:14px;flex-wrap:wrap;justify-content:center">
-<button id="again" class="btn gold">Play Another 10</button>
-<button id="choose" class="btn">Choose Another Category</button>
+<div id="gameScreen" class="text-center mt-16 px-4 hidden max-w-6xl mx-auto">
+<h1 id="categoryTitle" class="text-4xl md:text-6xl font-extrabold mb-8">Category</h1>
+<div id="phraseCard" class="max-w-5xl mx-auto">
+<div id="prompt"></div>
+<div id="answer" class="mt-8 hidden"></div>
 </div>
-</main>
+<div id="status" class="text-lg mt-6 max-w-3xl mx-auto"></div>
+<div class="flex justify-center gap-6 mt-8 flex-wrap">
+<button id="showAnswerBtn" class="big-btn bg-green-700 hover:bg-green-600">Show Answer</button>
+<button id="nextPhraseBtn" class="big-btn pf-blue hidden">Next Phrase</button>
+<button id="backBtn" class="big-btn bg-gray-600 hover:bg-gray-500">⬅ Back</button>
+</div>
+</div>
+
+<div id="doneScreen" class="text-center mt-16 px-4 hidden max-w-5xl mx-auto">
+<div class="bg-white/80 border-4 border-white rounded-[34px] p-10 shadow-xl">
+<div class="text-6xl mb-4">👏</div>
+<h1 class="font-[Georgia] text-4xl md:text-6xl font-extrabold text-[#17324d] mb-4">Round Complete!</h1>
+<p class="text-xl md:text-2xl font-bold text-slate-600 mb-8">That was 10 phrases.</p>
+<div class="flex justify-center gap-6 flex-wrap">
+<button id="againBtn" class="big-btn bg-green-700 hover:bg-green-600">Play Another 10</button>
+<button id="chooseBtn" class="big-btn pf-blue">Choose Category</button>
+</div>
+</div>
 </div>
 
 <script>
@@ -754,39 +743,44 @@ mothersday: [
     { prompt:"New Year, same great...", answer:"you." }
   ]
 };
+
 const LABELS={
-sayings:"Sayings 💬",hymns:"Hymns 🎶",holiday:"Christmas 🎄",winter:"Winter ❄️",funny:"Funny 😂",
-easter:"Easter 🐣",stpatricks:"St. Patrick’s Day 🍀",valentines:"Valentine’s Day ❤️",spring:"Spring 🌸",
-mardigras:"Mardi Gras 🎭",fathersday:"Father’s Day 👔",fall:"Fall 🍂",thanksgiving:"Thanksgiving 🦃"
+sayings:"Sayings",hymns:"Hymns",holiday:"Christmas",winter:"Winter",funny:"Funny",
+easter:"Easter",stpatricks:"St. Patrick’s Day",valentines:"Valentine’s Day",spring:"Spring",
+mardigras:"Mardi Gras",fathersday:"Father’s Day",fall:"Fall",thanksgiving:"Thanksgiving"
 };
 let currentCategory="",deck=[],pos=0,roundSize=0;
 
-function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));const t=a[i];a[i]=a[j];a[j]=t}return a}
-function show(id){["start","play","done"].forEach(x=>document.getElementById(x).classList.toggle("hidden",x!==id))}
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
 function pretty(cat){return LABELS[cat]||cat.charAt(0).toUpperCase()+cat.slice(1)}
+function show(screen){
+ document.getElementById("categoryScreen").classList.toggle("hidden",screen!=="categories");
+ document.getElementById("gameScreen").classList.toggle("hidden",screen!=="game");
+ document.getElementById("doneScreen").classList.toggle("hidden",screen!=="done");
+}
 function startGame(cat){
  currentCategory=cat;
  const pool=DEFAULT_PHRASES[cat]||[];
  roundSize=Math.min(10,pool.length);
  deck=shuffle(pool).slice(0,roundSize);
  pos=0;
- show("play");
+ show("game");
  render();
 }
 function render(){
  const item=deck[pos];
- document.getElementById("catTitle").textContent=pretty(currentCategory);
+ document.getElementById("categoryTitle").textContent=pretty(currentCategory);
  document.getElementById("prompt").textContent=item.prompt;
  document.getElementById("answer").textContent=item.answer;
  document.getElementById("answer").classList.add("hidden");
- document.getElementById("showAnswer").classList.remove("hidden");
- document.getElementById("nextPhrase").classList.add("hidden");
- document.getElementById("counter").textContent="Phrase "+(pos+1)+" of "+roundSize;
+ document.getElementById("showAnswerBtn").classList.remove("hidden");
+ document.getElementById("nextPhraseBtn").classList.add("hidden");
+ document.getElementById("status").textContent="Phrase "+(pos+1)+" of "+roundSize+" • Let the group call out the ending";
 }
 function reveal(){
  document.getElementById("answer").classList.remove("hidden");
- document.getElementById("showAnswer").classList.add("hidden");
- document.getElementById("nextPhrase").classList.remove("hidden");
+ document.getElementById("showAnswerBtn").classList.add("hidden");
+ document.getElementById("nextPhraseBtn").classList.remove("hidden");
 }
 function next(){
  pos++;
@@ -796,24 +790,22 @@ function next(){
 function full(){
  if(document.fullscreenElement){document.exitFullscreen()}else{document.documentElement.requestFullscreen()}
 }
-const cats=document.getElementById("cats");
+const categoryButtons=document.getElementById("categoryButtons");
 Object.keys(DEFAULT_PHRASES).forEach(cat=>{
- const b=document.createElement("button");
- b.className="cat";
- b.type="button";
- b.textContent=pretty(cat)+"  •  "+DEFAULT_PHRASES[cat].length;
- b.addEventListener("click",()=>startGame(cat));
- cats.appendChild(b);
+ const btn=document.createElement("button");
+ btn.className="text-2xl md:text-3xl font-bold py-6 transition-transform hover:scale-[1.01]";
+ btn.textContent=pretty(cat);
+ btn.addEventListener("click",()=>startGame(cat));
+ categoryButtons.appendChild(btn);
 });
 const total=Object.values(DEFAULT_PHRASES).reduce((n,a)=>n+a.length,0);
 document.getElementById("bankInfo").textContent=Object.keys(DEFAULT_PHRASES).length+" ready-to-play categories • "+total+" phrases built in";
-document.getElementById("showAnswer").addEventListener("click",reveal);
-document.getElementById("nextPhrase").addEventListener("click",next);
-document.getElementById("back").addEventListener("click",()=>show("start"));
-document.getElementById("choose").addEventListener("click",()=>show("start"));
-document.getElementById("again").addEventListener("click",()=>startGame(currentCategory));
-document.getElementById("fs1").addEventListener("click",full);
-document.getElementById("fs2").addEventListener("click",full);
+document.getElementById("showAnswerBtn").addEventListener("click",reveal);
+document.getElementById("nextPhraseBtn").addEventListener("click",next);
+document.getElementById("backBtn").addEventListener("click",()=>show("categories"));
+document.getElementById("againBtn").addEventListener("click",()=>startGame(currentCategory));
+document.getElementById("chooseBtn").addEventListener("click",()=>show("categories"));
+document.getElementById("fullscreenBtn").addEventListener("click",full);
 </script>
 </body>
 </html>
