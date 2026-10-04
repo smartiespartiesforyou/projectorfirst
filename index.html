@@ -204,6 +204,10 @@
     }
     .library-link:hover{border-color:var(--blue);background:#f5f0e7}
     .center{text-align:center}
+    .library-note{
+      margin:18px auto 0;text-align:center;font-weight:900;color:#80694e;
+      font-size:1.05rem;letter-spacing:.01em;
+    }
 
     .pricing{
       margin-top:26px;padding:34px 20px 42px;text-align:center;
@@ -543,8 +547,8 @@
           <a class="library-link" href="guess-the-state.html">Guess the State</a>
         </div>
 
-        <div class="center">
-          <a class="btn btn-primary" href="apps.html">See All Games →</a>
+        <div class="library-note">
+          New games are added to the library all the time.
         </div>
       </div>
     </section>
@@ -578,46 +582,12 @@
         <button class="close-preview" onclick="closeGamesPreview()" aria-label="Close game library preview">✕ Close</button>
       </div>
 
-      <div class="all-games-grid">
-        <div class="all-game-tile">I Spy</div>
-        <div class="all-game-tile">Calendar Maker</div>
-        <div class="all-game-tile">Guess the Price</div>
-        <div class="all-game-tile">Daily Devotional</div>
-        <div class="all-game-tile">Bingo Caller</div>
-        <div class="all-game-tile">Random Number Generator</div>
-        <div class="all-game-tile">Resident Feud</div>
-        <div class="all-game-tile">Pokeno</div>
-        <div class="all-game-tile">Move &amp; Groove</div>
-        <div class="all-game-tile">Finish the Phrase</div>
-        <div class="all-game-tile">Dice Roller</div>
-        <div class="all-game-tile">Trivia (True/False)</div>
-        <div class="all-game-tile">Let’s Chat</div>
-        <div class="all-game-tile">Casino Night</div>
-        <div class="all-game-tile">Memory Match</div>
-        <div class="all-game-tile">Pop the Balloon</div>
-        <div class="all-game-tile">Letter Lounge</div>
-        <div class="all-game-tile">Word Scramble</div>
-        <div class="all-game-tile">Guess the State</div>
-        <div class="all-game-tile">Fortune Spin</div>
-        <div class="all-game-tile">Guess the Caller</div>
-        <div class="all-game-tile">Derby Day Horse Race</div>
-        <div class="all-game-tile">Emoji Guess</div>
-        <div class="all-game-tile">What's That Emoji?</div>
-        <div class="all-game-tile">Crossword Puzzle</div>
-        <div class="all-game-tile">Which Decade?</div>
-        <div class="all-game-tile">Spin &amp; Name</div>
-        <div class="all-game-tile">Pick a Door!</div>
-        <div class="all-game-tile">What Doesn't Fit?</div>
-        <div class="all-game-tile">Connect Words</div>
-        <div class="all-game-tile">Rhyme Time</div>
-        <div class="all-game-tile">What Comes Next?</div>
-        <div class="all-game-tile">Guess the Song</div>
-        <div class="all-game-tile">Silly Stories</div>
-        <div class="all-game-tile">Mystery Pictures</div>
+      <div id="allGamesGrid" class="all-games-grid">
+        <div class="all-game-tile">Loading game library…</div>
       </div>
 
       <div class="preview-footer">
-        <a href="apps.html">Open the Full Game Library →</a>
+        <div class="library-note">New games are added to the library all the time.</div>
       </div>
     </div>
   </div>
@@ -641,11 +611,35 @@
   <script>
     document.getElementById("year").textContent = new Date().getFullYear();
 
-    function openGamesPreview(event){
+    async function openGamesPreview(event){
       if(event)event.preventDefault();
       const modal=document.getElementById("gamesPreviewModal");
+      const grid=document.getElementById("allGamesGrid");
       modal.classList.add("open");
       document.body.style.overflow="hidden";
+
+      try{
+        const response=await fetch("apps.html",{cache:"no-store"});
+        if(!response.ok)throw new Error("Could not load game library");
+        const html=await response.text();
+        const doc=new DOMParser().parseFromString(html,"text/html");
+        const titles=[...doc.querySelectorAll("article.card h2")]
+          .map(el=>el.textContent.replace(/\s+/g," ").trim())
+          .filter(Boolean);
+
+        grid.innerHTML="";
+        titles.forEach(title=>{
+          const tile=document.createElement("div");
+          tile.className="all-game-tile";
+          tile.textContent=title;
+          grid.appendChild(tile);
+        });
+
+        const countLine=modal.querySelector(".games-preview-head p");
+        if(countLine)countLine.textContent=titles.length+" games and tools currently in the library.";
+      }catch(error){
+        grid.innerHTML='<div class="all-game-tile">Game list could not load. Please open the Games page.</div>';
+      }
     }
 
     function closeGamesPreview(){
