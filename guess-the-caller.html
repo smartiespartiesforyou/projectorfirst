@@ -1,292 +1,301 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Guess the Caller | ProjectorFirst</title>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Guess the Caller | Projector First</title>
 
-
-<!-- Membership gate (paywall-test) -->
-<script
-  data-memberstack-app="app_cmgnwpg8y00x10suih4pua785"
-  src="https://static.memberstack.com/scripts/v2/memberstack.js"
-  type="text/javascript">
-</script>
+<script data-memberstack-app="app_cmgnwpg8y00x10suih4pua785"
+        src="https://static.memberstack.com/scripts/v2/memberstack.js"
+        type="text/javascript"></script>
 <script src="/guard.js"></script>
 
 <style>
-body {
-  margin: 0;
-  font-family: Arial, sans-serif;
-  background: linear-gradient(135deg, #0f172a, #1e3a8a);
-  color: white;
-  text-align: center;
-  min-height: 100vh;
-  min-height: 100dvh;
+:root{
+  --navy:#17324d;--blue:#3f7898;--blue2:#2f607a;--coral:#d97961;--coral2:#bc5e4b;
+  --sage:#6e9d8b;--sage2:#557e70;--cream:#fff8e8;--ivory:#fffdf6;--gold:#d5c49d;
+}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%}
+body{
+  min-height:100vh;color:var(--navy);font-family:Arial,sans-serif;
+  background:
+    radial-gradient(circle at 12% 10%,rgba(242,184,75,.30),transparent 24%),
+    radial-gradient(circle at 88% 18%,rgba(110,157,139,.25),transparent 26%),
+    linear-gradient(145deg,#fff8e8,#f3ede2 52%,#e6f0ed);
+}
+body:before{
+  content:"";position:fixed;inset:0;pointer-events:none;opacity:.10;
+  background-image:
+    linear-gradient(90deg,transparent 49%,rgba(23,50,77,.07) 50%,transparent 51%),
+    linear-gradient(transparent 49%,rgba(23,50,77,.05) 50%,transparent 51%);
+  background-size:48px 48px
+}
+button,a{font:inherit}
+button{cursor:pointer}
+.hidden{display:none!important}
+
+.topbar{
+  max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;
+  gap:12px;padding:18px;flex-wrap:wrap;border-bottom:1px solid rgba(23,50,77,.12)
+}
+.back-btn,.top-btn{
+  border:0;border-radius:14px;background:#1e3a8a;color:#fff;text-decoration:none;
+  font-weight:900;padding:11px 17px;box-shadow:0 5px 0 rgba(23,50,77,.22)
+}
+.title-block{text-align:center;flex:1;min-width:270px}
+.eyebrow{font-size:.8rem;font-weight:900;letter-spacing:.18em;color:#80694e}
+h1{
+  margin:3px 0 0;font-family:Georgia,serif;font-size:clamp(2.1rem,4.8vw,3.8rem);
+  color:var(--navy);line-height:1
 }
 
-.topbar {
-  display: flex;
-  justify-content: flex-start;
-  padding: 16px 20px 0;
+.wrap{max-width:1060px;margin:0 auto;padding:22px 18px 32px}
+.progress{text-align:center;color:#80694e;font-weight:900;margin-bottom:12px}
+.stage{
+  background:linear-gradient(145deg,#fffdf6,#f1e6d0);
+  border:4px solid #d5c49d;border-radius:30px;padding:clamp(20px,3vw,34px);
+  box-shadow:0 10px 0 #b99d69,0 17px 32px rgba(23,50,77,.14);
+  min-height:560px;display:flex;flex-direction:column;align-items:center;justify-content:center
 }
-.back-btn {
-  background: #1e3a8a;
-  border: 2px solid rgba(255,255,255,0.5);
-  color: #fff;
-  text-decoration: none;
-  font-weight: bold;
-  font-size: 22px;
-  padding: 12px 22px;
-  border-radius: 14px;
+.phone{
+  font-size:clamp(7rem,18vw,12rem);line-height:1;margin-bottom:6px
 }
-.back-btn:hover { background: #1e40af; }
-
-.container {
-  padding: 10px 20px 40px;
-  max-width: 1100px;
-  margin: auto;
+.ringing{animation:ring .45s infinite}
+@keyframes ring{
+  0%,100%{transform:rotate(0deg)}
+  25%{transform:rotate(10deg)}
+  75%{transform:rotate(-10deg)}
 }
-
-h1 {
-  font-size: clamp(44px, 7vw, 70px);
-  margin: 10px 0;
+.message{
+  width:min(860px,100%);background:#fff;border:3px solid #d8cdbc;border-radius:20px;
+  padding:18px 22px;text-align:center;font-family:"Arial Black",Arial,sans-serif;
+  font-size:clamp(1.6rem,3.6vw,2.7rem);color:#17324d;
+  box-shadow:0 6px 0 rgba(23,50,77,.08)
 }
-
-.subtitle {
-  font-size: clamp(22px, 3.5vw, 34px);
-  margin-bottom: 20px;
+.answer{
+  width:min(860px,100%);margin-top:14px;background:#e3efe8;border:4px solid #6e9d8b;
+  border-radius:20px;padding:18px;text-align:center;color:#17324d;
+  box-shadow:0 7px 0 #9eb8ae
 }
-
-.phone {
-  font-size: clamp(90px, 16vw, 150px);
-  display: none;
-  margin: 10px 0;
+.answer .label{font-size:.8rem;font-weight:900;letter-spacing:.15em;color:#557e70}
+.answer .name{
+  margin-top:4px;font-family:Georgia,serif;font-weight:900;
+  font-size:clamp(2.2rem,5vw,3.8rem);line-height:1
 }
-
-.ringing {
-  display: block;
-  animation: ring 0.45s infinite;
+.actions{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin-top:20px}
+.action{
+  min-width:190px;border:4px solid rgba(255,255,255,.82);border-radius:18px;color:#fff;
+  font-weight:900;padding:13px 18px;font-size:clamp(1.05rem,2.2vw,1.4rem)
 }
-
-@keyframes ring {
-  0% { transform: rotate(0deg) scale(1); }
-  20% { transform: rotate(12deg) scale(1.05); }
-  40% { transform: rotate(-12deg) scale(1.05); }
-  60% { transform: rotate(10deg) scale(1.05); }
-  80% { transform: rotate(-10deg) scale(1.05); }
-  100% { transform: rotate(0deg) scale(1); }
-}
-@media (prefers-reduced-motion: reduce) {
-  .ringing { animation: none; }
-}
-
-.message {
-  background: rgba(255,255,255,0.14);
-  border-radius: 24px;
-  padding: 30px;
-  margin: 20px auto;
-  font-size: clamp(28px, 4vw, 42px);
-  line-height: 1.3;
-  min-height: 90px;
-}
-
-.answer {
-  font-size: clamp(36px, 5vw, 56px);
-  color: #fde68a;
-  font-weight: bold;
-  margin: 20px 0;
-  display: none;
-}
-
-button {
-  font-size: clamp(24px, 3.2vw, 34px);
-  padding: 18px 30px;
-  margin: 10px;
-  border-radius: 18px;
-  border: none;
-  cursor: pointer;
-  font-weight: bold;
-}
-button:focus-visible { outline: 4px solid #fde68a; outline-offset: 2px; }
-
-.start  { background: #22c55e; color: white; }
-.replay { background: #e2e8f0; color: #0f172a; display: none; }
-.reveal { background: #f59e0b; color: #111827; display: none; }
-.next   { background: #38bdf8; color: #0f172a; display: none; }
-
-.progress {
-  margin-top: 20px;
-  font-size: clamp(18px, 2.5vw, 24px);
-  opacity: 0.85;
-}
-.footer {
-  margin-top: 10px;
-  font-size: 20px;
-  opacity: 0.7;
+.start{background:linear-gradient(145deg,var(--blue),var(--blue2));box-shadow:0 7px 0 #244d63}
+.replay{background:linear-gradient(145deg,#d8aa43,#b98424);box-shadow:0 7px 0 #8d641b;color:#17324d}
+.reveal{background:linear-gradient(145deg,var(--coral),var(--coral2));box-shadow:0 7px 0 #934738}
+.next{background:linear-gradient(145deg,var(--sage),var(--sage2));box-shadow:0 7px 0 #42665b}
+.helper{text-align:center;margin-top:12px;color:#7a7167;font-size:.92rem;font-weight:700}
+@media(prefers-reduced-motion:reduce){.ringing{animation:none!important}}
+@media(max-width:650px){
+  .title-block{order:-1;flex-basis:100%}
+  .stage{min-height:500px}
 }
 </style>
 </head>
 
 <body>
-
 <div class="topbar">
   <a href="apps.html" class="back-btn">← Back to Apps</a>
-</div>
-
-<div class="container">
-  <h1>📞 Guess the Caller</h1>
-  <div class="subtitle">Listen carefully. Guess who is calling!</div>
-
-  <div id="phone" class="phone">☎️</div>
-
-  <div id="message" class="message">
-    Press Start Call.
+  <div class="title-block">
+    <div class="eyebrow">VOICE RECOGNITION GAME</div>
+    <h1>Guess the Caller</h1>
   </div>
-
-  <div id="answer" class="answer"></div>
-
-  <button id="startBtn" class="start" onclick="startCall()">▶ Start Call</button>
-  <button id="replayBtn" class="replay" onclick="replayVoice()">🔁 Play Voice Again</button>
-  <button id="revealBtn" class="reveal" onclick="revealAnswer()">👀 Reveal Answer</button>
-  <button id="nextBtn" class="next" onclick="nextCaller()">➡ Next Caller</button>
-
-  <div id="progress" class="progress"></div>
-  <div class="footer">ProjectorFirst Activity Game</div>
+  <button class="top-btn" onclick="toggleFullscreen()">⛶ Fullscreen</button>
 </div>
 
-<audio id="ringAudio" src="sounds/ringtone.mp3"></audio>
-<audio id="voiceAudio"></audio>
+<main class="wrap">
+  <div id="progress" class="progress">17 mystery callers ready</div>
+
+  <section class="stage">
+    <div id="phone" class="phone">☎️</div>
+
+    <div id="message" class="message">Press Start Call.</div>
+
+    <div id="answer" class="answer hidden">
+      <div class="label">THE CALLER IS</div>
+      <div id="answerName" class="name"></div>
+    </div>
+
+    <div class="actions">
+      <button id="startBtn" class="action start" onclick="startCall()">▶ Start Call</button>
+      <button id="replayBtn" class="action replay hidden" onclick="replayVoice()">🔁 Play Voice Again</button>
+      <button id="revealBtn" class="action reveal hidden" onclick="revealAnswer()">Reveal Answer</button>
+      <button id="nextBtn" class="action next hidden" onclick="nextCaller()">Next Caller →</button>
+    </div>
+
+    <div class="helper">Listen, guess out loud, then reveal • Space = next step • F = Fullscreen</div>
+  </section>
+</main>
+
+<audio id="ringAudio" src="sounds/ringtone.mp3" preload="auto"></audio>
+<audio id="voiceAudio" preload="auto"></audio>
 
 <script>
 "use strict";
 
-/* All 17 voices in the sounds library.
-   NOTE: two files live under unusual names/locations in the repo —
-   the paths below point at where the files ACTUALLY are. */
-const CALLERS = [
-  { answer: "Andy Griffith",      file: "sounds/andy griffith.mp3" },
-  { answer: "John Wayne",         file: "sounds/john wayne.mp3" },
-  { answer: "Bill Clinton",       file: "sounds/bill clinton.mp3" },
-  { answer: "Lucille Ball",       file: "sounds/lucille ball.mp3" },
-  { answer: "Frank Sinatra",      file: "frank sinatra.mp3" },
-  { answer: "Yoda",               file: "sounds/yoda.mp3" },
-  { answer: "Michelle Obama",     file: "sounds/michelle obama (2).mp3" },
-  { answer: "Johnny Cash",        file: "sounds/johnny cash.mp3" },
-  { answer: "Hillary Clinton",    file: "sounds/hillary clinton.mp3" },
-  { answer: "Dolly Parton",       file: "sounds/dolly.mp3" },
-  { answer: "Elvis Presley",      file: "sounds/elvis.mp3" },
-  { answer: "Donald Trump",       file: "sounds/donald trump.mp3" },
-  { answer: "Martin Luther King", file: "sounds/martin luther king.mp3" },
-  { answer: "Michael Jackson",    file: "sounds/michael jackson.mp3" },
-  { answer: "Oprah Winfrey",      file: "sounds/Oprah Winfrey.mp3" },
-  { answer: "Barack Obama",       file: "sounds/barack obama.mp3" },
-  { answer: "John F. Kennedy",    file: "sounds/john f kennedy.mp3" }
+const CALLERS=[
+  {answer:"Andy Griffith",file:"sounds/andy griffith.mp3"},
+  {answer:"John Wayne",file:"sounds/john wayne.mp3"},
+  {answer:"Bill Clinton",file:"sounds/bill clinton.mp3"},
+  {answer:"Lucille Ball",file:"sounds/lucille ball.mp3"},
+  {answer:"Frank Sinatra",file:"frank sinatra.mp3"},
+  {answer:"Yoda",file:"sounds/yoda.mp3"},
+  {answer:"Michelle Obama",file:"sounds/michelle obama (2).mp3"},
+  {answer:"Johnny Cash",file:"sounds/johnny cash.mp3"},
+  {answer:"Hillary Clinton",file:"sounds/hillary clinton.mp3"},
+  {answer:"Dolly Parton",file:"sounds/dolly.mp3"},
+  {answer:"Elvis Presley",file:"sounds/elvis.mp3"},
+  {answer:"Donald Trump",file:"sounds/donald trump.mp3"},
+  {answer:"Martin Luther King",file:"sounds/martin luther king.mp3"},
+  {answer:"Michael Jackson",file:"sounds/michael jackson.mp3"},
+  {answer:"Oprah Winfrey",file:"sounds/Oprah Winfrey.mp3"},
+  {answer:"Barack Obama",file:"sounds/barack obama.mp3"},
+  {answer:"John F. Kennedy",file:"sounds/john f kennedy.mp3"}
 ];
 
-let deck = [];
-let index = 0;
+let deck=[];
+let index=0;
+let phase="ready";
+let ringTimer=null;
 
-const phone = document.getElementById("phone");
-const message = document.getElementById("message");
-const answer = document.getElementById("answer");
-const startBtn = document.getElementById("startBtn");
-const replayBtn = document.getElementById("replayBtn");
-const revealBtn = document.getElementById("revealBtn");
-const nextBtn = document.getElementById("nextBtn");
-const progress = document.getElementById("progress");
-const ringAudio = document.getElementById("ringAudio");
-const voiceAudio = document.getElementById("voiceAudio");
+const phone=document.getElementById("phone");
+const message=document.getElementById("message");
+const progress=document.getElementById("progress");
+const answerBox=document.getElementById("answer");
+const answerName=document.getElementById("answerName");
+const startBtn=document.getElementById("startBtn");
+const replayBtn=document.getElementById("replayBtn");
+const revealBtn=document.getElementById("revealBtn");
+const nextBtn=document.getElementById("nextBtn");
+const ringAudio=document.getElementById("ringAudio");
+const voiceAudio=document.getElementById("voiceAudio");
 
-function shuffle(arr) {
-  const a = [...arr];
-  for (let i = a.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [a[i], a[j]] = [a[j], a[i]];
+function shuffle(arr){
+  const a=arr.slice();
+  for(let i=a.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
   }
   return a;
 }
 
-function showGuessButtons() {
-  message.innerText = "Who is calling?";
-  replayBtn.style.display = "inline-block";
-  revealBtn.style.display = "inline-block";
+function resetButtons(){
+  startBtn.classList.add("hidden");
+  replayBtn.classList.add("hidden");
+  revealBtn.classList.add("hidden");
+  nextBtn.classList.add("hidden");
 }
 
-function startCall() {
-  answer.style.display = "none";
-  replayBtn.style.display = "none";
-  revealBtn.style.display = "none";
-  nextBtn.style.display = "none";
-  startBtn.style.display = "none";
+function stopAudio(){
+  clearTimeout(ringTimer);
+  ringAudio.pause(); ringAudio.currentTime=0;
+  voiceAudio.pause(); voiceAudio.currentTime=0;
+  phone.classList.remove("ringing");
+}
 
-  message.innerText = "Ring... ring...";
+function startCall(){
+  stopAudio();
+  phase="ringing";
+  resetButtons();
+  answerBox.classList.add("hidden");
+  answerName.textContent="";
+  progress.textContent="Caller "+(index+1)+" of "+deck.length;
+  message.textContent="Ring… ring…";
   phone.classList.add("ringing");
-  progress.innerText = "Caller " + (index + 1) + " of " + deck.length;
 
-  ringAudio.pause();
-  ringAudio.currentTime = 0;
-  voiceAudio.pause();
-  voiceAudio.currentTime = 0;
+  ringAudio.play().catch(()=>{});
 
-  ringAudio.play().catch(() => {});
-
-  setTimeout(() => {
+  ringTimer=setTimeout(()=>{
     ringAudio.pause();
-    ringAudio.currentTime = 0;
+    ringAudio.currentTime=0;
     phone.classList.remove("ringing");
-    message.innerText = "Listen carefully...";
+    message.textContent="Listen carefully…";
     playVoice();
-  }, 3000);
+  },2200);
 }
 
-function playVoice() {
-  voiceAudio.src = deck[index].file;
-  voiceAudio.currentTime = 0;
+function playVoice(){
+  phase="listening";
+  const caller=deck[index];
+  voiceAudio.src=encodeURI(caller.file);
+  voiceAudio.currentTime=0;
 
-  voiceAudio.onended = showGuessButtons;
-
-  /* If a recording is missing or won't play, NEVER stall the game —
-     tell the director and let them reveal / move on. */
-  voiceAudio.onerror = () => {
-    message.innerText = "This recording won't play — reveal or skip to the next caller.";
-    replayBtn.style.display = "none";
-    revealBtn.style.display = "inline-block";
-    nextBtn.style.display = "inline-block";
+  voiceAudio.onended=()=>{
+    phase="guessing";
+    message.textContent="Who is calling?";
+    replayBtn.classList.remove("hidden");
+    revealBtn.classList.remove("hidden");
   };
 
-  voiceAudio.play().catch(() => {
-    message.innerText = "Tap 🔁 Play Voice Again to hear the caller.";
-    replayBtn.style.display = "inline-block";
-    revealBtn.style.display = "inline-block";
+  voiceAudio.onerror=()=>{
+    phase="guessing";
+    message.textContent="This recording could not play. You can reveal the answer or move on.";
+    replayBtn.classList.add("hidden");
+    revealBtn.classList.remove("hidden");
+    nextBtn.classList.remove("hidden");
+  };
+
+  voiceAudio.play().catch(()=>{
+    phase="guessing";
+    message.textContent="Tap Play Voice Again to hear the caller.";
+    replayBtn.classList.remove("hidden");
+    revealBtn.classList.remove("hidden");
   });
 }
 
-function replayVoice() {
-  voiceAudio.currentTime = 0;
-  voiceAudio.play().catch(() => {});
+function replayVoice(){
+  voiceAudio.currentTime=0;
+  voiceAudio.play().catch(()=>{
+    message.textContent="The browser blocked the replay. Try the button once more.";
+  });
 }
 
-function revealAnswer() {
-  answer.innerText = "Caller: " + deck[index].answer;
-  answer.style.display = "block";
-  nextBtn.style.display = "inline-block";
+function revealAnswer(){
+  phase="revealed";
+  voiceAudio.pause();
+  answerName.textContent=deck[index].answer;
+  answerBox.classList.remove("hidden");
+  message.textContent="Did you recognize the voice?";
+  revealBtn.classList.add("hidden");
+  replayBtn.classList.remove("hidden");
+  nextBtn.classList.remove("hidden");
 }
 
-function nextCaller() {
+function nextCaller(){
+  stopAudio();
   index++;
-  if (index >= deck.length) {
-    deck = shuffle(CALLERS);
-    index = 0;
+  if(index>=deck.length){
+    deck=shuffle(CALLERS);
+    index=0;
   }
-  /* jump straight into the next ring — one less click for the director */
   startCall();
 }
 
-deck = shuffle(CALLERS);
-index = 0;
-progress.innerText = deck.length + " mystery callers ready";
-</script>
+function toggleFullscreen(){
+  if(!document.fullscreenElement)document.documentElement.requestFullscreen();
+  else document.exitFullscreen();
+}
 
+document.addEventListener("keydown",e=>{
+  if(e.code==="KeyF"){toggleFullscreen();return}
+  if(e.code!=="Space"&&e.key!==" ")return;
+  e.preventDefault();
+
+  if(phase==="ready")startCall();
+  else if(phase==="guessing")revealAnswer();
+  else if(phase==="revealed")nextCaller();
+});
+
+deck=shuffle(CALLERS);
+progress.textContent=deck.length+" mystery callers ready";
+</script>
 </body>
 </html>
