@@ -77,9 +77,36 @@ h1{
   box-shadow:0 10px 0 #b99d69,0 18px 36px rgba(23,50,77,.18);
   font-weight:900;user-select:none;padding:26px
 }
+.caller-letter{
+  min-height:1.15em;
+  margin-bottom:clamp(2px,.8vmin,8px);
+  padding:clamp(4px,.8vmin,8px) clamp(14px,2.2vmin,24px);
+  border-radius:999px;
+  background:var(--navy);
+  color:#fff;
+  font-family:"Arial Black",Arial,sans-serif;
+  font-size:clamp(1.5rem,4.5vmin,3rem);
+  font-weight:900;
+  line-height:1;
+  letter-spacing:.03em;
+  text-align:center;
+  box-shadow:0 5px 0 rgba(23,50,77,.20)
+}
+.caller-letter:empty{
+  min-height:0;
+  margin:0;
+  padding:0;
+  box-shadow:none
+}
 .caller-number{
-  white-space:nowrap;letter-spacing:.035em;line-height:.88;font-family:Georgia,serif;
-  text-align:center
+  white-space:nowrap;
+  line-height:.82;
+  font-family:"Arial Black",Arial,sans-serif;
+  font-weight:900;
+  letter-spacing:-.045em;
+  text-align:center;
+  color:#102d46;
+  font-variant-numeric:tabular-nums
 }
 .caller-emoji{font-size:clamp(1.8rem,5vmin,3.5rem);margin-top:10px;min-height:1em}
 .caller-sub{
@@ -151,7 +178,8 @@ h1{
   </div>
 
   <div id="callerBox" class="caller-box">
-    <div id="callerText" class="caller-number">—</div>
+    <div id="callerLetter" class="caller-letter" aria-hidden="true"></div>
+    <div id="callerNumber" class="caller-number">—</div>
     <div id="callerEmoji" class="caller-emoji"></div>
     <div id="callerSub" class="caller-sub">Ready to begin.</div>
   </div>
@@ -183,7 +211,8 @@ const THEMES={
 
 let pool=[],history=[],currentTheme="classic",maxNumber=75;
 
-const callerText=document.getElementById("callerText");
+const callerLetter=document.getElementById("callerLetter");
+const callerNumber=document.getElementById("callerNumber");
 const callerEmoji=document.getElementById("callerEmoji");
 const callerSub=document.getElementById("callerSub");
 const recentDiv=document.getElementById("recentCalls");
@@ -219,7 +248,8 @@ function initGame(){
   }
 
   shuffle(pool);
-  callerText.textContent="—";
+  callerLetter.textContent="";
+  callerNumber.textContent="—";
   callerEmoji.textContent="";
   callerSub.textContent="Ready to begin.";
   recentDiv.innerHTML="";
@@ -237,7 +267,8 @@ function callNext(){
   history.push(pick);
   const emoji=THEMES[currentTheme]?.emoji||"";
 
-  callerText.textContent=pick.letter?pick.letter+" "+pick.number:String(pick.number);
+  callerLetter.textContent=pick.letter||"";
+  callerNumber.textContent=String(pick.number);
   callerEmoji.textContent=emoji;
   callerSub.textContent=pool.length===0?"All numbers have been called.":"";
   addRecent(pick);
@@ -267,13 +298,17 @@ function updateProgress(){
 
 function fitCaller(){
   const box=document.getElementById("callerBox");
-  const text=callerText.textContent||"—";
-  let size=Math.min(box.clientHeight*.58,(box.clientWidth*.9)/(.62*Math.max(text.length,1)));
-  callerText.style.fontSize=size+"px";
-  let guard=20;
-  while(callerText.scrollWidth>box.clientWidth*.92&&guard-->0){
+  const text=callerNumber.textContent||"—";
+  const digits=Math.max(text.length,1);
+  let size=Math.min(
+    box.clientHeight*(callerLetter.textContent?.trim()?0.52:0.64),
+    box.clientWidth/(digits===1?0.72:digits===2?1.34:1.95)
+  );
+  callerNumber.style.fontSize=size+"px";
+  let guard=24;
+  while(callerNumber.scrollWidth>box.clientWidth*.90&&guard-->0){
     size*=.94;
-    callerText.style.fontSize=size+"px";
+    callerNumber.style.fontSize=size+"px";
   }
 }
 
