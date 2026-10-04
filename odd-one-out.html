@@ -1,357 +1,528 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Odd One Out — ProjectorFirst</title>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>What Doesn't Fit? — ProjectorFirst</title>
 
-<!-- Membership gate (paywall-test) -->
-<script
-  data-memberstack-app="app_cmgnwpg8y00x10suih4pua785"
-  src="https://static.memberstack.com/scripts/v2/memberstack.js"
-  type="text/javascript">
-</script>
+<script data-memberstack-app="app_cmgnwpg8y00x10suih4pua785" src="https://static.memberstack.com/scripts/v2/memberstack.js" type="text/javascript"></script>
 <script src="/guard.js"></script>
 
-  <script src="https://cdn.tailwindcss.com"></script>
-  <style>
-    html, body {
-      height: 100vh;
-      height: 100dvh;
-      margin: 0;
-      overflow: hidden;
-      background: #1e3a8a;
-      font-family: ui-rounded, system-ui, -apple-system, "Segoe UI", sans-serif;
-    }
-    .screen {
-      height: 100vh;
-      height: 100dvh;
-      display: flex;
-      flex-direction: column;
-    }
-    .btn-big {
-      font-weight: 900;
-      border-radius: 1.25rem;
-      border: 4px solid #0f265f;
-      box-shadow: 0 6px 0 #0f265f;
-      transition: transform .08s ease, box-shadow .08s ease;
-      cursor: pointer;
-      user-select: none;
-      -webkit-user-select: none;
-      touch-action: manipulation;
-    }
-    .btn-big:active { transform: translateY(4px); box-shadow: 0 2px 0 #0f265f; }
-    .choice {
-      background: #fff;
-      border: 5px solid #0f265f;
-      border-radius: 1.5rem;
-      box-shadow: 0 8px 0 #0f265f55;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: .2rem;
-      cursor: pointer;
-      padding: .6rem;
-      transition: transform .15s ease, background .3s ease, opacity .3s ease, border-color .3s ease;
-      touch-action: manipulation;
-    }
-    .choice .c-emoji { font-size: clamp(3rem, 12vw, 8rem); line-height: 1.1; }
-    .choice .c-name { font-weight: 900; color: #1e3a8a; font-size: clamp(.9rem, 2.8vw, 1.5rem); text-align: center; }
-    .choice.dimmed { opacity: .35; }
-    .choice.winner {
-      background: #facc15;
-      border-color: #fff;
-      transform: scale(1.08);
-      box-shadow: 0 0 30px #facc15aa;
-      animation: bounce .6s ease;
-    }
-    @keyframes bounce {
-      0%, 100% { transform: scale(1.08); }
-      40% { transform: scale(1.2) rotate(-3deg); }
-      70% { transform: scale(1.05) rotate(2deg); }
-    }
-    .choice.wobble { animation: wobble .4s ease; }
-    @keyframes wobble {
-      0%, 100% { transform: translateX(0); }
-      25% { transform: translateX(-8px); }
-      75% { transform: translateX(8px); }
-    }
-    .answer-banner {
-      background: #facc15;
-      color: #1e3a8a;
-      border: 6px solid #fff;
-      border-radius: 1.5rem;
-      box-shadow: 0 10px 30px rgba(0,0,0,.4);
-      animation: popIn .45s cubic-bezier(.2,1.6,.4,1) both;
-    }
-    @keyframes popIn {
-      0% { transform: scale(.3); opacity: 0; }
-      100% { transform: scale(1); opacity: 1; }
-    }
-    .confetti {
-      position: fixed;
-      top: -20px;
-      pointer-events: none;
-      z-index: 50;
-      font-size: clamp(1.2rem, 3vw, 2rem);
-      animation: fall linear forwards;
-    }
-    @keyframes fall {
-      to { transform: translateY(110vh) rotate(720deg); opacity: .9; }
-    }
-    @media (prefers-reduced-motion: reduce) {
-      .answer-banner { animation: none; }
-      .confetti { display: none; }
-      .choice.winner, .choice.wobble { animation: none; }
-    }
-  </style>
-</head>
-<body>
+<meta name="description" content="A large-screen adult reasoning game: study four familiar pictures and decide which one does not fit the group."/>
+<link rel="icon" href="/logo.svg" type="image/svg+xml"/>
 
-  <div id="gameScreen" class="screen">
-    <header class="flex items-center justify-between px-4 pt-4 pb-1 gap-2 flex-wrap">
-      <a href="apps.html" class="btn-big bg-white text-blue-900 text-base md:text-xl px-3 py-2 no-underline">← Back to Apps</a>
-      <h1 class="text-yellow-300 font-black" style="font-size: clamp(1.3rem, 4.5vw, 2.4rem); text-shadow: 3px 3px 0 #0f265f;">🔍 ODD ONE OUT</h1>
-      <label class="flex items-center gap-2 text-white font-bold text-sm md:text-lg cursor-pointer select-none">
-        <input type="checkbox" id="voiceToggle" class="w-5 h-5 md:w-6 md:h-6 accent-yellow-400" checked>
+<style>
+:root{
+  --navy:#17324d;--blue:#3f7898;--blue2:#2f607a;--coral:#d97961;--coral2:#bc5e4b;
+  --sage:#6e9d8b;--sage2:#557e70;--cream:#fff8e8;--ivory:#fffdf6;--gold:#d5c49d;
+}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%}
+body{
+  min-height:100vh;color:var(--navy);font-family:Arial,sans-serif;
+  background:
+    radial-gradient(circle at 12% 10%,rgba(242,184,75,.30),transparent 24%),
+    radial-gradient(circle at 88% 18%,rgba(110,157,139,.25),transparent 26%),
+    linear-gradient(145deg,#fff8e8,#f3ede2 52%,#e6f0ed);
+}
+body:before{
+  content:"";position:fixed;inset:0;pointer-events:none;opacity:.10;
+  background-image:
+    linear-gradient(90deg,transparent 49%,rgba(23,50,77,.07) 50%,transparent 51%),
+    linear-gradient(transparent 49%,rgba(23,50,77,.05) 50%,transparent 51%);
+  background-size:48px 48px
+}
+button,a{font:inherit}
+button{cursor:pointer}
+.hidden{display:none!important}
+.screen{min-height:100vh}
+.topbar{
+  max-width:1220px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;
+  gap:14px;padding:18px;border-bottom:1px solid rgba(23,50,77,.12);flex-wrap:wrap
+}
+.back-btn,.top-btn{
+  border:0;border-radius:14px;background:#1e3a8a;color:#fff;text-decoration:none;
+  font-weight:900;padding:11px 17px;box-shadow:0 5px 0 rgba(23,50,77,.22)
+}
+.title-block{text-align:center;flex:1;min-width:270px}
+.eyebrow{font-size:.78rem;font-weight:900;letter-spacing:.18em;color:#80694e}
+h1{
+  margin:3px 0 0;font-family:Georgia,serif;font-size:clamp(2rem,4.5vw,3.6rem);
+  color:var(--navy);line-height:1;text-shadow:0 2px 0 #fff
+}
+.voice{
+  display:flex;align-items:center;gap:8px;background:#fffdf6;color:#17324d;
+  border:3px solid #d5c49d;border-radius:14px;padding:8px 12px;font-weight:900
+}
+.voice input{width:20px;height:20px}
+.game-wrap{max-width:1160px;margin:0 auto;padding:14px 18px 28px}
+.prompt{
+  text-align:center;margin:4px 0 4px;
+  font-family:"Arial Black",Arial,sans-serif;
+  font-size:clamp(1.6rem,3.7vw,2.8rem);color:#17324d
+}
+.round{
+  text-align:center;color:#80694e;font-weight:900;
+  font-size:clamp(.95rem,1.8vw,1.15rem);margin-bottom:14px
+}
+.stage{
+  background:linear-gradient(145deg,#fffdf6,#f1e6d0);
+  border:4px solid #d5c49d;border-radius:30px;padding:18px;
+  box-shadow:0 10px 0 #b99d69,0 17px 32px rgba(23,50,77,.14)
+}
+.grid{
+  display:grid;grid-template-columns:repeat(2,minmax(220px,1fr));gap:16px;
+  max-width:850px;margin:0 auto
+}
+.choice{
+  min-height:190px;background:#fff;border:3px solid #d8cdbc;border-radius:22px;
+  box-shadow:0 7px 0 rgba(23,50,77,.10);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:8px;padding:14px;transition:transform .12s ease,border-color .15s ease,background .15s ease
+}
+.choice:hover{transform:translateY(-2px);border-color:#98acb5}
+.choice .picture{
+  font-size:clamp(4rem,8vw,6.6rem);line-height:1;filter:drop-shadow(0 4px 3px rgba(23,50,77,.10))
+}
+.choice .name{
+  font-family:"Arial Black",Arial,sans-serif;font-size:clamp(1.25rem,2.8vw,2rem);
+  color:#102d46;text-align:center;line-height:1.05
+}
+.choice.try-again{border-color:#d97961;background:#fae8e3}
+.choice.correct{
+  border-color:#6e9d8b;background:#e3efe8;
+  box-shadow:0 7px 0 #9eb8ae
+}
+.choice.dimmed{opacity:.58}
+.answer{
+  max-width:900px;margin:17px auto 0;background:#fff8e8;border:3px solid #d5c49d;
+  border-radius:18px;padding:14px 18px;text-align:center;color:#17324d;
+  font-size:clamp(1.15rem,2.8vw,1.75rem);font-weight:800;line-height:1.3
+}
+.answer strong{font-family:"Arial Black",Arial,sans-serif}
+.actions{display:flex;justify-content:center;gap:14px;flex-wrap:wrap;margin-top:17px}
+.action{
+  min-width:210px;border:4px solid rgba(255,255,255,.82);border-radius:18px;
+  color:#fff;font-weight:900;font-size:clamp(1.1rem,2.4vw,1.5rem);
+  padding:13px 18px
+}
+.reveal{
+  background:linear-gradient(145deg,#3f7898,#2f607a);
+  box-shadow:0 7px 0 #244d63
+}
+.next{
+  background:linear-gradient(145deg,#6e9d8b,#557e70);
+  box-shadow:0 7px 0 #42665b
+}
+.helper{text-align:center;margin-top:11px;color:#7a7167;font-size:.92rem;font-weight:700}
+@media(max-width:680px){
+  .title-block{order:-1;flex-basis:100%}
+  .grid{grid-template-columns:1fr 1fr;gap:10px}
+  .choice{min-height:150px}
+}
+@media(prefers-reduced-motion:reduce){
+  *{transition:none!important}
+}
+</style>
+</head>
+
+<body>
+<section id="gameScreen" class="screen">
+  <div class="topbar">
+    <a href="apps.html" class="back-btn">← Back to Apps</a>
+
+    <div class="title-block">
+      <div class="eyebrow">THINK • COMPARE • REASON</div>
+      <h1>What Doesn't Fit?</h1>
+    </div>
+
+    <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+      <label class="voice">
+        <input type="checkbox" id="voiceToggle" checked>
         🔊 Voice
       </label>
-    </header>
-
-    <div class="text-center text-white font-black" style="font-size: clamp(1.1rem, 3.4vw, 1.9rem);" id="hostLine">Which one does NOT belong?</div>
-    <div class="text-center text-blue-200 font-bold" style="font-size: clamp(.9rem, 2.4vw, 1.2rem);" id="roundLabel"></div>
-
-    <main class="flex-1 flex flex-col items-center justify-center px-3 min-h-0 gap-3">
-      <div id="grid" class="grid grid-cols-2 gap-3 md:gap-6 w-full max-w-3xl"></div>
-
-      <div class="w-full max-w-4xl flex items-center justify-center min-h-[5rem] px-2">
-        <div id="answerBanner" class="answer-banner px-6 py-3 text-center font-black hidden" style="font-size: clamp(1.1rem, 3.8vw, 2.2rem);"></div>
-      </div>
-    </main>
-
-    <footer class="px-4 pb-5 pt-1">
-      <div class="flex justify-center gap-3 md:gap-5 flex-wrap max-w-2xl mx-auto">
-        <button id="revealBtn" class="btn-big bg-yellow-400 text-blue-900 px-5 py-4 flex-1 min-w-[10rem]" style="font-size: clamp(1.2rem, 3.8vw, 2rem); border-color:#b45309; box-shadow: 0 6px 0 #b45309;" onclick="reveal()">✨ Show the Answer!</button>
-        <button id="nextBtn" class="btn-big bg-white text-blue-900 px-5 py-4 flex-1 min-w-[10rem]" style="font-size: clamp(1.2rem, 3.8vw, 2rem);" onclick="nextRound()">Next ➡️</button>
-      </div>
-      <div class="text-center text-blue-300 font-semibold mt-2 hidden md:block" style="font-size: clamp(.85rem, 2vw, 1.05rem);">Tip: tap the odd picture, or press SPACE to reveal, then advance</div>
-    </footer>
+      <button class="top-btn" onclick="toggleFullscreen()">⛶ Fullscreen</button>
+    </div>
   </div>
 
+  <main class="game-wrap">
+    <div id="hostLine" class="prompt">Which one doesn't fit with the other three?</div>
+    <div id="roundLabel" class="round"></div>
+
+    <section class="stage">
+      <div id="grid" class="grid"></div>
+      <div id="answerBanner" class="answer hidden"></div>
+
+      <div class="actions">
+        <button id="revealBtn" class="action reveal" onclick="reveal()">Show Answer</button>
+        <button id="nextBtn" class="action next" onclick="nextRound()">Next Round →</button>
+      </div>
+
+      <div class="helper">Choose a picture • Space = Show Answer / Next Round • F = Fullscreen</div>
+    </section>
+  </main>
+</section>
+
 <script>
-// ============ CATEGORY POOLS ============
-// Each pool has a family so the odd one is always from a clearly DIFFERENT kind of thing.
-const POOLS = [
-  { family: "food", label: "FRUITS", items: [
-    { e: "🍎", n: "Apple" }, { e: "🍌", n: "Banana" }, { e: "🍇", n: "Grapes" }, { e: "🍓", n: "Strawberry" },
-    { e: "🍊", n: "Orange" }, { e: "🍉", n: "Watermelon" }, { e: "🍑", n: "Peach" }, { e: "🍒", n: "Cherries" } ] },
-  { family: "food", label: "VEGETABLES", items: [
-    { e: "🥕", n: "Carrot" }, { e: "🌽", n: "Corn" }, { e: "🥔", n: "Potato" }, { e: "🍅", n: "Tomato" },
-    { e: "🥒", n: "Cucumber" }, { e: "🧅", n: "Onion" } ] },
-  { family: "food", label: "SWEET TREATS", items: [
-    { e: "🍰", n: "Cake" }, { e: "🍪", n: "Cookie" }, { e: "🍭", n: "Lollipop" }, { e: "🍩", n: "Doughnut" },
-    { e: "🍦", n: "Ice Cream" }, { e: "🧁", n: "Cupcake" } ] },
-  { family: "food", label: "DRINKS", items: [
-    { e: "☕", n: "Coffee" }, { e: "🥛", n: "Milk" }, { e: "🧃", n: "Juice" }, { e: "🍵", n: "Tea" },
-    { e: "🥤", n: "Soda Pop" } ] },
-  { family: "animals", label: "FARM ANIMALS", items: [
-    { e: "🐴", n: "Horse" }, { e: "🐮", n: "Cow" }, { e: "🐷", n: "Pig" }, { e: "🐑", n: "Sheep" },
-    { e: "🐔", n: "Chicken" }, { e: "🦆", n: "Duck" }, { e: "🐐", n: "Goat" } ] },
-  { family: "animals", label: "PETS", items: [
-    { e: "🐶", n: "Dog" }, { e: "🐱", n: "Cat" }, { e: "🐰", n: "Rabbit" }, { e: "🐦", n: "Bird" },
-    { e: "🐹", n: "Hamster" } ] },
-  { family: "animals", label: "SEA CREATURES", items: [
-    { e: "🐟", n: "Fish" }, { e: "🐬", n: "Dolphin" }, { e: "🐙", n: "Octopus" }, { e: "🦀", n: "Crab" },
-    { e: "🐳", n: "Whale" }, { e: "🦞", n: "Lobster" } ] },
-  { family: "animals", label: "LITTLE BUGS", items: [
-    { e: "🐝", n: "Bee" }, { e: "🦋", n: "Butterfly" }, { e: "🐞", n: "Ladybug" }, { e: "🐜", n: "Ant" },
-    { e: "🦗", n: "Cricket" } ] },
-  { family: "things", label: "THINGS THAT GO", items: [
-    { e: "🚗", n: "Car" }, { e: "🚌", n: "Bus" }, { e: "🚂", n: "Train" }, { e: "🚲", n: "Bicycle" },
-    { e: "✈️", n: "Airplane" }, { e: "⛵", n: "Sailboat" }, { e: "🚜", n: "Tractor" } ] },
-  { family: "things", label: "THINGS YOU WEAR", items: [
-    { e: "👒", n: "Hat" }, { e: "👞", n: "Shoe" }, { e: "🧦", n: "Socks" }, { e: "🧤", n: "Gloves" },
-    { e: "👗", n: "Dress" }, { e: "🧥", n: "Coat" }, { e: "👔", n: "Necktie" } ] },
-  { family: "things", label: "MUSICAL INSTRUMENTS", items: [
-    { e: "🎺", n: "Trumpet" }, { e: "🎸", n: "Guitar" }, { e: "🎻", n: "Violin" }, { e: "🥁", n: "Drum" },
-    { e: "🎹", n: "Piano" }, { e: "🪗", n: "Accordion" } ] },
-  { family: "things", label: "SPORTS BALLS", items: [
-    { e: "⚾", n: "Baseball" }, { e: "🏀", n: "Basketball" }, { e: "🏈", n: "Football" }, { e: "⚽", n: "Soccer Ball" },
-    { e: "🎾", n: "Tennis Ball" }, { e: "🎳", n: "Bowling Ball" } ] },
-  { family: "things", label: "THINGS IN THE HOUSE", items: [
-    { e: "🪑", n: "Chair" }, { e: "🛏️", n: "Bed" }, { e: "🛋️", n: "Couch" }, { e: "🕰️", n: "Clock" },
-    { e: "🛁", n: "Bathtub" }, { e: "📺", n: "Television" } ] },
-  { family: "nature", label: "FLOWERS", items: [
-    { e: "🌹", n: "Rose" }, { e: "🌻", n: "Sunflower" }, { e: "🌷", n: "Tulip" }, { e: "🌼", n: "Daisy" },
-    { e: "🌺", n: "Hibiscus" } ] },
-  { family: "nature", label: "THINGS IN THE SKY", items: [
-    { e: "☀️", n: "Sun" }, { e: "🌙", n: "Moon" }, { e: "⭐", n: "Star" }, { e: "🌈", n: "Rainbow" },
-    { e: "☁️", n: "Cloud" } ] },
+const ROUNDS=[
+  {
+    items:[["🎺","Trumpet"],["🪈","Flute"],["🎷","Saxophone"],["🎻","Violin"]],
+    odd:3,
+    reason:"The violin is the only string instrument. The other three are played by blowing air through them."
+  },
+  {
+    items:[["🎺","Trumpet"],["📯","French Horn"],["🎷","Saxophone"],["🎻","Violin"]],
+    odd:3,
+    reason:"The violin is the only instrument played with a bow. The others are wind instruments."
+  },
+  {
+    items:[["☕","Coffee"],["🍵","Tea"],["🥛","Milk"],["🍲","Soup"]],
+    odd:3,
+    reason:"Soup is a food. The other three are beverages."
+  },
+  {
+    items:[["🍴","Fork"],["🥄","Spoon"],["🔪","Knife"],["🥣","Bowl"]],
+    odd:3,
+    reason:"The bowl is dishware. The other three are utensils used to eat."
+  },
+  {
+    items:[["🥄","Spoon"],["🍴","Fork"],["🔪","Table Knife"],["🥄","Serving Spoon"]],
+    odd:3,
+    reason:"The serving spoon is mainly used to serve food. The other three are part of a place setting."
+  },
+  {
+    items:[["🧥","Coat"],["👒","Hat"],["🧤","Gloves"],["☂️","Umbrella"]],
+    odd:3,
+    reason:"An umbrella is carried. The other three are worn."
+  },
+  {
+    items:[["👞","Shoe"],["🥾","Boot"],["🩴","Sandal"],["🧦","Sock"]],
+    odd:3,
+    reason:"A sock is clothing worn inside footwear. The other three are types of footwear."
+  },
+  {
+    items:[["🛏️","Bed"],["🛋️","Sofa"],["🪑","Chair"],["🔥","Stove"]],
+    odd:3,
+    reason:"The stove is an appliance. The other three are furniture."
+  },
+  {
+    items:[["🛁","Bathtub"],["🚽","Toilet"],["🚰","Sink"],["🔥","Stove"]],
+    odd:3,
+    reason:"The stove belongs in the kitchen. The other three are bathroom fixtures."
+  },
+  {
+    items:[["🧹","Broom"],["🪣","Mop"],["🧽","Sponge"],["🪴","Flowerpot"]],
+    odd:3,
+    reason:"The flowerpot is not a cleaning item. The other three are used for cleaning."
+  },
+  {
+    items:[["🧹","Broom"],["🧽","Sponge"],["🧴","Cleaner"],["🍃","Rake"]],
+    odd:3,
+    reason:"The rake is mainly a yard tool. The other three are commonly used for indoor cleaning."
+  },
+  {
+    items:[["🧊","Refrigerator"],["❄️","Freezer"],["🧺","Cooler"],["🔥","Oven"]],
+    odd:3,
+    reason:"The oven heats food. The other three keep food or drinks cold."
+  },
+  {
+    items:[["🔥","Oven"],["♨️","Stove"],["🍞","Toaster"],["❄️","Refrigerator"]],
+    odd:3,
+    reason:"The refrigerator cools food. The other three heat food."
+  },
+  {
+    items:[["📰","Newspaper"],["📖","Book"],["📕","Magazine"],["📺","Television"]],
+    odd:3,
+    reason:"Television is electronic media. The other three are printed reading material."
+  },
+  {
+    items:[["📻","Radio"],["💿","Record Player"],["📼","Cassette Player"],["📺","Television"]],
+    odd:3,
+    reason:"Television includes pictures. The other three were commonly used mainly for listening."
+  },
+  {
+    items:[["☎️","Rotary Phone"],["📞","Landline"],["🪙","Pay Phone"],["📱","Smartphone"]],
+    odd:3,
+    reason:"The smartphone is mobile and digital. The other three are traditional wired phone types."
+  },
+  {
+    items:[["⌚","Watch"],["⏰","Alarm Clock"],["🕰️","Clock"],["📅","Calendar"]],
+    odd:3,
+    reason:"A calendar tracks dates. The other three tell or measure time."
+  },
+  {
+    items:[["🚗","Car"],["🚌","Bus"],["🚚","Truck"],["🚂","Train"]],
+    odd:3,
+    reason:"The train travels on rails. The other three normally travel on roads."
+  },
+  {
+    items:[["🚲","Bicycle"],["🏍️","Motorcycle"],["🛵","Scooter"],["🚗","Car"]],
+    odd:3,
+    reason:"The car has four wheels. The other three are commonly two-wheeled vehicles."
+  },
+  {
+    items:[["🛶","Canoe"],["🚣","Rowboat"],["⛵","Sailboat"],["🚲","Bicycle"]],
+    odd:3,
+    reason:"The bicycle is a land vehicle. The other three travel on water."
+  },
+  {
+    items:[["🐄","Cow"],["🐐","Goat"],["🐑","Sheep"],["🐖","Pig"]],
+    odd:3,
+    reason:"Cows, goats, and sheep are commonly raised for milk. Pigs are not."
+  },
+  {
+    items:[["🐬","Dolphin"],["🐋","Whale"],["🦭","Seal"],["🦈","Shark"]],
+    odd:3,
+    reason:"The shark is a fish. The other three are mammals."
+  },
+  {
+    items:[["🐝","Bee"],["🦋","Butterfly"],["🐜","Ant"],["🐦","Sparrow"]],
+    odd:3,
+    reason:"The sparrow is a bird. The other three are insects."
+  },
+  {
+    items:[["🌳","Oak"],["🌲","Pine"],["🍁","Maple"],["🌹","Rose"]],
+    odd:3,
+    reason:"The rose is a flower shrub. The other three are trees."
+  },
+  {
+    items:[["🥕","Carrot"],["🥔","Potato"],["🫜","Beet"],["🌽","Corn"]],
+    odd:3,
+    reason:"Corn grows above the ground. The other three are harvested from underground."
+  },
+  {
+    items:[["🍊","Orange"],["🍋","Lemon"],["🍈","Lime"],["🍎","Apple"]],
+    odd:3,
+    reason:"The apple is not a citrus fruit. The other three are citrus."
+  },
+  {
+    items:[["🥛","Milk"],["🧀","Cheese"],["🧈","Butter"],["🍞","Bread"]],
+    odd:3,
+    reason:"Bread is not a dairy product. The other three are made from milk."
+  },
+  {
+    items:[["🥓","Bacon"],["🍖","Ham"],["🌭","Sausage"],["🍗","Chicken"]],
+    odd:3,
+    reason:"Chicken is poultry. The other three are commonly pork products."
+  },
+  {
+    items:[["🥣","Oatmeal"],["🥣","Grits"],["🥣","Cereal"],["🥓","Bacon"]],
+    odd:3,
+    reason:"Bacon is meat. The other three are grain-based breakfast foods."
+  },
+  {
+    items:[["🍰","Cake"],["🍪","Cookie"],["🍩","Doughnut"],["🥨","Pretzel"]],
+    odd:3,
+    reason:"The pretzel is usually savory. The other three are usually sweet treats."
+  },
+  {
+    items:[["🔨","Hammer"],["🪛","Screwdriver"],["🔧","Wrench"],["🍳","Spatula"]],
+    odd:3,
+    reason:"The spatula is a kitchen tool. The other three are workshop tools."
+  },
+  {
+    items:[["🪡","Needle"],["🧵","Thread"],["✂️","Scissors"],["🖌️","Paintbrush"]],
+    odd:3,
+    reason:"The paintbrush is an art tool. The other three are commonly used in sewing."
+  },
+  {
+    items:[["💄","Lipstick"],["👁️","Mascara"],["🪞","Face Powder"],["🪥","Toothpaste"]],
+    odd:3,
+    reason:"Toothpaste is for dental care. The other three are cosmetics."
+  },
+  {
+    items:[["🛏️","Sheets"],["🛏️","Blanket"],["🛏️","Pillow"],["🛁","Towel"]],
+    odd:3,
+    reason:"A towel is bath linen. The other three are bedding."
+  },
+  {
+    items:[["🪙","Quarter"],["🪙","Dime"],["🪙","Nickel"],["💵","Dollar Bill"]],
+    odd:3,
+    reason:"The dollar bill is paper money. The other three are coins."
+  },
+  {
+    items:[["❤️","Heart"],["♦️","Diamond"],["♣️","Club"],["⭐","Star"]],
+    odd:3,
+    reason:"The star is not a playing-card suit. The other three are card suits."
+  },
+  {
+    items:[["🔴","Red"],["⚪","White"],["🔵","Blue"],["🟢","Green"]],
+    odd:3,
+    reason:"Green is not a color on the United States flag. Red, white, and blue are."
+  },
+  {
+    items:[["🗽","Statue of Liberty"],["🏛️","U.S. Capitol"],["🏠","White House"],["🗼","Eiffel Tower"]],
+    odd:3,
+    reason:"The Eiffel Tower is in France. The other three landmarks are in the United States."
+  },
+  {
+    items:[["⚜️","Fleur-de-lis"],["🦞","Crawfish"],["🦤","Pelican"],["🌵","Cactus"]],
+    odd:3,
+    reason:"The cactus is not closely associated with Louisiana. The other three are familiar Louisiana symbols."
+  },
+  {
+    items:[["🥣","Gumbo"],["🍚","Jambalaya"],["🍩","Beignet"],["🥪","Cheesesteak"]],
+    odd:3,
+    reason:"The cheesesteak is associated with Philadelphia. The other three are strongly associated with Louisiana."
+  },
+  {
+    items:[["⚾","Baseball"],["🧤","Baseball Glove"],["🏏","Bat"],["🏀","Basketball"]],
+    odd:3,
+    reason:"The basketball belongs to a different sport. The other three are associated with baseball."
+  },
+  {
+    items:[["⛳","Golf Hole"],["🏌️","Golf Club"],["⚪","Golf Ball"],["🧤","Baseball Glove"]],
+    odd:3,
+    reason:"The baseball glove belongs to baseball. The other three are used in golf."
+  },
+  {
+    items:[["🎄","Christmas Tree"],["🧦","Stocking"],["🎁","Gift"],["🎃","Pumpkin"]],
+    odd:3,
+    reason:"The pumpkin is associated with fall and Halloween. The other three are Christmas symbols."
+  },
+  {
+    items:[["💿","Record"],["📼","Cassette"],["📻","8-Track"],["📱","Streaming"]],
+    odd:3,
+    reason:"Streaming is digital. The other three represent physical ways people bought or played recorded music."
+  },
+  {
+    items:[["⌨️","Typewriter"],["🖋️","Fountain Pen"],["✏️","Pencil"],["📱","Smartphone"]],
+    odd:3,
+    reason:"The smartphone is primarily an electronic device. The other three are traditional writing tools."
+  }
 ];
 
-// ============ STATE ============
-let round = 0;
-let tiles = [];       // 4 items on screen
-let oddIndex = -1;
-let baseLabel = "";
-let oddItem = null;
-let revealed = false;
-let lastBasePool = -1;
+let deck=[];
+let deckIndex=0;
+let current=null;
+let revealed=false;
 
-// ============ AUDIO ============
-let audioCtx = null;
-function getCtx() {
-  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-  if (audioCtx.state === "suspended") audioCtx.resume();
-  return audioCtx;
-}
-function tone(freq, start, dur, type, vol) {
-  const ctx = getCtx();
-  const o = ctx.createOscillator();
-  const g = ctx.createGain();
-  o.type = type || "triangle";
-  o.frequency.value = freq;
-  g.gain.setValueAtTime(0.0001, ctx.currentTime + start);
-  g.gain.exponentialRampToValueAtTime(vol || 0.25, ctx.currentTime + start + 0.02);
-  g.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + start + dur);
-  o.connect(g).connect(ctx.destination);
-  o.start(ctx.currentTime + start);
-  o.stop(ctx.currentTime + start + dur + 0.05);
-}
-function popSound() { tone(520, 0, 0.12, "triangle", 0.2); }
-function softNote() { tone(330, 0, 0.18, "sine", 0.15); }
-function fanfare() {
-  tone(523, 0.00, 0.18, "triangle", 0.28);
-  tone(659, 0.14, 0.18, "triangle", 0.28);
-  tone(784, 0.28, 0.18, "triangle", 0.28);
-  tone(1047, 0.42, 0.45, "triangle", 0.32);
-}
-
-// ============ VOICE ============
-function speakText(text) {
-  if (!document.getElementById("voiceToggle").checked) return;
-  if (!("speechSynthesis" in window)) return;
-  window.speechSynthesis.cancel();
-  const u = new SpeechSynthesisUtterance(text);
-  u.rate = 0.9;
-  window.speechSynthesis.speak(u);
-}
-
-// ============ ROUND GENERATION ============
-function shuffle(arr) {
-  const a = arr.slice();
-  for (let i = a.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [a[i], a[j]] = [a[j], a[i]];
+function shuffle(arr){
+  const a=arr.slice();
+  for(let i=a.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
   }
   return a;
 }
-function newRoundData() {
-  let baseIdx;
-  do {
-    baseIdx = Math.floor(Math.random() * POOLS.length);
-  } while (baseIdx === lastBasePool);
-  lastBasePool = baseIdx;
-  const base = POOLS[baseIdx];
-  const others = POOLS.filter(p => p.family !== base.family);
-  const oddPool = others[Math.floor(Math.random() * others.length)];
-  const three = shuffle(base.items).slice(0, 3);
-  const odd = oddPool.items[Math.floor(Math.random() * oddPool.items.length)];
-  const four = shuffle(three.concat([odd]));
-  return {
-    tiles: four,
-    oddIndex: four.indexOf(odd),
-    baseLabel: base.label,
-    oddItem: odd,
-  };
-}
-function renderRound() {
-  revealed = false;
-  round++;
-  const data = newRoundData();
-  tiles = data.tiles;
-  oddIndex = data.oddIndex;
-  baseLabel = data.baseLabel;
-  oddItem = data.oddItem;
 
-  document.getElementById("roundLabel").textContent = "Round " + round;
-  document.getElementById("hostLine").textContent = "Which one does NOT belong?";
-  const grid = document.getElementById("grid");
-  grid.innerHTML = "";
-  tiles.forEach((t, i) => {
-    const d = document.createElement("div");
-    d.className = "choice";
-    d.id = "choice" + i;
-    d.innerHTML = "<div class='c-emoji'>" + t.e + "</div><div class='c-name'>" + t.n + "</div>";
-    d.onclick = function () { tapTile(i); };
-    grid.appendChild(d);
+function buildDeck(){
+  deck=shuffle(ROUNDS.map((r,i)=>i));
+  deckIndex=0;
+}
+
+function renderRound(){
+  if(!deck.length||deckIndex>=deck.length)buildDeck();
+  current=ROUNDS[deck[deckIndex]];
+  revealed=false;
+
+  document.getElementById("hostLine").textContent="Which one doesn't fit with the other three?";
+  document.getElementById("roundLabel").textContent=
+    "Round "+(deckIndex+1)+" of "+deck.length+" • no repeats until the deck reshuffles";
+
+  const grid=document.getElementById("grid");
+  grid.innerHTML="";
+
+  current.items.forEach((item,i)=>{
+    const b=document.createElement("button");
+    b.className="choice";
+    b.id="choice"+i;
+    b.innerHTML="<div class='picture'>"+item[0]+"</div><div class='name'>"+item[1]+"</div>";
+    b.onclick=()=>choose(i);
+    grid.appendChild(b);
   });
-  const banner = document.getElementById("answerBanner");
-  banner.classList.add("hidden");
-  banner.textContent = "";
-  document.getElementById("revealBtn").style.visibility = "visible";
+
+  document.getElementById("answerBanner").classList.add("hidden");
+  document.getElementById("answerBanner").innerHTML="";
+  document.getElementById("revealBtn").classList.remove("hidden");
 }
-function tapTile(i) {
-  if (revealed) return;
-  if (i === oddIndex) {
+
+function choose(i){
+  if(revealed)return;
+  if(i===current.odd){
     reveal();
-  } else {
-    const el = document.getElementById("choice" + i);
-    el.classList.remove("wobble");
-    void el.offsetWidth;
-    el.classList.add("wobble");
-    softNote();
+    return;
   }
+
+  const el=document.getElementById("choice"+i);
+  el.classList.add("try-again");
+  setTimeout(()=>el.classList.remove("try-again"),500);
+  softNote();
+  document.getElementById("hostLine").textContent="That one still fits. Look for a different connection.";
+  setTimeout(()=>{
+    if(!revealed)document.getElementById("hostLine").textContent="Which one doesn't fit with the other three?";
+  },1600);
 }
-function reveal() {
-  if (revealed) return;
-  revealed = true;
-  tiles.forEach((t, i) => {
-    const el = document.getElementById("choice" + i);
-    if (i === oddIndex) el.classList.add("winner");
+
+function reveal(){
+  if(revealed)return;
+  revealed=true;
+
+  current.items.forEach((_,i)=>{
+    const el=document.getElementById("choice"+i);
+    if(i===current.odd)el.classList.add("correct");
     else el.classList.add("dimmed");
   });
-  const line = "These three are " + baseLabel + " — the " + oddItem.n.toUpperCase() + " is the odd one out!";
-  const banner = document.getElementById("answerBanner");
-  banner.textContent = "🎉 " + line;
+
+  const answer=current.items[current.odd][1];
+  const banner=document.getElementById("answerBanner");
+  banner.innerHTML="<strong>"+answer+"</strong> doesn't fit.<br>"+current.reason;
   banner.classList.remove("hidden");
-  document.getElementById("hostLine").textContent = "You found it!";
-  document.getElementById("revealBtn").style.visibility = "hidden";
-  fanfare();
-  throwConfetti(16);
-  speakText(line);
+
+  document.getElementById("hostLine").textContent="Here's the connection.";
+  document.getElementById("revealBtn").classList.add("hidden");
+  chime();
+  speakText(answer+" doesn't fit. "+current.reason);
 }
-function nextRound() {
-  window.speechSynthesis && window.speechSynthesis.cancel();
+
+function nextRound(){
+  if(window.speechSynthesis)window.speechSynthesis.cancel();
+  deckIndex++;
+  if(deckIndex>=deck.length)buildDeck();
   renderRound();
-  popSound();
 }
 
-// ============ CONFETTI ============
-const CONFETTI_EMOJI = ["🎉", "✨", "⭐", "🎊", "💛", "💙"];
-function throwConfetti(count) {
-  const n = count || 14;
-  for (let i = 0; i < n; i++) {
-    const el = document.createElement("div");
-    el.className = "confetti";
-    el.textContent = CONFETTI_EMOJI[Math.floor(Math.random() * CONFETTI_EMOJI.length)];
-    el.style.left = Math.random() * 100 + "vw";
-    el.style.animationDuration = (1.8 + Math.random() * 1.6) + "s";
-    el.style.animationDelay = (Math.random() * 0.4) + "s";
-    document.body.appendChild(el);
-    setTimeout(() => el.remove(), 4200);
-  }
+let audioCtx=null;
+function getCtx(){
+  if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();
+  if(audioCtx.state==="suspended")audioCtx.resume();
+  return audioCtx;
+}
+function tone(freq,start,dur,type,vol){
+  const ctx=getCtx(),o=ctx.createOscillator(),g=ctx.createGain();
+  o.type=type||"sine";o.frequency.value=freq;
+  g.gain.setValueAtTime(.0001,ctx.currentTime+start);
+  g.gain.exponentialRampToValueAtTime(vol||.14,ctx.currentTime+start+.02);
+  g.gain.exponentialRampToValueAtTime(.0001,ctx.currentTime+start+dur);
+  o.connect(g).connect(ctx.destination);
+  o.start(ctx.currentTime+start);o.stop(ctx.currentTime+start+dur+.05);
+}
+function softNote(){tone(300,0,.16,"sine",.09)}
+function chime(){tone(523,0,.18,"triangle",.14);tone(659,.12,.2,"triangle",.14)}
+
+function speakText(text){
+  if(!document.getElementById("voiceToggle").checked)return;
+  if(!("speechSynthesis" in window))return;
+  window.speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(text);
+  u.rate=.9;
+  window.speechSynthesis.speak(u);
 }
 
-// ============ SPACE BAR: reveal, then advance ============
-document.addEventListener("keydown", function (ev) {
-  if (ev.code !== "Space" && ev.key !== " ") return;
+function toggleFullscreen(){
+  if(!document.fullscreenElement)document.documentElement.requestFullscreen();
+  else document.exitFullscreen();
+}
+
+document.addEventListener("keydown",ev=>{
+  if(ev.code==="KeyF"){toggleFullscreen();return}
+  if(ev.code!=="Space"&&ev.key!==" ")return;
   ev.preventDefault();
-  if (!revealed) reveal();
+  if(!revealed)reveal();
   else nextRound();
 });
 
+buildDeck();
 renderRound();
 </script>
 </body>
