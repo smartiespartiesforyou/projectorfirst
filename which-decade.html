@@ -105,6 +105,10 @@ repeating-linear-gradient(135deg,rgba(255,255,255,.025) 0 2px,transparent 2px 18
 #itemText{color:#17324d!important;font-family:Georgia,serif!important;max-width:950px!important}
 #decadeStrip{gap:10px!important}
 .decade-chip{background:#fffaf0!important;color:#365b68!important;border:3px solid #c7aa72!important;box-shadow:0 4px 0 #a4854f;padding:.55rem .9rem!important}
+.decade-chip{cursor:pointer;touch-action:manipulation}
+.decade-chip:active{transform:translateY(3px)}
+.decade-chip.wrong{background:#f3d6cf!important;color:#7d3e35!important;border-color:#c97868!important;animation:decadeShake .35s ease}
+@keyframes decadeShake{25%{transform:translateX(-7px)}50%{transform:translateX(7px)}75%{transform:translateX(-4px)}}
 .decade-chip.winner{background:#e8b84f!important;color:#17324d!important;border-color:#fff!important;box-shadow:0 5px 0 #a87522,0 0 25px rgba(232,184,79,.55)!important}
 .fact-banner{background:#dcebdc!important;color:#244d38!important;border:4px solid #739676!important;box-shadow:0 6px 0 #55745a!important}
 .btn-big{border-radius:18px!important}
@@ -134,7 +138,7 @@ repeating-linear-gradient(135deg,rgba(255,255,255,.025) 0 2px,transparent 2px 18
         <p class="text-white font-bold max-w-2xl mx-auto" style="font-size: clamp(1.1rem, 3vw, 1.6rem);">Hula hoops, moon landings, disco fever... shout out the decade you remember it from!</p>
       </div>
       <button class="btn-big bg-yellow-400 text-blue-900 px-10 py-5" style="font-size: clamp(1.5rem, 5vw, 2.5rem); border-color:#b45309; box-shadow: 0 8px 0 #b45309;" onclick="startGame()">▶️ Let's Play!</button>
-      <p class="text-blue-200 font-bold" style="font-size: clamp(1rem, 2.5vw, 1.3rem);">A fresh 15-memory round every time you play</p>
+      <p class="text-blue-200 font-bold" style="font-size: clamp(1rem, 2.5vw, 1.3rem);">15 questions per round • 80 memories in the game • a new mix each time</p>
     </main>
   </div>
 
@@ -151,14 +155,14 @@ repeating-linear-gradient(135deg,rgba(255,255,255,.025) 0 2px,transparent 2px 18
       <div id="itemText" class="text-white font-black text-center max-w-4xl" style="font-size: clamp(1.6rem, 5.5vw, 3.4rem); line-height: 1.2;"></div>
 
       <div class="flex flex-wrap justify-center gap-2 md:gap-3" id="decadeStrip">
-        <span class="decade-chip" data-d="1920s">1920s</span>
-        <span class="decade-chip" data-d="1930s">1930s</span>
-        <span class="decade-chip" data-d="1940s">1940s</span>
-        <span class="decade-chip" data-d="1950s">1950s</span>
-        <span class="decade-chip" data-d="1960s">1960s</span>
-        <span class="decade-chip" data-d="1970s">1970s</span>
-        <span class="decade-chip" data-d="1980s">1980s</span>
-        <span class="decade-chip" data-d="1990s">1990s</span>
+        <button class="decade-chip" data-d="1920s" onclick="chooseDecade('1920s')">1920s</button>
+        <button class="decade-chip" data-d="1930s" onclick="chooseDecade('1930s')">1930s</button>
+        <button class="decade-chip" data-d="1940s" onclick="chooseDecade('1940s')">1940s</button>
+        <button class="decade-chip" data-d="1950s" onclick="chooseDecade('1950s')">1950s</button>
+        <button class="decade-chip" data-d="1960s" onclick="chooseDecade('1960s')">1960s</button>
+        <button class="decade-chip" data-d="1970s" onclick="chooseDecade('1970s')">1970s</button>
+        <button class="decade-chip" data-d="1980s" onclick="chooseDecade('1980s')">1980s</button>
+        <button class="decade-chip" data-d="1990s" onclick="chooseDecade('1990s')">1990s</button>
       </div>
 
       <div class="w-full max-w-4xl flex items-center justify-center min-h-[6rem]">
@@ -171,7 +175,7 @@ repeating-linear-gradient(135deg,rgba(255,255,255,.025) 0 2px,transparent 2px 18
         <button id="revealBtn" class="btn-big bg-yellow-400 text-blue-900 px-5 py-4 flex-1 min-w-[10rem]" style="font-size: clamp(1.3rem, 4vw, 2.1rem); border-color:#b45309; box-shadow: 0 6px 0 #b45309;" onclick="reveal()">✨ Reveal Decade!</button>
         <button id="nextBtn" class="btn-big bg-white text-blue-900 px-5 py-4 flex-1 min-w-[10rem]" style="font-size: clamp(1.3rem, 4vw, 2.1rem);" onclick="nextItem()">Next ➡️</button>
       </div>
-      <div class="text-center text-blue-300 font-semibold mt-2 hidden md:block" style="font-size: clamp(.85rem, 2vw, 1.05rem);">Tip: press the SPACE BAR to reveal, then advance</div>
+      <div class="text-center text-blue-300 font-semibold mt-2 hidden md:block" style="font-size: clamp(.85rem, 2vw, 1.05rem);">Tap a decade to answer • or press SPACE BAR to reveal, then advance</div>
     </footer>
   </div>
 
@@ -182,7 +186,7 @@ repeating-linear-gradient(135deg,rgba(255,255,255,.025) 0 2px,transparent 2px 18
       <h2 class="text-yellow-300 font-black" style="font-size: clamp(2rem, 7vw, 4.5rem); text-shadow: 4px 4px 0 #0f265f;">WHAT A TRIP THROUGH TIME!</h2>
       <p class="text-white font-bold" style="font-size: clamp(1.1rem, 3vw, 1.6rem);">Round complete — what a trip through time!</p>
       <div class="flex gap-4 flex-wrap justify-center">
-        <button class="btn-big bg-yellow-400 text-blue-900 px-8 py-4" style="font-size: clamp(1.2rem, 4vw, 2rem); border-color:#b45309; box-shadow: 0 6px 0 #b45309;" onclick="startGame()">🔄 Play Again</button>
+        <button class="btn-big bg-yellow-400 text-blue-900 px-8 py-4" style="font-size: clamp(1.2rem, 4vw, 2rem); border-color:#b45309; box-shadow: 0 6px 0 #b45309;" onclick="startGame()">🔄 Play Another 15</button>
         <a href="apps.html" class="btn-big bg-white text-blue-900 px-8 py-4 no-underline inline-block" style="font-size: clamp(1.2rem, 4vw, 2rem);">← Back to Apps</a>
       </div>
     </main>
@@ -360,12 +364,35 @@ function renderItem() {
   document.getElementById("itemEmoji").textContent = it.e;
   document.getElementById("itemText").textContent = it.q;
   document.getElementById("progressLabel").textContent = "Memory " + (deckIndex + 1) + " of " + deck.length;
-  document.querySelectorAll(".decade-chip").forEach(c => c.classList.remove("winner"));
+  document.querySelectorAll(".decade-chip").forEach(c => c.classList.remove("winner", "wrong"));
   const banner = document.getElementById("factBanner");
   banner.classList.add("hidden");
   banner.textContent = "";
   document.getElementById("revealBtn").style.visibility = "visible";
 }
+function chooseDecade(decade) {
+  if (revealed) return;
+  const it = deck[deckIndex];
+  const chosen = document.querySelector('.decade-chip[data-d="' + decade + '"]');
+  if (decade === it.a) {
+    reveal();
+  } else {
+    chosen.classList.remove("wrong");
+    void chosen.offsetWidth;
+    chosen.classList.add("wrong");
+    const banner = document.getElementById("factBanner");
+    banner.textContent = "Not that one — try another decade!";
+    banner.classList.remove("hidden");
+    popSound();
+    setTimeout(() => {
+      if (!revealed) {
+        banner.classList.add("hidden");
+        chosen.classList.remove("wrong");
+      }
+    }, 1200);
+  }
+}
+
 function reveal() {
   if (revealed) return;
   revealed = true;
