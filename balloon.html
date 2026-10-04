@@ -97,6 +97,35 @@
 .balloon-pop {
   animation: pop 0.35s ease-out forwards;
 }
+
+/* Projector First refresh */
+body{margin:0;background:radial-gradient(circle at 50% 0,#fff7d6 0,#f7ead2 38%,#dcebed 100%);color:#17324d;font-family:Arial,sans-serif;min-height:100vh}
+body:before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.18;background-image:radial-gradient(#3f7898 1.5px,transparent 1.5px);background-size:28px 28px}
+#categoryScreen,#gameScreen{position:relative}
+#categoryScreen h1{font-family:Georgia,serif!important;color:#17324d!important;text-shadow:0 3px 0 #fff;font-size:clamp(3rem,6vw,6rem)!important;margin-bottom:1rem!important}
+#categoryScreen p{font-size:clamp(1.25rem,2vw,2rem)!important;color:#526573!important;font-weight:700}
+#categoryButtons button{background:linear-gradient(145deg,#3f7898,#2e617d)!important;border:4px solid rgba(255,255,255,.7);box-shadow:0 9px 0 #244e66,0 14px 28px rgba(23,50,77,.2);border-radius:26px!important;min-height:110px}
+#categoryButtons button:nth-child(3n+2){background:linear-gradient(145deg,#d97961,#bd5f4b)!important;box-shadow:0 9px 0 #934738,0 14px 28px rgba(23,50,77,.2)}
+#categoryButtons button:nth-child(3n){background:linear-gradient(145deg,#6e9d8b,#557f70)!important;box-shadow:0 9px 0 #42675a,0 14px 28px rgba(23,50,77,.2)}
+#gameScreen{background:rgba(255,253,246,.88);border:3px solid rgba(23,50,77,.12);border-radius:34px;margin-top:22px!important;padding:22px!important;box-shadow:0 20px 50px rgba(23,50,77,.16)}
+#categoryTitle{font-family:Georgia,serif!important;color:#17324d!important}
+#balloons{height:170px!important;gap:22px!important;margin-bottom:22px!important}
+.pf-balloon{position:relative;width:105px;height:132px;border-radius:52% 48% 48% 52% / 58% 58% 42% 42%;box-shadow:inset -12px -14px 0 rgba(0,0,0,.08),inset 14px 10px 0 rgba(255,255,255,.22),0 10px 18px rgba(23,50,77,.16);animation:floaty 2.8s ease-in-out infinite}
+.pf-balloon:before{content:"";position:absolute;width:18px;height:14px;bottom:-9px;left:44px;background:inherit;clip-path:polygon(50% 0,100% 100%,0 100%)}
+.pf-balloon:after{content:"";position:absolute;width:2px;height:40px;background:#8b806f;bottom:-47px;left:52px}
+.pf-balloon:nth-child(1){background:#e97961}.pf-balloon:nth-child(2){background:#f2b84b;animation-delay:-.4s}.pf-balloon:nth-child(3){background:#6e9d8b;animation-delay:-.8s}.pf-balloon:nth-child(4){background:#5e8eb1;animation-delay:-1.2s}.pf-balloon:nth-child(5){background:#9275a3;animation-delay:-1.6s}.pf-balloon:nth-child(6){background:#df8c54;animation-delay:-2s}
+@keyframes floaty{50%{transform:translateY(-9px) rotate(1deg)}}
+@keyframes realPop{0%{transform:scale(1);opacity:1}55%{transform:scale(1.35);opacity:1}100%{transform:scale(.2);opacity:0}}
+.pf-balloon.popping{animation:realPop .35s ease-out forwards!important}
+.word-box-base{height:112px!important;width:92px!important;border-radius:20px!important;border:4px solid #d5c49d!important;background:linear-gradient(145deg,#fffdf6,#efe3c7)!important;box-shadow:0 7px 0 #b99d69,0 10px 16px rgba(23,50,77,.15)!important}
+.word-box-hidden{color:#17324d!important}.word-box-revealed{color:#17324d!important;font-family:Georgia,serif;font-size:3.7rem!important}
+#status{height:auto!important;min-height:52px;background:#fff8e8;border-radius:18px;padding:10px 18px;margin:16px auto 22px!important;max-width:900px}
+#alphabet{display:grid;grid-template-columns:repeat(13,1fr);gap:7px;max-width:1100px;margin:0 auto 24px}
+.letter-key{min-height:54px;border:0;border-radius:12px;background:#17324d;color:#fff;font-size:25px;font-weight:900;box-shadow:0 5px 0 #0c2135;cursor:pointer}
+.letter-key:hover{transform:translateY(-2px)}.letter-key.used{background:#a9b0b4;color:#eef0f1;box-shadow:0 3px 0 #7f898e;transform:translateY(2px)}
+#usedLetters{border:0!important;padding-top:0!important;margin-bottom:22px!important}.used-letter{font-size:2.4rem!important;background:white;border-radius:12px;padding:.25rem .65rem!important;box-shadow:0 3px 8px rgba(23,50,77,.1)}
+.big-btn{font-size:24px!important;padding:15px 24px!important;box-shadow:0 6px 0 rgba(23,50,77,.25)}
+@media(max-width:850px){#alphabet{grid-template-columns:repeat(7,1fr)}.pf-balloon{width:72px;height:92px}.pf-balloon:before{left:28px}.pf-balloon:after{left:35px}#balloons{height:125px!important}.word-box-base{width:68px!important;height:88px!important}}
 </style>
 
   <!-- Memberstack Loader -->
@@ -112,19 +141,21 @@
       ← Back to Apps
     </a>
 
+    <div class="flex gap-3 flex-wrap justify-end">
+    <button onclick="document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen()" class="bg-blue-700 text-white text-xl font-bold px-6 py-3 rounded-xl hover:bg-blue-600">⛶ Fullscreen</button>
     <button id="openEditor"
             class="bg-purple-700 text-white text-xl font-bold px-6 py-3 rounded-xl hover:bg-purple-600">
       Word Editor 📝
-    </button>
+    </button></div>
   </div>
 
   <!-- Category Screen -->
   <div id="categoryScreen" class="text-center mt-10 px-6 max-w-6xl mx-auto">
     <h1 class="text-4xl md:text-6xl font-extrabold text-blue-800 mb-10">
-      Pop the Balloon 🎈
+      Balloon Word Pop
     </h1>
     <p class="text-xl text-gray-700 mb-6">
-      Choose a category. Residents guess letters; wrong guesses pop balloons!
+      Choose a category, call out letters, and try to solve the word before the balloons are gone.
     </p>
 
     <div id="categoryButtons"
@@ -156,6 +187,8 @@
          aria-live="polite">
     </div>
 
+    <div id="alphabet" aria-label="Choose a letter"></div>
+
     <!-- Used letters -->
     <div class="text-center text-xl font-bold text-gray-700 mb-4">
       Used Letters
@@ -166,10 +199,10 @@
 
     <div class="flex justify-center gap-4 flex-wrap mb-10">
       <button id="newWordBtn" class="big-btn pf-blue hover:pf-blue">
-        New Word
+        Next Word
       </button>
       <button id="revealBtn" class="big-btn bg-green-700 hover:bg-green-600">
-        Reveal Answer
+        Show Answer
       </button>
       <button id="backBtn" class="big-btn bg-gray-600 hover:bg-gray-500">
         ⬅ Back
@@ -304,11 +337,24 @@
       balloonsEl.innerHTML = "";
       const remaining = MAX_MISSES - misses;
       for (let i = 0; i < remaining; i++) {
-        balloonsEl.innerHTML += `<span class="text-7xl md:text-8xl transition-opacity duration-300">🎈</span>`;
+        const balloon = document.createElement("div");
+        balloon.className = "pf-balloon";
+        balloon.setAttribute("aria-label","balloon");
+        balloonsEl.appendChild(balloon);
       }
-      for (let i = 0; i < misses; i++) {
-        balloonsEl.innerHTML += `<span class="text-7xl md:text-8xl transition-opacity duration-300">💥</span>`;
-      }
+    }
+
+    function renderAlphabet() {
+      const alphabetEl = document.getElementById("alphabet");
+      alphabetEl.innerHTML = "";
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("").forEach(letter => {
+        const btn = document.createElement("button");
+        btn.className = "letter-key" + (used.has(letter) ? " used" : "");
+        btn.textContent = letter;
+        btn.disabled = used.has(letter) || finished;
+        btn.onclick = () => handleGuess(letter);
+        alphabetEl.appendChild(btn);
+      });
     }
 
     function renderWord() {
@@ -348,6 +394,7 @@
       renderBalloons();
       renderWord();
       renderUsedLetters();
+      renderAlphabet();
     }
 
     // =========================
@@ -394,6 +441,8 @@
         }
         correct = true;
       } else {
+        const lastBalloon = balloonsEl.lastElementChild;
+        if (lastBalloon) lastBalloon.classList.add("popping");
         misses++;
       }
       used.add(letter);
@@ -412,7 +461,14 @@
         setStatus(`💥 All balloons popped! The word was ${word}.`, "text-red-700");
       }
 
-      renderAll();
+      if (correct) {
+        renderAll();
+      } else {
+        renderWord();
+        renderUsedLetters();
+        renderAlphabet();
+        setTimeout(renderBalloons, 330);
+      }
     }
 
     function revealAnswer() {
