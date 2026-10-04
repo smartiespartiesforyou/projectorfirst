@@ -49,7 +49,23 @@
     }
     .pf-blue { background: #1e3a8a; }
     .pf-blue:hover { background: #1d4ed8; }
-  </style>
+  
+/* Projector First visual refresh */
+body{margin:0;background:radial-gradient(circle at 12% 10%,rgba(242,184,75,.30),transparent 24%),radial-gradient(circle at 88% 18%,rgba(110,157,139,.25),transparent 26%),linear-gradient(145deg,#fff8e8,#f3ede2 52%,#e6f0ed);color:#17324d;font-family:Arial,sans-serif;min-height:100vh}
+body:before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.13;background-image:linear-gradient(90deg,transparent 49%,rgba(23,50,77,.08) 50%,transparent 51%),linear-gradient(transparent 49%,rgba(23,50,77,.06) 50%,transparent 51%);background-size:48px 48px}
+#categoryScreen,#gameScreen{position:relative}#categoryScreen h1,#categoryTitle{font-family:Georgia,serif!important;color:#17324d!important;text-shadow:0 3px 0 white}
+#categoryScreen:before{content:"WORD SCRAMBLE";display:block;font-weight:900;letter-spacing:.18em;color:#80694e;margin-top:8px;margin-bottom:10px}
+#categoryButtons button{background:linear-gradient(145deg,#3f7898,#2f607a)!important;border:4px solid rgba(255,255,255,.75);box-shadow:0 9px 0 #244d63,0 14px 28px rgba(23,50,77,.18);border-radius:26px!important;min-height:105px}
+#categoryButtons button:nth-child(3n+2){background:linear-gradient(145deg,#d97961,#bc5e4b)!important;box-shadow:0 9px 0 #934738,0 14px 28px rgba(23,50,77,.18)}
+#categoryButtons button:nth-child(3n){background:linear-gradient(145deg,#6e9d8b,#557e70)!important;box-shadow:0 9px 0 #42675a,0 14px 28px rgba(23,50,77,.18)}
+#gameScreen{background:rgba(255,253,246,.9);border:3px solid rgba(23,50,77,.12);border-radius:34px;padding:24px!important;margin-top:24px!important;box-shadow:0 20px 50px rgba(23,50,77,.15)}
+#scramble{display:flex;flex-wrap:wrap;justify-content:center;gap:12px;letter-spacing:0!important;margin:24px auto!important;max-width:1200px}
+.scramble-tile{min-width:82px;height:104px;padding:0 16px;display:flex;align-items:center;justify-content:center;background:linear-gradient(145deg,#fffdf6,#efe3c7);border:4px solid #d5c49d;border-radius:20px;box-shadow:0 8px 0 #b99d69,0 12px 18px rgba(23,50,77,.15);font-family:Georgia,serif;font-size:clamp(3rem,6vw,5.5rem);font-weight:900;color:#17324d;animation:scrambleIn .45s ease both}
+@keyframes scrambleIn{from{transform:translateY(-20px) rotate(-7deg);opacity:0}to{transform:translateY(0);opacity:1}}
+#answer{background:#e9f4e8;border:4px solid #7aa17a;border-radius:22px;padding:18px 24px;max-width:900px;margin:20px auto!important;color:#245b3b!important;box-shadow:0 7px 0 #648c64}
+#status{min-height:50px!important;height:auto!important;background:#fff8e8;border-radius:16px;padding:10px 18px;max-width:900px;margin:16px auto 24px!important}.big-btn{font-size:25px!important;padding:16px 26px!important;box-shadow:0 6px 0 rgba(23,50,77,.25)}
+@media(max-width:700px){.scramble-tile{min-width:58px;height:76px;padding:0 10px;border-radius:14px}#gameScreen{padding:14px!important}}
+</style>
 </head>
 
 <body class="min-h-screen">
@@ -57,9 +73,9 @@
   <!-- Header -->
   <div class="max-w-6xl mx-auto flex justify-between items-center p-6 border-b border-gray-200">
     <a href="apps.html" class="pf-blue text-white text-xl font-bold px-5 py-3 rounded-xl">← Back to Apps</a>
-    <button id="openEditor" class="bg-purple-700 text-white text-xl font-bold px-6 py-3 rounded-xl hover:bg-purple-600">
+    <div class="flex gap-3 flex-wrap justify-end"><button onclick="document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen()" class="bg-blue-700 text-white text-xl font-bold px-6 py-3 rounded-xl hover:bg-blue-600">⛶ Fullscreen</button><button id="openEditor" class="bg-purple-700 text-white text-xl font-bold px-6 py-3 rounded-xl hover:bg-purple-600">
       Word Editor 📝
-    </button>
+    </button></div>
   </div>
 
   <!-- Category Screen -->
@@ -435,7 +451,15 @@
 
       const next = getNextWordForCategory(currentCategory);
       currentWord = next;
-      scrambleEl.textContent = shuffleWord(currentWord);
+      const mixed = shuffleWord(currentWord);
+      scrambleEl.innerHTML = "";
+      Array.from(mixed).forEach((letter, i) => {
+        const tile = document.createElement("span");
+        tile.className = "scramble-tile";
+        tile.style.animationDelay = (i * 45) + "ms";
+        tile.textContent = letter;
+        scrambleEl.appendChild(tile);
+      });
       answerEl.textContent = currentWord;
       answerEl.classList.add("hidden");
       updateStatus(currentCategory);
