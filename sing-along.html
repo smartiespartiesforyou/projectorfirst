@@ -1,401 +1,401 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Sing-Along — ProjectorFirst</title>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Guess the Song — ProjectorFirst</title>
 
-<!-- Membership gate (paywall-test) -->
-<script
-  data-memberstack-app="app_cmgnwpg8y00x10suih4pua785"
-  src="https://static.memberstack.com/scripts/v2/memberstack.js"
-  type="text/javascript">
-</script>
+<script data-memberstack-app="app_cmgnwpg8y00x10suih4pua785" src="https://static.memberstack.com/scripts/v2/memberstack.js" type="text/javascript"></script>
 <script src="/guard.js"></script>
 
-  <script src="https://cdn.tailwindcss.com"></script>
-  <style>
-    html, body {
-      height: 100vh;
-      height: 100dvh;
-      margin: 0;
-      overflow: hidden;
-      background: #1e3a8a;
-      font-family: ui-rounded, system-ui, -apple-system, "Segoe UI", sans-serif;
-    }
-    .screen { height: 100vh; height: 100dvh; display: flex; flex-direction: column; }
-    .btn-big {
-      font-weight: 900;
-      border-radius: 1.25rem;
-      border: 4px solid #0f265f;
-      box-shadow: 0 6px 0 #0f265f;
-      transition: transform .08s ease, box-shadow .08s ease;
-      cursor: pointer;
-      user-select: none;
-      -webkit-user-select: none;
-      touch-action: manipulation;
-    }
-    .btn-big:active { transform: translateY(4px); box-shadow: 0 2px 0 #0f265f; }
-    .btn-big:disabled { opacity: .5; cursor: default; }
-    .answer-card {
-      background: #facc15;
-      color: #1e3a8a;
-      font-weight: 900;
-      border: 4px solid #fff;
-      border-radius: 1.5rem;
-      padding: 1rem 1.5rem;
-      animation: popIn .4s cubic-bezier(.2,1.6,.4,1) both;
-      box-shadow: 0 6px 0 #b45309;
-      text-align: center;
-    }
-    @keyframes popIn {
-      0% { transform: scale(.3); opacity: 0; }
-      100% { transform: scale(1); opacity: 1; }
-    }
-    .confetti {
-      position: fixed;
-      top: -20px;
-      pointer-events: none;
-      z-index: 50;
-      font-size: clamp(1.2rem, 3vw, 2rem);
-      animation: fall linear forwards;
-    }
-    @keyframes fall { to { transform: translateY(110vh) rotate(720deg); opacity: .9; } }
-    @media (prefers-reduced-motion: reduce) {
-      .answer-card { animation: none; }
-      .confetti { display: none; }
-    }
-    .note-pulse {
-      animation: pulse 1.4s ease-in-out infinite;
-    }
-    @keyframes pulse {
-      0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.12); }
-    }
-    /* Player hidden by default (audio-only). The Show Video toggle
-       reveals it as a small corner player as a manual fallback. */
-    #ytHolder {
-      position: fixed;
-      bottom: 8px;
-      right: 8px;
-      width: 3px;
-      height: 3px;
-      overflow: hidden;
-      opacity: 0.01;
-      pointer-events: none;
-      z-index: 40;
-    }
-    #ytHolder.visible {
-      width: 320px;
-      height: 200px;
-      opacity: 1;
-      pointer-events: auto;
-      border: 3px solid #facc15;
-      border-radius: .5rem;
-      background: #000;
-    }
-    #ytHolder iframe {
-      width: 100%;
-      height: 100%;
-      min-width: 300px;
-      min-height: 180px;
-    }
-  </style>
+<meta name="description" content="A large-screen music memory game. Reveal clues one at a time and guess familiar songs together."/>
+<link rel="icon" href="/logo.svg" type="image/svg+xml"/>
+
+<style>
+:root{--navy:#17324d;--blue:#3f7898;--blue2:#2f607a;--coral:#d97961;--coral2:#bc5e4b;--sage:#6e9d8b;--sage2:#557e70;--cream:#fff8e8;--ivory:#fffdf6;--gold:#d5c49d}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%}
+body{
+  min-height:100vh;color:var(--navy);font-family:Arial,sans-serif;
+  background:
+    radial-gradient(circle at 12% 10%,rgba(242,184,75,.30),transparent 24%),
+    radial-gradient(circle at 88% 18%,rgba(110,157,139,.25),transparent 26%),
+    linear-gradient(145deg,#fff8e8,#f3ede2 52%,#e6f0ed);
+}
+body:before{
+  content:"";position:fixed;inset:0;pointer-events:none;opacity:.10;
+  background-image:
+    linear-gradient(90deg,transparent 49%,rgba(23,50,77,.07) 50%,transparent 51%),
+    linear-gradient(transparent 49%,rgba(23,50,77,.05) 50%,transparent 51%);
+  background-size:48px 48px
+}
+button,a{font:inherit}
+button{cursor:pointer}
+.hidden{display:none!important}
+.topbar{
+  max-width:1220px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;
+  gap:12px;padding:18px;border-bottom:1px solid rgba(23,50,77,.12);flex-wrap:wrap
+}
+.back-btn,.top-btn{
+  border:0;border-radius:14px;background:#1e3a8a;color:#fff;text-decoration:none;
+  font-weight:900;padding:11px 17px;box-shadow:0 5px 0 rgba(23,50,77,.22)
+}
+.title-block{text-align:center;flex:1;min-width:270px}
+.eyebrow{font-size:.8rem;font-weight:900;letter-spacing:.18em;color:#80694e}
+h1{
+  margin:3px 0 0;font-family:Georgia,serif;font-size:clamp(2.1rem,4.8vw,3.8rem);
+  color:var(--navy);line-height:1;text-shadow:0 2px 0 #fff
+}
+.voice{
+  display:flex;align-items:center;gap:8px;background:#fffdf6;color:#17324d;
+  border:3px solid #d5c49d;border-radius:14px;padding:8px 12px;font-weight:900
+}
+.voice input{width:20px;height:20px}
+.category-wrap{max-width:1050px;margin:0 auto;padding:28px 18px 40px}
+.intro{text-align:center;color:#5f6c72;font-size:clamp(1.05rem,2.1vw,1.3rem);font-weight:800;margin:0 auto 20px;max-width:780px}
+.category-grid{display:grid;grid-template-columns:repeat(2,minmax(260px,1fr));gap:14px}
+.category-btn{
+  min-height:105px;border:3px solid #d5c49d;border-radius:20px;background:#fffdf6;color:#17324d;
+  box-shadow:0 6px 0 #b99d69;padding:16px;text-align:left
+}
+.category-btn .name{font-family:Georgia,serif;font-weight:900;font-size:clamp(1.35rem,2.5vw,1.8rem)}
+.category-btn .count{display:block;color:#80694e;font-weight:900;margin-top:4px}
+.category-btn.mix{grid-column:1/-1;background:linear-gradient(145deg,#e7eef2,#f8f1df)}
+.game-wrap{max-width:1120px;margin:0 auto;padding:14px 18px 28px}
+.game-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:10px}
+.category-label{font-family:Georgia,serif;font-weight:900;font-size:clamp(1.25rem,2.5vw,1.8rem)}
+.progress{text-align:center;color:#80694e;font-weight:900;margin-bottom:10px}
+.stage{
+  min-height:560px;background:linear-gradient(145deg,#fffdf6,#f1e6d0);
+  border:4px solid #d5c49d;border-radius:30px;padding:clamp(18px,3vw,30px);
+  box-shadow:0 10px 0 #b99d69,0 17px 32px rgba(23,50,77,.14);
+  display:flex;flex-direction:column;justify-content:center
+}
+.prompt{text-align:center;font-family:"Arial Black",Arial,sans-serif;font-size:clamp(1.55rem,3.2vw,2.4rem);margin-bottom:16px}
+.clues{display:grid;gap:12px;max-width:860px;width:100%;margin:0 auto}
+.clue{
+  background:#fff;border:3px solid #d8cdbc;border-radius:18px;padding:15px 18px;
+  font-size:clamp(1.25rem,2.8vw,1.9rem);font-weight:900;color:#17324d;
+  box-shadow:0 5px 0 rgba(23,50,77,.09)
+}
+.clue .label{display:block;font-size:.76em;letter-spacing:.08em;color:#80694e;margin-bottom:4px}
+.answer{
+  max-width:860px;width:100%;margin:16px auto 0;background:#e3efe8;border:4px solid #6e9d8b;
+  border-radius:20px;padding:17px;text-align:center;color:#17324d;box-shadow:0 7px 0 #9eb8ae
+}
+.answer .song{font-family:Georgia,serif;font-weight:900;font-size:clamp(2rem,4.5vw,3.4rem);line-height:1}
+.answer .artist{font-weight:900;font-size:clamp(1.15rem,2.5vw,1.7rem);margin-top:8px}
+.answer .talk{color:#557e70;font-weight:800;font-size:clamp(.95rem,1.8vw,1.12rem);margin-top:10px}
+.actions{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin-top:18px}
+.action{
+  min-width:175px;border:4px solid rgba(255,255,255,.82);border-radius:18px;color:#fff;
+  font-weight:900;padding:13px 18px;font-size:clamp(1.05rem,2.1vw,1.35rem)
+}
+.more{background:linear-gradient(145deg,#d8aa43,#b98424);box-shadow:0 7px 0 #8d641b;color:#17324d}
+.listen{background:linear-gradient(145deg,var(--blue),var(--blue2));box-shadow:0 7px 0 #244d63}
+.reveal{background:linear-gradient(145deg,var(--coral),var(--coral2));box-shadow:0 7px 0 #934738}
+.next{background:linear-gradient(145deg,var(--sage),var(--sage2));box-shadow:0 7px 0 #42665b}
+.helper{text-align:center;margin-top:12px;color:#7a7167;font-size:.92rem;font-weight:700}
+#ytHolder{
+  position:fixed;right:8px;bottom:8px;width:2px;height:2px;overflow:hidden;opacity:.01;pointer-events:none
+}
+#ytHolder iframe{width:100%;height:100%}
+@media(max-width:680px){
+  .title-block{order:-1;flex-basis:100%}
+  .category-grid{grid-template-columns:1fr}
+  .category-btn.mix{grid-column:auto}
+  .stage{min-height:500px}
+}
+</style>
 </head>
+
 <body>
-
-  <div id="categoryScreen" class="screen items-center justify-center px-4 gap-6">
-    <h1 class="text-yellow-300 font-black text-center" style="font-size: clamp(1.8rem, 6vw, 3rem); text-shadow: 4px 4px 0 #0f265f;">🎤 SING-ALONG</h1>
-    <div class="text-white font-bold text-center" style="font-size: clamp(1rem, 3vw, 1.4rem);">Choose a song set to begin</div>
-    <div id="categoryButtons" class="flex flex-wrap justify-center gap-4 max-w-3xl"></div>
-    <a href="apps.html" class="btn-big bg-white text-blue-900 text-base md:text-lg px-4 py-3 no-underline mt-4">← Back to Apps</a>
+<section id="categoryScreen">
+  <div class="topbar">
+    <a href="apps.html" class="back-btn">← Back to Apps</a>
+    <div class="title-block">
+      <div class="eyebrow">MUSIC MEMORY</div>
+      <h1>Guess the Song</h1>
+    </div>
+    <button class="top-btn" onclick="toggleFullscreen()">⛶ Fullscreen</button>
   </div>
 
-  <div id="gameScreen" class="screen" style="display:none;">
-    <header class="flex items-center justify-between px-4 pt-4 pb-1 gap-2 flex-wrap">
-      <button onclick="showCategoryScreen()" class="btn-big bg-white text-blue-900 text-base md:text-xl px-3 py-2">← Song Sets</button>
-      <h1 class="text-yellow-300 font-black" style="font-size: clamp(1.3rem, 4.5vw, 2.4rem); text-shadow: 3px 3px 0 #0f265f;">🎤 SING-ALONG</h1>
-      <label class="flex items-center gap-2 text-white font-bold text-sm md:text-lg cursor-pointer select-none">
-        <input type="checkbox" id="videoToggle" class="w-5 h-5 md:w-6 md:h-6 accent-yellow-400" onchange="toggleVideo()">
-        🎬 Show Video
-      </label>
-    </header>
+  <main class="category-wrap">
+    <p class="intro">Reveal clues one at a time. Guess the song together, then reveal the title and artist. No score, no timer.</p>
+    <div id="categoryGrid" class="category-grid"></div>
+  </main>
+</section>
 
-    <div class="text-center text-blue-200 font-bold" style="font-size: clamp(.9rem, 2.4vw, 1.2rem);" id="progressLabel"></div>
-
-    <main class="flex-1 flex flex-col items-center justify-center px-4 min-h-0 gap-5">
-      <div id="notePulse" class="note-pulse text-center" style="font-size: clamp(4rem, 16vw, 9rem); line-height: 1;">🎵</div>
-      <div id="statusLine" class="text-white font-black text-center" style="font-size: clamp(1.3rem, 4.5vw, 2.2rem);">Listen closely... can you guess the artist?</div>
-      <div id="answerWrap" class="flex justify-center px-2 max-w-3xl"></div>
-    </main>
-
-    <footer class="px-4 pb-5 pt-1">
-      <div class="flex justify-center gap-3 md:gap-5 flex-wrap max-w-2xl mx-auto">
-        <button id="playBtn" class="btn-big bg-green-400 text-blue-900 px-5 py-4 flex-1 min-w-[10rem]" style="font-size: clamp(1.2rem, 3.8vw, 2rem); border-color:#14532d; box-shadow: 0 6px 0 #14532d;" onclick="playClip()">▶️ Play Clip</button>
-        <button id="revealBtn" class="btn-big bg-yellow-400 text-blue-900 px-5 py-4 flex-1 min-w-[10rem]" style="font-size: clamp(1.2rem, 3.8vw, 2rem); border-color:#b45309; box-shadow: 0 6px 0 #b45309;" onclick="reveal()" disabled>✨ Reveal Answer</button>
-        <button id="nextBtn" class="btn-big bg-white text-blue-900 px-5 py-4 flex-1 min-w-[10rem]" style="font-size: clamp(1.2rem, 3.8vw, 2rem);" onclick="nextSong()">Next Song ➡️</button>
+<section id="gameScreen" class="hidden">
+  <div class="game-wrap">
+    <div class="game-head">
+      <button class="back-btn" onclick="showCategories()">← Song Sets</button>
+      <div id="categoryLabel" class="category-label"></div>
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+        <label class="voice">
+          <input id="voiceToggle" type="checkbox" checked>
+          🔊 Read Clues
+        </label>
+        <button class="top-btn" onclick="toggleFullscreen()">⛶ Fullscreen</button>
       </div>
-      <div class="text-center text-blue-300 font-semibold mt-2 hidden md:block" style="font-size: clamp(.85rem, 2vw, 1.05rem);">Play the clip, let everyone guess out loud, then reveal!</div>
-    </footer>
-  </div>
+    </div>
 
-  <div id="ytHolder"><div id="ytPlayer"></div></div>
+    <div id="progress" class="progress"></div>
+
+    <main class="stage">
+      <div id="prompt" class="prompt">Can you name this song?</div>
+      <div id="clues" class="clues"></div>
+
+      <div id="answer" class="answer hidden">
+        <div id="answerSong" class="song"></div>
+        <div id="answerArtist" class="artist"></div>
+        <div id="talkPrompt" class="talk"></div>
+      </div>
+
+      <div class="actions">
+        <button id="moreBtn" class="action more" onclick="anotherClue()">Another Clue</button>
+        <button id="listenBtn" class="action listen hidden" onclick="playClip()">▶ Listen to Clip</button>
+        <button id="revealBtn" class="action reveal" onclick="revealSong()">Reveal Song</button>
+        <button id="nextBtn" class="action next hidden" onclick="nextSong()">Next Song →</button>
+      </div>
+
+      <div class="helper">10 songs per round • Space = Another Clue / Reveal / Next • F = Fullscreen</div>
+    </main>
+  </div>
+</section>
+
+<div id="ytHolder"><div id="ytPlayer"></div></div>
 
 <script>
-// ============ SONGS ============
-// Each song has its own dedicated YouTube video, so each clip just loads
-// and autoplays from the start — no seeking to a mid-video timestamp,
-// which was unreliable. Fill in "id" with the real YouTube video ID
-// (the part after watch?v= in a normal youtube.com/watch link) for each.
-const CATEGORIES = {
-  oldies: {
-    label: "🎻 Classic Oldies",
-    songs: [
-      { title: "Oh, Pretty Woman", artist: "Roy Orbison", id: "3KFvoDDs0XM" },
-      { title: "Can't Take My Eyes Off You", artist: "Frankie Valli", id: "LcJm1pOswfM" },
-      { title: "Ain't No Mountain High Enough", artist: "Marvin Gaye & Tammi Terrell", id: "2Hlhi8AZf6k" },
-      { title: "Dreams", artist: "Fleetwood Mac", id: "mrZRURcb1cM" },
-      { title: "Don't Worry Baby", artist: "The Beach Boys", id: "Qt6oiHHbmT8" },
-      { title: "Suspicious Minds", artist: "Elvis Presley", id: "FU722OCH-wo" },
-      { title: "I Just Want to Be Your Everything", artist: "Andy Gibb", id: "tA6L8-lxaA8" },
-      { title: "Unchained Melody", artist: "The Righteous Brothers", id: "pm2Z9yAp_CE" },
-      { title: "Have You Ever Seen the Rain", artist: "Creedence Clearwater Revival", id: "Gu2pVPWGYMQ" },
-      { title: "Let It Be", artist: "The Beatles", id: "85u7my78ng0" },
-      { title: "A Horse With No Name", artist: "America", id: "zSAJ0l4OBHM" },
-      { title: "My Girl", artist: "The Temptations", id: "y3KJ7d2qBoA" },
-      { title: "Return to Sender", artist: "Elvis Presley", id: "Z54-QHEZN6E" },
-      { title: "Dancing Queen", artist: "ABBA", id: "3ij_pUtJJrw" },
-      { title: "California Dreamin'", artist: "The Mamas & the Papas", id: "qhZULM69DIw" },
-      { title: "Sweet Caroline", artist: "Neil Diamond", id: "0iN-hemcKc8" },
-      { title: "Jolene", artist: "Dolly Parton", id: "irnTlxdJghM" },
-      { title: "Fortunate Son", artist: "Creedence Clearwater Revival", id: "I1cF9YwGjJ8" },
-      { title: "Put Your Head on My Shoulder", artist: "Paul Anka", id: "kvazBqAlx58" },
-      { title: "Stop! In the Name of Love", artist: "The Supremes", id: "une981B7Q4Y" },
-      { title: "Wouldn't It Be Nice", artist: "The Beach Boys", id: "5lP8BZcyoEQ" },
-    ]
-  },
-  country: {
-    label: "🤠 Classic Country",
-    songs: [
-      { title: "Ring of Fire", artist: "Johnny Cash", id: "sDnWV_gGg9o" },
-      { title: "Crazy", artist: "Patsy Cline", id: "IvdT3Wh9O34" },
-      { title: "On the Road Again", artist: "Willie Nelson", id: "NCs8ufxnnYA" },
-      { title: "The Gambler", artist: "Kenny Rogers", id: "LvjdxnaHPfk" },
-      { title: "Friends in Low Places", artist: "Garth Brooks", id: "EyWTL3QfXMQ" },
-      { title: "9 to 5", artist: "Dolly Parton", id: "Pcm2yDp8XxI" },
-      { title: "Coward of the County", artist: "Kenny Rogers", id: "HnwX0QCR1mM" },
-      { title: "Stand By Your Man", artist: "Tammy Wynette", id: "YKwJrLY4nXk" },
-      { title: "I Will Always Love You", artist: "Dolly Parton", id: "x0bEZH6ZqG4" },
-      { title: "Sixteen Tons", artist: "Tennessee Ernie Ford", id: "hjmdEBgsu_g" },
-      { title: "Amarillo By Morning", artist: "George Strait", id: "XwtNks-hoHI" },
-      { title: "He Stopped Loving Her Today", artist: "George Jones", id: "VExw77xJsBQ" },
-      { title: "King of the Road", artist: "Roger Miller", id: "WrhAC0dFis0" },
-      { title: "Convoy", artist: "C.W. McCall", id: "Sd5ZLJWQmss" },
-      { title: "Delta Dawn", artist: "Tanya Tucker", id: "r0Xgt37rVOo" },
-      { title: "Harper Valley PTA", artist: "Jeannie C. Riley", id: "_iPr4AKWSeY" },
-      { title: "Always on My Mind", artist: "Willie Nelson", id: "KQAsbAoEias" },
-      { title: "Islands in the Stream", artist: "Kenny Rogers & Dolly Parton", id: "MChzszK0FtE" },
-      { title: "Jackson", artist: "Johnny Cash & June Carter", id: "43qK1Lh2xH0" },
-      { title: "Coat of Many Colors", artist: "Dolly Parton", id: "h7I_9MMcWvk" },
-      { title: "Wagon Wheel", artist: "Darius Rucker", id: "wjzYh36uMds" },
-    ]
-  }
-};
+const CATEGORIES={"oldies":{"label":"Classic Oldies","emoji":"🎙️","songs":[["Oh, Pretty Woman","Roy Orbison","1960s","A Roy Orbison hit with a title that sounds like a compliment to a woman.","3KFvoDDs0XM"],["Can't Take My Eyes Off You","Frankie Valli","1960s","A romantic hit whose title is about not being able to stop looking at someone.","LcJm1pOswfM"],["Unchained Melody","The Righteous Brothers","1960s","A soaring love ballad with the word “Melody” in the title.","pm2Z9yAp_CE"],["California Dreamin'","The Mamas & the Papas","1960s","A folk-rock favorite named for longing for the West Coast.","qhZULM69DIw"],["Sweet Caroline","Neil Diamond","1960s","A Neil Diamond crowd favorite named for a woman named Caroline.","0iN-hemcKc8"],["Put Your Head on My Shoulder","Paul Anka","1950s","A Paul Anka slow dance favorite whose title gives a gentle romantic instruction.","kvazBqAlx58"],["Wouldn't It Be Nice","The Beach Boys","1960s","A Beach Boys favorite whose title begins with a hopeful question.","5lP8BZcyoEQ"],["Return to Sender","Elvis Presley","1960s","An Elvis song with a title borrowed from words seen on undeliverable mail.","Z54-QHEZN6E"],["Wake Up Little Susie","The Everly Brothers","1950s","An Everly Brothers hit that calls for Susie to wake up."],["Only You (And You Alone)","The Platters","1950s","A Platters love song built around the idea that one person is the only one."],["Blueberry Hill","Fats Domino","1950s","A Fats Domino favorite named for a colorful fruit and a hill.","8mix3gmzPa0"],["Que Sera, Sera","Doris Day","1950s","A Doris Day standard whose title is a familiar phrase meaning “whatever will be.”"],["That's Amore","Dean Martin","1950s","A Dean Martin favorite with the Italian word for love in its title."],["Unforgettable","Nat King Cole","1950s","A Nat King Cole standard whose title means impossible to forget."],["Stand by Me","Ben E. King","1960s","A soul classic whose title asks someone to stay close and supportive."],["At Last","Etta James","1960s","An Etta James standard with a two-word title expressing long-awaited relief."]]},"country":{"label":"Classic Country","emoji":"🤠","songs":[["Ring of Fire","Johnny Cash","1960s","A Johnny Cash classic whose title combines jewelry and flames.","sDnWV_gGg9o"],["Crazy","Patsy Cline","1960s","A Patsy Cline signature ballad with a one-word title about losing good sense.","IvdT3Wh9O34"],["On the Road Again","Willie Nelson","1980s","A Willie Nelson travel favorite about heading back out on the highway.","NCs8ufxnnYA"],["The Gambler","Kenny Rogers","1970s","A Kenny Rogers story-song named for a man who plays cards for money.","LvjdxnaHPfk"],["9 to 5","Dolly Parton","1980s","A Dolly Parton hit named for a traditional workday schedule.","Pcm2yDp8XxI"],["Stand by Your Man","Tammy Wynette","1960s","A Tammy Wynette country standard whose title is about loyalty in a relationship.","YKwJrLY4nXk"],["I Will Always Love You","Dolly Parton","1970s","A Dolly Parton ballad whose title promises lasting affection.","x0bEZH6ZqG4"],["Sixteen Tons","Tennessee Ernie Ford","1950s","A working-man country classic with a heavy weight in the title.","hjmdEBgsu_g"],["Amarillo by Morning","George Strait","1980s","A George Strait favorite that names a Texas city and a time of day.","XwtNks-hoHI"],["He Stopped Loving Her Today","George Jones","1980s","A George Jones heartbreak classic whose title tells when a man's love finally ended.","VExw77xJsBQ"],["King of the Road","Roger Miller","1960s","A Roger Miller hit that gives someone royal status on the highway.","WrhAC0dFis0"],["Delta Dawn","Tanya Tucker","1970s","A Tanya Tucker hit named for a woman and the first light of day.","r0Xgt37rVOo"],["Harper Valley PTA","Jeannie C. Riley","1960s","A story-song named for a town's parent-teacher association.","_iPr4AKWSeY"],["Always on My Mind","Willie Nelson","1980s","A Willie Nelson ballad whose title says someone is never far from your thoughts.","KQAsbAoEias"],["Islands in the Stream","Kenny Rogers & Dolly Parton","1980s","A famous country duet whose title pictures land surrounded by moving water.","MChzszK0FtE"],["Coat of Many Colors","Dolly Parton","1970s","A Dolly Parton story-song named for a handmade piece of clothing.","h7I_9MMcWvk"],["Coal Miner's Daughter","Loretta Lynn","1970s","Loretta Lynn's autobiographical signature song names her father's occupation."],["Wichita Lineman","Glen Campbell","1960s","A Glen Campbell classic about a utility worker connected to a Kansas city."]]},"motown":{"label":"Motown & Soul","emoji":"💿","songs":[["My Girl","The Temptations","1960s","A Temptations classic with a simple two-word title about a special woman.","y3KJ7d2qBoA"],["Stop! In the Name of Love","The Supremes","1960s","A Supremes hit whose title begins with a command to stop.","une981B7Q4Y"],["Ain't No Mountain High Enough","Marvin Gaye & Tammi Terrell","1960s","A Motown duet whose title says no obstacle is too large.","2Hlhi8AZf6k"],["Reach Out I'll Be There","The Four Tops","1960s","A Four Tops hit whose title promises support when someone reaches out."],["I Heard It Through the Grapevine","Marvin Gaye","1960s","A Marvin Gaye classic whose title uses an old expression for hearing news indirectly."],["Respect","Aretha Franklin","1960s","Aretha Franklin's signature anthem with a one-word title about being valued."],["Chain of Fools","Aretha Franklin","1960s","An Aretha Franklin hit whose title links foolish people together."],["(Sittin' On) The Dock of the Bay","Otis Redding","1960s","An Otis Redding classic set beside the water at a dock."],["You Send Me","Sam Cooke","1950s","A Sam Cooke love song with a title about the effect someone has on you."],["Please Mr. Postman","The Marvelettes","1960s","An early Motown hit that speaks directly to the person delivering the mail."],["Dancing in the Street","Martha and the Vandellas","1960s","A Motown party classic whose title moves the dancing outdoors."],["What's Going On","Marvin Gaye","1970s","A Marvin Gaye classic whose title is a question about the state of the world."],["Signed, Sealed, Delivered (I'm Yours)","Stevie Wonder","1970s","A Stevie Wonder hit whose title borrows three words from sending a package."],["Baby Love","The Supremes","1960s","A Supremes hit with a short affectionate title."],["Heat Wave","Martha and the Vandellas","1960s","A Motown favorite named for a stretch of unusually hot weather."],["Ain't Too Proud to Beg","The Temptations","1960s","A Temptations hit whose title says pride will not stop someone from pleading."]]},"standards":{"label":"Crooners & Standards","emoji":"🎼","songs":[["Fly Me to the Moon","Frank Sinatra","1960s","A Sinatra standard whose title asks for a trip far beyond Earth."],["Moon River","Andy Williams","1960s","An Andy Williams standard whose title pairs the moon with a river."],["What a Wonderful World","Louis Armstrong","1960s","A Louis Armstrong favorite whose title celebrates the beauty of the world."],["Mona Lisa","Nat King Cole","1950s","A Nat King Cole hit named for Leonardo da Vinci's famous portrait."],["Everybody Loves Somebody","Dean Martin","1960s","A Dean Martin standard whose title says everyone loves someone at some point."],["I Left My Heart in San Francisco","Tony Bennett","1960s","Tony Bennett's signature song names the California city where he left his heart."],["Beyond the Sea","Bobby Darin","1950s","A Bobby Darin standard whose title looks past the ocean."],["Mack the Knife","Bobby Darin","1950s","A Bobby Darin hit whose title names a man and a sharp object."],["Blue Velvet","Bobby Vinton","1960s","A Bobby Vinton favorite named for a color and a soft fabric."],["Love Me Tender","Elvis Presley","1950s","An Elvis ballad whose title asks for gentle affection."],["Misty","Johnny Mathis","1950s","A romantic standard with a one-word title describing foggy air."],["That's Life","Frank Sinatra","1960s","A Sinatra standard whose title is a familiar phrase about accepting life's ups and downs."]]},"seventies":{"label":"70s Favorites","emoji":"🪩","songs":[["Dancing Queen","ABBA","1970s","An ABBA favorite whose title crowns the best dancer in the room.","3ij_pUtJJrw"],["Dreams","Fleetwood Mac","1970s","A Fleetwood Mac hit named for what happens while you sleep.","mrZRURcb1cM"],["Have You Ever Seen the Rain","Creedence Clearwater Revival","1970s","A CCR favorite whose title asks about seeing rain.","Gu2pVPWGYMQ"],["Let It Be","The Beatles","1970s","A Beatles classic with a three-word title about accepting things as they are.","85u7my78ng0"],["A Horse with No Name","America","1970s","An America hit about an unnamed animal crossing a dry landscape.","zSAJ0l4OBHM"],["American Pie","Don McLean","1970s","A Don McLean epic whose title sounds like a patriotic dessert."],["Take Me Home, Country Roads","John Denver","1970s","A John Denver classic whose title asks rural roads to lead the singer home."],["Ain't No Sunshine","Bill Withers","1970s","A Bill Withers hit whose title says the sunlight is gone."],["Lean on Me","Bill Withers","1970s","A Bill Withers classic whose title offers support to someone who needs it."],["Margaritaville","Jimmy Buffett","1970s","A Jimmy Buffett favorite named for an imaginary place built around a tropical drink."],["Piano Man","Billy Joel","1970s","A Billy Joel signature song named for the musician at the keyboard."],["You Are the Sunshine of My Life","Stevie Wonder","1970s","A Stevie Wonder love song comparing someone special to sunshine."],["Crocodile Rock","Elton John","1970s","An Elton John hit whose title combines a reptile with rock music."],["Let's Stay Together","Al Green","1970s","An Al Green soul classic whose title asks a couple not to separate."]]},"gospel":{"label":"Gospel & Hymns","emoji":"⛪","songs":[["Amazing Grace","Traditional Hymn","Hymn","One of the best-known Christian hymns, with a title about undeserved grace."],["How Great Thou Art","Traditional Hymn","Hymn","A worship hymn whose title declares God's greatness."],["Blessed Assurance","Traditional Hymn","Hymn","A Fanny Crosby hymn whose title expresses confident faith."],["In the Garden","Traditional Hymn","Hymn","A beloved hymn whose title places the scene among flowers and greenery."],["What a Friend We Have in Jesus","Traditional Hymn","Hymn","A hymn whose title describes Jesus as a close friend."],["I'll Fly Away","Traditional Gospel","Gospel","A gospel favorite whose title imagines flying away."],["The Old Rugged Cross","Traditional Hymn","Hymn","A classic hymn whose title describes an aged wooden cross."],["Peace in the Valley","Traditional Gospel","Gospel","A gospel standard whose title brings calm to a low place between hills."],["Just a Closer Walk with Thee","Traditional Gospel","Gospel","A gospel standard asking for a closer spiritual walk."],["Swing Low, Sweet Chariot","Traditional Spiritual","Spiritual","A traditional spiritual whose title calls for a chariot to come down low."]]},"holiday":{"label":"Holiday & Patriotic","emoji":"🎄","songs":[["White Christmas","Bing Crosby","1940s","A Bing Crosby holiday standard dreaming of a Christmas covered in snow."],["Rockin' Around the Christmas Tree","Brenda Lee","1950s","A Brenda Lee holiday hit about dancing around a decorated tree."],["Jingle Bell Rock","Bobby Helms","1950s","A holiday hit that combines jingling bells with rock and roll."],["Feliz Navidad","José Feliciano","1970s","A bilingual Christmas favorite whose Spanish title means Merry Christmas."],["Blue Christmas","Elvis Presley","1950s","An Elvis holiday favorite that gives Christmas a sad color."],["Have Yourself a Merry Little Christmas","Judy Garland","1940s","A holiday standard whose title offers a warm seasonal wish."],["God Bless America","Kate Smith","1930s","A patriotic standard asking for a blessing on the nation."],["This Land Is Your Land","Woody Guthrie","1940s","A folk classic whose title says the country belongs to everyone."],["You're a Grand Old Flag","George M. Cohan","1900s","A patriotic standard praising the American flag."],["America the Beautiful","Traditional","Patriotic","A patriotic standard whose title calls the country beautiful."]]}};
+const ROUND_SIZE=10;
+let currentKey="oldies";
+let deck=[];
+let index=0;
+let clueCount=1;
+let revealed=false;
+let player=null;
+let playerReady=false;
+let pendingId=null;
+let clipTimer=null;
 
-let currentCategory = "oldies";
+const TALK_PROMPTS=[
+  "Do you remember hearing this one on the radio?",
+  "Did this song ever make you want to sing along?",
+  "Does this song remind you of a particular person or place?",
+  "Would you have danced to this one?",
+  "Do you remember who in your family liked this song?"
+];
 
-// ============ STATE ============
-let deck = [];
-let deckIndex = 0;
-let revealed = false;
-let clipTimer = null;
-const CLIP_SECONDS = 25; // auto-stop the clip after this many seconds
-
-function shuffle(arr) {
-  const a = arr.slice();
-  for (let i = a.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [a[i], a[j]] = [a[j], a[i]];
-  }
-  return a;
-}
-
-// ============ YOUTUBE PLAYER (official IFrame API) ============
-// One persistent player, created on the first Play click (a user gesture,
-// which satisfies browser autoplay rules). Each subsequent song is loaded
-// into the SAME player via loadVideoById(differentVideoId) — the standard,
-// well-supported way to switch videos, unlike recreating iframes (whose
-// autoplay is often blocked after the first) or seeking within one long
-// video (which was unreliable).
-let player = null;
-let playerReady = false;
-let pendingVideoId = null;
-
-// Load the API script.
-(function () {
-  const tag = document.createElement("script");
-  tag.src = "https://www.youtube.com/iframe_api";
+(function(){
+  const tag=document.createElement("script");
+  tag.src="https://www.youtube.com/iframe_api";
   document.body.appendChild(tag);
 })();
 
-window.onYouTubeIframeAPIReady = function () {
-  // API is ready; the player itself is created lazily on first Play.
-};
+window.onYouTubeIframeAPIReady=function(){};
 
-function ensurePlayer(videoId) {
-  if (player) return true;
-  if (!(window.YT && YT.Player)) return false; // API still loading
-  player = new YT.Player("ytPlayer", {
-    videoId: videoId,
-    playerVars: { autoplay: 1, rel: 0, modestbranding: 1 },
-    events: {
-      onReady: function (e) {
-        playerReady = true;
-        e.target.playVideo();
-        if (pendingVideoId && pendingVideoId !== videoId) {
-          e.target.loadVideoById(pendingVideoId);
-        }
-        pendingVideoId = null;
-      }
-    }
+function shuffle(a){
+  const x=a.slice();
+  for(let i=x.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [x[i],x[j]]=[x[j],x[i]];
+  }
+  return x;
+}
+
+function allSongs(){
+  return Object.values(CATEGORIES).flatMap(c=>c.songs.map(s=>({s,c:c.label,emoji:c.emoji})));
+}
+
+function normalizedSong(raw,catLabel,emoji){
+  return {
+    title:raw[0],artist:raw[1],era:raw[2],hint:raw[3],id:raw[4]||"",
+    catLabel,emoji
+  };
+}
+
+function categorySongs(key){
+  if(key==="mix"){
+    return allSongs().map(x=>normalizedSong(x.s,x.c,x.emoji));
+  }
+  const c=CATEGORIES[key];
+  return c.songs.map(s=>normalizedSong(s,c.label,c.emoji));
+}
+
+function renderCategories(){
+  const grid=document.getElementById("categoryGrid");
+  grid.innerHTML="";
+  Object.entries(CATEGORIES).forEach(([key,c])=>{
+    const b=document.createElement("button");
+    b.className="category-btn";
+    b.innerHTML="<div class='name'>"+c.emoji+" "+c.label+"</div><span class='count'>"+c.songs.length+" songs</span>";
+    b.onclick=()=>startCategory(key);
+    grid.appendChild(b);
+  });
+  const total=allSongs().length;
+  const mix=document.createElement("button");
+  mix.className="category-btn mix";
+  mix.innerHTML="<div class='name'>🎶 Mix It Up</div><span class='count'>"+total+" songs across every set</span>";
+  mix.onclick=()=>startCategory("mix");
+  grid.appendChild(mix);
+}
+
+function startCategory(key){
+  currentKey=key;
+  const pool=shuffle(categorySongs(key));
+  deck=pool.slice(0,Math.min(ROUND_SIZE,pool.length));
+  index=0;
+  document.getElementById("categoryScreen").classList.add("hidden");
+  document.getElementById("gameScreen").classList.remove("hidden");
+  renderSong();
+}
+
+function showCategories(){
+  stopClip();
+  document.getElementById("gameScreen").classList.add("hidden");
+  document.getElementById("categoryScreen").classList.remove("hidden");
+}
+
+function renderSong(){
+  stopClip();
+  clueCount=1;
+  revealed=false;
+  const song=deck[index];
+
+  document.getElementById("categoryLabel").textContent=
+    currentKey==="mix"?"🎶 Mix It Up":song.emoji+" "+song.catLabel;
+  document.getElementById("progress").textContent="Song "+(index+1)+" of "+deck.length;
+  document.getElementById("prompt").textContent="Can you name this song?";
+  document.getElementById("answer").classList.add("hidden");
+  document.getElementById("moreBtn").classList.remove("hidden");
+  document.getElementById("revealBtn").classList.remove("hidden");
+  document.getElementById("nextBtn").classList.add("hidden");
+  document.getElementById("listenBtn").classList.toggle("hidden",!song.id);
+  renderClues();
+}
+
+function clueText(song,n){
+  if(n===1)return "Era: "+song.era;
+  if(n===2)return "Performer: "+song.artist;
+  return "Title Hint: "+song.hint;
+}
+
+function renderClues(){
+  const song=deck[index];
+  const wrap=document.getElementById("clues");
+  wrap.innerHTML="";
+  for(let n=1;n<=clueCount;n++){
+    const div=document.createElement("div");
+    div.className="clue";
+    div.innerHTML="<span class='label'>CLUE "+n+"</span>"+clueText(song,n);
+    wrap.appendChild(div);
+  }
+  if(clueCount>=3)document.getElementById("moreBtn").classList.add("hidden");
+}
+
+function anotherClue(){
+  if(revealed)return;
+  if(clueCount<3){
+    clueCount++;
+    renderClues();
+    speakText(clueText(deck[index],clueCount));
+  }else{
+    revealSong();
+  }
+}
+
+function revealSong(){
+  if(revealed)return;
+  revealed=true;
+  stopClip();
+  const song=deck[index];
+
+  document.getElementById("prompt").textContent="The song is…";
+  document.getElementById("answerSong").textContent=song.title;
+  document.getElementById("answerArtist").textContent=song.artist+" • "+song.era;
+  document.getElementById("talkPrompt").textContent=TALK_PROMPTS[index%TALK_PROMPTS.length];
+  document.getElementById("answer").classList.remove("hidden");
+
+  document.getElementById("moreBtn").classList.add("hidden");
+  document.getElementById("revealBtn").classList.add("hidden");
+  document.getElementById("nextBtn").classList.remove("hidden");
+
+  speakText(song.title+" by "+song.artist);
+}
+
+function nextSong(){
+  index++;
+  if(index>=deck.length){
+    const pool=shuffle(categorySongs(currentKey));
+    deck=pool.slice(0,Math.min(ROUND_SIZE,pool.length));
+    index=0;
+  }
+  renderSong();
+}
+
+function speakText(text){
+  if(!document.getElementById("voiceToggle").checked)return;
+  if(!("speechSynthesis" in window))return;
+  window.speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(text);
+  u.rate=.9;
+  window.speechSynthesis.speak(u);
+}
+
+function ensurePlayer(id){
+  if(player)return true;
+  if(!(window.YT&&YT.Player))return false;
+  player=new YT.Player("ytPlayer",{
+    videoId:id,
+    playerVars:{autoplay:1,rel:0,modestbranding:1},
+    events:{onReady:function(e){
+      playerReady=true;
+      e.target.playVideo();
+      if(pendingId&&pendingId!==id)e.target.loadVideoById(pendingId);
+      pendingId=null;
+    }}
   });
   return true;
 }
 
-function toggleVideo() {
-  const on = document.getElementById("videoToggle").checked;
-  document.getElementById("ytHolder").classList.toggle("visible", on);
-}
-
-// ============ GAME ============
-function stopClip() {
-  if (player && playerReady && player.stopVideo) player.stopVideo();
-}
-
-function renderSong() {
-  revealed = false;
+function playClip(){
+  const song=deck[index];
+  if(!song.id)return;
   clearTimeout(clipTimer);
-  document.getElementById("progressLabel").textContent = "Song " + (deckIndex + 1) + " of " + deck.length;
-  document.getElementById("statusLine").textContent = "Listen closely... can you guess the artist?";
-  document.getElementById("answerWrap").innerHTML = "";
-  document.getElementById("notePulse").textContent = "🎵";
-  document.getElementById("revealBtn").disabled = true;
-  document.getElementById("playBtn").disabled = false;
-  stopClip();
-}
-
-function playClip() {
-  const song = deck[deckIndex];
-  clearTimeout(clipTimer);
-  if (!song.id) {
-    document.getElementById("statusLine").textContent = "No video linked for this song yet.";
+  if(!ensurePlayer(song.id)){
+    pendingId=song.id;
+    document.getElementById("prompt").textContent="Loading the music…";
+    setTimeout(playClip,400);
     return;
   }
-  if (!ensurePlayer(song.id)) {
-    // API script still loading; remember what to play and retry shortly.
-    pendingVideoId = song.id;
-    document.getElementById("statusLine").textContent = "Loading the music... one moment.";
-    setTimeout(playClip, 400);
-    return;
-  }
-  if (playerReady) {
-    player.loadVideoById(song.id); // loads AND autoplays the new video
-  } else {
-    pendingVideoId = song.id; // player object exists but not ready yet
-  }
-  document.getElementById("statusLine").textContent = "🎶 Now playing... guess out loud!";
-  document.getElementById("revealBtn").disabled = false;
-  clipTimer = setTimeout(function () {
-    if (player && playerReady && player.pauseVideo) player.pauseVideo();
-  }, CLIP_SECONDS * 1000);
+  if(playerReady)player.loadVideoById(song.id);
+  else pendingId=song.id;
+  document.getElementById("prompt").textContent="Listen closely…";
+  clipTimer=setTimeout(()=>{if(player&&playerReady&&player.pauseVideo)player.pauseVideo()},18000);
 }
 
-function reveal() {
-  if (revealed) return;
-  revealed = true;
+function stopClip(){
   clearTimeout(clipTimer);
-  stopClip();
-  const song = deck[deckIndex];
-  document.getElementById("statusLine").textContent = "The answer is...";
-  document.getElementById("notePulse").textContent = "🎉";
-  const wrap = document.getElementById("answerWrap");
-  const card = document.createElement("div");
-  card.className = "answer-card";
-  card.style.fontSize = "clamp(1.5rem, 5.5vw, 3rem)";
-  card.innerHTML = song.title + "<br><span style='font-size:.7em;'>" + song.artist + "</span>";
-  wrap.appendChild(card);
-  document.getElementById("revealBtn").disabled = true;
-  throwConfetti(16);
+  if(player&&playerReady&&player.stopVideo)player.stopVideo();
 }
 
-function nextSong() {
-  clearTimeout(clipTimer);
-  deckIndex++;
-  if (deckIndex >= deck.length) {
-    deck = shuffle(CATEGORIES[currentCategory].songs);
-    deckIndex = 0;
-  }
-  renderSong();
+function toggleFullscreen(){
+  if(!document.fullscreenElement)document.documentElement.requestFullscreen();
+  else document.exitFullscreen();
 }
 
-// ============ CONFETTI ============
-const CONFETTI_EMOJI = ["🎉", "✨", "⭐", "🎊", "💛", "💙", "🎶"];
-function throwConfetti(count) {
-  const n = count || 14;
-  for (let i = 0; i < n; i++) {
-    const el = document.createElement("div");
-    el.className = "confetti";
-    el.textContent = CONFETTI_EMOJI[Math.floor(Math.random() * CONFETTI_EMOJI.length)];
-    el.style.left = Math.random() * 100 + "vw";
-    el.style.animationDuration = (1.8 + Math.random() * 1.6) + "s";
-    el.style.animationDelay = (Math.random() * 0.4) + "s";
-    document.body.appendChild(el);
-    setTimeout(() => el.remove(), 4200);
-  }
-}
-
-// ============ SPACE BAR ============
-document.addEventListener("keydown", function (ev) {
-  if (ev.code !== "Space" && ev.key !== " ") return;
+document.addEventListener("keydown",ev=>{
+  if(ev.code==="KeyF"){toggleFullscreen();return}
+  if(ev.code!=="Space"&&ev.key!==" ")return;
   ev.preventDefault();
-  if (!revealed && !document.getElementById("revealBtn").disabled) reveal();
-  else if (document.getElementById("playBtn").disabled === false && document.getElementById("revealBtn").disabled === true) playClip();
+  if(document.getElementById("gameScreen").classList.contains("hidden"))return;
+  if(revealed)nextSong();
+  else if(clueCount<3)anotherClue();
+  else revealSong();
 });
 
-// ============ CATEGORY SCREEN ============
-function renderCategoryButtons() {
-  const wrap = document.getElementById("categoryButtons");
-  wrap.innerHTML = "";
-  Object.keys(CATEGORIES).forEach(function (key) {
-    const cat = CATEGORIES[key];
-    const btn = document.createElement("button");
-    btn.className = "btn-big bg-yellow-400 text-blue-900 px-6 py-5";
-    btn.style.fontSize = "clamp(1.1rem, 3.5vw, 1.6rem)";
-    btn.style.borderColor = "#b45309";
-    btn.style.boxShadow = "0 6px 0 #b45309";
-    btn.textContent = cat.label + " (" + cat.songs.length + ")";
-    btn.onclick = function () { startCategory(key); };
-    wrap.appendChild(btn);
-  });
-}
-
-function startCategory(key) {
-  currentCategory = key;
-  deck = shuffle(CATEGORIES[key].songs);
-  deckIndex = 0;
-  document.getElementById("categoryScreen").style.display = "none";
-  document.getElementById("gameScreen").style.display = "flex";
-  renderSong();
-}
-
-function showCategoryScreen() {
-  clearTimeout(clipTimer);
-  stopClip();
-  document.getElementById("gameScreen").style.display = "none";
-  document.getElementById("categoryScreen").style.display = "flex";
-}
-
-renderCategoryButtons();
+renderCategories();
 </script>
 </body>
 </html>
