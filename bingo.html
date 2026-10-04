@@ -84,10 +84,9 @@ h1{
   background:transparent;
   color:var(--navy);
   font-family:"Arial Black",Arial,sans-serif;
-  font-size:clamp(3.2rem,10vmin,7rem);
   font-weight:900;
-  line-height:.9;
-  letter-spacing:0;
+  line-height:.82;
+  letter-spacing:-.045em;
   text-align:center;
   width:100%;
   box-shadow:none
@@ -299,14 +298,25 @@ function fitCaller(){
   const box=document.getElementById("callerBox");
   const text=callerNumber.textContent||"—";
   const digits=Math.max(text.length,1);
+
   let size=Math.min(
-    box.clientHeight*(callerLetter.textContent?.trim()?0.44:0.64),
-    box.clientWidth/(digits===1?0.72:digits===2?1.34:1.95)
+    box.clientHeight*0.30,
+    box.clientWidth/(digits===1?0.78:digits===2?1.38:1.95)
   );
+
+  callerLetter.style.fontSize=size+"px";
   callerNumber.style.fontSize=size+"px";
+
   let guard=24;
-  while(callerNumber.scrollWidth>box.clientWidth*.90&&guard-->0){
-    size*=.94;
+  while(
+    (
+      callerNumber.scrollWidth>box.clientWidth*0.90 ||
+      callerLetter.scrollWidth>box.clientWidth*0.90 ||
+      (callerLetter.offsetHeight+callerNumber.offsetHeight)>box.clientHeight*0.80
+    ) && guard-->0
+  ){
+    size*=0.94;
+    callerLetter.style.fontSize=size+"px";
     callerNumber.style.fontSize=size+"px";
   }
 }
