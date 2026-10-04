@@ -134,19 +134,14 @@ body:before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.18;ba
 
 <body class="bg-white text-gray-900 min-h-screen">
 
-  <!-- Header: Back + Editor -->
+  <!-- Header -->
   <div class="max-w-6xl mx-auto flex justify-between items-center p-6 border-b border-gray-200">
     <a href="apps.html"
        class="pf-blue text-white text-xl font-bold px-5 py-3 rounded-xl hover:pf-blue">
       ← Back to Apps
     </a>
 
-    <div class="flex gap-3 flex-wrap justify-end">
     <button onclick="document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen()" class="bg-blue-700 text-white text-xl font-bold px-6 py-3 rounded-xl hover:bg-blue-600">⛶ Fullscreen</button>
-    <button id="openEditor"
-            class="bg-purple-700 text-white text-xl font-bold px-6 py-3 rounded-xl hover:bg-purple-600">
-      Word Editor 📝
-    </button></div>
   </div>
 
   <!-- Category Screen -->
@@ -210,68 +205,29 @@ body:before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.18;ba
     </div>
   </div>
 
-  <!-- Editor Modal -->
-  <div id="modalBg" class="modal-bg">
-    <div class="modal">
-      <div class="flex justify-between items-center mb-6">
-        <h2 class="text-3xl font-bold text-blue-800">Word Editor</h2>
-        <button id="closeEditor"
-                class="px-4 py-1 bg-gray-300 rounded-xl font-bold hover:bg-gray-400">
-          Close
-        </button>
-      </div>
-
-      <label class="font-bold text-gray-700">Word (letters only)</label>
-      <input id="inputWord"
-             class="w-full border p-3 rounded-xl mb-4 text-lg"
-             placeholder="Enter a word… (e.g., ELEPHANT)">
-
-      <label class="font-bold text-gray-700">Category</label>
-      <select id="inputCategory"
-              class="w-full border p-3 rounded-xl mb-4 text-lg">
-      </select>
-
-      <input id="newCategoryInput"
-             class="w-full border p-3 rounded-xl mb-4 text-lg hidden"
-             placeholder="Enter new category… (e.g., Animals - Hard)">
-
-      <button id="saveBtn"
-              class="bg-green-600 text-white font-bold px-6 py-3 rounded-xl hover:bg-green-500">
-        Save Word
-      </button>
-
-      <h3 class="text-xl font-bold mt-8 mb-2 text-blue-700">Your Saved Words</h3>
-      <ul id="savedList" class="space-y-2 text-lg max-h-[250px] overflow-y-auto"></ul>
-    </div>
-  </div>
-
   <script>
     // =========================
-    // DATA: CATEGORIES + WORDS
+    // DATA: READY-TO-PLAY CATEGORIES + WORDS
     // =========================
 
-    let categories = JSON.parse(localStorage.getItem("balloonCategories") || "[]");
-    let words = JSON.parse(localStorage.getItem("balloonWords") || "[]");
+    const DEFAULT_BANK = {
+      Animals: ["ELEPHANT","KANGAROO","ALLIGATOR","PORCUPINE","CHAMELEON","ARMADILLO","RHINOCEROS","HIPPOPOTAMUS","FLAMINGO","BUTTERFLY","DOLPHIN","PENGUIN"],
+      Foods: ["SPAGHETTI","PINEAPPLE","CHOCOLATE","BLUEBERRY","WATERMELON","LASAGNA","MARSHMALLOW","ARTICHOKE","PANCAKES","MEATLOAF","POPCORN","STRAWBERRY"],
+      "Around the House": ["TELEPHONE","REFRIGERATOR","ROCKING CHAIR","TELEVISION","PILLOWCASE","WASHING MACHINE","TOOTHBRUSH","FLASHLIGHT","UMBRELLA","CALENDAR","VACUUM","CURTAINS"],
+      "Old-Time Favorites": ["JUKEBOX","DRIVE IN","MILKSHAKE","POODLE SKIRT","RECORD PLAYER","SODA FOUNTAIN","TYPEWRITER","ROLLER SKATES","HULA HOOP","PHONE BOOTH","PAPER DOLL","MALT SHOP"],
+      "Louisiana": ["CRAWFISH","MAGNOLIA","PELICAN","BAYOU","JAMBALAYA","GUMBO","BEIGNET","ZYDECO","ALLIGATOR","MISSISSIPPI","BATON ROUGE","MARDI GRAS"],
+      "Music": ["PIANO","TRUMPET","SAXOPHONE","HARMONICA","GUITAR","VIOLIN","DRUMMER","MELODY","CHORUS","DANCING","CONCERT","SINGING"],
+      "Holidays": ["CHRISTMAS","THANKSGIVING","VALENTINE","FIREWORKS","HALLOWEEN","EASTER BUNNY","MISTLETOE","PUMPKIN","ORNAMENT","BIRTHDAY","PARADE","STOCKING"],
+      "Garden & Outdoors": ["SUNFLOWER","BUTTERFLY","DAFFODIL","VEGETABLE","BIRDHOUSE","WATERING CAN","TOMATO","MAGNOLIA","ROSEBUSH","PICNIC","HUMMINGBIRD","GARDEN"],
+      "Travel": ["SUITCASE","AIRPLANE","VACATION","HIGHWAY","PASSPORT","MOTEL","POSTCARD","ROAD TRIP","TRAIN STATION","MAP","BEACH","MOUNTAINS"],
+      "Occupations": ["TEACHER","CARPENTER","NURSE","FIREMAN","SECRETARY","FARMER","BARBER","MECHANIC","WAITRESS","MAILMAN","PLUMBER","CASHIER"],
+      "Movies & TV": ["COWBOY","COMEDY","WESTERN","CARTOON","MOVIE STAR","TELEVISION","THEATER","CAMERA","COMMERCIAL","NEWSCAST","ACTRESS","POPCORN"],
+      "Sayings": ["PIECE OF CAKE","BREAK A LEG","HOLD YOUR HORSES","EASY DOES IT","BETTER LATE THAN NEVER","COSTS AN ARM AND A LEG","UNDER THE WEATHER","THE EARLY BIRD","TIME FLIES","ON CLOUD NINE"]
+    };
 
-    if (categories.length === 0) {
-      categories = ["Animals", "Countries", "Foods"];
-      localStorage.setItem("balloonCategories", JSON.stringify(categories));
-    }
-
-    if (words.length === 0) {
-      const DEFAULT_BANK = {
-        Animals: ["ELEPHANT","KANGAROO","ALLIGATOR","PORCUPINE","CHAMELEON","ARMADILLO","RHINOCEROS","HIPPOPOTAMUS","FLAMINGO","WOLVERINE"],
-        Countries: ["ARGENTINA","VENEZUELA","AUSTRALIA","NETHERLANDS","PHILIPPINES","SWITZERLAND","ZIMBABWE","KAZAKHSTAN","SINGAPORE","GUATEMALA"],
-        Foods: ["SPAGHETTI","PINEAPPLE","CHOCOLATE","CROISSANT","BLUEBERRY","WATERMELON","LASAGNA","CANNELLONI","MARSHMALLOW","ARTICHOKE"],
-      };
-      words = [];
-      Object.keys(DEFAULT_BANK).forEach(cat => {
-        DEFAULT_BANK[cat].forEach(w => {
-          words.push({ word: w.toUpperCase(), category: cat });
-        });
-      });
-      localStorage.setItem("balloonWords", JSON.stringify(words));
-    }
+    const categories = Object.keys(DEFAULT_BANK);
+    const words = [];
+    categories.forEach(cat => DEFAULT_BANK[cat].forEach(w => words.push({word:w, category:cat})));
 
     // =========================
     // DOM ELEMENTS
@@ -289,15 +245,6 @@ body:before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.18;ba
     const newWordBtn = document.getElementById("newWordBtn");
     const revealBtn = document.getElementById("revealBtn");
     const backBtn = document.getElementById("backBtn");
-
-    const modalBg = document.getElementById("modalBg");
-    const openEditor = document.getElementById("openEditor");
-    const closeEditor = document.getElementById("closeEditor");
-    const inputWord = document.getElementById("inputWord");
-    const inputCategory = document.getElementById("inputCategory");
-    const newCategoryInput = document.getElementById("newCategoryInput");
-    const saveBtn = document.getElementById("saveBtn");
-    const savedList = document.getElementById("savedList");
 
     // =========================
     // GAME STATE
@@ -498,117 +445,8 @@ body:before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.18;ba
     backBtn.onclick = backToCategories;
 
     // =========================
-    // EDITOR LOGIC
-    // =========================
-
-    function updateCategoryDropdown() {
-      inputCategory.innerHTML = "";
-      categories.forEach(cat => {
-        const opt = document.createElement("option");
-        opt.value = cat;
-        opt.textContent = cat;
-        inputCategory.appendChild(opt);
-      });
-      const addNew = document.createElement("option");
-      addNew.value = "__NEW__";
-      addNew.textContent = "+ Add New Category";
-      inputCategory.appendChild(addNew);
-    }
-
-    inputCategory.onchange = () => {
-      if (inputCategory.value === "__NEW__") {
-        newCategoryInput.classList.remove("hidden");
-      } else {
-        newCategoryInput.classList.add("hidden");
-      }
-    };
-
-    function updateSavedList() {
-      savedList.innerHTML = "";
-      words.forEach((w, i) => {
-        const li = document.createElement("li");
-        li.innerHTML = `
-          <div class="flex justify-between bg-gray-100 p-3 rounded-xl items-center">
-            <div class="flex-1">
-              <strong>${w.word}</strong>
-              <em class="text-gray-500">(${w.category})</em>
-            </div>
-            <button onclick="deleteWord(${i})"
-                    class="bg-red-500 text-white px-3 py-1 rounded-lg hover:bg-red-600 ml-4 whitespace-nowrap">
-              Delete
-            </button>
-          </div>`;
-        savedList.appendChild(li);
-      });
-    }
-
-    function saveWordsToStorage() {
-      localStorage.setItem("balloonWords", JSON.stringify(words));
-    }
-
-    function saveCategoriesToStorage() {
-      localStorage.setItem("balloonCategories", JSON.stringify(categories));
-    }
-
-    function deleteWord(index) {
-      words.splice(index, 1);
-      saveWordsToStorage();
-      updateSavedList();
-    }
-    window.deleteWord = deleteWord;
-
-    openEditor.onclick = () => {
-      modalBg.style.display = "flex";
-      updateCategoryDropdown();
-      updateSavedList();
-    };
-
-    closeEditor.onclick = () => {
-      modalBg.style.display = "none";
-      inputWord.value = "";
-      newCategoryInput.value = "";
-      newCategoryInput.classList.add("hidden");
-    };
-
-    saveBtn.onclick = () => {
-      let w = inputWord.value.trim();
-      let cat = inputCategory.value;
-
-      if (!w) {
-        alert("Please enter a word.");
-        return;
-      }
-      w = w.toUpperCase().replace(/[^A-Z\- ]/g, ""); // keep letters, space, dash
-
-      if (!w) {
-        alert("Word must contain letters.");
-        return;
-      }
-
-      if (cat === "__NEW__") {
-        cat = newCategoryInput.value.trim();
-        if (!cat) {
-          alert("Enter a category name.");
-          return;
-        }
-        categories.push(cat);
-        saveCategoriesToStorage();
-        renderCategories();
-      }
-
-      words.push({ word: w, category: cat });
-      saveWordsToStorage();
-      inputWord.value = "";
-      newCategoryInput.value = "";
-      newCategoryInput.classList.add("hidden");
-      inputCategory.value = cat;
-      updateCategoryDropdown();
-      updateSavedList();
-    };
-
     // Init
     renderCategories();
-    updateCategoryDropdown();
   </script>
 </body>
 </html>
