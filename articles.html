@@ -1,106 +1,263 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Free Activity Ideas & Articles for Activity Directors | ProjectorFirst</title>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Free Activity Ideas & Articles for Activity Directors | Projector First</title>
 
-  <meta name="description" content="Free articles and activity ideas for nursing home and senior care activity directors — session plans, trivia questions, memory care games, and wheelchair-friendly activities.">
-  <link rel="canonical" href="https://projectorfirst.com/articles.html">
+  <meta name="description" content="Free articles and activity ideas for nursing home and senior care activity directors — session plans, trivia questions, memory care games, and wheelchair-friendly activities."/>
+  <link rel="canonical" href="https://projectorfirst.com/articles.html"/>
 
-  <meta property="og:title" content="Free Activity Ideas & Articles for Activity Directors">
-  <meta property="og:description" content="Free session plans, trivia questions, and game ideas for senior care activity directors.">
-  <meta property="og:url" content="https://projectorfirst.com/articles.html">
-  <meta property="og:type" content="website">
-  <meta property="og:image" content="https://projectorfirst.com/social-card.png">
-  <meta property="og:image:width" content="1200">
-  <meta property="og:image:height" content="630">
-  <meta name="twitter:card" content="summary_large_image">
+  <meta property="og:title" content="Free Activity Ideas & Articles for Activity Directors"/>
+  <meta property="og:description" content="Free session plans, trivia questions, and game ideas for senior care activity directors."/>
+  <meta property="og:url" content="https://projectorfirst.com/articles.html"/>
+  <meta property="og:type" content="website"/>
+  <meta property="og:image" content="https://projectorfirst.com/social-card.png"/>
+  <meta property="og:image:width" content="1200"/>
+  <meta property="og:image:height" content="630"/>
+  <meta name="twitter:card" content="summary_large_image"/>
 
-  <meta name="theme-color" content="#1e3a8a" />
-  <link rel="icon" href="logo.svg" type="image/svg+xml" />
-  <script src="https://cdn.tailwindcss.com"></script>
+  <meta name="theme-color" content="#fff8e8"/>
+  <link rel="icon" href="logo.svg" type="image/svg+xml"/>
 
   <script
     data-memberstack-app="app_cmgnwpg8y00x10suih4pua785"
     src="https://static.memberstack.com/scripts/v2/memberstack.js"
     type="text/javascript">
   </script>
+
+  <style>
+    :root{
+      --navy:#17324d;
+      --blue:#2f607a;
+      --cream:#fff8e8;
+      --paper:#fffdf7;
+      --gold:#e8b54c;
+      --sage:#6e9d8b;
+      --line:#d7cbb9;
+      --muted:#5f6870;
+    }
+
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;
+      color:var(--navy);
+      font-family:Arial,Helvetica,sans-serif;
+      line-height:1.55;
+      background:
+        radial-gradient(circle at 12% 8%,rgba(242,184,75,.18),transparent 24%),
+        radial-gradient(circle at 88% 18%,rgba(110,157,139,.14),transparent 28%),
+        linear-gradient(145deg,#fffaf0,#f7f0e4 55%,#edf3ef);
+    }
+
+    a{color:inherit}
+    .shell{width:min(1100px,calc(100% - 32px));margin:0 auto}
+
+    header{
+      position:sticky;top:0;z-index:50;
+      background:rgba(255,253,247,.96);
+      border-bottom:1px solid rgba(23,50,77,.10);
+      backdrop-filter:blur(10px)
+    }
+    .header-inner{
+      min-height:82px;display:flex;align-items:center;justify-content:space-between;
+      gap:24px;padding:12px 0
+    }
+    .brand{
+      text-decoration:none;display:inline-flex;flex-direction:column;line-height:1;
+      min-width:max-content
+    }
+    .brand-name{
+      font-family:Georgia,"Times New Roman",serif;font-weight:800;
+      font-size:clamp(2rem,3.4vw,3rem);letter-spacing:-.025em
+    }
+    .brand-tag{
+      margin-top:7px;font-size:.68rem;font-weight:900;letter-spacing:.33em;color:#615b53
+    }
+
+    nav{display:flex;align-items:center;gap:7px;flex-wrap:wrap;justify-content:flex-end}
+    nav a{
+      text-decoration:none;font-weight:800;padding:9px 12px;border-radius:10px
+    }
+    nav a:hover{background:#f4ecdf}
+    nav a[aria-current="page"]{
+      border-bottom:3px solid var(--gold);border-radius:0
+    }
+    .nav-cta{
+      background:var(--navy);color:#fff;padding:10px 17px!important;
+      border-radius:10px!important;box-shadow:0 4px 0 rgba(23,50,77,.18)
+    }
+
+    .hero{padding:58px 0 28px}
+    .eyebrow{
+      margin:0 0 12px;text-align:center;font-size:.78rem;font-weight:900;
+      letter-spacing:.22em;color:#80694e
+    }
+    h1,h2,h3{font-family:Georgia,"Times New Roman",serif}
+    h1{
+      margin:0 auto;text-align:center;max-width:900px;
+      font-size:clamp(3rem,6vw,5rem);line-height:.98;letter-spacing:-.035em
+    }
+    .intro{
+      max-width:780px;margin:22px auto 0;text-align:center;
+      font-size:clamp(1.12rem,2.1vw,1.38rem);color:#2f4457
+    }
+
+    .article-grid{
+      display:grid;grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:18px;margin:20px auto 30px
+    }
+    .article-card{
+      text-decoration:none;background:rgba(255,253,247,.84);
+      border:1px solid var(--line);border-radius:20px;padding:26px;
+      box-shadow:0 6px 0 rgba(23,50,77,.05);
+      transition:transform .15s ease,border-color .15s ease,box-shadow .15s ease
+    }
+    .article-card:hover{
+      transform:translateY(-2px);border-color:#9eacaa;
+      box-shadow:0 9px 0 rgba(23,50,77,.07)
+    }
+    .article-icon{font-size:2.2rem;margin-bottom:10px}
+    .article-card h2{
+      margin:0 0 10px;font-size:clamp(1.55rem,2.7vw,2.1rem);line-height:1.08
+    }
+    .article-card p{margin:0;color:#405568;font-size:1.04rem}
+    .gold-rule{
+      width:48px;height:3px;background:var(--gold);border-radius:999px;margin:0 0 14px
+    }
+
+    .cta{
+      margin:34px auto 48px;
+      background:linear-gradient(145deg,#e7eee8,#f8f2e4);
+      border:2px solid #b7c8bf;border-radius:22px;
+      padding:32px;text-align:center
+    }
+    .cta h2{
+      margin:0 0 10px;font-size:clamp(2.1rem,3.8vw,3rem);line-height:1.05
+    }
+    .cta p{
+      margin:0 auto 18px;max-width:780px;color:#334a5d;font-size:1.1rem
+    }
+    .btn{
+      display:inline-flex;align-items:center;justify-content:center;
+      text-decoration:none;background:#f5c45b;color:var(--navy);
+      font-weight:900;border-radius:12px;padding:14px 22px;
+      box-shadow:0 5px 0 #c99127
+    }
+
+    footer{
+      background:#fffdf7;border-top:1px solid rgba(23,50,77,.10);
+      padding:25px 0 30px;text-align:center;color:#56626b
+    }
+    .footer-links{
+      display:flex;justify-content:center;gap:16px;flex-wrap:wrap;margin-top:8px
+    }
+    .footer-links a{font-weight:800}
+
+    @media(max-width:800px){
+      .header-inner{align-items:flex-start;flex-direction:column}
+      nav{justify-content:flex-start}
+      .article-grid{grid-template-columns:1fr}
+    }
+
+    @media(max-width:560px){
+      .shell{width:min(100% - 22px,1100px)}
+      .brand-name{font-size:2.05rem}
+      .brand-tag{letter-spacing:.22em}
+      nav a{font-size:.92rem;padding:8px 9px}
+      h1{font-size:3.05rem}
+      .hero{padding-top:38px}
+      .article-card,.cta{padding:22px}
+    }
+  </style>
 </head>
 
-<body data-ms-content="public" class="bg-white text-black">
-
-  <!-- Header -->
-  <header class="bg-white border-b border-black/10 py-4 shadow-sm" role="banner">
-    <div class="max-w-6xl mx-auto px-4 flex flex-wrap items-center justify-between gap-4">
-      <a href="index.html" class="flex items-center gap-3 rounded-xl w-full sm:w-auto justify-center sm:justify-start">
-        <img src="logo.svg" alt="ProjectorFirst logo" class="w-12 h-12"/>
-        <span class="text-2xl sm:text-3xl font-extrabold text-blue-900">ProjectorFirst</span>
+<body data-ms-content="public">
+  <header role="banner">
+    <div class="shell header-inner">
+      <a class="brand" href="index.html" aria-label="Projector First home">
+        <span class="brand-name">Projector First</span>
+        <span class="brand-tag">BIG GAMES · BRIGHTER DAYS.</span>
       </a>
-      <nav class="flex flex-wrap justify-center gap-2 sm:gap-3 text-center w-full sm:w-auto" aria-label="Primary">
-        <a href="index.html" class="px-4 py-2 rounded-xl bg-blue-900/90 text-white text-lg font-bold hover:bg-blue-800">Home</a>
-        <a href="apps.html" class="px-4 py-2 rounded-xl bg-blue-900/90 text-white text-lg font-bold hover:bg-blue-800">Apps</a>
-        <a href="articles.html" class="px-4 py-2 rounded-xl bg-blue-900 text-white text-lg font-bold">Articles</a>
-        <a href="about.html" class="px-4 py-2 rounded-xl bg-blue-900/90 text-white text-lg font-bold hover:bg-blue-800">About</a>
-        <a href="contact.html" class="px-4 py-2 rounded-xl bg-blue-900/90 text-white text-lg font-bold hover:bg-blue-800">Contact</a>
+
+      <nav aria-label="Primary">
+        <a href="index.html">Home</a>
+        <a href="apps.html">Games</a>
+        <a href="articles.html" aria-current="page">Articles</a>
+        <a href="about.html">About</a>
+        <a href="contact.html">Contact</a>
+        <a class="nav-cta" href="index.html#pricing">Get Started</a>
       </nav>
     </div>
   </header>
 
-  <main class="max-w-4xl mx-auto px-4 py-10">
-    <h1 class="text-3xl sm:text-5xl font-extrabold text-blue-900 leading-tight mb-4 text-center">
-      Free Activity Ideas for Activity Directors
-    </h1>
-    <p class="text-lg sm:text-xl leading-relaxed mb-10 text-center max-w-2xl mx-auto">
-      Practical, no-fluff guides for running great group activities in nursing homes, assisted living, and memory care. Free to use — no signup needed.
-    </p>
+  <main>
+    <section class="hero">
+      <div class="shell">
+        <p class="eyebrow">FREE IDEAS FOR ACTIVITY DIRECTORS</p>
+        <h1>Practical activity ideas you can actually use.</h1>
+        <p class="intro">
+          Free, straightforward guides for nursing homes, assisted living, and memory care —
+          session plans, trivia, projector ideas, and seated group activities.
+        </p>
+      </div>
+    </section>
 
-    <div class="grid gap-6 sm:grid-cols-2">
-      <a href="memory-care-projector-games.html" class="block bg-white border-2 border-blue-900 rounded-2xl p-8 shadow-sm hover:shadow-md transition">
-        <div class="text-4xl mb-3">🎬</div>
-        <h2 class="text-xl sm:text-2xl font-extrabold text-blue-900 mb-2">10 Projector Games That Work for Memory Care Groups</h2>
-        <p class="text-base sm:text-lg">Big-screen game formats that keep cognitively declining residents engaged — with tips from real sessions.</p>
+    <section class="shell article-grid">
+      <a href="memory-care-projector-games.html" class="article-card">
+        <div class="article-icon">🎬</div>
+        <h2>10 Projector Games That Work for Memory Care Groups</h2>
+        <div class="gold-rule"></div>
+        <p>Big-screen game formats that keep cognitively declining residents engaged — with tips from real sessions.</p>
       </a>
 
-      <a href="45-minute-activity-session.html" class="block bg-white border-2 border-blue-900 rounded-2xl p-8 shadow-sm hover:shadow-md transition">
-        <div class="text-4xl mb-3">⏱️</div>
-        <h2 class="text-xl sm:text-2xl font-extrabold text-blue-900 mb-2">How to Fill a 45-Minute Activity Session</h2>
-        <p class="text-base sm:text-lg">A simple warm-up / main event / wind-down structure, plus a full sample week — never run out of material again.</p>
+      <a href="45-minute-activity-session.html" class="article-card">
+        <div class="article-icon">⏱️</div>
+        <h2>How to Fill a 45-Minute Activity Session</h2>
+        <div class="gold-rule"></div>
+        <p>A simple warm-up / main event / wind-down structure, plus a full sample week — never run out of material again.</p>
       </a>
 
-      <a href="free-trivia-questions-for-seniors.html" class="block bg-white border-2 border-blue-900 rounded-2xl p-8 shadow-sm hover:shadow-md transition">
-        <div class="text-4xl mb-3">❓</div>
-        <h2 class="text-xl sm:text-2xl font-extrabold text-blue-900 mb-2">40 Free Easy Trivia Questions for Seniors</h2>
-        <p class="text-base sm:text-lg">Everyone-can-answer trivia with answers included — read aloud, project, or print.</p>
+      <a href="free-trivia-questions-for-seniors.html" class="article-card">
+        <div class="article-icon">❓</div>
+        <h2>40 Free Easy Trivia Questions for Seniors</h2>
+        <div class="gold-rule"></div>
+        <p>Everyone-can-answer trivia with answers included — read aloud, project, or print.</p>
       </a>
 
-      <a href="wheelchair-friendly-group-games.html" class="block bg-white border-2 border-blue-900 rounded-2xl p-8 shadow-sm hover:shadow-md transition">
-        <div class="text-4xl mb-3">♿</div>
-        <h2 class="text-xl sm:text-2xl font-extrabold text-blue-900 mb-2">Wheelchair-Friendly Group Games for Seniors</h2>
-        <p class="text-base sm:text-lg">Fully seated, inclusive games where every resident plays from exactly where they are.</p>
+      <a href="wheelchair-friendly-group-games.html" class="article-card">
+        <div class="article-icon">♿</div>
+        <h2>Wheelchair-Friendly Group Games for Seniors</h2>
+        <div class="gold-rule"></div>
+        <p>Fully seated, inclusive games where every resident plays from exactly where they are.</p>
       </a>
-    </div>
+    </section>
 
-    <div class="bg-blue-900 text-white rounded-2xl p-8 mt-12 text-center">
-      <h2 class="text-2xl sm:text-3xl font-extrabold mb-3">Want the games ready-made?</h2>
-      <p class="text-lg mb-6">ProjectorFirst is a growing library of one-click, big-screen games built for senior groups — new games added all the time — large text, easy questions, full-session decks.</p>
-      <a href="index.html" class="inline-block bg-yellow-400 text-gray-900 font-bold text-xl px-6 py-3 rounded-xl hover:bg-yellow-300 transition">See ProjectorFirst — $9.99/month</a>
-    </div>
+    <section class="shell cta">
+      <h2>Want the games ready-made?</h2>
+      <p>
+        Projector First is a growing library of big-screen activities designed for senior groups.
+        Large text, simple controls, and new games added to the library all the time.
+      </p>
+      <a class="btn" href="index.html#pricing">See Projector First — $9.99/month</a>
+    </section>
   </main>
 
-  <!-- Footer -->
-  <footer class="bg-white border-t border-black/10 py-6 mt-12" role="contentinfo">
-    <div class="max-w-6xl mx-auto px-4 text-center text-base sm:text-lg">
-      © <span id="year"></span> ProjectorFirst • Big, Simple Apps for Nursing Homes & Senior Care
-      <p class="mt-2 text-sm text-gray-600">
-        <a href="legal.html" class="underline hover:text-blue-700">Legal & Policies</a> •
-        <a href="articles.html" class="underline hover:text-blue-700">Articles</a>
-      </p>
+  <footer role="contentinfo">
+    <div class="shell">
+      <strong>© <span id="year"></span> Projector First</strong> · Big, simple games for senior living.
+      <div class="footer-links">
+        <a href="index.html">Home</a>
+        <a href="about.html">About</a>
+        <a href="contact.html">Contact</a>
+        <a href="legal.html">Legal &amp; Policies</a>
+      </div>
     </div>
   </footer>
 
   <script>
-    document.getElementById('year').textContent = new Date().getFullYear();
+    document.getElementById("year").textContent = new Date().getFullYear();
   </script>
 </body>
 </html>
