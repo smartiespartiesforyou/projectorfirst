@@ -1,7 +1,10 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120">
-  <rect width="120" height="120" rx="16" fill="#22c55e"/>
-  <g fill="#0b0b0c">
-    <rect x="22" y="38" width="76" height="44" rx="6"/>
-    <circle cx="60" cy="92" r="6"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" role="img" aria-label="Projector First sunray icon">
+  <g fill="#e8b54c">
+    <path d="M50 88 L19 86 C14 86 11 82 12 78 C13 74 16 72 20 73 L51 80 Z"/>
+    <path d="M54 72 L25 58 C20 56 18 51 20 47 C22 43 27 42 31 44 L58 62 Z"/>
+    <path d="M65 58 L45 32 C42 28 43 23 47 20 C51 17 56 18 59 22 L74 52 Z"/>
+    <path d="M81 53 L79 20 C79 15 83 12 87 12 C92 12 95 16 94 20 L90 54 Z"/>
+    <path d="M97 61 L111 31 C113 27 118 25 122 28 L122 49 L105 68 Z"/>
+    <path d="M56 93 C56 74 70 60 88 60 C105 60 119 73 120 90 L120 104 L56 104 Z"/>
   </g>
 </svg>
