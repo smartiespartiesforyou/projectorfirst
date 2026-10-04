@@ -1,234 +1,148 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>Boggle Style — ProjectorFirst</title>
-  
-<!-- Membership gate (paywall-test) -->
-<script
-  data-memberstack-app="app_cmgnwpg8y00x10suih4pua785"
-  src="https://static.memberstack.com/scripts/v2/memberstack.js"
-  type="text/javascript">
-</script>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Letter Lounge — ProjectorFirst</title>
+<script data-memberstack-app="app_cmgnwpg8y00x10suih4pua785" src="https://static.memberstack.com/scripts/v2/memberstack.js" type="text/javascript"></script>
 <script src="/guard.js"></script>
-
-<meta name="description" content="Simple Boggle-style letter grid game for projector use."/>
-  <meta name="theme-color" content="#1e3a8a"/>
-  <link rel="icon" href="/logo.svg" type="image/svg+xml"/>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <style>
-    .letter {
-      width: 140px; height: 140px;
-      background: #1e3a8a; color: white;
-      font-size: 4rem; font-weight: bold;
-      display: flex; align-items: center; justify-content: center;
-      border-radius: 0.75rem;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.25);
-      user-select: none;
-    }
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 1rem;
-      justify-items: center;
-    }
-    @media (min-width: 1280px) {
-      .letter { width: 180px; height: 180px; font-size: 5rem; }
-    }
-    .btn {
-      font-size: 1.5rem;
-      font-weight: bold;
-      padding: 1rem 2rem;
-      border-radius: 1rem;
-      transition: background 0.2s;
-    }
-    .btn-shake { background: #1e3a8a; color: white; }
-    .btn-shake:hover { background: #1d4ed8; }
-    .btn-reset { background: #dc2626; color: white; }
-    .btn-fullscreen { background: #6d28d9; color: white; }
-    .btn-timer { background: #f59e0b; color: white; }
-    .btn-timer:hover { background: #d97706; }
-    .btn-next { background: #1e3a8a; color: white; }
-    .btn-next:hover { background: #1d4ed8; }
-
-    /* Word list horizontal layout */
-    #wordList {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 1rem;
-    }
-    #wordList li {
-      background: #e0e7ff;
-      color: #1e3a8a;
-      padding: 0.5rem 1rem;
-      border-radius: 0.5rem;
-      font-size: 2rem;
-      font-weight: bold;
-      list-style: none;
-    }
-  </style>
+<meta name="description" content="A large-screen word building game designed for senior living groups."/>
+<meta name="theme-color" content="#17324d"/>
+<link rel="icon" href="/logo.svg" type="image/svg+xml"/>
+<style>
+:root{--ink:#17324d;--cream:#fff8e8;--gold:#f2b84b;--coral:#e97961;--sage:#6e9d8b;--blue:#3f7898;--paper:#fffdf6}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;font-family:Arial,Helvetica,sans-serif;color:var(--ink);background:
+radial-gradient(circle at 12% 8%,rgba(242,184,75,.30),transparent 25%),
+radial-gradient(circle at 88% 18%,rgba(110,157,139,.25),transparent 26%),
+linear-gradient(145deg,#fff8e8 0%,#f4efe4 52%,#e9f2ee 100%);overflow-x:hidden}
+body:before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.16;background-image:linear-gradient(90deg,transparent 49%,rgba(23,50,77,.08) 50%,transparent 51%),linear-gradient(transparent 49%,rgba(23,50,77,.06) 50%,transparent 51%);background-size:46px 46px}
+.shell{width:min(1500px,96vw);margin:auto;padding:18px 0 36px;position:relative}
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:12px}
+.brand{display:flex;align-items:center;gap:12px;font-weight:900;letter-spacing:.08em;text-transform:uppercase}
+.brand-dot{width:18px;height:18px;border-radius:50%;background:var(--coral);box-shadow:22px 0 0 var(--gold),44px 0 0 var(--sage);margin-right:44px}
+.back{color:var(--ink);font-weight:800;text-decoration:none;background:rgba(255,255,255,.75);border:2px solid rgba(23,50,77,.16);padding:10px 16px;border-radius:999px}
+.hero{text-align:center;margin:4px auto 14px}
+.kicker{font-size:clamp(14px,1.4vw,20px);font-weight:900;letter-spacing:.16em;text-transform:uppercase;color:#6b5542}
+h1{font-family:Georgia,serif;font-size:clamp(46px,6vw,88px);line-height:.9;margin:5px 0;color:var(--ink);text-shadow:0 3px 0 rgba(255,255,255,.8)}
+.subtitle{font-size:clamp(18px,2vw,28px);font-weight:700;margin:10px 0 0;color:#516474}
+.game{display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:20px;align-items:start}
+.board{background:rgba(255,253,246,.86);border:3px solid rgba(23,50,77,.13);border-radius:34px;padding:22px;box-shadow:0 18px 50px rgba(23,50,77,.14),inset 0 0 0 7px rgba(255,255,255,.5)}
+.letters{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.letter{aspect-ratio:1.12/1;display:flex;align-items:center;justify-content:center;border-radius:22px;background:linear-gradient(145deg,#fffdf6,#efe3c7);border:4px solid #d7c59f;box-shadow:0 9px 0 #b99d69,0 13px 18px rgba(23,50,77,.18),inset 0 2px 0 #fff;font-family:Georgia,serif;font-weight:900;font-size:clamp(52px,7vw,102px);color:var(--ink);text-shadow:0 2px 0 white;user-select:none;transform:translateY(0) rotate(0);transition:transform .25s,background .25s}
+.letter.pop{animation:tilePop .52s ease both}
+@keyframes tilePop{0%{transform:scale(.3) rotate(-10deg);opacity:0}70%{transform:scale(1.08) rotate(2deg)}100%{transform:scale(1);opacity:1}}
+.controls{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin-top:20px}
+button{border:0;cursor:pointer;font:inherit}
+.btn{min-height:58px;padding:12px 20px;border-radius:18px;color:white;font-size:clamp(17px,1.5vw,23px);font-weight:900;box-shadow:0 6px 0 rgba(23,50,77,.22);transition:transform .12s,filter .12s}
+.btn:hover{filter:brightness(1.06)} .btn:active{transform:translateY(4px);box-shadow:0 2px 0 rgba(23,50,77,.22)}
+.primary{background:var(--blue)}.timerbtn{background:#b56a35}.full{background:#76598e}.reset{background:#a94f4f}
+.side{display:flex;flex-direction:column;gap:16px}
+.card{background:rgba(255,253,246,.9);border:3px solid rgba(23,50,77,.12);border-radius:28px;padding:20px;box-shadow:0 12px 32px rgba(23,50,77,.12)}
+.round-label{text-transform:uppercase;letter-spacing:.12em;font-weight:900;color:#756650;text-align:center}
+.timer{font-family:Georgia,serif;font-size:70px;font-weight:900;text-align:center;line-height:1;margin:10px 0;color:var(--ink)}
+.timer.warning{color:#a94f4f;animation:pulse 1s infinite}@keyframes pulse{50%{transform:scale(1.04)}}
+.tip{font-size:18px;line-height:1.4;text-align:center;color:#586a76;font-weight:700}
+.entry{display:flex;gap:8px;margin-top:8px}
+input{min-width:0;width:100%;border:3px solid #c9b991;border-radius:16px;background:white;padding:13px 12px;font-size:24px;font-weight:900;text-transform:uppercase;text-align:center;color:var(--ink);outline:none}
+input:focus{border-color:var(--blue);box-shadow:0 0 0 4px rgba(63,120,152,.16)}
+.add{background:var(--sage);padding-inline:16px}
+.words-title{display:flex;justify-content:space-between;align-items:end;gap:10px;margin-bottom:10px}
+.words-title h2{font-family:Georgia,serif;font-size:28px;margin:0}.count{font-weight:900;color:#6b5542}
+#wordList{display:flex;flex-wrap:wrap;gap:10px;list-style:none;margin:0;padding:0;min-height:58px}
+#wordList:empty:after{content:"Words your group finds will appear here.";display:block;color:#7a858c;font-size:18px;font-weight:700;padding:12px 2px}
+#wordList li{background:linear-gradient(145deg,#fff,#f7e8bd);border:2px solid #e1c56f;border-radius:14px;padding:9px 13px;font-size:24px;font-weight:900;box-shadow:0 4px 0 #d6b95f;animation:wordIn .35s ease both}
+@keyframes wordIn{from{transform:scale(.5) rotate(-4deg);opacity:0}to{transform:scale(1);opacity:1}}
+.celebrate{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:20}
+.confetti{position:absolute;top:-20px;width:12px;height:22px;border-radius:3px;animation:fall 1.5s ease-in forwards}
+@keyframes fall{to{transform:translateY(105vh) rotate(620deg);opacity:.1}}
+.hint{font-size:14px;text-align:center;color:#69777f;margin-top:14px;font-weight:700}
+@media(max-width:980px){.game{grid-template-columns:1fr}.side{display:grid;grid-template-columns:1fr 1fr}.words-card{grid-column:1/-1}.letter{font-size:clamp(44px,12vw,86px)}}
+@media(max-width:650px){.shell{width:94vw}.topbar{align-items:flex-start}.brand{font-size:12px}.hero{margin-top:10px}.board{padding:12px;border-radius:24px}.letters{gap:8px}.letter{border-width:3px;border-radius:15px;box-shadow:0 6px 0 #b99d69,0 9px 12px rgba(23,50,77,.15)}.side{display:flex}.btn{min-height:52px;padding:10px 14px}.timer{font-size:58px}}
+</style>
 </head>
-<body class="flex flex-col items-center justify-start min-h-screen py-10 bg-white text-black"><main class="w-full max-w-6xl text-center">
-    <h1 class="text-5xl font-extrabold text-blue-900 mb-6">🔤 Boggle Style Game</h1>
-
-    <!-- Back to Apps -->
-    <div class="mb-6">
-      <a href="apps.html" class="btn btn-next">⬅ Back to Apps</a>
+<body>
+<div class="celebrate" id="celebrate"></div>
+<main class="shell">
+  <div class="topbar">
+    <div class="brand"><span class="brand-dot"></span>Projector First</div>
+    <a class="back" href="apps.html">← All Activities</a>
+  </div>
+  <section class="hero">
+    <div class="kicker">A big-screen word challenge</div>
+    <h1>Letter Lounge</h1>
+    <p class="subtitle">Make as many words as you can from the letters on the board.</p>
+  </section>
+  <section class="game">
+    <div class="board">
+      <div id="letterGrid" class="letters" aria-label="Letter board"></div>
+      <div class="controls">
+        <button class="btn primary" onclick="shakeGrid()">✦ New Letters</button>
+        <button class="btn timerbtn" onclick="startTimer()">▶ Start 3 Minutes</button>
+        <button class="btn full" onclick="toggleFullScreen()">⛶ Fullscreen</button>
+        <button class="btn reset" onclick="resetGame()">↻ Reset</button>
+      </div>
+      <div class="hint">Tip: Press SPACE for new letters · T for timer · F for fullscreen</div>
     </div>
+    <aside class="side">
+      <div class="card">
+        <div class="round-label">Round Timer</div>
+        <div id="timerBox" class="timer">3:00</div>
+        <div class="tip" id="timerTip">Take your time, talk it out, and let the whole room play together.</div>
+      </div>
+      <div class="card">
+        <div class="round-label">Add a Word</div>
+        <div class="entry">
+          <input id="wordInput" type="text" autocomplete="off" placeholder="TYPE WORD" aria-label="Word found"/>
+          <button class="btn add" onclick="addWord()">＋</button>
+        </div>
+      </div>
+      <div class="card words-card">
+        <div class="words-title"><h2>Words Found</h2><span id="wordCount" class="count">0 words</span></div>
+        <ul id="wordList"></ul>
+      </div>
+    </aside>
+  </section>
+</main>
+<script>
+const GRID_ROWS=3,GRID_COLS=4;
+const ALPHABET="ABCDEFGHIJKLMNOPQRSTUVWXYZ",VOWELS="AEIOU";
+const COMMON="EEEEEEEEEEEEAAAAAAAAAIIIIIIIIOOOOOOOONNNNNNRRRRRRTTTTTTLLLLSSSSUUUUDDDDGGGBBCCMMPPFFHHVVWWYYKJXQZ";
+let timerInterval=null,timeLeft=180;
 
-    <!-- Controls -->
-    <div class="flex flex-wrap justify-center gap-4 mb-6">
-      <button onclick="shakeGrid()" class="btn btn-shake">Shake (Space)</button>
-      <button onclick="resetGrid()" class="btn btn-reset">Reset</button>
-      <button onclick="toggleFullScreen()" class="btn btn-fullscreen">Fullscreen</button>
-      <button onclick="startTimer()" class="btn btn-timer">Start Timer</button>
-    </div>
-
-    <!-- Letter Grid -->
-    <div id="letterGrid" class="grid mb-6"></div>
-
-    <!-- Timer -->
-    <div id="timerBox" class="text-4xl font-extrabold text-blue-900 mt-4"></div>
-
-    <!-- Word Entry -->
-    <div class="mt-8">
-      <input id="wordInput" type="text" placeholder="Type a word…" 
-             class="border-2 border-blue-900 rounded-xl px-4 py-3 text-2xl w-72 text-center"/>
-      <button onclick="addWord()" class="btn btn-shake ml-3">Add Word</button>
-    </div>
-
-    <!-- Word List -->
-    <div class="mt-8">
-      <h2 class="text-3xl font-bold text-blue-900 mb-4">Words Found</h2>
-      <ul id="wordList"></ul>
-    </div>
-  </main>
-
-  <script>
-    const GRID_ROWS = 3;
-    const GRID_COLS = 4;
-    const ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    const VOWELS = "AEIOU";
-    let timerInterval = null;
-    let timeLeft = 0;
-
-    function randomLetter() {
-      return ALPHABET[Math.floor(Math.random() * ALPHABET.length)];
-    }
-
-    function buildGrid(blank = true) {
-      const grid = document.getElementById("letterGrid");
-      grid.innerHTML = "";
-      grid.style.gridTemplateColumns = `repeat(${GRID_COLS}, 1fr)`;
-      for (let i = 0; i < GRID_ROWS * GRID_COLS; i++) {
-        const div = document.createElement("div");
-        div.className = "letter";
-        div.textContent = blank ? "—" : randomLetter();
-        grid.appendChild(div);
-      }
-    }
-
-    function shakeGrid() {
-      const grid = document.getElementById("letterGrid");
-      grid.innerHTML = "";
-      grid.style.gridTemplateColumns = `repeat(${GRID_COLS}, 1fr)`;
-
-      let letters = [];
-
-      // Guarantee at least 3 vowels
-      for (let i = 0; i < 3; i++) {
-        letters.push(VOWELS[Math.floor(Math.random() * VOWELS.length)]);
-      }
-
-      // Fill the rest randomly
-      while (letters.length < GRID_ROWS * GRID_COLS) {
-        letters.push(randomLetter());
-      }
-
-      // Shuffle
-      for (let i = letters.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [letters[i], letters[j]] = [letters[j], letters[i]];
-      }
-
-      // Place into grid
-      letters.forEach(l => {
-        const div = document.createElement("div");
-        div.className = "letter";
-        div.textContent = l;
-        grid.appendChild(div);
-      });
-    }
-
-    function resetGrid() {
-      buildGrid(true);
-      stopTimer();
-      document.getElementById("wordList").innerHTML = "";
-    }
-
-    function toggleFullScreen() {
-      if (!document.fullscreenElement) {
-        document.documentElement.requestFullscreen();
-      } else {
-        if (document.exitFullscreen) document.exitFullscreen();
-      }
-    }
-
-    // Timer
-    function startTimer() {
-      stopTimer();
-      timeLeft = 180;
-      updateTimerDisplay();
-      timerInterval = setInterval(() => {
-        timeLeft--;
-        updateTimerDisplay();
-        if (timeLeft <= 0) {
-          stopTimer();
-          document.getElementById("timerBox").textContent = "⏰ Time's up!";
-        }
-      }, 1000);
-    }
-
-    function stopTimer() {
-      clearInterval(timerInterval);
-      timerInterval = null;
-    }
-
-    function updateTimerDisplay() {
-      const mins = Math.floor(timeLeft / 60);
-      const secs = timeLeft % 60;
-      document.getElementById("timerBox").textContent =
-        mins + ":" + (secs < 10 ? "0" : "") + secs;
-    }
-
-    // Words
-    function addWord() {
-      const input = document.getElementById("wordInput");
-      const word = input.value.trim().toUpperCase();
-      if (word) {
-        const li = document.createElement("li");
-        li.textContent = word;
-        document.getElementById("wordList").appendChild(li);
-        input.value = "";
-      }
-    }
-
-    document.getElementById("wordInput").addEventListener("keydown", e => {
-      if (e.key === "Enter") addWord();
-    });
-
-    // Keyboard shortcuts
-    document.addEventListener("keydown", e => {
-      if (e.code === "Space") { e.preventDefault(); shakeGrid(); }
-      if (e.code === "KeyR") { resetGrid(); }
-      if (e.code === "KeyF") { toggleFullScreen(); }
-      if (e.code === "KeyT") { startTimer(); }
-    });
-
-    // Init
-    buildGrid(true);
-  </script>
+function randomLetter(){return COMMON[Math.floor(Math.random()*COMMON.length)]}
+function renderLetters(letters){
+ const grid=document.getElementById("letterGrid");grid.innerHTML="";
+ letters.forEach((l,i)=>{const d=document.createElement("div");d.className="letter pop";d.style.animationDelay=(i*35)+"ms";d.textContent=l;grid.appendChild(d)})
+}
+function buildGrid(blank=true){renderLetters(Array(GRID_ROWS*GRID_COLS).fill(blank?"•":"").map(x=>x||randomLetter()))}
+function shakeGrid(){
+ let letters=[];
+ for(let i=0;i<4;i++)letters.push(VOWELS[Math.floor(Math.random()*VOWELS.length)]);
+ while(letters.length<GRID_ROWS*GRID_COLS)letters.push(randomLetter());
+ for(let i=letters.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[letters[i],letters[j]]=[letters[j],letters[i]]}
+ renderLetters(letters);
+}
+function resetGame(){stopTimer();timeLeft=180;updateTimerDisplay();document.getElementById("wordList").innerHTML="";document.getElementById("wordCount").textContent="0 words";document.getElementById("timerTip").textContent="Take your time, talk it out, and let the whole room play together.";buildGrid(true)}
+function toggleFullScreen(){if(!document.fullscreenElement)document.documentElement.requestFullscreen?.();else document.exitFullscreen?.()}
+function startTimer(){stopTimer();timeLeft=180;updateTimerDisplay();document.getElementById("timerTip").textContent="Go! Call out any word you can make from the board.";timerInterval=setInterval(()=>{timeLeft--;updateTimerDisplay();if(timeLeft<=0){stopTimer();document.getElementById("timerTip").textContent="Time's up! Count your words and celebrate the round.";confetti(42)}},1000)}
+function stopTimer(){if(timerInterval)clearInterval(timerInterval);timerInterval=null}
+function updateTimerDisplay(){const b=document.getElementById("timerBox"),m=Math.floor(timeLeft/60),s=timeLeft%60;b.textContent=m+":"+(s<10?"0":"")+s;b.classList.toggle("warning",timeLeft<=30)}
+function addWord(){
+ const input=document.getElementById("wordInput"),word=input.value.trim().toUpperCase();if(!word)return;
+ const existing=[...document.querySelectorAll("#wordList li")].map(x=>x.textContent);
+ if(existing.includes(word)){input.select();return}
+ const li=document.createElement("li");li.textContent=word;document.getElementById("wordList").appendChild(li);input.value="";
+ const n=document.querySelectorAll("#wordList li").length;document.getElementById("wordCount").textContent=n+(n===1?" word":" words");
+ if(n%5===0)confetti(18);input.focus()
+}
+function confetti(amount){
+ const wrap=document.getElementById("celebrate"),colors=["#f2b84b","#e97961","#6e9d8b","#3f7898","#76598e"];
+ for(let i=0;i<amount;i++){const c=document.createElement("i");c.className="confetti";c.style.left=Math.random()*100+"vw";c.style.background=colors[i%colors.length];c.style.animationDelay=Math.random()*.35+"s";c.style.transform="rotate("+Math.random()*180+"deg)";wrap.appendChild(c);setTimeout(()=>c.remove(),2100)}
+}
+document.getElementById("wordInput").addEventListener("keydown",e=>{if(e.key==="Enter")addWord()});
+document.addEventListener("keydown",e=>{if(document.activeElement===document.getElementById("wordInput"))return;if(e.code==="Space"){e.preventDefault();shakeGrid()}if(e.code==="KeyF")toggleFullScreen();if(e.code==="KeyT")startTimer()});
+buildGrid(true);updateTimerDisplay();
+</script>
 </body>
 </html>
