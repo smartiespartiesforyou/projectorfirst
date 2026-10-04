@@ -1,418 +1,500 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>31 Day Daily Devotional — ProjectorFirst</title>
-  
-<!-- Membership gate (paywall-test) -->
-<script
-  data-memberstack-app="app_cmgnwpg8y00x10suih4pua785"
-  src="https://static.memberstack.com/scripts/v2/memberstack.js"
-  type="text/javascript">
-</script>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>31 Day Daily Devotional — ProjectorFirst</title>
+
+<script data-memberstack-app="app_cmgnwpg8y00x10suih4pua785" src="https://static.memberstack.com/scripts/v2/memberstack.js" type="text/javascript"></script>
 <script src="/guard.js"></script>
 
-<script src="https://cdn.tailwindcss.com"></script>
-  <style>
-    html, body {
-      margin: 0;
-      padding: 0;
-      height: 100%;
-      background: #111827;
-      font-family: Arial, sans-serif;
-    }
-    .slide-bg {
-      background-size: cover;
-      background-position: center;
-      background-repeat: no-repeat;
-      min-height: 58vh;
-    }
-  </style>
+<style>
+:root{
+  --navy:#17324d;--blue:#3f7898;--blue2:#2f607a;--sage:#6e9d8b;--sage2:#557e70;
+  --cream:#fff8e8;--ivory:#fffdf6;--gold:#d5c49d;--muted:#80694e;
+}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%}
+body{
+  min-height:100vh;color:var(--navy);font-family:Arial,sans-serif;
+  background:
+    radial-gradient(circle at 12% 10%,rgba(242,184,75,.30),transparent 24%),
+    radial-gradient(circle at 88% 18%,rgba(110,157,139,.25),transparent 26%),
+    linear-gradient(145deg,#fff8e8,#f3ede2 52%,#e6f0ed);
+}
+body:before{
+  content:"";position:fixed;inset:0;pointer-events:none;opacity:.10;
+  background-image:
+    linear-gradient(90deg,transparent 49%,rgba(23,50,77,.08) 50%,transparent 51%),
+    linear-gradient(transparent 49%,rgba(23,50,77,.06) 50%,transparent 51%);
+  background-size:48px 48px;
+}
+button,a{font:inherit}
+.topbar{
+  max-width:1200px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;
+  gap:12px;padding:20px 18px;border-bottom:1px solid rgba(23,50,77,.12);flex-wrap:wrap
+}
+.brand{font-weight:900;letter-spacing:.18em;color:var(--muted)}
+.nav-btn,.tool-btn{
+  border:0;border-radius:15px;background:#1e3a8a;color:#fff;text-decoration:none;
+  font-weight:900;padding:11px 17px;cursor:pointer;box-shadow:0 5px 0 rgba(23,50,77,.22)
+}
+.tool-btn.secondary{background:linear-gradient(145deg,var(--sage),var(--sage2));box-shadow:0 5px 0 #42675a}
+.wrap{max-width:1200px;margin:0 auto;padding:28px 18px 38px;position:relative}
+.eyebrow{text-align:center;font-weight:900;letter-spacing:.18em;color:var(--muted);font-size:.92rem}
+.page-title{
+  margin:5px 0 8px;text-align:center;font-family:Georgia,serif;
+  font-size:clamp(2.6rem,6vw,4.8rem);font-weight:900;color:var(--navy);text-shadow:0 3px 0 #fff
+}
+.subtitle{
+  text-align:center;color:#5f6c72;font-weight:800;font-size:clamp(1rem,2vw,1.25rem);
+  margin:0 auto 22px;max-width:850px
+}
+.devotional-shell{
+  border:3px solid rgba(23,50,77,.12);border-radius:34px;padding:22px;
+  background:rgba(255,253,246,.88);box-shadow:0 20px 50px rgba(23,50,77,.14)
+}
+.devotional-card{
+  min-height:500px;border:4px solid #d5c49d;border-radius:30px;
+  box-shadow:0 10px 0 #b99d69,0 16px 26px rgba(23,50,77,.14);
+  padding:clamp(28px,5vw,58px);display:flex;align-items:center;justify-content:center;
+  position:relative;overflow:hidden;text-align:center;transition:background .35s ease
+}
+.devotional-card:before{
+  content:"✦";position:absolute;top:24px;left:30px;font-size:2.4rem;color:rgba(128,105,78,.35)
+}
+.devotional-card:after{
+  content:"✦";position:absolute;bottom:24px;right:30px;font-size:2.4rem;color:rgba(128,105,78,.35)
+}
+.theme-0{background:linear-gradient(145deg,#fff8e8,#f4e4ba 55%,#e6efe9)}
+.theme-1{background:linear-gradient(145deg,#edf5f1,#dce9e4 55%,#fff8e8)}
+.theme-2{background:linear-gradient(145deg,#eef4f7,#dce8ee 55%,#fff7e6)}
+.theme-3{background:linear-gradient(145deg,#f3edf7,#e7dff0 55%,#fff8e8)}
+.theme-4{background:linear-gradient(145deg,#fff4dc,#f0ddae 55%,#e7eee8)}
+.slide-inner{max-width:980px;position:relative;z-index:1}
+.day-tag{
+  display:inline-block;border-radius:999px;background:rgba(255,253,246,.78);
+  border:2px solid rgba(128,105,78,.22);padding:8px 18px;color:var(--muted);
+  font-weight:900;letter-spacing:.12em;font-size:clamp(.9rem,1.6vw,1.05rem)
+}
+.slide-title{
+  margin:22px 0 20px;font-family:Georgia,serif;font-size:clamp(2.5rem,6vw,5rem);
+  line-height:1.05;color:var(--navy);font-weight:900
+}
+.verse{
+  max-width:900px;margin:0 auto;font-family:Georgia,serif;
+  font-size:clamp(1.6rem,3.4vw,2.7rem);line-height:1.35;font-weight:700;color:#314a5c
+}
+.divider{
+  width:120px;height:4px;border-radius:999px;background:linear-gradient(90deg,var(--blue),var(--sage));
+  margin:28px auto
+}
+.reflection{
+  max-width:820px;margin:0 auto;font-size:clamp(1.25rem,2.5vw,1.8rem);
+  line-height:1.5;font-weight:700;color:#56646c
+}
+.controls{
+  display:flex;justify-content:center;align-items:center;gap:12px;flex-wrap:wrap;margin-top:22px
+}
+.control-btn{
+  min-width:145px;border:4px solid rgba(255,255,255,.78);border-radius:18px;
+  padding:12px 18px;color:white;font-weight:900;font-size:1.05rem;cursor:pointer
+}
+.prev{background:linear-gradient(145deg,#71808a,#5d6972);box-shadow:0 6px 0 #4e5961}
+.next{background:linear-gradient(145deg,var(--blue),var(--blue2));box-shadow:0 6px 0 #244d63}
+.auto{background:linear-gradient(145deg,var(--sage),var(--sage2));box-shadow:0 6px 0 #42675a}
+.daypick{background:linear-gradient(145deg,#d2a84d,#b98c32);box-shadow:0 6px 0 #8f6a25}
+.counter{
+  min-width:135px;background:#fff8e8;border:3px solid #d5c49d;border-radius:16px;
+  padding:10px 14px;font-weight:900;color:#5f6c72
+}
+.music-row{
+  display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:14px
+}
+.music-btn{
+  border:0;border-radius:15px;padding:10px 16px;font-weight:900;cursor:pointer;
+  background:white;color:var(--navy);border:3px solid rgba(23,50,77,.12)
+}
+.music-btn.active{background:#e9f4e8;border-color:#7aa17a;color:#245b3b}
+.tip{text-align:center;margin-top:13px;font-size:.92rem;font-weight:700;color:#7a7167}
+.modal{
+  position:fixed;inset:0;z-index:50;background:rgba(23,50,77,.52);
+  display:flex;align-items:center;justify-content:center;padding:22px
+}
+.modal.hidden{display:none}
+.modal-card{
+  width:min(900px,96vw);max-height:88vh;overflow:auto;background:#fffdf6;
+  border:4px solid #d5c49d;border-radius:28px;padding:24px;
+  box-shadow:0 24px 60px rgba(0,0,0,.28)
+}
+.modal-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:18px}
+.modal-head h2{margin:0;font-family:Georgia,serif;font-size:2rem;color:var(--navy)}
+.close-btn{border:0;background:#687582;color:#fff;border-radius:14px;padding:10px 14px;font-weight:900;cursor:pointer}
+.day-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:10px}
+.day-btn{
+  border:3px solid rgba(255,255,255,.8);border-radius:16px;padding:14px 6px;
+  font-weight:900;color:white;cursor:pointer;background:linear-gradient(145deg,var(--blue),var(--blue2));
+  box-shadow:0 5px 0 #244d63
+}
+.day-btn:nth-child(3n+2){background:linear-gradient(145deg,#d97961,#bc5e4b);box-shadow:0 5px 0 #934738}
+.day-btn:nth-child(3n){background:linear-gradient(145deg,var(--sage),var(--sage2));box-shadow:0 5px 0 #42675a}
+@media(max-width:700px){
+  .day-grid{grid-template-columns:repeat(4,1fr)}
+  .devotional-card{min-height:430px;padding:28px 18px}
+  .control-btn{min-width:130px}
+}
+</style>
 </head>
-<body class="text-white">
 
-  <audio id="bgMusic" loop>
-    <source src="music/soft-piano.mp3" type="audio/mpeg">
-  </audio>
+<body>
+<audio id="bgMusic" loop>
+  <source src="music/soft-piano.mp3" type="audio/mpeg">
+</audio>
 
-  <div id="app" class="min-h-screen flex flex-col">
+<div class="topbar">
+  <a href="apps.html" class="nav-btn">← Back to Apps</a>
+  <div class="brand">PROJECTOR FIRST</div>
+  <button id="fullscreenBtn" class="tool-btn">⛶ Fullscreen</button>
+</div>
 
-    <!-- HEADER -->
-    <div class="w-full px-6 py-4 bg-black/60 backdrop-blur-sm">
-      <div class="max-w-7xl mx-auto flex flex-wrap justify-between items-center gap-3">
+<main class="wrap">
+  <div class="eyebrow">31-DAY DAILY DEVOTIONAL</div>
+  <h1 class="page-title">A Quiet Moment</h1>
+  <p class="subtitle">Scripture, a short reflection, and a peaceful moment for the group.</p>
 
-        <a href="apps.html" class="px-4 py-2 bg-blue-800 rounded-xl font-bold hover:bg-blue-700">
-          ← Back to Apps
-        </a>
-
-        <div class="text-2xl font-extrabold">ProjectorFirst Daily Devotional</div>
-
-        <div class="flex flex-wrap gap-3">
-          <button id="restartBtn" class="px-4 py-2 bg-blue-800 rounded-xl font-bold hover:bg-blue-700">Restart</button>
-          <button id="fullscreenBtn" class="px-4 py-2 bg-green-700 rounded-xl font-bold hover:bg-green-600">Fullscreen</button>
-          <button id="musicPlayBtn" class="px-4 py-2 bg-purple-700 rounded-xl font-bold hover:bg-purple-600">Play Music</button>
-          <button id="musicPauseBtn" class="px-4 py-2 bg-gray-700 rounded-xl font-bold hover:bg-gray-600">Pause Music</button>
-        </div>
-
+  <section class="devotional-shell">
+    <div id="slide" class="devotional-card theme-0">
+      <div class="slide-inner">
+        <div id="slideTag" class="day-tag">DAY 1</div>
+        <h2 id="slideTitle" class="slide-title"></h2>
+        <div id="slideVerse" class="verse"></div>
+        <div class="divider"></div>
+        <div id="slideText" class="reflection"></div>
       </div>
     </div>
 
-    <!-- SLIDE -->
-    <div class="flex justify-center px-4 py-6">
-      <div class="w-full max-w-5xl">
-
-        <div id="slide"
-          class="slide-bg flex items-center justify-center px-6 py-10 rounded-2xl"
-          style="background-image: linear-gradient(rgba(0,0,0,.45), rgba(0,0,0,.45)), url('https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1600&q=80');">
-
-          <div class="w-full text-center">
-            <div id="slideTag" class="text-lg md:text-2xl font-bold uppercase tracking-widest mb-4 text-yellow-300">
-              Day 1
-            </div>
-
-            <h1 id="slideTitle" class="text-4xl md:text-7xl font-extrabold mb-6">
-              God Is With You
-            </h1>
-
-            <p id="slideVerse" class="text-2xl md:text-4xl font-bold mb-6">
-              “Fear thou not; for I am with thee.” — Isaiah 41:10
-            </p>
-
-            <p id="slideText" class="text-xl md:text-3xl max-w-3xl mx-auto">
-              You do not begin this day alone. Strength and help are already beside you.
-            </p>
-          </div>
-
-        </div>
-
-      </div>
+    <div class="controls">
+      <button id="prevBtn" class="control-btn prev">← Previous</button>
+      <button id="chooseDayBtn" class="control-btn daypick">Choose Day</button>
+      <div id="counter" class="counter">Day 1 of 31</div>
+      <button id="nextBtn" class="control-btn next">Next →</button>
+      <button id="autoBtn" class="control-btn auto">Auto Play</button>
     </div>
 
-    <!-- CONTROLS -->
-    <div class="flex justify-center pb-8">
-      <div class="flex flex-wrap items-center justify-center gap-3 bg-black/70 px-6 py-4 rounded-xl">
-
-        <button id="prevBtn" class="px-6 py-3 bg-gray-700 rounded-xl font-bold hover:bg-gray-600">
-          ← Previous
-        </button>
-
-        <button id="nextBtn" class="px-6 py-3 bg-blue-800 rounded-xl font-bold hover:bg-blue-700">
-          Next →
-        </button>
-
-        <div id="counter" class="px-4 text-lg font-bold">
-          Day 1 of 31
-        </div>
-
-        <button id="playBtn" class="px-6 py-3 bg-green-700 rounded-xl font-bold hover:bg-green-600">
-          Auto Play
-        </button>
-
-        <button id="stopBtn" class="px-6 py-3 bg-red-700 rounded-xl font-bold hover:bg-red-600">
-          Stop
-        </button>
-
-      </div>
+    <div class="music-row">
+      <button id="musicBtn" class="music-btn">♪ Play Soft Piano</button>
+      <button id="restartBtn" class="music-btn">↺ Return to Day 1</button>
     </div>
+    <div class="tip">Auto Play changes the devotional every 8 seconds. Music stays optional.</div>
+  </section>
+</main>
 
+<div id="dayModal" class="modal hidden" aria-hidden="true">
+  <div class="modal-card">
+    <div class="modal-head">
+      <h2>Choose a Day</h2>
+      <button id="closeDayBtn" class="close-btn">Close</button>
+    </div>
+    <div id="dayGrid" class="day-grid"></div>
   </div>
+</div>
 
-  <script>
-    const slides = [
-      {
-        tag: "Day 1",
-        title: "God Is With You",
-        verse: "“Fear thou not; for I am with thee.” — Isaiah 41:10",
-        text: "You do not begin this day alone. Strength and help are already beside you.",
-        image: "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1600&q=80"
-      },
-      {
-        tag: "Day 2",
-        title: "New Mercies",
-        verse: "“His mercies are new every morning.” — Lamentations 3:23",
-        text: "Today is a fresh start. Grace meets you again this morning.",
-        image: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1600&q=80"
-      },
-      {
-        tag: "Day 3",
-        title: "Be Still",
-        verse: "“Be still, and know that I am God.” — Psalm 46:10",
-        text: "Pause your thoughts and let peace settle in your heart.",
-        image: "https://images.unsplash.com/photo-1470770903676-69b98201ea1c?auto=format&fit=crop&w=1600&q=80"
-      },
-      {
-        tag: "Day 4",
-        title: "Walk by Faith",
-        verse: "“For we walk by faith, not by sight.” — 2 Corinthians 5:7",
-        text: "You do not need to see the whole road to take the next step.",
-        image: "https://images.unsplash.com/photo-1502082553048-f009c37129b9?auto=format&fit=crop&w=1600&q=80"
-      },
-      {
-        tag: "Day 5",
-        title: "The Lord Is Near",
-        verse: "“The Lord is nigh unto them that are of a broken heart.” — Psalm 34:18",
-        text: "God draws close to hurting hearts with comfort and tenderness.",
-        image: "https://images.unsplash.com/photo-1500534623283-312aade485b7?auto=format&fit=crop&w=1600&q=80"
-      },
-      {
-        tag: "Day 6",
-        title: "Strength for Today",
-        verse: "“He giveth power to the faint.” — Isaiah 40:29",
-        text: "When you feel weak, strength can still rise to meet you.",
-        image: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1600&q=80"
-      },
-      {
-        tag: "Day 7",
-        title: "This Is the Day",
-        verse: "“This is the day which the Lord hath made.” — Psalm 118:24",
-        text: "There is something good to notice in today, even if it is small.",
-        image: "https://images.unsplash.com/photo-1493246507139-91e8fad9978e?auto=format&fit=crop&w=1600&q=80"
-      },
-      {
-        tag: "Day 8",
-        title: "Trust the Lord",
-        verse: "“Trust in the Lord with all thine heart.” — Proverbs 3:5",
-        text: "You do not have to carry every answer. Trust can hold what worry cannot.",
-        image: "https://images.unsplash.com/photo-1505761671935-60b3a7427bad?auto=format&fit=crop&w=1600&q=80"
-      },
-      {
-        tag: "Day 9",
-        title: "Grace Is Enough",
-        verse: "“My grace is sufficient for thee.” — 2 Corinthians 12:9",
-        text: "God’s grace is enough for weakness, waiting, and today’s needs.",
-        image: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1600&q=80"
-      },
-      {
-        tag: "Day 10",
-        title: "Come Unto Me",
-        verse: "“Come unto me... and I will give you rest.” — Matthew 11:28",
-        text: "Rest is not failure. It is a place where peace can grow.",
-        image: "https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=1600&q=80"
-      },
-      {
-        tag: "Day 11",
-        title: "Held by Love",
-        verse: "“Nothing shall be able to separate us from the love of God.” — Romans 8:39",
-        text: "Nothing can pull you out of the reach of God’s love.",
-        image: "https://images.unsplash.com/photo-1501594907352-04cda38ebc29?auto=format&fit=crop&w=1600&q=80"
-      },
-      {
-        tag: "Day 12",
-        title: "Peaceful Rest",
-        verse: "“I will both lay me down in peace, and sleep.” — Psalm 4:8",
-        text: "Peace can cover the mind and heart like a blanket.",
-        image: "https://images.unsplash.com/photo-1504893524553-b855bce32c67?auto=format&fit=crop&w=1600&q=80"
-      },
-      {
-        tag: "Day 13",
-        title: "A Lamp Unto My Feet",
-        verse: "“Thy word is a lamp unto my feet.” — Psalm 119:105",
-        text: "God gives enough light for the next step, even when the whole path is not visible.",
-        image: "https://images.unsplash.com/photo-1501004318641-b39e6451bec6?auto=format&fit=crop&w=1600&q=80"
-      },
-      {
-        tag: "Day 14",
-        title: "Perfect Peace",
-        verse: "“Thou wilt keep him in perfect peace.” — Isaiah 26:3",
-        text: "Peace grows when the mind turns away from fear and toward God.",
-        image: "https://images.unsplash.com/photo-1439405326854-014607f694d7?auto=format&fit=crop&w=1600&q=80"
-      },
-      {
-        tag: "Day 15",
-        title: "Rejoice Always",
-        verse: "“Rejoice evermore.” — 1 Thessalonians 5:16",
-        text: "Joy does not have to be loud. Sometimes it is quiet gratitude.",
-        image: "https://images.unsplash.com/photo-1490750967868-88aa4486c946?auto=format&fit=crop&w=1600&q=80"
-      },
-      {
-        tag: "Day 16",
-        title: "God Is Your Refuge",
-        verse: "“God is our refuge and strength.” — Psalm 46:1",
-        text: "When life feels unstable, God remains a safe place.",
-        image: "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?auto=format&fit=crop&w=1600&q=80"
-      },
-      {
-        tag: "Day 17",
-        title: "He Cares for You",
-        verse: "“Casting all your care upon him; for he careth for you.” — 1 Peter 5:7",
-        text: "You do not have to carry every burden alone today.",
-        image: "https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?auto=format&fit=crop&w=1600&q=80"
-      },
-      {
-        tag: "Day 18",
-        title: "Joy Comes in the Morning",
-        verse: "“Joy cometh in the morning.” — Psalm 30:5",
-        text: "Morning brings more than sunlight. It brings renewed hope.",
-        image: "https://images.unsplash.com/photo-1465146344425-f00d5f5c8f07?auto=format&fit=crop&w=1600&q=80"
-      },
-      {
-        tag: "Day 19",
-        title: "The Lord Is My Shepherd",
-        verse: "“The Lord is my shepherd; I shall not want.” — Psalm 23:1",
-        text: "You are guided, watched over, and cared for.",
-        image: "https://images.unsplash.com/photo-1472396961693-142e6e269027?auto=format&fit=crop&w=1600&q=80"
-      },
-      {
-        tag: "Day 20",
-        title: "Wait on the Lord",
-        verse: "“Wait on the Lord: be of good courage.” — Psalm 27:14",
-        text: "Waiting is hard, but courage can still grow in quiet places.",
-        image: "https://images.unsplash.com/photo-1500534314209-a26db0f0b8d9?auto=format&fit=crop&w=1600&q=80"
-      },
-      {
-        tag: "Day 21",
-        title: "He Will Sustain You",
-        verse: "“He shall sustain thee.” — Psalm 55:22",
-        text: "You are not left to hold yourself together by sheer strength.",
-        image: "https://images.unsplash.com/photo-1508672019048-805c876b67e2?auto=format&fit=crop&w=1600&q=80"
-      },
-      {
-        tag: "Day 22",
-        title: "Light in Darkness",
-        verse: "“The light shineth in darkness.” — John 1:5",
-        text: "Dark moments do not mean light is gone. It still shines.",
-        image: "https://images.unsplash.com/photo-1473116763249-2faaef81ccda?auto=format&fit=crop&w=1600&q=80"
-      },
-      {
-        tag: "Day 23",
-        title: "Give Thanks",
-        verse: "“In every thing give thanks.” — 1 Thessalonians 5:18",
-        text: "Gratitude softens the heart and opens the eyes to quiet blessings.",
-        image: "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=1600&q=80"
-      },
-      {
-        tag: "Day 24",
-        title: "He Will Direct Your Paths",
-        verse: "“He shall direct thy paths.” — Proverbs 3:6",
-        text: "You do not have to see the whole way. Guidance comes step by step.",
-        image: "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1600&q=80"
-      },
-      {
-        tag: "Day 25",
-        title: "My Help Comes From the Lord",
-        verse: "“My help cometh from the Lord.” — Psalm 121:2",
-        text: "Help is not far away. God’s care reaches into ordinary days.",
-        image: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1600&q=80"
-      },
-      {
-        tag: "Day 26",
-        title: "A Cheerful Heart",
-        verse: "“A merry heart doeth good like a medicine.” — Proverbs 17:22",
-        text: "A smile, a laugh, a kind moment can bring healing too.",
-        image: "https://images.unsplash.com/photo-1493246507139-91e8fad9978e?auto=format&fit=crop&w=1600&q=80"
-      },
-      {
-        tag: "Day 27",
-        title: "Hope in the Lord",
-        verse: "“Be of good courage, and he shall strengthen thine heart.” — Psalm 31:24",
-        text: "Hope is not pretending. It is choosing courage again.",
-        image: "https://images.unsplash.com/photo-1502082553048-f009c37129b9?auto=format&fit=crop&w=1600&q=80"
-      },
-      {
-        tag: "Day 28",
-        title: "His Peace Guards You",
-        verse: "“The peace of God... shall keep your hearts and minds.” — Philippians 4:7",
-        text: "Peace can stand guard over anxious thoughts.",
-        image: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1600&q=80"
-      },
-      {
-        tag: "Day 29",
-        title: "Blessed Are the Peacemakers",
-        verse: "“Blessed are the peacemakers.” — Matthew 5:9",
-        text: "Gentleness, patience, and peace bring light into a room.",
-        image: "https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=1600&q=80"
-      },
-      {
-        tag: "Day 30",
-        title: "He Makes All Things New",
-        verse: "“Behold, I make all things new.” — Revelation 21:5",
-        text: "God is still at work, even in places that feel worn out.",
-        image: "https://images.unsplash.com/photo-1501594907352-04cda38ebc29?auto=format&fit=crop&w=1600&q=80"
-      },
-      {
-        tag: "Day 31",
-        title: "The Lord Bless You",
-        verse: "“The Lord bless thee, and keep thee.” — Numbers 6:24",
-        text: "May this day begin with blessing, steadiness, and peace.",
-        image: "https://images.unsplash.com/photo-1504893524553-b855bce32c67?auto=format&fit=crop&w=1600&q=80"
-      }
-    ];
+<script>
+const slides=[
+  {
+    "tag": "Day 1",
+    "title": "God Is With You",
+    "verse": "“Fear thou not; for I am with thee.” — Isaiah 41:10",
+    "text": "You do not begin this day alone. Strength and help are already beside you."
+  },
+  {
+    "tag": "Day 2",
+    "title": "New Mercies",
+    "verse": "“His mercies are new every morning.” — Lamentations 3:23",
+    "text": "Today is a fresh start. Grace meets you again this morning."
+  },
+  {
+    "tag": "Day 3",
+    "title": "Be Still",
+    "verse": "“Be still, and know that I am God.” — Psalm 46:10",
+    "text": "Pause your thoughts and let peace settle in your heart."
+  },
+  {
+    "tag": "Day 4",
+    "title": "Walk by Faith",
+    "verse": "“For we walk by faith, not by sight.” — 2 Corinthians 5:7",
+    "text": "You do not need to see the whole road to take the next step."
+  },
+  {
+    "tag": "Day 5",
+    "title": "The Lord Is Near",
+    "verse": "“The Lord is nigh unto them that are of a broken heart.” — Psalm 34:18",
+    "text": "God draws close to hurting hearts with comfort and tenderness."
+  },
+  {
+    "tag": "Day 6",
+    "title": "Strength for Today",
+    "verse": "“He giveth power to the faint.” — Isaiah 40:29",
+    "text": "When you feel weak, strength can still rise to meet you."
+  },
+  {
+    "tag": "Day 7",
+    "title": "This Is the Day",
+    "verse": "“This is the day which the Lord hath made.” — Psalm 118:24",
+    "text": "There is something good to notice in today, even if it is small."
+  },
+  {
+    "tag": "Day 8",
+    "title": "Trust the Lord",
+    "verse": "“Trust in the Lord with all thine heart.” — Proverbs 3:5",
+    "text": "You do not have to carry every answer. Trust can hold what worry cannot."
+  },
+  {
+    "tag": "Day 9",
+    "title": "Grace Is Enough",
+    "verse": "“My grace is sufficient for thee.” — 2 Corinthians 12:9",
+    "text": "God’s grace is enough for weakness, waiting, and today’s needs."
+  },
+  {
+    "tag": "Day 10",
+    "title": "Come Unto Me",
+    "verse": "“Come unto me... and I will give you rest.” — Matthew 11:28",
+    "text": "Rest is not failure. It is a place where peace can grow."
+  },
+  {
+    "tag": "Day 11",
+    "title": "Held by Love",
+    "verse": "“Nothing shall be able to separate us from the love of God.” — Romans 8:39",
+    "text": "Nothing can pull you out of the reach of God’s love."
+  },
+  {
+    "tag": "Day 12",
+    "title": "Peaceful Rest",
+    "verse": "“I will both lay me down in peace, and sleep.” — Psalm 4:8",
+    "text": "Peace can cover the mind and heart like a blanket."
+  },
+  {
+    "tag": "Day 13",
+    "title": "A Lamp Unto My Feet",
+    "verse": "“Thy word is a lamp unto my feet.” — Psalm 119:105",
+    "text": "God gives enough light for the next step, even when the whole path is not visible."
+  },
+  {
+    "tag": "Day 14",
+    "title": "Perfect Peace",
+    "verse": "“Thou wilt keep him in perfect peace.” — Isaiah 26:3",
+    "text": "Peace grows when the mind turns away from fear and toward God."
+  },
+  {
+    "tag": "Day 15",
+    "title": "Rejoice Always",
+    "verse": "“Rejoice evermore.” — 1 Thessalonians 5:16",
+    "text": "Joy does not have to be loud. Sometimes it is quiet gratitude."
+  },
+  {
+    "tag": "Day 16",
+    "title": "God Is Your Refuge",
+    "verse": "“God is our refuge and strength.” — Psalm 46:1",
+    "text": "When life feels unstable, God remains a safe place."
+  },
+  {
+    "tag": "Day 17",
+    "title": "He Cares for You",
+    "verse": "“Casting all your care upon him; for he careth for you.” — 1 Peter 5:7",
+    "text": "You do not have to carry every burden alone today."
+  },
+  {
+    "tag": "Day 18",
+    "title": "Joy Comes in the Morning",
+    "verse": "“Joy cometh in the morning.” — Psalm 30:5",
+    "text": "Morning brings more than sunlight. It brings renewed hope."
+  },
+  {
+    "tag": "Day 19",
+    "title": "The Lord Is My Shepherd",
+    "verse": "“The Lord is my shepherd; I shall not want.” — Psalm 23:1",
+    "text": "You are guided, watched over, and cared for."
+  },
+  {
+    "tag": "Day 20",
+    "title": "Wait on the Lord",
+    "verse": "“Wait on the Lord: be of good courage.” — Psalm 27:14",
+    "text": "Waiting is hard, but courage can still grow in quiet places."
+  },
+  {
+    "tag": "Day 21",
+    "title": "He Will Sustain You",
+    "verse": "“He shall sustain thee.” — Psalm 55:22",
+    "text": "You are not left to hold yourself together by sheer strength."
+  },
+  {
+    "tag": "Day 22",
+    "title": "Light in Darkness",
+    "verse": "“The light shineth in darkness.” — John 1:5",
+    "text": "Dark moments do not mean light is gone. It still shines."
+  },
+  {
+    "tag": "Day 23",
+    "title": "Give Thanks",
+    "verse": "“In every thing give thanks.” — 1 Thessalonians 5:18",
+    "text": "Gratitude softens the heart and opens the eyes to quiet blessings."
+  },
+  {
+    "tag": "Day 24",
+    "title": "He Will Direct Your Paths",
+    "verse": "“He shall direct thy paths.” — Proverbs 3:6",
+    "text": "You do not have to see the whole way. Guidance comes step by step."
+  },
+  {
+    "tag": "Day 25",
+    "title": "My Help Comes From the Lord",
+    "verse": "“My help cometh from the Lord.” — Psalm 121:2",
+    "text": "Help is not far away. God’s care reaches into ordinary days."
+  },
+  {
+    "tag": "Day 26",
+    "title": "A Cheerful Heart",
+    "verse": "“A merry heart doeth good like a medicine.” — Proverbs 17:22",
+    "text": "A smile, a laugh, a kind moment can bring healing too."
+  },
+  {
+    "tag": "Day 27",
+    "title": "Hope in the Lord",
+    "verse": "“Be of good courage, and he shall strengthen thine heart.” — Psalm 31:24",
+    "text": "Hope is not pretending. It is choosing courage again."
+  },
+  {
+    "tag": "Day 28",
+    "title": "His Peace Guards You",
+    "verse": "“The peace of God... shall keep your hearts and minds.” — Philippians 4:7",
+    "text": "Peace can stand guard over anxious thoughts."
+  },
+  {
+    "tag": "Day 29",
+    "title": "Blessed Are the Peacemakers",
+    "verse": "“Blessed are the peacemakers.” — Matthew 5:9",
+    "text": "Gentleness, patience, and peace bring light into a room."
+  },
+  {
+    "tag": "Day 30",
+    "title": "He Makes All Things New",
+    "verse": "“Behold, I make all things new.” — Revelation 21:5",
+    "text": "God is still at work, even in places that feel worn out."
+  },
+  {
+    "tag": "Day 31",
+    "title": "The Lord Bless You",
+    "verse": "“The Lord bless thee, and keep thee.” — Numbers 6:24",
+    "text": "May this day begin with blessing, steadiness, and peace."
+  }
+];
 
-    let currentIndex = 0;
-    let autoplay = null;
+let currentIndex=0;
+let autoplay=null;
+let musicPlaying=false;
 
-    const slideEl = document.getElementById("slide");
-    const slideTagEl = document.getElementById("slideTag");
-    const slideTitleEl = document.getElementById("slideTitle");
-    const slideVerseEl = document.getElementById("slideVerse");
-    const slideTextEl = document.getElementById("slideText");
-    const counterEl = document.getElementById("counter");
-    const bgMusic = document.getElementById("bgMusic");
+const slideEl=document.getElementById("slide");
+const slideTagEl=document.getElementById("slideTag");
+const slideTitleEl=document.getElementById("slideTitle");
+const slideVerseEl=document.getElementById("slideVerse");
+const slideTextEl=document.getElementById("slideText");
+const counterEl=document.getElementById("counter");
+const bgMusic=document.getElementById("bgMusic");
+const autoBtn=document.getElementById("autoBtn");
+const musicBtn=document.getElementById("musicBtn");
+const modal=document.getElementById("dayModal");
 
-    function renderSlide() {
-      const s = slides[currentIndex];
-      slideTagEl.textContent = s.tag;
-      slideTitleEl.textContent = s.title;
-      slideVerseEl.textContent = s.verse;
-      slideTextEl.textContent = s.text;
-      slideEl.style.backgroundImage =
-        `linear-gradient(rgba(0,0,0,.45), rgba(0,0,0,.45)), url('${s.image}')`;
-      counterEl.textContent = `Day ${currentIndex + 1} of ${slides.length}`;
-    }
-
-    function nextSlide() {
-      currentIndex = (currentIndex + 1) % slides.length;
+function renderSlide(){
+  const s=slides[currentIndex];
+  slideTagEl.textContent=s.tag.toUpperCase();
+  slideTitleEl.textContent=s.title;
+  slideVerseEl.textContent=s.verse;
+  slideTextEl.textContent=s.text;
+  slideEl.className="devotional-card theme-"+(currentIndex%5);
+  counterEl.textContent="Day "+(currentIndex+1)+" of "+slides.length;
+}
+function nextSlide(){
+  currentIndex=(currentIndex+1)%slides.length;
+  renderSlide();
+}
+function prevSlide(){
+  currentIndex=(currentIndex-1+slides.length)%slides.length;
+  renderSlide();
+}
+function restartSlides(){
+  currentIndex=0;
+  renderSlide();
+}
+function toggleAutoplay(){
+  if(autoplay){
+    clearInterval(autoplay);
+    autoplay=null;
+    autoBtn.textContent="Auto Play";
+    return;
+  }
+  autoplay=setInterval(nextSlide,8000);
+  autoBtn.textContent="Stop Auto Play";
+}
+function toggleMusic(){
+  if(musicPlaying){
+    bgMusic.pause();
+    musicPlaying=false;
+    musicBtn.textContent="♪ Play Soft Piano";
+    musicBtn.classList.remove("active");
+  }else{
+    bgMusic.volume=.18;
+    bgMusic.play().then(()=>{
+      musicPlaying=true;
+      musicBtn.textContent="❚❚ Pause Soft Piano";
+      musicBtn.classList.add("active");
+    }).catch(()=>{});
+  }
+}
+function toggleFullscreen(){
+  if(!document.fullscreenElement)document.documentElement.requestFullscreen();
+  else document.exitFullscreen();
+}
+function openDays(){
+  modal.classList.remove("hidden");
+  modal.setAttribute("aria-hidden","false");
+}
+function closeDays(){
+  modal.classList.add("hidden");
+  modal.setAttribute("aria-hidden","true");
+}
+function buildDayGrid(){
+  const grid=document.getElementById("dayGrid");
+  slides.forEach((s,i)=>{
+    const b=document.createElement("button");
+    b.className="day-btn";
+    b.textContent=String(i+1);
+    b.title=s.title;
+    b.addEventListener("click",()=>{
+      currentIndex=i;
       renderSlide();
-    }
-
-    function prevSlide() {
-      currentIndex = (currentIndex - 1 + slides.length) % slides.length;
-      renderSlide();
-    }
-
-    function restartSlides() {
-      currentIndex = 0;
-      renderSlide();
-    }
-
-    function startAutoplay() {
-      if (autoplay) return;
-      autoplay = setInterval(nextSlide, 8000);
-    }
-
-    function stopAutoplay() {
-      clearInterval(autoplay);
-      autoplay = null;
-    }
-
-    function playMusic() {
-      bgMusic.volume = 0.18;
-      bgMusic.play().catch(() => {});
-    }
-
-    function pauseMusic() {
-      bgMusic.pause();
-    }
-
-    document.getElementById("nextBtn").addEventListener("click", nextSlide);
-    document.getElementById("prevBtn").addEventListener("click", prevSlide);
-    document.getElementById("restartBtn").addEventListener("click", restartSlides);
-    document.getElementById("playBtn").addEventListener("click", startAutoplay);
-    document.getElementById("stopBtn").addEventListener("click", stopAutoplay);
-    document.getElementById("musicPlayBtn").addEventListener("click", playMusic);
-    document.getElementById("musicPauseBtn").addEventListener("click", pauseMusic);
-
-    document.getElementById("fullscreenBtn").addEventListener("click", async () => {
-      const el = document.documentElement;
-      if (!document.fullscreenElement) {
-        await el.requestFullscreen();
-      } else {
-        await document.exitFullscreen();
-      }
+      closeDays();
     });
+    grid.appendChild(b);
+  });
+}
 
-    renderSlide();
-  </script>
+document.getElementById("nextBtn").addEventListener("click",nextSlide);
+document.getElementById("prevBtn").addEventListener("click",prevSlide);
+document.getElementById("restartBtn").addEventListener("click",restartSlides);
+document.getElementById("autoBtn").addEventListener("click",toggleAutoplay);
+document.getElementById("musicBtn").addEventListener("click",toggleMusic);
+document.getElementById("fullscreenBtn").addEventListener("click",toggleFullscreen);
+document.getElementById("chooseDayBtn").addEventListener("click",openDays);
+document.getElementById("closeDayBtn").addEventListener("click",closeDays);
+modal.addEventListener("click",e=>{if(e.target===modal)closeDays()});
+document.addEventListener("keydown",e=>{
+  if(e.key==="ArrowRight")nextSlide();
+  if(e.key==="ArrowLeft")prevSlide();
+  if(e.key==="Escape")closeDays();
+});
+
+buildDayGrid();
+renderSlide();
+</script>
 </body>
 </html>
