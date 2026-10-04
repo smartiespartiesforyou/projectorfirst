@@ -97,17 +97,23 @@ h1{
   flex-wrap:wrap;margin:16px 0
 }
 .playing-card{
+  position:relative;
   background:#fff;border-radius:18px;border:5px solid #ece8df;
   box-shadow:0 8px 0 rgba(0,0,0,.28),0 14px 22px rgba(0,0,0,.2);
   width:clamp(150px,16vw,220px);height:clamp(210px,22.4vw,308px);
-  display:flex;flex-direction:column;justify-content:space-between;
-  padding:.5em .58em;font-weight:900;line-height:1
+  padding:.5em .58em;font-weight:900;line-height:1;overflow:hidden
 }
 .playing-card .corner{
-  font-family:"Arial Black",Arial,sans-serif;
-  font-size:clamp(2.3rem,4.3vw,4.3rem);letter-spacing:-.05em
+  position:absolute;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  font-family:"Arial Black",Arial,sans-serif;line-height:.82;letter-spacing:-.05em
 }
+.playing-card .corner.top-left{top:.42em;left:.45em}
+.playing-card .corner.bottom-right{bottom:.42em;right:.45em;transform:rotate(180deg)}
+.playing-card .corner .rank{font-size:clamp(2.1rem,4vw,4rem)}
+.playing-card .corner .mini-suit{font-size:clamp(1.9rem,3.7vw,3.5rem);margin-top:-.1em}
 .playing-card .pip{
+  position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
   font-size:clamp(5.5rem,10vw,9rem);text-align:center;line-height:.85
 }
 .card-red{color:#c93f35}.card-black{color:#102d46}
@@ -265,9 +271,10 @@ h1{
     if(faceDown)return '<div class="playing-card card-back" aria-label="Face-down card"></div>';
     const color=c.red?"card-red":"card-black";
     return '<div class="playing-card '+color+'" aria-label="'+c.r+' of '+c.suit+'">'+
-      '<div class="corner" style="text-align:left">'+c.r+c.suit+'</div>'+
+      '<div class="corner top-left"><div class="rank">'+c.r+'</div><div class="mini-suit">'+c.suit+'</div></div>'+
       '<div class="pip">'+c.suit+'</div>'+
-      '<div class="corner" style="text-align:right;transform:rotate(180deg)">'+c.r+c.suit+'</div></div>';
+      '<div class="corner bottom-right"><div class="rank">'+c.r+'</div><div class="mini-suit">'+c.suit+'</div></div>'+
+    '</div>';
   }
 
   function setMode(mode){
