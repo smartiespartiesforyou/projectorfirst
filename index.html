@@ -222,6 +222,61 @@
     }
     .footer-links a{font-weight:800}
 
+
+    .games-modal{
+      position:fixed;inset:0;z-index:1000;background:rgba(15,38,55,.72);
+      display:none;align-items:center;justify-content:center;padding:22px;
+      backdrop-filter:blur(5px);
+    }
+    .games-modal.open{display:flex}
+    .games-preview{
+      width:min(1180px,96vw);max-height:92vh;overflow:auto;
+      background:
+        radial-gradient(circle at 12% 10%,rgba(242,184,75,.18),transparent 24%),
+        radial-gradient(circle at 88% 18%,rgba(110,157,139,.14),transparent 28%),
+        linear-gradient(145deg,#fffaf0,#f7f0e4 55%,#edf3ef);
+      border:4px solid #fff;border-radius:26px;padding:22px;
+      box-shadow:0 22px 70px rgba(0,0,0,.32);
+    }
+    .games-preview-head{
+      display:flex;align-items:center;justify-content:space-between;gap:14px;
+      border-bottom:1px solid #d7cbb9;padding-bottom:14px;margin-bottom:18px;
+    }
+    .games-preview-head h2{
+      margin:0;font-size:clamp(2rem,4vw,3.1rem);line-height:1;
+    }
+    .games-preview-head p{margin:5px 0 0;color:#56626b;font-weight:700}
+    .close-preview{
+      border:0;border-radius:12px;background:var(--navy);color:#fff;
+      font-size:1.2rem;font-weight:900;padding:10px 15px;cursor:pointer;
+    }
+    .all-games-grid{
+      display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;
+    }
+    .all-game-tile{
+      min-height:70px;background:#fffdf7;border:1px solid #c9bfaf;
+      border-radius:12px;padding:10px;text-align:center;display:flex;
+      align-items:center;justify-content:center;font-weight:900;color:var(--navy);
+      box-shadow:0 3px 0 rgba(23,50,77,.05);
+    }
+    .preview-footer{
+      display:flex;justify-content:center;margin-top:18px;
+    }
+    .preview-footer a{
+      text-decoration:none;background:var(--navy);color:#fff;font-weight:900;
+      padding:12px 20px;border-radius:12px;
+    }
+    @media(max-width:980px){
+      .all-games-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
+    }
+    @media(max-width:720px){
+      .all-games-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+    }
+    @media(max-width:520px){
+      .all-games-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+      .games-preview{padding:15px}
+    }
+
     @media(max-width:900px){
       .header-inner{align-items:flex-start;flex-direction:column}
       .nav{justify-content:flex-start}
@@ -262,7 +317,7 @@
 
       <nav class="nav" aria-label="Primary navigation">
         <a href="index.html">Home</a>
-        <a href="apps.html">Games</a>
+        <a href="#games" onclick="openGamesPreview(event)">Games</a>
         <a href="about.html">About</a>
         <a href="#pricing">Pricing</a>
 
@@ -512,6 +567,61 @@
     </section>
   </main>
 
+
+  <div id="gamesPreviewModal" class="games-modal" role="dialog" aria-modal="true" aria-labelledby="gamesPreviewTitle" onclick="closeGamesPreviewOnBackdrop(event)">
+    <div class="games-preview">
+      <div class="games-preview-head">
+        <div>
+          <h2 id="gamesPreviewTitle">Projector First Game Library</h2>
+          <p>35 games and tools currently in the library.</p>
+        </div>
+        <button class="close-preview" onclick="closeGamesPreview()" aria-label="Close game library preview">✕ Close</button>
+      </div>
+
+      <div class="all-games-grid">
+        <div class="all-game-tile">I Spy</div>
+        <div class="all-game-tile">Calendar Maker</div>
+        <div class="all-game-tile">Guess the Price</div>
+        <div class="all-game-tile">Daily Devotional</div>
+        <div class="all-game-tile">Bingo Caller</div>
+        <div class="all-game-tile">Random Number Generator</div>
+        <div class="all-game-tile">Resident Feud</div>
+        <div class="all-game-tile">Pokeno</div>
+        <div class="all-game-tile">Move &amp; Groove</div>
+        <div class="all-game-tile">Finish the Phrase</div>
+        <div class="all-game-tile">Dice Roller</div>
+        <div class="all-game-tile">Trivia (True/False)</div>
+        <div class="all-game-tile">Let’s Chat</div>
+        <div class="all-game-tile">Casino Night</div>
+        <div class="all-game-tile">Memory Match</div>
+        <div class="all-game-tile">Pop the Balloon</div>
+        <div class="all-game-tile">Letter Lounge</div>
+        <div class="all-game-tile">Word Scramble</div>
+        <div class="all-game-tile">Guess the State</div>
+        <div class="all-game-tile">Fortune Spin</div>
+        <div class="all-game-tile">Guess the Caller</div>
+        <div class="all-game-tile">Derby Day Horse Race</div>
+        <div class="all-game-tile">Emoji Guess</div>
+        <div class="all-game-tile">What's That Emoji?</div>
+        <div class="all-game-tile">Crossword Puzzle</div>
+        <div class="all-game-tile">Which Decade?</div>
+        <div class="all-game-tile">Spin &amp; Name</div>
+        <div class="all-game-tile">Pick a Door!</div>
+        <div class="all-game-tile">What Doesn't Fit?</div>
+        <div class="all-game-tile">Connect Words</div>
+        <div class="all-game-tile">Rhyme Time</div>
+        <div class="all-game-tile">What Comes Next?</div>
+        <div class="all-game-tile">Guess the Song</div>
+        <div class="all-game-tile">Silly Stories</div>
+        <div class="all-game-tile">Mystery Pictures</div>
+      </div>
+
+      <div class="preview-footer">
+        <a href="apps.html">Open the Full Game Library →</a>
+      </div>
+    </div>
+  </div>
+
   <footer role="contentinfo">
     <div class="shell">
       <strong>© <span id="year"></span> Projector First</strong> · Big, simple games for senior living.
@@ -530,6 +640,27 @@
 
   <script>
     document.getElementById("year").textContent = new Date().getFullYear();
+
+    function openGamesPreview(event){
+      if(event)event.preventDefault();
+      const modal=document.getElementById("gamesPreviewModal");
+      modal.classList.add("open");
+      document.body.style.overflow="hidden";
+    }
+
+    function closeGamesPreview(){
+      const modal=document.getElementById("gamesPreviewModal");
+      modal.classList.remove("open");
+      document.body.style.overflow="";
+    }
+
+    function closeGamesPreviewOnBackdrop(event){
+      if(event.target===document.getElementById("gamesPreviewModal"))closeGamesPreview();
+    }
+
+    document.addEventListener("keydown",function(event){
+      if(event.key==="Escape")closeGamesPreview();
+    });
   </script>
 </body>
 </html>
