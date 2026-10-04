@@ -115,6 +115,54 @@ repeating-linear-gradient(135deg,rgba(255,255,255,.025) 0 2px,transparent 2px 18
 #gameScreen header,#gameScreen footer{max-width:1200px;width:96%;margin-left:auto;margin-right:auto}
 #progressLabel{background:#0f2937;border:2px solid rgba(255,255,255,.25);border-radius:999px;padding:7px 16px;color:#f4dfaa!important}
 @media(max-height:760px){#gameScreen main{padding:10px!important;gap:8px!important}#itemEmoji{font-size:clamp(3rem,10vw,6rem)!important}}
+
+/* Projector First — current cream shell */
+html,body{
+  background:
+    radial-gradient(circle at 12% 10%,rgba(242,184,75,.30),transparent 24%),
+    radial-gradient(circle at 88% 18%,rgba(110,157,139,.25),transparent 26%),
+    linear-gradient(145deg,#fff8e8,#f3ede2 52%,#e6f0ed)!important;
+  color:#17324d!important;
+}
+body:before{
+  content:"";position:fixed;inset:0;pointer-events:none;opacity:.10;
+  background-image:
+    linear-gradient(90deg,transparent 49%,rgba(23,50,77,.07) 50%,transparent 51%),
+    linear-gradient(transparent 49%,rgba(23,50,77,.05) 50%,transparent 51%)!important;
+  background-size:48px 48px!important;
+}
+#startScreen main,#doneScreen main{background:transparent!important}
+#startScreen main>div:first-child{
+  background:rgba(255,253,246,.88)!important;
+  border:3px solid rgba(23,50,77,.10)!important;
+  box-shadow:0 12px 28px rgba(23,50,77,.08)!important;
+}
+#startScreen h1,#doneScreen h2{
+  color:#17324d!important;
+  text-shadow:0 2px 0 #fff!important;
+}
+#startScreen p,#doneScreen p{color:#5f6c72!important}
+#startScreen header,#gameScreen header,#doneScreen header{
+  border-bottom:1px solid rgba(23,50,77,.12);
+}
+#startScreen header .btn-big,#gameScreen header .btn-big{
+  background:#1e3a8a!important;color:#fff!important;
+  border-color:#17324d!important;
+  box-shadow:0 5px 0 rgba(23,50,77,.22)!important;
+}
+#startScreen header label{
+  color:#17324d!important;background:#fffdf6;
+  border:3px solid #d5c49d;border-radius:14px;padding:8px 12px
+}
+#progressLabel{
+  background:#fff8e8!important;color:#5f6c72!important;
+  border:3px solid #d5c49d!important;box-shadow:none!important
+}
+#gameScreen main{
+  background:linear-gradient(145deg,#fffdf6,#f1e6d0)!important;
+  border-color:#d5c49d!important;
+  box-shadow:0 10px 0 #b99d69,0 17px 32px rgba(23,50,77,.14)!important
+}
 </style>
 </head>
 <body>
