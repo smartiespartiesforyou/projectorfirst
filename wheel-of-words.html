@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Wheel of Words — ProjectorFirst</title>
+  <title>Spin & Name — ProjectorFirst</title>
 
 <!-- Membership gate (paywall-test) -->
 <script
@@ -73,18 +73,90 @@
       .confetti { display: none; }
       #wheelSvg { transition: none; }
     }
-  </style>
+  
+/* Projector First — current cream shell */
+html,body{
+  background:
+    radial-gradient(circle at 12% 10%,rgba(242,184,75,.30),transparent 24%),
+    radial-gradient(circle at 88% 18%,rgba(110,157,139,.25),transparent 26%),
+    linear-gradient(145deg,#fff8e8,#f3ede2 52%,#e6f0ed)!important;
+  color:#17324d!important;
+}
+body:before{
+  content:"";position:fixed;inset:0;pointer-events:none;opacity:.10;
+  background-image:
+    linear-gradient(90deg,transparent 49%,rgba(23,50,77,.07) 50%,transparent 51%),
+    linear-gradient(transparent 49%,rgba(23,50,77,.05) 50%,transparent 51%);
+  background-size:48px 48px
+}
+#gameScreen header{
+  max-width:1180px;width:100%;margin:0 auto;
+  border-bottom:1px solid rgba(23,50,77,.12)
+}
+#gameScreen header h1{
+  font-family:Georgia,serif!important;
+  color:#17324d!important;
+  text-shadow:0 2px 0 #fff!important;
+  letter-spacing:.02em
+}
+#gameScreen header .btn-big{
+  background:#1e3a8a!important;color:#fff!important;
+  border-color:#17324d!important;box-shadow:0 5px 0 rgba(23,50,77,.22)!important
+}
+#gameScreen header label{
+  color:#17324d!important;background:#fffdf6;
+  border:3px solid #d5c49d;border-radius:14px;padding:8px 12px
+}
+#gameScreen main{
+  width:min(94%,1120px);margin:12px auto 8px;
+  background:linear-gradient(145deg,#fffdf6,#f1e6d0);
+  border:4px solid #d5c49d;border-radius:30px;
+  box-shadow:0 10px 0 #b99d69,0 17px 32px rgba(23,50,77,.14);
+  padding:22px!important
+}
+#letterCaption{color:#5f6c72!important}
+#bigLetter{
+  color:#102d46!important;
+  font-family:"Arial Black",Arial,sans-serif!important;
+  font-size:200px!important;
+  text-shadow:none!important
+}
+.prompt-banner{
+  background:#fff1b8!important;color:#102d46!important;
+  border:4px solid #d6a93f!important;
+  box-shadow:0 7px 0 #b1842f,0 14px 26px rgba(23,50,77,.12)!important;
+  font-size:clamp(1.8rem,5.4vw,3.5rem)!important
+}
+#helpText{color:#5f6c72!important}
+#spinBtn{
+  background:linear-gradient(145deg,#3f7898,#2f607a)!important;color:#fff!important;
+  border-color:rgba(255,255,255,.8)!important;box-shadow:0 7px 0 #244d63!important
+}
+#catBtn{
+  background:linear-gradient(145deg,#d97961,#bc5e4b)!important;color:#fff!important;
+  border-color:rgba(255,255,255,.8)!important;box-shadow:0 7px 0 #934738!important
+}
+#cheerBtn{
+  background:linear-gradient(145deg,#6e9d8b,#557e70)!important;color:#fff!important;
+  border-color:rgba(255,255,255,.8)!important;box-shadow:0 7px 0 #42665b!important
+}
+#gameScreen footer>div:last-child{color:#7a7167!important}
+@media(max-width:700px){#bigLetter{font-size:clamp(8rem,32vw,12rem)!important}}
+</style>
 </head>
 <body>
 
   <div id="gameScreen" class="screen">
     <header class="flex items-center justify-between px-4 pt-4 pb-1 gap-2 flex-wrap">
       <a href="apps.html" class="btn-big bg-white text-blue-900 text-base md:text-xl px-3 py-2 no-underline">← Back to Apps</a>
-      <h1 class="text-yellow-300 font-black" style="font-size: clamp(1.4rem, 4.5vw, 2.4rem); text-shadow: 3px 3px 0 #0f265f;">🎡 WHEEL OF WORDS</h1>
-      <label class="flex items-center gap-2 text-white font-bold text-sm md:text-lg cursor-pointer select-none">
-        <input type="checkbox" id="voiceToggle" class="w-5 h-5 md:w-6 md:h-6 accent-yellow-400" checked>
-        🔊 Voice
-      </label>
+      <h1 class="text-yellow-300 font-black" style="font-size: clamp(1.4rem, 4.5vw, 2.4rem); text-shadow: 3px 3px 0 #0f265f;">SPIN &amp; NAME</h1>
+      <div class="flex items-center gap-2 flex-wrap justify-end">
+        <button class="btn-big bg-white text-blue-900 text-sm md:text-lg px-3 py-2" onclick="toggleFullscreen()">⛶ Fullscreen</button>
+        <label class="flex items-center gap-2 text-white font-bold text-sm md:text-lg cursor-pointer select-none">
+          <input type="checkbox" id="voiceToggle" class="w-5 h-5 md:w-6 md:h-6 accent-yellow-400" checked>
+          🔊 Voice
+        </label>
+      </div>
     </header>
 
     <main class="flex-1 flex flex-col items-center justify-center px-4 min-h-0 gap-2">
@@ -308,6 +380,15 @@ document.addEventListener("keydown", function (ev) {
   if (ev.code !== "Space" && ev.key !== " ") return;
   ev.preventDefault();
   spinWheel();
+});
+
+function toggleFullscreen() {
+  if (!document.fullscreenElement) document.documentElement.requestFullscreen();
+  else document.exitFullscreen();
+}
+
+document.addEventListener("keydown", function (ev) {
+  if (ev.code === "KeyF") toggleFullscreen();
 });
 
 buildWheel();
